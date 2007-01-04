@@ -1,0 +1,91 @@
+<!--
+/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *			http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<preface id="preface">
+    <title>Preface</title>
+		<para>Morph is a Java framework that eases the internal interoperability of an application.  As information flows through an application, it undergoes multiple transformations.  Morph provides a standard way to implement these transformations.  For example, when a user submits data using an HTML form in a J2EE application, the data typically goes through three transformations.  First, HTTP request parameters are converted to presentation-tier command objects.  Second, the command objects are converted into business objects.  Finally, the business objects are persisted to a database.</para>
+
+		<para>In addition to providing a framework for performing transformations like those described above, Morph provides implementations of many common transformations, including all three of the transformations in the example above (1 is partly done now, 2 and 3 are done).  As you can see, Morph is surprisingly powerful out-of-the-box, but it can't solve every problem.  Instead, it provides a simple API you can use to harness its power for your particular situation.  It has been built from the ground up for flexibility and extensibility, and integrates seamlessly with dependency injection frameworks such as <ulink url="http://www.springframework.org">Spring</ulink>, <ulink url="http://www.picocontainer.org/">PicoContainer</ulink> and <ulink url="http://jakarta.apache.org/hivemind/">Hivemind</ulink>.</para>
+
+		<para>Many of the ideas in Morph were inspired by the Apache Jakarta Commons <ulink url="http://jakarta.apache.org/commons/beanutils/">BeanUtils</ulink> project, the Apache Jakarta Commons sandbox component called <ulink url="http://jakarta.apache.org/commons/sandbox/convert/">Convert</ulink> and the <ulink url="http://jakarta.apache.org/commons/chain/apidocs/org/apache/commons/chain/Context.html">Context</ulink> notion of the Apache Jakarta Commons <ulink url="http://jakarta.apache.org/commons/chain/">Chain</ulink> project.  Morph synthesizes ideas from these various areas into one consistent API.  Implementations are be provided that solve many common problems such as mapping HTTP request parameters to POJOs and converting a SQL statement into Java objects.</para>
+
+    <para>
+	    Special thanks to the developers of Hibernate and the Spring framework.
+		This methods for generating this documentation were taken from Spring,
+		which was in turn adapted from Hibernate.
+    </para>
+</preface>
+
+<chapter id="introduction">
+
+    <title>Introduction</title>
+
+	<sect1 id="introduction-started">
+		<title>Getting Started</title>
+
+		<para>The easiest way to use Morph is to use the <literal>Morph</literal> static class.  The main operations it supports are <literal><link linkend="transformers-converters">convert</link></literal>, <literal><link linkend="transformers-copiers">copy</link></literal>, <literal><link linkend="context-get">get</link></literal> and <literal><link linkend="context-set">set</link></literal>.  Without getting into details, these methods allow you to: convert an object from one type to another, copy information from one object to another (already existing) object, retrieve information from anywhere in an object graph and set information anywhere in an object graph, respectively.</para>
+
+		<para>The benefit of using the <literal>Morph</literal> static class directly is that it's simple, and you don't have to do any special setup.  No matter what project you're working on, all you have to do is drop the morph JAR into your project's library directory and reference the Morph class.  In addition, you are assured that no matter how the application you are working on is configured, Morph will work the way you're used to.</para>
+		
+		<para>The drawback of using Morph in this way is that you cannot do any customization.  The <literal>Morph</literal> class is a static facade that makes it easy to get started using Morph.  To accomplish this goal, it hides all of the powerful customizations Morph provides.  Fortunately, once you outgrow the capabilities that come with Morph out of the box, your own custom Morph configuration will live peacefully side by side with the Morph static class.  Your existing code that utilizes the Morph static class will continue to work as it did before, and the parts of your application that require special configuration can have that special configuration limited to only those parts of the system that need the added complexity.</para>
+	</sect1>
+
+    <sect1 id="introduction-custom">
+		<title>Customizing Morph</title>
+
+		<para>A common convention in Java programming is to write objects as JavaBeans and expose their configuration parameters as JavaBean properties.  The Morph framework exposes all configuration options in this way.  This allows Morph to be configured programmatically using simple syntax.  An even more powerful way to configure Morph is to use a dependency injection framework such as Spring.  (Dependency injection frameworks are also sometimes called Inversion of Control containers, or IoC containers).  This will allow you to configure Morph using the same format you use to configure the rest of your application.</para>
+
+		<para>If you're completely lost at this point and wondering what the heck a dependency injection framework is, take a look <ulink url="http://www.picocontainer.org/Dependency+Injection">here</ulink>.  Note that Morph uses Setter Injection rather than Constructor Injection.  I (Matt Sgarlata) personally think dependency injection containers are the most significant innovation in computer programming since object orientation.  If you don't know what dependency injection is, stop now and take a look at Spring, PicoContainer, or Hivemind!  My favorite is Spring.</para>
+	</sect1>
+
+	<sect1 id="introduction-concepts">
+		<title>Concepts</title>
+
+		<para>There is a whole lot of code in the Morph framework, but it all boils down to a few basic types of things: Transformers, Reflectors, Wrappers, Languages and Contexts.  Each of these types of things is given its own package.  We'll use the remainder of this section to briefly cover these types.  For more information on a type, see the reference guide chapter about the type if one has been written.  If you need more information or there is no reference chapter, see the <ulink url="http://morph.sourceforge.net/apidocs/index.html">JavaDoc</ulink> documentation.  Documentation can always be improved, but the documentation for each of the main interfaces is fairly complete.</para>
+
+		<sect2 id="introduction-concepts-transformers">
+			<title>Transformers</title>
+
+			<para>Transformers transform data from one type to another.  Transformers were essentially the inspiration for the entire framework, and they are targeted pretty squarely at the original goal for the framework, which was "to be able to convert anything to anything".</para>
+		</sect2>
+
+		<sect2 id="introduction-concepts-reflectors">
+			<title>Reflectors</title>
+
+			<para>Reflectors were originally created to help implement Copiers, which are a type of Transformers.  They provide a stateless model for accessing data from two main types of data structures: bean-like structures and container-like structures.  It turns out reflectors are so useful, they can implement all sorts of neat functionality.  If you have some type of special data type that you need Morph to understand, you probably want to write a Reflector.  A good example of this is the <literal>DynaBeanReflector</literal></para>
+		</sect2>
+
+		<sect2 id="introduction-concepts-wrappers">
+			<title>Wrappers</title>
+
+			<para>Wrappers are very similar to reflectors, and in fact their APIs are nearly identical.  The difference is that reflectors are stateless so that transformers can be implemented efficiently.  Wrappers are more useful when you want to allow a method to take any type of bean-like or container-like data, but you don't want to have to overload the method for every conceivable bean (e.g. Object, Map) or container (e.g. Array, List)</para>
+		</sect2>
+
+		<sect2 id="introduction-concepts-languages">
+			<title>Languages</title>
+
+			<para>Languages define a way to retrieve and modify arbitrary information in an object graph.</para>
+		</sect2>
+
+		<sect2 id="introduction-concepts-contexts">
+			<title>Contexts</title>
+
+			<para>Contexts are similar to bean wrappers in that they provide stateful access to information stored in a bean-like object.  Unlike beans, contexts are backed by the full power of a language, so they can be used to modify and change any information in an object graph.  Also, the default context implementations provided with Morph implement the Map interface.  This allows you to easily pass Contexts between tiers of an application, even if different tiers of the application are dependent on different APIs (e.g. the Servlet API in the presentation tier and the JDBC API in the resource tier).</para>
+		</sect2>
+	</sect1>
+	
+</chapter>

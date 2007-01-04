@@ -1,0 +1,30 @@
+<!--
+/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *			http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<chapter id="contexts">
+
+    <title>Contexts</title>
+    
+    <sect1 id="contexts-introduction">
+
+		<title>Introduction</title>
+
+		<para>A context is an object that can be passed between tiers of an application without exposing the APIs that are particular to any given tier. For example, in a web application the information submitted by a user in an HttpRequest object could be exposed to a business object through the Context interface. This leaves objects in the business tier independent of the servlet API and thus testable outside a Servlet container.  <emphasis>This chapter has yet to be written</emphasis></para>
+
+	</sect1>
+
+</chapter>
