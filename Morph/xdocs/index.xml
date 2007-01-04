@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+
+<document>
+
+  <properties>
+    <title>Welcome to Morph</title>
+    <author email="sgarlatm@lists.sourceforge.net">Matt Sgarlata</author>
+  </properties>
+
+  <body>
+    <section name="Morph">
+	  <subsection name="Current Version">
+        <p>Morph 1.0:
+		<a href="http://sourceforge.net/project/showfiles.php?group_id=124910">Download</a> |
+		<a href="reference/index.html">Reference Document</a> |
+		<a href="apidocs/index.html">JavaDoc</a> |
+		<a href="history.html">Changes since previous version</a></p>
+	  </subsection>
+
+	  <subsection name="About Morph">
+		<p>Morph is a Java framework that eases the internal interoperability of an application.  As information flows through an application, it undergoes multiple transformations.  Morph provides a standard way to implement these transformations.  For example, when a user submits data using an HTML form in a J2EE application, the data typically goes through three transformations.  First, HTTP request parameters are converted to presentation-tier command objects.  Second, the command objects are converted into business objects.  Finally, the business objects are persisted to a database.</p>
+
+		<p>In addition to providing a framework for performing transformations like those described above, Morph provides implementations of many common transformations, including all three of the transformations in the example above (1 and 2 are done now, 3 is partially done).  As you can see, Morph is surprisingly powerful out-of-the-box, but it can't solve every problem.  Instead, it provides a simple API you can use to harness its power for your particular situation.  It has been built from the ground up for flexibility and extensibility, and integrates seamlessly with dependency injection frameworks such as <a href="http://www.springframework.org">Spring</a>, <a href="http://www.picocontainer.org/">PicoContainer</a> and <a href="http://jakarta.apache.org/hivemind/">Hivemind</a>.</p>
+
+		<p>Many of the ideas in Morph were inspired by the Apache Jakarta Commons <a href="http://jakarta.apache.org/commons/beanutils/">BeanUtils</a> project, the Apache Jakarta Commons sandbox component called <a href="http://jakarta.apache.org/commons/sandbox/convert/">Convert</a> and the <a href="http://jakarta.apache.org/commons/chain/apidocs/org/apache/commons/chain/Context.html">Context</a> notion of the Apache Jakarta Commons <a href="http://jakarta.apache.org/commons/chain/">Chain</a> project.  Morph synthesizes ideas from these various areas into one consistent API.  Implementations are be provided that solve many common problems such as mapping HTTP request parameters to POJOs and converting a SQL statement into Java objects.</p>
+      </subsection>
+
+	  <subsection name="Help">
+        <p>
+          If you have any questions, please feel free to post them to the
+          <a href="mail-lists.html">Morph users mailing list</a>.
+        </p>
+      </subsection>
+    </section>
+  </body>
+</document>
+

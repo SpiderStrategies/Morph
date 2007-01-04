@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *			http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+
+<project name="Morph">
+
+	<title>Morph</title>
+
+	<body>
+
+		<menu name="Morph">
+			<item 
+				name="Introduction"
+				href="/index.html" />
+			<item
+				name="Download"
+				href="http://sourceforge.net/project/showfiles.php?group_id=124910" />
+			<item
+				name="History"
+				href="/history.html" />
+			<item
+				name="SourceForge Site"
+				href="http://sourceforge.net/projects/morph"/>
+			<item
+				name="Activity Statistics"
+				href="http://sourceforge.net/project/stats/?group_id=124910&amp;ugn=morph" />
+<!-- Moving this to the SourceForge issue tracker
+			<item
+				name="To Do List"
+				href="/todo.html"/>
+-->
+		</menu>
+
+		<menu name="Documentation">
+
+			<item name="Reference Doc (HTML)" href="reference/html/index.html" />
+			<item name="Reference Doc (PDF)"
+				href="reference/pdf/morph-reference.pdf" />
+			<item name="JavaDoc" href="/apidocs/index.html" />
+			<item name="Browse Source" href="/xref/index.html" />
+
+		</menu>
+
+		<menu name="Related Projects">
+
+			<item name="BeanUtils" href="/alternatives/beanutils.html">
+				<item
+					name="Homepage"
+					href="http://jakarta.apache.org/commons/beanutils/"/>
+				<item
+					name="Comparison"
+					href="/alternatives/beanutils.html"/>
+			</item>
+
+			<item name="JEXL" href="/alternatives/jexl.html">
+				<item
+					name="Homepage"
+					href="http://jakarta.apache.org/commons/jexl/"/>
+				<item
+					name="Comparison"
+					href="/alternatives/jexl.html"/>
+			</item>
+
+			<item
+				name="Morphed Apps"
+				href="morphed_apps.html"/>
+
+		</menu>
+
+		<menu name="Tools">
+			<item
+				name="Clover"
+				href="http://www.cenqua.com/clover"
+				src="http://www.cenqua.com/images/clovered2.gif"/>
+
+		</menu>
+
+	</body>
+
+</project>

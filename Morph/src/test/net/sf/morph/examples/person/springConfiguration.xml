@@ -1,0 +1,49 @@
+<!DOCTYPE beans PUBLIC
+	"-//SPRING//DTD BEAN//EN"
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<!-- VehicleDAO[] to VehicleVO[] -->
+	<bean
+		id="vehicleCopier"
+		class="net.sf.morph.transform.copiers.PropertyNameMatchingCopier"/>
+	<!-- PersonDAO[] to String[] -->
+	<bean
+		id="childrenCopier"
+		class="net.sf.morph.transform.copiers.ContainerCopier"/>
+	<!-- AddressDAO[] to String -->
+	<bean
+		id="addressCopier"
+		class="net.sf.morph.examples.person.AddressDAOArrayToStringConverter"/>
+	<!-- PersonDAO[] to PersonVO[] -->
+	<bean
+		id="personCopier"
+		class="net.sf.morph.examples.person.PersonDAOToPersonVOCopier">
+		<property name="mapping">
+			<map>
+				<entry key="children"><value>children</value></entry>
+				<entry key="address"><value>primaryAddress</value></entry>
+				<entry key="vehicles"><value>vehicles</value></entry>
+			</list>
+		</property>
+		<property name="nestedTransformer">
+			<ref bean="graphTransformer"/>
+		</property>
+	</bean>
+
+	<!-- the overall transformer we'll use to do the graph copy -->
+	<bean
+		id="graphTransformer"
+		class="net.sf.morph.transform.DelegatingCopier">
+		<property name="components">
+			<list>
+				<ref bean="personCopier"/>
+				<ref bean="vehicleCopier"/>
+				<ref bean="childrenCopier"/>
+				<ref bean="addressConverter"/>
+			</list>
+		</property>
+	</bean>
+	
+</beans>

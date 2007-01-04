@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+
+<!--
+  Build file for the documentation in the Morph Framework.  Most of this file
+  was copied from the Spring framework.
+
+  This script requires a "lib" directory containing the necessary third party JAR files.
+  See project.properties for the definitions of the properties used in this file.
+
+  (Not sure if the following is true for Morph:)
+  Building Spring requires J2SE 1.4; the "dist" JARs are built with Sun's JDK 1.4.2.
+  Note: To successfully run the tests, you need to use Xerces or any other JAXP parser
+  that properly supports XML includes. A simple way to achieve this is to put
+  xml-apis.jar and xercesImpl.jar into your "JAVA_HOME/jre/lib/ext" directory.
+-->
+
+<project name="morph-documentation" default="doc.all" basedir=".">
+
+	<property file="build.properties"/>
+	<property file="project.properties"/>
+
+	<target name="doc.clean" description="Delete temporary and distribution directories for docs">
+
+		<delete quiet="true" dir="${basedir}/${dist.ref.dir}/pdf"/>
+		<delete quiet="true" dir="${basedir}/${dist.ref.dir}/html_single"/>
+		<delete quiet="true" dir="${basedir}/${dist.ref.dir}/html"/>
+
+	</target>
+
+
+	<target name="doc.prepare" description="Extra preparation for the documentation">
+
+		<fail message="XSLT supporting lib not installed. Please see docs/reference/readme.txt for instructions.">
+			<condition>
+				<not>
+					<available file="${basedir}/${doc.ref.dir}/lib"/>
+				</not>
+			</condition>
+		</fail>
+
+		<!-- For now, no dynamic inclusion of the DTD since it looks ugly because of
+		     all the extra newlines the replace is mysteriously adding.
+		     I'll figure something out for that later on
+		<delete file="${basedir}/${doc.ref.dir}/src/dtd.xml"/>
+		<loadfile
+			property="doc.beansdtd"
+				srcFile="${src.dir}/org/springframework/beans/factory/xml/spring-beans.dtd"/>
+		<copy
+			file="${basedir}/${doc.ref.dir}/src/dtd-template.xml"
+			tofile="${basedir}/${doc.ref.dir}/src/dtd.xml"/>
+		<replace
+			file="${basedir}/${doc.ref.dir}/src/dtd.xml"
+			token="@dtd-include@"
+			value="${doc.beansdtd}">
+		</replace>
+		<replace
+			file="${basedir}/${doc.ref.dir}/src/dtd.xml"
+			token="\\n"
+			value=""/>
+		-->
+	</target>
+
+
+	<target name="doc.pdf" depends="doc.prepare" description="Compile reference documentation to pdf">
+
+		<mkdir dir="${basedir}/${dist.ref.dir}/pdf/images"/>
+
+		<copy todir="${basedir}/${dist.ref.dir}/pdf/images">
+			<fileset dir="${basedir}/${doc.ref.dir}/src/images">
+				<include name="*.gif"/>
+				<include name="*.svg"/>
+				<include name="*.png"/>
+				<include name="*.jpg"/>
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${doc.ref.dir}">
+			<classpath>
+				<fileset dir="${basedir}/${doc.ref.dir}/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<arg value="-o"/>
+			<arg value="${basedir}/${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+			<arg value="${basedir}/${doc.ref.dir}/src/index.xml"/>
+			<arg value="${basedir}/${doc.ref.dir}/styles/fopdf.xsl"/>
+		</java>
+
+		<java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${doc.ref.dir}">
+			<classpath>
+				<fileset dir="${basedir}/${doc.ref.dir}/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<arg value="${basedir}/${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+			<arg value="${basedir}/${dist.ref.dir}/pdf/morph-reference.pdf"/>
+		</java>
+
+		<delete file="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+
+	</target>
+
+
+	<target name="doc.html" depends="doc.prepare" description="Compile reference documentation to chunked html">
+
+		<mkdir dir="${dist.ref.dir}/html/images"/>
+
+		<copy todir="${basedir}/${dist.ref.dir}/html/images">
+			<fileset dir="${basedir}/${doc.ref.dir}/src/images">
+				<include name="*.gif"/>
+				<include name="*.svg"/>
+				<include name="*.jpg"/>
+				<include name="*.png"/>
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}/html/">
+			<classpath>
+				<fileset dir="${basedir}/${doc.ref.dir}/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<arg value="${basedir}/${doc.ref.dir}/src/index.xml"/>
+			<arg value="${basedir}/${doc.ref.dir}/styles/html_chunk.xsl"/>
+		</java>
+
+	</target>
+
+
+	<target name="doc.htmlsingle" description="Compile reference documentation to single html">
+
+		<mkdir dir="${dist.ref.dir}/html_single/images"/>
+
+		<copy todir="${basedir}/${dist.ref.dir}/html_single/images">
+			<fileset dir="${basedir}/${doc.ref.dir}/src/images">
+				<include name="*.gif"/>
+				<include name="*.svg"/>
+				<include name="*.jpg"/>
+				<include name="*.png"/>
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${doc.ref.dir}">
+			<classpath>
+				<fileset dir="${basedir}/${doc.dir}/reference/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<arg value="-o"/>
+			<arg value="${basedir}/${dist.ref.dir}/html_single/index.html"/>
+			<arg value="${basedir}/${doc.ref.dir}/src/index.xml"/>
+			<arg value="${basedir}/${doc.ref.dir}/styles/html.xsl"/>
+		</java>
+
+	</target>
+
+
+	<target name="doc.all" depends="doc.html,doc.htmlsingle,doc.pdf" description="Generate and copy reference documentation"/>
+
+</project>

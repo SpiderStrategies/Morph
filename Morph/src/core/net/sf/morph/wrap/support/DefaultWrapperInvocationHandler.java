@@ -1,0 +1,162 @@
+package net.sf.morph.wrap.support;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import net.sf.composite.util.CompositeUtils;
+import net.sf.composite.util.ObjectUtils;
+import net.sf.morph.Defaults;
+import net.sf.morph.reflect.BeanReflector;
+import net.sf.morph.reflect.ContainerReflector;
+import net.sf.morph.reflect.GrowableContainerReflector;
+import net.sf.morph.reflect.IndexedContainerReflector;
+import net.sf.morph.reflect.Reflector;
+import net.sf.morph.reflect.SizableReflector;
+import net.sf.morph.util.BidirectionalMap;
+import net.sf.morph.wrap.Bean;
+import net.sf.morph.wrap.Container;
+import net.sf.morph.wrap.GrowableContainer;
+import net.sf.morph.wrap.IndexedContainer;
+import net.sf.morph.wrap.MutableIndexedContainer;
+import net.sf.morph.wrap.Sizable;
+
+/**
+ * @author Matt Sgarlata
+ * @since Jan 16, 2005
+ */
+public class DefaultWrapperInvocationHandler implements WrapperInvocationHandler {
+	
+	private static final Map DEFAULT_REFLECTOR_WRAPPER_MAP;
+	private Map reflectorWrapperMap;
+	private Reflector reflector;
+	private Object wrapped;
+
+	static {
+		DEFAULT_REFLECTOR_WRAPPER_MAP = new BidirectionalMap(6);
+		DEFAULT_REFLECTOR_WRAPPER_MAP.put(BeanReflector.class, Bean.class);
+		DEFAULT_REFLECTOR_WRAPPER_MAP.put(ContainerReflector.class, Container.class);
+		DEFAULT_REFLECTOR_WRAPPER_MAP.put(GrowableContainerReflector.class, GrowableContainer.class);
+		DEFAULT_REFLECTOR_WRAPPER_MAP.put(IndexedContainerReflector.class, IndexedContainer.class);
+		DEFAULT_REFLECTOR_WRAPPER_MAP.put(MutableIndexedContainer.class, MutableIndexedContainer.class);
+		DEFAULT_REFLECTOR_WRAPPER_MAP.put(SizableReflector.class, Sizable.class);		
+	}
+	
+	public DefaultWrapperInvocationHandler(Object wrapped) {
+		super();
+		this.wrapped = wrapped;
+	}
+	
+	public DefaultWrapperInvocationHandler(Object wrapped, Reflector reflector) {
+		this(wrapped);
+		this.reflector = reflector;
+	}
+	
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		
+		try {
+			
+			Class declaringClass = method.getDeclaringClass();
+			if (declaringClass.equals(getWrapped().getClass())) {
+				return method.invoke(getWrapped(), args);
+			}
+			else {
+				Class wrapperClass = method.getDeclaringClass();
+				Class reflectorClass = (Class) getBiDirectionalReflectorWrapperMap().getKey(wrapperClass);
+				if (reflectorClass == null) {
+					throw new IllegalArgumentException("Cannot invoke method " + method + " because it is not declared in one of the recognized wrapper classes, which are: " + ObjectUtils.getObjectDescription(getReflectorWrapperMap().values()));
+				}
+				
+				Reflector reflector = (Reflector) CompositeUtils.specialize(getReflector(), reflectorClass);
+				
+				int wrapperNumArgs = method.getParameterTypes().length;
+				int reflectorNumArgs = wrapperNumArgs + 1;
+				
+				Class[] reflectorParameterTypes = new Class[reflectorNumArgs];
+				reflectorParameterTypes[0] = Object.class;
+				if (method.getParameterTypes() != null) {
+					System.arraycopy(method.getParameterTypes(), 0,
+						reflectorParameterTypes, 1, wrapperNumArgs);
+				}
+				
+				Object[] reflectorArgs = new Object[reflectorNumArgs];
+				reflectorArgs[0] = getWrapped();
+				if (args != null) {
+					System.arraycopy(args, 0, reflectorArgs, 1, wrapperNumArgs);
+				}
+				
+				Method reflectorMethod = reflector.getClass().getMethod(method.getName(), reflectorParameterTypes);
+				
+				return reflectorMethod.invoke(reflector, reflectorArgs);
+			}
+			
+		}
+		// if an exception is thrown by the invoke method, just rethrow it
+		// without it wrapped in an InvocationTargetException
+		catch (InvocationTargetException e) {
+			throw e.getTargetException();
+		}
+	
+	}
+
+	public Class[] getInterfaces(Object object) {
+		Class[] baseInterfaces = object.getClass().getInterfaces();
+		List interfaces;
+		if (baseInterfaces == null) {
+			interfaces = new ArrayList();
+		}
+		else {
+			// wrap the list in an ArrayList so that new elements can be added
+			interfaces = new ArrayList(Arrays.asList(baseInterfaces));
+		}
+		Map reflectorWrapperMap = getReflectorWrapperMap();
+		Iterator reflectorClasses =  reflectorWrapperMap.keySet().iterator();
+		while (reflectorClasses.hasNext()) {
+			Class reflectorClass = (Class) reflectorClasses.next();
+			Class wrapperClass = (Class) reflectorWrapperMap.get(reflectorClass); 
+			if (CompositeUtils.isSpecializable(getReflector(), reflectorClass)) {
+				interfaces.add(wrapperClass);
+			}
+		}
+		return (Class[]) interfaces.toArray(new Class[interfaces.size()]);
+	}
+	
+	protected BidirectionalMap getBiDirectionalReflectorWrapperMap() {
+		return (BidirectionalMap) getReflectorWrapperMap();
+	}
+	
+	public Map getReflectorWrapperMap() {
+		if (reflectorWrapperMap == null) {
+			setReflectorWrapperMap(DEFAULT_REFLECTOR_WRAPPER_MAP);
+		}
+		return reflectorWrapperMap;
+	}
+	public void setReflectorWrapperMap(Map reflectorWrapperMap) {
+		if (reflectorWrapperMap instanceof BidirectionalMap) {
+			this.reflectorWrapperMap = reflectorWrapperMap;
+		}
+		else {
+			this.reflectorWrapperMap = new BidirectionalMap(reflectorWrapperMap);
+		}
+	}
+
+	public Reflector getReflector() {
+		if (reflector == null) {
+			setReflector(Defaults.createReflector());
+		}
+		return reflector;
+	}
+	public void setReflector(Reflector reflector) {
+		this.reflector = reflector;
+	}
+	public Object getWrapped() {
+		return wrapped;
+	}
+	public void setWrapped(Object wrapped) {
+		this.wrapped = wrapped;
+	}
+}

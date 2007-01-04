@@ -1,0 +1,90 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.sf.morph</groupId>
+  <artifactId>morph</artifactId>
+  <packaging>jar</packaging>
+  <version>0.9.3</version>
+  <name>Maven Quick Start Archetype</name>
+  <url>http://maven.apache.org</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.3</version>
+      <url>http://jakarta.apache.org/commons/logging</url>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-chain</groupId>
+      <artifactId>commons-chain</artifactId>
+      <version>1.0</version>
+      <url>http://jakarta.apache.org/commons/chain</url>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <url>http://www.junit.org/index.htm</url>
+    </dependency>
+
+    <dependency>
+      <groupId>velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>1.4</version>
+      <url>http://jakarta.apache.org/velocity/</url>
+    </dependency>
+
+    <dependency>
+      <groupId>servletapi</groupId>
+      <artifactId>servletapi</artifactId>
+      <version>2.3</version>
+      <url>http://java.sun.com/products/servlet/2.3/javadoc/index.html</url>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils-core</artifactId>
+      <version>1.7.0</version>
+      <url>http://jakarta.apache.org/commons/beanutils</url>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.8</version>
+      <url>http://logging.apache.org/log4j/docs/</url>
+    </dependency>
+
+    <dependency>
+      <groupId>spring</groupId>
+      <artifactId>spring</artifactId>
+      <version>1.1.2</version>
+      <url>http://www.springframework.org</url>
+    </dependency>
+
+    <dependency>
+      <groupId>spring</groupId>
+      <artifactId>spring-mock</artifactId>
+      <version>1.1.2</version>
+      <url>http://www.springframework.org</url>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.0</version>
+      <url>http://jakarta.apache.org/commons/lang</url>
+    </dependency>
+
+    <dependency>
+      <groupId>composite</groupId>
+      <artifactId>composite</artifactId>
+      <version>0.1</version>
+      <url>http://composite.sourceforge.net</url>
+    </dependency>
+  </dependencies>
+
+</project>

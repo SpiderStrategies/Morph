@@ -1,0 +1,303 @@
+<project name="Morph" default="dist">
+
+<!--============================================================================
+|
+| MACROS
+|
+=============================================================================-->
+
+	<macrodef name="component-compile">
+		<attribute name="component"/>
+		<sequential>
+			<mkdir dir="${path.build.javadoc}/@{component}"/>
+			<javac
+				source="1.3"
+				target="1.3"
+				destdir="${path.build.javadoc}/@{component}"
+				deprecation="on"
+				classpathref="classpath"
+				debug="true"
+				debuglevel="lines,vars,source">
+				<src path="${path.src}/@{component}" />
+			</javac>
+			<copy todir="${path.build.javadoc}/@{component}">
+				<fileset dir="${path.src}/@{component}">
+					<include name="**/*.xml"/>
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="component-jar">
+		<attribute name="component"/>
+		<sequential>
+			<component-compile component="@{component}"/>
+			<jar
+				destfile="${path.dist}/${distname}/morph-@{component}-${project.version.morph}.jar">
+				<fileset dir="${path.build.javadoc}/@{component}">
+					<exclude name="**/*.html"/>
+				</fileset>
+			</jar>
+		</sequential>
+	</macrodef>
+
+<!--============================================================================
+|
+| TARGETS
+|
+=============================================================================-->
+
+	<target name="prepare">
+		<record name="build.log" />
+
+		<property file="build.properties"/>
+
+		<property name="distname" value="morph-${project.version.morph}"/>
+
+		<path id="classpath">
+			<fileset dir="${path.lib}">
+				<include name="**/*.jar"/>
+				<include name="**/*.zip"/>
+			</fileset>
+			<pathelement path="${path.classes}"/>
+			<pathelement path="${path.build.javadoc}"/>
+			<pathelement path="${path.build.javadoc}/core"/>
+			<pathelement path="${path.build.javadoc}/beanutils"/>
+			<pathelement path="${path.build.javadoc}/chain"/>
+	<!--
+			<pathelement path="${path.build.javadoc}/spring"/>
+	-->
+			<pathelement path="${path.build.javadoc}/test"/>
+			<pathelement path="${path.build.javadoc}/velocity"/>
+			<pathelement path="${path.build.javadoc}/web"/>
+
+		</path>
+
+		<echo message="Morph ${project.version.morph}"/>
+	</target>
+
+	<target name="compile" description="Compile the source" depends="prepare,composite">
+		<mkdir dir="${path.classes}"/>
+		<javac
+			source="1.3"
+			target="1.3"
+			destdir="${path.classes}"
+			deprecation="on"
+			classpathref="classpath"
+			debug="true"
+			debuglevel="lines,vars,source">
+			<src path="${path.src}" />
+		</javac>
+		<copy todir="${path.classes}">
+			<fileset dir="${path.src}">
+				<include name="**/*.xml"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="test" depends="prepare,compile" description="Run all tests">
+		<mkdir dir="${path.build.javadoc.tests}"/>
+
+		<junit fork="yes" printsummary="yes">
+			<formatter type="plain"/>
+
+			<classpath refid="classpath"/>
+			<batchtest fork="yes" todir="${path.build.javadoc.tests}" haltonerror="yes">
+				<fileset dir="${path.src}/test">
+					<include name="**/*TestCase.java"/>
+					<exclude name="**/Base*TestCase.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<!-- get a fresh copy of the composite package -->
+	<target
+		name="composite"
+		description="Get a fresh copy of the Composite package">
+		<!-- build the Composite JAR -->
+		<echo message="Building Composite..."/>
+		<ant
+			antfile="${path.composite}/build.xml"
+			inheritAll="false"
+			target="jar"/>
+		<!-- Load the project.version property from the Composite package -->
+		<loadproperties srcFile="${path.composite}/build.properties">
+			<filterchain>
+				<linecontains>
+					<contains value="project.version.composite"/>
+				</linecontains>
+			</filterchain>
+		</loadproperties>
+		<property
+			name="jarname"
+			value="composite-${project.version.composite}.jar"/>
+		<property
+			name="jarpath"
+			value="${path.composite}/dist/composite-${project.version.composite}/${jarname}"/>
+
+		<echo message="Removing old version of Morph..."/>
+		<fileset dir="${path.lib}" includes="morph*.jar"/>
+		<fileset dir="${path.cp}" includes="morph*.jar"/>
+
+		<echo
+			message="Copying new version of Composite to Morph..."/>
+		<delete>
+			<fileset dir="${path.lib}/core" includes="composite*.jar"/>
+		</delete>
+		<copy
+			file="${jarpath}"
+			tofile="${path.lib}/core/${jarname}"/>
+	</target>
+
+
+	<target name="jar" depends="prepare,composite" description="Create main JAR">
+		<mkdir dir="${path.build.javadoc}/temp"/>
+		<mkdir dir="${path.dist}/${distname}"/>
+		<!-- not using the compile target, because we don't want to compile all
+		code, just the code to include in the JAR -->
+		<javac
+			source="1.3"
+			target="1.3"
+			destdir="${path.build.javadoc}/temp"
+			deprecation="on"
+			classpathref="classpath"
+			debug="true"
+			debuglevel="lines,vars,source">
+			<src path="${path.src}/core"/>
+		</javac>
+		<copy todir="${path.build.javadoc}/temp">
+			<fileset dir="${path.src}/core" includes="**/*.xml"/>
+		</copy>
+		<jar
+			destfile="${path.dist}/${distname}/morph-${project.version.morph}.jar">
+			<fileset dir="${path.build.javadoc}/temp">
+				<exclude name="log4j.properties"/>
+				<exclude name="commons-logging.properties"/>
+				<exclude name="**/*.html"/>
+			</fileset>
+		</jar>
+		<delete dir="${path.build.javadoc}/temp"/>
+	</target>
+	
+	<!-- generate documentation -->
+	<target name="javadoc" description="Generate javadoc" depends="prepare">
+		<mkdir dir="${path.docs.javadoc}"/>
+		<javadoc
+			access="public"
+			destdir="${path.docs.javadoc}"
+			windowtitle="Morph ${project.version.morph} API"
+			failonerror="false"
+			classpathref="classpath">
+			<fileset dir="${path.src}" defaultexcludes="yes">
+			    <exclude name="**/*.properties"/>
+				<exclude name="**/*Test*.java"/>
+				<exclude name="**/*.html"/>
+			</fileset>
+			<link href="http://jakarta.apache.org/commons/beanutils/commons-beanutils-1.7.0/docs/api/"/>
+			<link href="http://www.springframework.org/docs/api/"/>
+			<link href="http://java.sun.com/products/servlet/2.3/javadoc/"/>
+			<link href="http://jakarta.apache.org/commons/chain/apidocs/"/>
+			<link href="http://jakarta.apache.org/velocity/api/"/>
+			<link href="http://java.sun.com/j2se/1.3/docs/api/"/>
+		</javadoc>
+		<!--
+		<copy todir="${path.docs.javadoc}">
+			<fileset dir="${path.src}">
+				<include name="**/*.html"/>
+			</fileset>
+		</copy>
+		-->
+	</target>
+
+	<!-- generate the reference documentation and copy it to the specified directory -->
+	<macrodef name="documentation">
+		<attribute name="dest"/>
+		<sequential>
+			<ant antfile="build-documentation.xml"/>
+			<copy todir="@{dest}">
+				<fileset dir="docs/reference">
+					<exclude name="lib/**"/>
+					<exclude name="styles/**"/>
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<target name="component-jars" depends="prepare">
+<!--
+		<component-jar component="core"/>
+		<component-jar component="beanutils"/>
+		<component-jar component="chain"/>
+		<component-jar component="spring"/>
+-->
+		<component-jar component="test"/>
+<!--
+		<component-jar component="velocity"/>
+-->
+		<component-jar component="sandbox"/>
+	</target>
+
+	<target name="clean">
+		<!-- clean out any files that might already be in the build dir -->
+		<delete dir="${path.build.javadoc}"/>
+		<!-- clean out any files that might already be in the dist dir -->
+		<delete dir="${path.dist}"/>
+	</target>
+
+	<!-- build the distribution -->
+	<target name="dist" description="Create distribution" depends="clean,prepare,compile,javadoc">
+
+		<!-- recreate the dist dir -->
+		<mkdir dir="${path.dist}/${distname}/"/>
+
+		<!-- prepare a full jar -->
+		<antcall target="jar"/>
+		
+		<!-- create component jars -->
+		<antcall target="component-jars"/>
+		
+		<!-- copy javadoc into distribution -->
+		<copy todir="${path.dist}/${distname}/docs/api">
+			<fileset dir="${path.docs.javadoc}"/>
+		</copy>
+
+		<!-- create reference doc into distribution -->
+		<documentation dest="${path.dist}/${distname}/docs/reference"/>
+
+		<!-- copy source and lib directories -->
+		<copy todir="${path.dist}/${distname}/${path.lib}">
+			<fileset dir="${path.lib}"/>
+		</copy>
+		<copy todir="${path.dist}/${distname}/${path.src}">
+			<fileset dir="${path.src}"/>
+		</copy>
+
+		<!-- zip up all generated content -->
+		<delete file="${path.dist}/morph-${project.version.morph}.zip"/>
+		<zip
+			destfile="${path.dist}/morph-${project.version.morph}.zip"
+			basedir="${path.dist}"
+			includes="morph-${project.version.morph}/**"/>
+
+	</target>
+
+	<target name="website" depends="prepare" description="Generates the Morph website">
+		<delete dir="${path.target}"/>
+		<copy todir="${path.build.javadoc}/${path.src}">
+			<fileset dir="${path.src}/sandbox">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${path.build.javadoc}/test">
+			<fileset dir="${path.src}/test"/>
+		</copy>
+		<exec executable="${path.maven}">
+			<arg value="site:generate"/>
+		</exec>
+		<documentation dest="${path.docs.reference}"/>
+		<delete dir="${path.build.javadoc}/${path.src}"/>
+		<delete dir="${path.build.javadoc}/test"/>
+	</target>
+
+</project>

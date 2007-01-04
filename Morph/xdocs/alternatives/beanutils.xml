@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *			http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+
+<document>
+
+	<properties>
+		<title>Comparison with BeanUtils</title>
+		<author email="sgarlatm@lists.sourceforge.net">Matt Sgarlata</author>
+	</properties>
+
+	<body>
+		<section name="Comparison with BeanUtils">
+
+			<p>Morph was inspired in part by the <a href="http://jakarta.apache.org/commons/beanutils/">BeanUtils</a> framework, so they offer similar functionality.  One of Morph's goals is to provide all the functionality in the BeanUtils framework (and some nice extras), but in a much more flexible and configurable way than the BeanUtils framework.</p>
+
+			<subsection name="Conversion approach">
+				<p>Morph's <a href="../apidocs/net/sf/morph/transform/Converter.html">Converter</a> interface is nearly identitcal to the <a href="http://jakarta.apache.org/commons/beanutils/api/org/apache/commons/beanutils/Converter.html">Converter</a> interface in BeanUtils.  The major difference is in how you combine multiple converters in the two frameworks.</p>
+				
+				<p>BeanUtils takes a registry approach with its <a href="http://jakarta.apache.org/commons/beanutils/api/org/apache/commons/beanutils/ConvertUtilsBean.html">ConvertUtilsBean</a>.  This bean gives centralized control over which converters are used to convert objects to which destination classes.  It requires you to explicitly register each destination class a Converter is capable of converting to.  So to use a Converter, you must explicitly know which classes it can convert.  Also, this approach lets you do undesireable things like register the <a href="http://jakarta.apache.org/commons/beanutils/api/org/apache/commons/beanutils/converters/LongConverter.html">LongConverter</a> as the converter that knows how to convert a java.util.Date into a java.lang.Long.  In fact, the BeanUtils LongConverter can't handle this conversion, so you're in store for a runtime error.  (Morph's <a href="../apidocs/net/sf/morph/transform/converters/LongConverter.html">LongConverter</a> does handle this conversion if you like, although not by default).</p>
+				
+				<p>Morph does away with the central registry concept and instead has converters determine themselves which objects they are willing to convert via the <a href="../apidocs/net/sf/morph/transform/Transformer.html#getSourceClasses()">getSourceClasses</a> and <a href="../apidocs/net/sf/morph/transform/Transformer.html#getDestinationClasses()">getDestionationClasses</a> methods.  This allows you to specify multiple converters for a given destination class, each of which knows how to convert different source objects to the destination class.  If you do want to combine multiple converters together (a common requirement), you can use the <a href="../apidocs/net/sf/morph/transform/converters/DelegatingConverter.html">DelegatingConverter</a>.</p>
+			</subsection>
+
+			<subsection name="Language approach">
+				<p>BeanUtils offers <a href="http://jakarta.apache.org/commons/beanutils/commons-beanutils-1.7.0/docs/api/org/apache/commons/beanutils/package-summary.html#standard.nested">one fixed language</a> you can use to access arbitrary properties of an object.  Morph instead provides the <a href="../apidocs/net/sf/morph/lang/languages/SimpleLanguage.html">SimpleLanguage</a> that can recognize several familiar syntactic forms (e.g. JSTL EL, BeanUtils/Struts, Spring).  Morph also allows you to define a new Language if you like (just implement the simple <a href="../apidocs/net/sf/morph/lang/Language.html">Language</a> interface).</p>
+
+				<p>BeanUtils supports only Maps, <a href="http://jakarta.apache.org/commons/beanutils/commons-beanutils-1.7.0/docs/api/org/apache/commons/beanutils/DynaBean.html">DynaBean</a>s, and Objects -- no more, no less.  Morph allows you to expand any language to read other types of objects if needed.  All you need to do is implement a <a href="../apidocs/net/sf/morph/reflect/BeanReflector.html">BeanReflector</a>.</p>
+				
+				<p>Finally, The BeanUtils' syntax makes a distinction between POJOs (plain old java objects) and Maps.  In our opinion, the choice of a Map vs. a POJO for a particular object is an implementation decision that should be easily changeable without requiring rework of code accessing the object.  We feel that this is one of the primary benefits of using a library such as BeanUtils or Morph -- the ability to treat all 'bean-like' objects the same, whether they be Maps, Objects, DynaBeans, or YourDomainObjects.  Thus, we feel this distinction is a weakness of BeanUtils' syntax (and also a disadvantage for Spring, but not for JEXL or the JSTL EL).</p>
+
+			</subsection>
+
+		</section>
+	</body>
+</document>
+

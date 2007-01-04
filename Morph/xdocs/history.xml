@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<!--
+/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *			http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+
+<document>
+
+	<properties>
+		<title>Release History</title>
+		<author email="sgarlatm@lists.sourceforge.net">Matt Sgarlata</author>
+	</properties>
+
+	<body>
+		<section name="Production Releases">
+
+			<subsection name="Morph 1.0.2 (May ??, 2006)">
+				<ul>
+					<li>Fixed transformation caching issue that was causing conversions done using the SimpleDelegatingTransformer to return results of previous transformations rather than performing the transformation again as it should have been.</li>
+					<li>TODO: Improved handling of nulls by all converters.</li>
+					<li>TODO: Property Editor support</li>
+					<li>TODO: Auto-detect Spring's presence and use the built in locale thread local</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 1.0.1 (March 31, 2006)">
+				<ul>
+					<li>Fixed bug that was preventing properties of POJOs without getters from being recognized by Morph in some circumstances (bug 1460440)</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 1.0 (February 10, 2006)">
+				<ul>
+					<li>Improved Internationalization support for number to text and text to number conversions</li>
+					<li>Fixed bug that was causing Morph.convertToDouble and Morph.convertToFloat to only return Integers</li>
+					<li>Performanced tuned the static Morph conversion methods so that they are nearly as fast as calling the corresponding conversion method manually.  For example, 10,000 iterations of Morph.convertToString used to take 6 seconds on my PC compared to only 50 milliseconds for NumberFormat.format.  Now Morph only takes around 200 milliseconds.</li>
+					<li>Removed the BaseConverter and BaseCopier classes because they didn't really do anything.  Any existing classes that extend those base classes should extend BaseTransformer instead.  Just be sure to <code>implements DecoratedConverter</code> to your converts and <code>implements DecoratedConverter, DecoratedCopier</code> to your copiers.</li>
+					<li>Minor updates to the reference documentation</li>
+					<li>Added the ObjectToClassConverter and corresponding test case</li>
+				</ul>
+			</subsection>
+
+		</section>
+		
+		<section name="Beta Releases">
+
+			<subsection name="Morph 0.9.2 (December 5, 2005)">
+				<ul>
+					<li>Removed the GraphTransformer interface and renamed the graphTransformer property of BaseTransformer back to nestedTransformer</li>
+					<li>Removed the TraverserConverter and refined the ContainerCopier so that it can convert to Iterators and Enumerators</li>
+					<li>Added TypeChangingGraphTransformer to assist with transformations of object graphs from a set of domain objects to a set of transfer objects</li>
+					<li>Various bug fixes</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.9.1 (April 14, 2005)">
+				<ul>
+					<li>More performance immprovements, especially to the reflectors for HTTP requests, HTTP sessions, and servlet contexts.  The test suite now executes in around 1.75s.</li>
+					<li>Moved the Composite package to its own project</li>
+					<li>More improvements to the ContainerCopier and PropertyCopiers</li>
+					<li>Introduced the <code><a href="apidocs/net/sf/morph/transform/converters/ArbitraryObjectMappingConverter.html">ArbitraryObjectMappingConverter</a></code></li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.8.3 (March 6, 2005)">
+				<ul>
+					<li>Performance improvements.  It's difficult to quantify exactly how much better performance is, but the test suite now takes around 3 seconds to execute on my laptop, whereas it used to take around 8 seconds.</li>
+					<li>Improved support for nested transformations using the PropertyName copiers, ContainerCopier.</li>
+					<li>Morph now supports transformations of cyclic graphs.</li>
+					<li>net/sf/morph/morphContext.xml is a Spring application context file available as a classpath resource.  This file defines common beans that you may need to reference in an application built on Spring.</li>
+					<li>Improved log output.</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.8.2 (February 12, 2005)">
+				<ul>
+					<li>Improvements to ObjectReflector that bring it more in line with the JavaBeans specification.  Thanks to Alexander Volanis!</li>
+					<li>Major improvements to the PropertyNameMatchingCopier and PropertyNameMappingCopier.  The capabilities of the SelectivePropertyNameMatchingCopier have been folded into the PropertyNameMatchingCopier.  Again, thanks to Alexander Volanis!</li>
+					<li>Began a <a href="reference/html/index.html">reference document</a></li>
+					<li>Renamed "pseudo properties" for Sizable and Bean objects to "implicit properties".</li>
+					<li>Updated the wrapper package so that it throws WrapperExceptions rather than ReflectionExceptions</li>
+					<li>Changed the behavior of the BeanReflector.getPropertyNames method so that it no longer returns the implicit properties for the object, unless those properties have been explicitly defined in the object.</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.8.1 (Jan 30, 2005)">
+				<ul>
+					<li>Test coverage at 61.1%</li>
+					<li>New wrapper package</li>
+				</ul>
+			</subsection>
+
+		</section>
+
+		<section name="Alpha Releases">
+
+			<subsection name="Morph 0.7.2 (Jan 10, 2005)">
+				<ul>
+					<li>Defined many more transformers and refactored the existing ones</li>
+					<li>Introduced a new composite package that provides a standard way for implementing the Composite design pattern (<a href="mailto:sgarlatm@users.sourceforge.net">let me know</a> if you think I should split this off into a separate project)</li>
+					<li>Refactored the composite reflectors and transformers to use the new composite package</li>
+					<li>Apache Jakarta <a href="http://jakarta.apache.org/velocity">Velocity</a> integration</li>
+					<li>Experimental Apache Jakarta Commons <a href="http://jakarta.apache.org/commons/chain">Chain</a> integration</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.6.4 (Dec 23, 2004)">
+				<ul>
+					<li>Improved test coverage and bug fixes</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.6.3 (Dec 21, 2004)">
+				<ul>
+					<li>Improved test coverage and bug fixes</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.6.2 (Dec 20, 2004)">
+				<ul>
+					<li>Combined the many different DelegatingReflectors into a single DelegatingReflector that implements every Reflector interface</li>
+					<li>Detect if Servlet API is present, and if so include the web reflectors in the DelegatingReflector</li>
+					<li>Detect if BeanUtils is present, and if so include the DynaBeanReflector in DelegatingReflector</li>
+					<li>Refactored container copiers (combined the old BaseContainerReflector, GrowableContainerReflector and MutableIndexedContainerReflector into just one class, ContainerReflectorCopier)</li>
+					<li>Make all bean reflectors expose the 'class' read-only pseudo-property so random bean-like objects</li>
+					<li>Made sizable reflectors expose a size pseudo-property, like JEXL.</li>
+					<li>Introduced the <code><a href="apidocs/net/sf/morph/web/MorphFilter.html">MorphFilter</a></code> which places a <code><a href="apidocs/net/sf/morph/context/contexts/HttpServletContext.html">HttpServletContext</a></code> in each request.  This exposes Morph's power to JSPs</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.5.2 (Dec 11, 2004)">
+				<ul>
+					<li>Test cases now pass</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.5.1 (Dec 7, 2004)">
+				<ul>
+					<li>Renamed LanguageEvaluator to <code><a href="apidocs/net/sf/morph/lang/DecoratedLanguage.html">DecoratedLanguage</a></code> and similarly extended the explicit naming of the Decorator pattern to other parts of the Morph framework.  and other new interfaces are <code><a href="apidocs/net/sf/morph/transform/DecoratedTransformer.html">DecoratedTransformer</a></code>, <code><a href="apidocs/net/sf/morph/transform/DecoratedConverter.html">DecoratedConverter</a></code> and <code><a href="apidocs/net/sf/morph/transform/DecoratedCopier.html">DecoratedCopier</a></code>.  The <code><a href="apidocs/net/sf/morph/context/DecoratedContext.html">DecoratedContext</a></code> is particularly nice, and I'll definitely want to use it to show a mapping of HTTP request parameters to an object model.</li>
+					<li>Cleaned up and improved documentation for the reflect package.  The package is probably pretty close to done at this point.</li>
+					<li>Not all tests are passing in this release.  This release was focused on API and documentation.  The next release will focus on tests and test coverage (time to try out Clover!)</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.4.2 (Dec 2, 2004)">
+				<ul>
+					<li>Settled on an API for <code><a href="apidocs/net/sf/morph/lang/Language.html">Language</a></code> and began work on its first out-of-the-box implementation, the <code><a href="apidocs/net/sf/morph/lang/languages/SimpleLanguage.html">SimpleLanguage</a></code>.</li>
+					<li>Introduced <code><strikethrough>LanguageEvaluator</strikethrough></code> which is the combination of a <code><a href="apidocs/net/sf/morph/transform/Converter.html">Converter</a></code> and a Language.</li>
+					<li>Introduced a static facade to the Morph framework (the <code><a href="apidocs/net/sf/morph/Morph.html">Morph</a></code> class).	This facade is static so it will be easier for people who haven't started using a good dependency injection framework yet.</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.3.1 (Nov 27, 2004)">
+				<ul>
+					<li>Introduced new Transformer abstraction, which is a common super-interface for Converters and Copiers</li>
+					<li>Removed isConvertible, isCopiable and isReflectable in favor of getDestinationClasses, getSourceClasses, and getReflectableClasses.	This was done primarily to support the ChainConverter</li>
+					<li>Broke up the IndexedReflector interface into several smaller interfaces that each define pieces of functionality that a "container" of items might have</li>
+				</ul>
+			</subsection>
+
+			<subsection name="Morph 0.2.1 (Nov 23, 2004)">
+				<ul>
+					<li>Filled out the context package</li>
+				</ul>
+			</subsection>
+
+		</section>
+	</body>
+</document>
+
