@@ -21,6 +21,7 @@ import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.SimpleDelegatingTransformer;
+import net.sf.morph.util.ClassUtils;
 
 /**
  * Converts any object to a Boolean by delegating to
@@ -55,15 +56,13 @@ public class DefaultToBooleanConverter extends SimpleDelegatingTransformer imple
 	}
 	
 	protected Object convertImpl(Class destinationType, Object source, Locale locale) throws Exception {
-		if (destinationType.equals(Boolean.class) && source == null) {
+		if (destinationType == Boolean.class && source == null) {
 			return null;
 		}
-		else if (destinationType.equals(boolean.class) && source == null) {
+		if (destinationType == boolean.class && source == null) {
 			throw new TransformationException(destinationType, source);
 		}
-		else {
-			return super.convertImpl(destinationType, source, locale);
-		}
+		return super.convertImpl(destinationType, source, locale);
 	}
 
 	protected boolean isAutomaticallyHandlingNulls() {
@@ -73,19 +72,14 @@ public class DefaultToBooleanConverter extends SimpleDelegatingTransformer imple
 	public Object[] getComponents() {
 		return COMPONENTS;
 	}
-	
+
 	public Class[] getDestinationClassesImpl() throws Exception {
 		return DESTINATION_TYPES;
 	}
-	
+
 	protected boolean isTransformableImpl(Class destinationType,
 		Class sourceType) throws Exception {
-		return
-			destinationType != null &&
-			(
-				Boolean.class.isAssignableFrom(destinationType) ||
-				boolean.class.isAssignableFrom(destinationType)
-			);
-	}	
+		return ClassUtils.inheritanceContains(DESTINATION_TYPES, destinationType);
+	}
 
 }
