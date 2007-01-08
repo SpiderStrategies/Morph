@@ -22,6 +22,7 @@ import java.util.Set;
 
 import net.sf.morph.transform.Converter;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.Int;
 import net.sf.morph.util.TransformerUtils;
 
 /**.
@@ -48,7 +49,11 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 	private int levels = DEFAULT_LEVELS;
 	private Converter containerToPrettyTextConverter;
 	private Converter beanToPrettyTextConverter;
-	private static ThreadLocal currentLevel = new ThreadLocal();
+	private static ThreadLocal currentLevelThreadLocal = new ThreadLocal() {
+		protected Object initialValue() {
+			return new Int(-1);
+		}
+	};
 	private Set typesUsingToString;
 	
 	public ObjectToPrettyTextConverter() {
@@ -57,52 +62,36 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 	}
 	
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
-		
-		Integer currentLevelInteger = (Integer) currentLevel.get();
-		int currentLevelInt;
-		if (currentLevelInteger == null) {
-			currentLevelInt = 0;
-		}
-		else {
-			currentLevelInt = currentLevelInteger.intValue();
-		}
-		
-		// increment the currentLevel
-		currentLevel.set(new Integer(currentLevelInt + 1));
-		
+		Int currentLevel = (Int) currentLevelThreadLocal.get();
+		currentLevel.value++;
+
 		try {
 			// if we aren't down too many levels in the object graph
-			if (currentLevelInt < levels) {
+			if (currentLevel.value < levels) {
 				if (source == null) {
 					return "null";
 				}
-				else if (getTypesUsingToStringInternal().contains(source.getClass())) {
+				if (getTypesUsingToStringInternal().contains(source.getClass())) {
 					return source.toString(); 
 				}
-				else if (TransformerUtils.isTransformable(getContainerToPrettyTextConverter(),
+				if (TransformerUtils.isTransformable(getContainerToPrettyTextConverter(),
 					destinationClass, ClassUtils.getClass(source))) {
 					return getContainerToPrettyTextConverter().convert(destinationClass, source, locale);
 				}
-				else if (TransformerUtils.isTransformable(getBeanToPrettyTextConverter(),
+				if (TransformerUtils.isTransformable(getBeanToPrettyTextConverter(),
 					destinationClass, ClassUtils.getClass(source))) {
 					return getBeanToPrettyTextConverter().convert(destinationClass, source, locale);
 				}
 			}
-			
-			// decrement the currentLevel, or remove it if it is no longer needed
-			if (currentLevelInt == 0) {
-				currentLevel.set(null);
-			}
-			else {
-				currentLevel.set(new Integer(currentLevelInt - 1));	
-			}		
 		}
 		catch (Exception e) {
 			if (log.isErrorEnabled()) {
 				log.error("Error occurred while attempting to create a formatted text representation of source " + source, e);
 			}
 		}
-		
+		finally {
+			currentLevel.value--;
+		}
 		return getToTextConverter().convert(destinationClass, source, locale);
 	}
 
