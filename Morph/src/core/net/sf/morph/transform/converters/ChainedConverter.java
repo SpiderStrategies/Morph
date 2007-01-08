@@ -15,6 +15,8 @@
  */
 package net.sf.morph.transform.converters;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import net.sf.composite.util.ObjectUtils;
@@ -22,6 +24,8 @@ import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseCompositeTransformer;
+import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * Runs one or more converters in a chain.
@@ -31,44 +35,8 @@ import net.sf.morph.transform.transformers.BaseCompositeTransformer;
  */
 public class ChainedConverter extends BaseCompositeTransformer implements Converter, DecoratedConverter {
 	
-	private Class[] compiledDestinations;
-	
-	protected void initializeImpl() throws TransformationException {
-		Converter[] chain = getChain();
-
-		Class[] destClasses = new Class[chain.length - 1];
-		
-		// loop through each converter in the chain, skipping the last one
-		for (int i=0; i<chain.length - 1; i++) {
-
-			Class[] sources = chain[i+1].getSourceClasses();
-			Class[] destinations = chain[i].getDestinationClasses(); 
-			
-			for (int j=0; j<sources.length && destClasses[i] == null; j++) {
-				for (int k=0; k<destinations.length && destClasses[i] == null; k++) {
-					if (sources[j].isAssignableFrom(destinations[k])) {
-						destClasses[i] = destinations[k]; 
-						break;
-					}
-				}
-			}
-			
-			logIntermediateDestination(chain,
-				ObjectUtils.getObjectDescription(destClasses[i]), i + 1);
-
-			if (destClasses[i] == null) {
-				throw new TransformationException(
-					"Conversion path could not be determined; Could not find a destination from converter "
-						+ ObjectUtils.getObjectDescription(chain[i])
-						+ " that could be a source for converter "
-						+ ObjectUtils.getObjectDescription(chain[i + 1]));
-			}
-		}
-		compiledDestinations = destClasses;
-		
-		logIntermediateDestination(chain,
-			"the final destination class as provided to the convert method",
-			chain.length);
+	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
+		return getConversionPath(destinationType, sourceType, getChain()) != null;
 	}
 
 	protected void logIntermediateDestination(Converter[] chain, String destination, int conversionNumber) {
@@ -90,15 +58,18 @@ public class ChainedConverter extends BaseCompositeTransformer implements Conver
 				+ ObjectUtils.getObjectDescription(destinationClass));
 		}
 		
-		Object destination;
-		for (int i=0; i<chain.length-1; i++) {
-			destination = chain[i].convert(compiledDestinations[i], source, locale);
-			logConversion(i + 1, chain, source, destination);
-			source = destination;
+		Class sourceType = ClassUtils.getClass(source);
+		List conversionPath = getConversionPath(destinationClass, sourceType, chain);
+		if (conversionPath == null) {
+			throw new TransformationException(destinationClass, sourceType, null,
+					"Chained conversion path could not be determined");
 		}
-		destination = chain[chain.length-1].convert(destinationClass, source, locale);
-		logConversion(chain.length, chain, source, destination);
-		return destination;
+		Object o = source;
+		for (int i = 0; i < conversionPath.size(); i++) {
+			o = chain[i].convert((Class) conversionPath.get(i), o, locale);
+			logConversion(i + 1, chain, source, o);
+		}
+		return o;
 	}
 
 	protected void logConversion(int conversionNumber, Converter[] chain, Object source, Object destination) {
@@ -123,13 +94,50 @@ public class ChainedConverter extends BaseCompositeTransformer implements Conver
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getChain()[getChain().length-1].getDestinationClasses();
 	}
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getChain()[0].getSourceClasses();
+	}
+
+	protected List getConversionPath(Class destinationType, Class sourceType, Converter[] chain) {
+		return getConversionPath(destinationType, sourceType, chain, 0);
+	}
+
+	/**
+	 * Get a conversion path by investigating possibilities recursively.
+	 * @param destinationType
+	 * @param sourceType
+	 * @param chain
+	 * @param index
+	 * @return
+	 */
+	private List getConversionPath(Class destinationType, Class sourceType, Converter[] chain, int index) {
+		Converter c = (Converter) chain[index];
+		if (index + 1 == chain.length) {
+			if (TransformerUtils.isTransformable(c, destinationType, sourceType)) {
+				ArrayList result = new ArrayList();
+				result.add(destinationType);
+				return result;
+			}
+			return null;
+		}
+		Class[] available = c.getDestinationClasses();
+		for (int i = 0; i < available.length; i++) {
+			if (TransformerUtils.isTransformable(c, available[i], sourceType)) {
+				List tail = getConversionPath(destinationType, available[i], chain, ++index);
+				if (tail != null) {
+					tail.add(0, available[i]);
+				}
+				return tail;
+			}
+		}
+		return null;
 	}
 
 	public Converter[] getChain() {
 		return (Converter[]) getComponents();
 	}
+
 	public void setChain(Converter[] chain) throws TransformationException {
 		setComponents(chain);
 	}

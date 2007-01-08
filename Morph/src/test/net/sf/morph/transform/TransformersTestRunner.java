@@ -19,6 +19,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import net.sf.morph.transform.converters.ChainedConverterTestCase;
+import net.sf.morph.transform.converters.ExplicitChainedConverterTestCase;
 import net.sf.morph.transform.converters.IdentityConverterTestCase;
 import net.sf.morph.transform.converters.NumberConverterTestCase;
 import net.sf.morph.transform.converters.NumberToTimeConverterTestCase;
@@ -73,6 +74,7 @@ public class TransformersTestRunner extends TestRunner {
 		
 		suite.addTestSuite(ChainedConverterTestCase.class);
 		suite.addTestSuite(DelegatingCopierTestCase.class);
+		suite.addTestSuite(ExplicitChainedConverterTestCase.class);
 		
 		// MISC TESTS
 		
