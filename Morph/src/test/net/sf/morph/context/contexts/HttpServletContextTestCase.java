@@ -16,7 +16,6 @@
 package net.sf.morph.context.contexts;
 
 import net.sf.morph.Morph;
-import net.sf.morph.MorphException;
 import net.sf.morph.context.Context;
 import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.util.ContainerUtils;
