@@ -56,16 +56,11 @@ public class PropertyNameMatchingCopier extends BasePropertyNameCopier {
 	}
 	
 	public void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType) throws Exception {
-		
-		String[] properties;
-		boolean throwErrors;
-		if (ObjectUtils.isEmpty(getPropertiesToCopy())) {
+		String[] properties = getPropertiesToCopy();
+		if (ObjectUtils.isEmpty(properties)) {
 			properties = getBeanReflector().getPropertyNames(source);
 		}
-		else {
-			properties = getPropertiesToCopy();
-		}
-		
+
 		if (log.isInfoEnabled()) {
 			if (ObjectUtils.isEmpty(properties)) {
 				getLog().info("No properties available for copying");
@@ -74,7 +69,7 @@ public class PropertyNameMatchingCopier extends BasePropertyNameCopier {
 				getLog().info("Copying properties " + StringUtils.englishJoin(properties));
 			}
 		}
-		
+
 		List unreadableProperties = null;
 		List unwriteableProperties = null;
 		if (getLog().isTraceEnabled()) {
