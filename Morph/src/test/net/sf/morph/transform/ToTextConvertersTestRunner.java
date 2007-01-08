@@ -22,6 +22,7 @@ import net.sf.morph.transform.converters.totext.BooleanToTextConverterTestCase;
 import net.sf.morph.transform.converters.totext.ContainerToPrettyTextConverterTestCase;
 import net.sf.morph.transform.converters.totext.DefaultToTextConverterTestCase;
 import net.sf.morph.transform.converters.totext.NumberToTextConverterTestCase;
+import net.sf.morph.transform.converters.totext.ObjectToPrettyTextConverterTestCase;
 import net.sf.morph.transform.converters.totext.ObjectToTextConverterTestCase;
 import net.sf.morph.transform.converters.totext.TimeToTextConverterTestCase;
 
@@ -39,8 +40,8 @@ public class ToTextConvertersTestRunner extends TestRunner {
 		suite.addTestSuite(NumberToTextConverterTestCase.class);
 		suite.addTestSuite(TimeToTextConverterTestCase.class);
 		suite.addTestSuite(ContainerToPrettyTextConverterTestCase.class);
-		
 		suite.addTestSuite(DefaultToTextConverterTestCase.class);
+		suite.addTestSuite(ObjectToPrettyTextConverterTestCase.class);
 
 		return suite;
 	}

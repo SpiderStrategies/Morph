@@ -51,6 +51,8 @@ public class TextConverterTestCase extends BaseConverterTestCase {
 		list.add(new ConvertedSourcePair("0", new Character('0')));
 		list.add(new ConvertedSourcePair(new Character('0'), new StringBuffer("0")));
 		list.add(new ConvertedSourcePair(new StringBuffer("0"), new Character('0')));
+		list.add(new ConvertedSourcePair(new byte[] {'f', 'o', 'o'}, "foo"));
+		list.add(new ConvertedSourcePair(new char[] {'f', 'o', 'o'}, "foo"));
 		return list;
 	}
 

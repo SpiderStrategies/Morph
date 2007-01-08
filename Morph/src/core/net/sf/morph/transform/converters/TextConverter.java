@@ -36,29 +36,30 @@ import net.sf.morph.transform.transformers.BaseTransformer;
 public class TextConverter extends BaseTransformer implements Converter, DecoratedConverter {
 	
 	private static final Class[] SOURCE_AND_DESTINATION_TYPES = {
-		StringBuffer.class, String.class, Character.class, char.class, null
+		StringBuffer.class, String.class, byte[].class, char[].class, Character.class, char.class, null
 	};
 
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 
-		String string = source.toString();
-		
-		if (destinationClass.equals(String.class)) {
+		String string = source instanceof byte[] ? new String((byte[]) source)
+				: source instanceof char[] ? new String((char[]) source) : source.toString();
+
+		if (destinationClass == String.class) {
 			return string;
 		}
-		else if (destinationClass.equals(StringBuffer.class)) {
+		if (destinationClass == StringBuffer.class) {
 			return new StringBuffer(string);
 		}
-		else if (destinationClass.equals(Character.class)) {
-			if (string.length() == 0) {
-				return null;
-			}
-			else {
-				return new Character(string.charAt(0));	
-			}			
+		if (destinationClass == Character.class) {
+			return "".equals(string) ? null : new Character(string.charAt(0));
 		}
-
+		if (destinationClass == byte[].class) {
+			return string.getBytes();
+		}
+		if (destinationClass == char[].class) {
+			return string.toCharArray();
+		}
 		throw new TransformationException(destinationClass, source);
 	}
 
