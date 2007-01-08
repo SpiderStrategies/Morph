@@ -16,9 +16,7 @@
 package net.sf.morph.transform.converters;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -47,7 +45,7 @@ public class ContainerToPrettyTextConverter extends BaseToPrettyTextConverter {
 	public static final String DEFAULT_PREFIX = "{";
 	public static final String DEFAULT_SUFFIX = "}";	
 	public static final String DEFAULT_SEPARATOR = "|";
-	
+
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 		
@@ -77,38 +75,35 @@ public class ContainerToPrettyTextConverter extends BaseToPrettyTextConverter {
 		// but for this converter we don't want objects to be valid sources
 		// to convert objects to text, the ObjectToTextConverter should be used
 		// instead
-		List sourceClasses =
-			Arrays.asList(getContainerReflector().getReflectableClasses());
-		// wrap the sourceClasses list so we can modify it 
-		sourceClasses = new ArrayList(sourceClasses);
-		// remove java.lang.Object from the sourceClasses list
-		for (int i=0; i<sourceClasses.size(); i++) {
-			if (Object.class.equals(sourceClasses.get(i))) {
-				sourceClasses.remove(i);
-				i--;
+		ArrayList al = null;
+		Class[] c = getContainerReflector().getReflectableClasses();
+		for (int i = 0; i < c.length; i++) {
+			if (c[i] == Object.class) {
+				if (al == null) {
+					al = new ArrayList(c.length - 1);
+					for (int j = 0; j < i; j++) {
+						al.add(j, c[j]);
+					}
+				}
+			} else if (al != null) {
+				al.add(c[i]);
 			}
 		}
-		return (Class[]) sourceClasses.toArray(new Class[sourceClasses.size()]);
+		return al == null ? c : (Class[]) al.toArray(new Class[al.size()]);
 	}
 
 	public String getSeparator() {
-		if (super.getSeparator() == null) {
-			setSeparator(DEFAULT_SEPARATOR);
-		}
-		return super.getSeparator();
+		String separator = super.getSeparator();
+		return separator == null ? DEFAULT_SEPARATOR : separator;
 	}
 
 	public String getPrefix() {
-		if (super.getPrefix() == null) {
-			setPrefix(DEFAULT_PREFIX);
-		}
-		return super.getPrefix();
+		String prefix = super.getPrefix();
+		return prefix == null ? DEFAULT_PREFIX : prefix;
 	}
 	public String getSuffix() {
-		if (super.getSuffix() == null) {
-			setSuffix(DEFAULT_SUFFIX);
-		}
-		return super.getSuffix();
+		String suffix = super.getSuffix();
+		return suffix == null ? DEFAULT_SUFFIX : suffix;
 	}
-	
+
 }
