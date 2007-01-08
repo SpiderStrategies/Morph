@@ -26,8 +26,6 @@ import net.sf.morph.util.ClassUtils;
  */
 public class ArrayCopier extends ContainerCopier {
 	
-	private static final Class[] DESTINATION_TYPES = ClassUtils.ARRAY_TYPES;
-	
 	public ArrayCopier() {
 		super();
 	}
@@ -43,7 +41,7 @@ public class ArrayCopier extends ContainerCopier {
 	}
 	
 	public Class[] getDestinationClassesImpl() throws TransformationException {
-		return DESTINATION_TYPES;
+		return ClassUtils.ARRAY_TYPES;
 	}
 
 
