@@ -88,8 +88,12 @@
     <contributor>
       <name>Alexander Volanis</name>
 	  <email>AVolanis@rsasecurity.com</email>
-	</contributor>
+    </contributor>
 
+    <contributor>
+      <name>Matt Benson</name>
+      <email>gudnabrsam@yahoo.com</email>
+    </contributor>
   </contributors>
 
   <dependencies>
