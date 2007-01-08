@@ -41,13 +41,7 @@ public class ObjectToBooleanConverter extends BaseTransformer implements Convert
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 
-		if (ObjectUtils.isEmpty(source)) {
-			return Boolean.FALSE;
-		}
-		else {
-			return Boolean.TRUE;
-		}
-		
+		return ObjectUtils.isEmpty(source) ? Boolean.FALSE : Boolean.TRUE;
 	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {
