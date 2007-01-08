@@ -50,33 +50,23 @@ public class IdentityConverter extends BaseTransformer implements Converter, Dec
 	protected boolean isTransformableImpl(Class destinationType,
 		Class sourceType) throws Exception {
 
-		if (TransformerUtils.isImplicitlyTransformable(this, destinationType, sourceType)) {
-			if (destinationType == null && sourceType == null) {
-				return true;
-			}
-			else if (destinationType == null || sourceType == null) {
-				return false;
-			}
-			else {
-				return destinationType.isAssignableFrom(sourceType); 
-			}
+		if (destinationType == sourceType) {
+			return true;
 		}
-		else {
+		if (destinationType == null || sourceType == null) {
 			return false;
 		}
-					
+		return TransformerUtils.isImplicitlyTransformable(this, destinationType, sourceType)
+				&& destinationType.isAssignableFrom(sourceType);
 	}
-	
+
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 		
 		if (destinationClass.isAssignableFrom(source.getClass())) {
 			return source;
 		}
-		else {
-			throw new TransformationException(destinationClass, source);
-		}
-		
+		throw new TransformationException(destinationClass, source);
 	}
 
 	protected boolean isPerformingLogging() {
@@ -91,11 +81,5 @@ public class IdentityConverter extends BaseTransformer implements Converter, Dec
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return DEFAULT_SOURCE_AND_DESTINATION_TYPES;
 	}
-	
-	public void setDestinationClasses(Class[] destinationClasses) {
-		super.setDestinationClasses(destinationClasses);
-	}
-	public void setSourceClasses(Class[] sourceClasses) {
-		super.setSourceClasses(sourceClasses);
-	}
+
 }
