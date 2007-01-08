@@ -345,17 +345,13 @@ public abstract class ContextBaseTestCase extends TestCase {
     // Verify the number of defined attributes
     protected void checkAttributeCount(int expected) {
         int actual = 0;
-        Iterator keys = context.keySet().iterator();
-        while (keys.hasNext()) {
-            Object key = (Object) keys.next();
-            actual++;
-        }
+        for (Iterator keys = context.keySet().iterator(); keys.hasNext(); actual++) keys.next();
         assertEquals("Correct attribute count",
                      expectedAttributeCount() + expected, actual);
         if (expected == 0) {
             assertTrue("Context should be empty", context.isEmpty());
         } else {
-            assertTrue("Context should not be empty", !context.isEmpty());
+            assertFalse("Context should not be empty", context.isEmpty());
         }
     }
 
