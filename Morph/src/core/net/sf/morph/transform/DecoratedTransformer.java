@@ -22,7 +22,7 @@ package net.sf.morph.transform;
  * methods in the Transformer interface. Thus, if you are defining your own
  * transformer you should implement only the Transformer interface. If you
  * extend from {@link net.sf.morph.transform.transformers.BaseTransformer},
- * your transformer will implement this inteface automatically.
+ * your transformer will implement this interface automatically.
  * </p>
  * 
  * <p>
