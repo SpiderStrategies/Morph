@@ -39,7 +39,6 @@ import net.sf.morph.util.TestObjects;
 public class ContainerCopierTestCase extends BaseCopierTestCase {
 
 	public List createInvalidDestinationClasses() throws Exception {
-		TestObjects to = new TestObjects();
 		List list = new ArrayList();
 		list.add(HttpSession.class);
 		list.add(Object.class);
