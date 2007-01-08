@@ -18,6 +18,7 @@ package net.sf.morph.transform.converters;
 import java.util.Locale;
 
 import net.sf.composite.util.ObjectUtils;
+import net.sf.morph.Defaults;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.TransformationException;
@@ -25,22 +26,18 @@ import net.sf.morph.transform.transformers.BaseTransformer;
 import net.sf.morph.util.ContainerUtils;
 
 /**
- * Converts text values to Booleans.  Text values include Characers, Strings and
+ * Converts text values to Booleans.  Text values include Characters, Strings and
  * StringBuffers.
  * 
  * @author Matt Sgarlata
  * @since Dec 31, 2004
  */
 public class TextToBooleanConverter extends BaseTransformer implements Converter, DecoratedConverter {
+	private Converter textConverter;
 
-	private static final Class[] SOURCE_TYPES = {
-		String.class, Character.class, char.class,
-		StringBuffer.class
-	};
-	
 	private static final Class[] DESTINATION_TYPES = { Boolean.class,
 		boolean.class };	
-	
+
 	/**
 	 * Default values for the <code>trueText</code> attribute.
 	 */
@@ -49,7 +46,7 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 	 * Default values for the <code>falseText</code> attribute.
 	 */
 	public static final String[] DEFAULT_FALSE_TEXT = { "false", "f", "no", "n" };
-	
+
 	/**
 	 * Defines the String, StringBuffer, and Character values that will be
 	 * converted to <code>true</code>. The strings are not case-sensitive.
@@ -63,29 +60,30 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 	
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-		
-		String str = source.toString().toLowerCase();
+
+		String str = (String) getTextConverter().convert(String.class, source, locale);
+		if (str != null) {
+			str = str.toLowerCase();
+		}
 		if (ContainerUtils.contains(getTrueText(), str)) {
 			return Boolean.TRUE;
 		}
-		else if (ContainerUtils.contains(getFalseText(), str)) {
+		if (ContainerUtils.contains(getFalseText(), str)) {
 			return Boolean.FALSE;
 		}
-		else if ("".equals(str)) {
+		if (ObjectUtils.isEmpty(str) && !destinationClass.isPrimitive()) {
 			return null;
 		}
-
 		throw new TransformationException(destinationClass, source);
 	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {
-		return SOURCE_TYPES;
+		return getTextConverter().getSourceClasses();
 	}
 
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return DESTINATION_TYPES;
 	}
-
 
 	/**
 	 * Returns the String, StringBuffer, and Character values that will be
@@ -145,11 +143,33 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 		changeToLowerCase(trueStrings);
 	}
 
+	protected boolean isAutomaticallyHandlingNulls() {
+		return false;
+	}
+
 	private void changeToLowerCase(String[] array) {
 		for (int i = 0; i < array.length; i++) {
 			array[i] = array[i].toLowerCase();
 		}
 	}
 
+	/**
+	 * Get the textConverter of this TextToBooleanConverter.
+	 * @return the textConverter
+	 */
+	public Converter getTextConverter() {
+		if (textConverter == null) {
+			setTextConverter(Defaults.createTextConverter());
+		}
+		return textConverter;
+	}
+
+	/**
+	 * Set the textConverter of this TextToBooleanConverter.
+	 * @param textConverter the textConverter to set
+	 */
+	public void setTextConverter(Converter textConverter) {
+		this.textConverter = textConverter;
+	}
 
 }

@@ -66,12 +66,14 @@ public abstract class BaseToBooleanConverterTestCase extends BaseConverterTestCa
 		list.add(new ConvertedSourcePair(Boolean.TRUE, new Character('t')));
 		list.add(new ConvertedSourcePair(Boolean.TRUE, new StringBuffer("yEs")));
 		list.add(new ConvertedSourcePair(Boolean.TRUE, new Character('Y')));
+		list.add(new ConvertedSourcePair(Boolean.TRUE, new byte[] {'y'}));
 		
 		list.add(new ConvertedSourcePair(Boolean.FALSE, "false"));
 		list.add(new ConvertedSourcePair(Boolean.FALSE, "fAlSe"));
 		list.add(new ConvertedSourcePair(Boolean.FALSE, new Character('f')));
 		list.add(new ConvertedSourcePair(Boolean.FALSE, new StringBuffer("nO")));
 		list.add(new ConvertedSourcePair(Boolean.FALSE, new Character('N')));
+		list.add(new ConvertedSourcePair(Boolean.FALSE, new char[] {'N'}));
 	}
 	
 	public void addObjectConversions(List list) {
