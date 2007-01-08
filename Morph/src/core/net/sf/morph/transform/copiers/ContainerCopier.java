@@ -177,7 +177,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 				transformedValue);
 		}
 		else {
-			// this souldn't happen
+			// this shouldn't happen
 			throw new TransformationException("Unable to copy value at index "
 				+ index + " to the destination because "
 				+ ObjectUtils.getObjectDescription(getReflector())
@@ -205,24 +205,22 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 			destination instanceof Enumeration) {
 			return;
 		}
-		else { // we have some real work to do
-			int i = 0;
-			Iterator sourceIterator = getContainerReflector().getIterator(source);
-			while (sourceIterator.hasNext()) {
-				Object sourceValue = sourceIterator.next();
-				// determine the 
-				Class sourceValueClass;
-				if (sourceValue == null) {
-					sourceValueClass = getContainerReflector().getContainedType(
-						source.getClass());				
-				}
-				else {
-					sourceValueClass = sourceValue.getClass();
-				}
-				put(i++, destination, sourceValue, sourceValueClass, locale,
-					preferredTransformationType);
-			}				
-		}
+		int i = 0;
+		Iterator sourceIterator = getContainerReflector().getIterator(source);
+		while (sourceIterator.hasNext()) {
+			Object sourceValue = sourceIterator.next();
+			// determine the 
+			Class sourceValueClass;
+			if (sourceValue == null) {
+				sourceValueClass = getContainerReflector().getContainedType(
+					source.getClass());				
+			}
+			else {
+				sourceValueClass = sourceValue.getClass();
+			}
+			put(i++, destination, sourceValue, sourceValueClass, locale,
+				preferredTransformationType);
+		}				
 		
 //		}
 //		else {
@@ -236,14 +234,10 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 	}
 	
 	public Object createReusableSource(Class destinationClass, Object source) {
-		if (destinationClass.isArray()) {
-			// get a resetable iterator over the source object
-			return new ResetableIteratorWrapper(
-				getContainerReflector().getIterator(source));
-		}
-		else {
-			return super.createReusableSource(destinationClass, source);
-		}
+		// if to array, get a resetable iterator over the source object:
+		return destinationClass.isArray() ? new ResetableIteratorWrapper(
+				getContainerReflector().getIterator(source))
+				: super.createReusableSource(destinationClass, source);
 	}
 	
 	protected Object createNewInstanceImpl(Class destinationClass, Object source) throws Exception {
@@ -272,27 +266,25 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 		// that come with the JDK.  Thus, if any Iterator or Iterator subclass
 		// or Enumeration or Enumeration subclass is requested, we just return
 		// whatever type is most readily available.
-		else if (Iterator.class.isAssignableFrom(destinationClass)) {
+		if (Iterator.class.isAssignableFrom(destinationClass)) {
 			// a newInstance call doesn't really make sense... just return the
 			// final Iterator that will be returned to the user of the
 			// ContainerCopier
 			return getContainerReflector().getIterator(source);
 		}
-		else if (Enumeration.class.isAssignableFrom(destinationClass)) {
+		if (Enumeration.class.isAssignableFrom(destinationClass)) {
 			// a newInstance call doesn't really make sense... just return the
 			// final Enumeration that will be returned to the user of the
 			// ContainerCopier
 			return new IteratorEnumeration(getContainerReflector().getIterator(source));
 		}
-		else {
-			return super.createNewInstanceImpl(destinationClass, source);
-		}
+		return super.createNewInstanceImpl(destinationClass, source);
 	}
-	
+
 	public Object createNewInstance(Class destinationClass, Object source) {
 		return super.createNewInstance(destinationClass, source);
 	}
-	
+
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		Set set = new HashSet();
 		set.addAll(Arrays.asList(getGrowableContainerReflector().getReflectableClasses()));
@@ -301,18 +293,18 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 		set.add(Enumeration.class);
 		return (Class[]) set.toArray(new Class[set.size()]);
 	}
-	
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getContainerReflector().getReflectableClasses();
 	}
-	
+
 	public Transformer getNestedTransformer() {
 		return super.getNestedTransformer();
 	}
 	public void setNestedTransformer(Transformer transformer) {
 		super.setNestedTransformer(transformer);
 	}
-	
+
 	public Map getContainedSourceToDestinationTypeMap() {
 		return containedSourceToDestinationTypeMap;
 	}
