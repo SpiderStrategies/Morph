@@ -1,7 +1,6 @@
 package net.sf.morph.beans;
 
 import java.beans.PropertyEditorSupport;
-import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
