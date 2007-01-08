@@ -40,16 +40,16 @@ public class MultipleDestinationConverter extends BaseCompositeTransformer imple
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 
-		Object[] components = getComponents();
-		Class[] destTypes = getDestinationClassesForEachDestination();
-		List destinationObjects = new ArrayList(components.length);
-		for (int i=0; i<components.length; i++) {
-			Converter converter = (Converter) components[i];
-			Class destType = destTypes[i] == null ? Object.class : destTypes[i];
-			Object converted = converter.convert(destType, source, locale);
-			destinationObjects.add(converted);
-		}
-		
+//		Object[] components = getComponents();
+//		Class[] destTypes = getDestinationClassesForEachDestination();
+//		List destinationObjects = new ArrayList(components.length);
+//		for (int i=0; i<components.length; i++) {
+//			Converter converter = (Converter) components[i];
+//			Class destType = destTypes[i] == null ? Object.class : destTypes[i];
+//			Object converted = converter.convert(destType, source, locale);
+//			destinationObjects.add(converted);
+//		}
+		//huh? what did we just do?
 		return getContainerConverter().convert(destinationClass, source, locale);
 	}
 
