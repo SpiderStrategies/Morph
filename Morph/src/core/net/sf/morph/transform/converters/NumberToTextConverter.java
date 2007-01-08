@@ -99,7 +99,7 @@ public class NumberToTextConverter extends BaseTransformer implements Converter,
 	 *         locale to format numbers as text
 	 */
 	protected NumberFormat getNumberFormat(Locale locale) {
-		NumberFormat numberFormat = numberFormat = NumberFormat.getInstance(locale);
+		NumberFormat numberFormat = NumberFormat.getInstance(locale);
 		numberFormat.setGroupingUsed(false);
 		numberFormat.setMaximumFractionDigits(Integer.MAX_VALUE);
 		return numberFormat;
