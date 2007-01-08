@@ -24,7 +24,6 @@ import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseReflectorTransformer;
 
-
 /**
  * Combines all of the contents of a container into a single container. If any
  * of the contents of the source container are containers themselves, the
@@ -49,7 +48,7 @@ public class CombiningCopier extends BaseReflectorTransformer implements Copier,
 
 	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType) throws TransformationException {
 		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("not implemented");
 	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {
