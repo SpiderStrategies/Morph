@@ -84,9 +84,7 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 			getPropertyTransformers().containsKey(sourceProperty)) {
 			return (Transformer) getPropertyTransformers().get(sourceProperty);
 		}
-		else {
-			return getNestedTransformer();	
-		}		
+		return getNestedTransformer();	
 	}
 	
 	protected void copyProperty(String sourceProperty, Object source, String destinationProperty, Object destination, Locale locale, Integer preferredTransformationType) {
