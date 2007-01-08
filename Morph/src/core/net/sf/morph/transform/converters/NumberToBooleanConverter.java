@@ -18,7 +18,6 @@ package net.sf.morph.transform.converters;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.transformers.BaseTransformer;
@@ -42,16 +41,7 @@ public class NumberToBooleanConverter extends BaseTransformer implements Convert
 		Locale locale) throws Exception {
 		
 		BigDecimal bigDecimal = new BigDecimal(source.toString());
-		BigDecimal zero = new BigDecimal("0");
-		if (ObjectUtils.equals(bigDecimal, zero) ||
-			// need this because the equals method of BigDecimal is dumb
-			bigDecimal.compareTo(zero) == 0) {
-			return Boolean.FALSE;
-		}
-		else {
-			return Boolean.TRUE;
-		}
-		
+		return bigDecimal.compareTo(new BigDecimal(0)) == 0 ? Boolean.FALSE : Boolean.TRUE;
 	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {
