@@ -17,6 +17,10 @@ package net.sf.morph.transform.converters;
 
 import java.util.Locale;
 
+import net.sf.composite.util.ObjectUtils;
+import net.sf.morph.reflect.BeanReflector;
+import net.sf.morph.transform.Converter;
+
 /**
  * <p>
  * Converts a bean to a textual representation (String or StringBuffer only).
@@ -51,30 +55,30 @@ public class BeanToPrettyTextConverter extends BaseToPrettyTextConverter {
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 		
-		boolean endsInSeparator = false;
 		StringBuffer buffer = new StringBuffer(getPrefix());
-		String[] propertyNames = getBeanReflector().getPropertyNames(source);
-		for (int i=0; propertyNames != null && i < propertyNames.length; i++) {
-			String propertyName = propertyNames[i];
-			Object next = getBeanReflector().get(source, propertyName);
-			if (next != null || isShowNullValues()) {
-				String text = (String) getToTextConverter().convert(String.class,
-					next, locale);
-				if (isShowPropertyNames()) {
-					buffer.append(propertyName);
-					buffer.append(getNameValueSeparator());
-				}
-				buffer.append(text);
+		BeanReflector beanReflector = getBeanReflector();
+		String[] propertyNames = beanReflector.getPropertyNames(source);
+		if (!ObjectUtils.isEmpty(propertyNames)) {
+			Converter toText = getToTextConverter();
+			append(source, propertyNames[0], buffer, beanReflector, toText, locale);
+			for (int i = 1; i < propertyNames.length; i++) {
 				buffer.append(getSeparator());
-				endsInSeparator = true;
+				append(source, propertyNames[i], buffer, beanReflector, toText, locale);
 			}
 		}
-		if (endsInSeparator) {
-			buffer.delete(buffer.length() - getSeparator().length(), buffer.length());	
-		}
-		buffer.append(getSuffix());
-		
 		return getTextConverter().convert(destinationClass, buffer, locale);
+	}
+
+	private void append(Object source, String propertyName, StringBuffer buffer,
+			BeanReflector reflector, Converter converter, Locale locale) {
+		Object p = reflector.get(source, propertyName);
+		if (p == null && !isShowNullValues()) {
+			return;
+		}
+		if (isShowPropertyNames()) {
+			buffer.append(propertyName).append(getNameValueSeparator());
+		}
+		buffer.append(converter.convert(String.class, p, locale));
 	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {
@@ -82,23 +86,17 @@ public class BeanToPrettyTextConverter extends BaseToPrettyTextConverter {
 	}
 	
 	public String getSeparator() {
-		if (super.getSeparator() == null) {
-			setSeparator(DEFAULT_SEPARATOR);
-		}
-		return super.getSeparator();
+		String separator = super.getSeparator();
+		return separator == null ? DEFAULT_SEPARATOR : separator;
 	}
 
 	public String getPrefix() {
-		if (super.getPrefix() == null) {
-			setPrefix(DEFAULT_PREFIX);
-		}
-		return super.getPrefix();
+		String prefix = super.getPrefix();
+		return prefix == null ? DEFAULT_PREFIX : prefix;
 	}
 	public String getSuffix() {
-		if (super.getSuffix() == null) {
-			setSuffix(DEFAULT_SUFFIX);
-		}
-		return super.getSuffix();
+		String suffix = super.getSuffix();
+		return suffix == null ? DEFAULT_SUFFIX : suffix;
 	}	
 	
 	public String getNameValueSeparator() {
