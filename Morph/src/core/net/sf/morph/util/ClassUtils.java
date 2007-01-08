@@ -141,14 +141,7 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 		}
 
 		try {
-			Class clazz;
-			if (type instanceof Class) {
-				clazz = (Class) type;
-			}
-			else {
-				clazz = Class.forName(type.toString());
-			}
-			return clazz;
+			return type instanceof Class ? (Class) type : Class.forName(type.toString());
 		}
 		catch (Exception e) {
 			throw new TransformationException(
@@ -176,11 +169,7 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	public static boolean isBeanUtilsPresent() {
 		return isClassPresent("org.apache.commons.beanutils.DynaBean");
 	}
-	
-	public static boolean isJdk14OrHigherPresent() {
-		return isClassPresent("java.lang.CharSequence");
-	}
-	
+
 	/**
 	 * Indicates whether Velocity is available.
 	 * 
@@ -229,17 +218,15 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 		if (typeArray == null) {
 			return false;
 		}
-		else {
-			for (int i=0; i<typeArray.length; i++) {
-				if (type == null) {
-					if (typeArray[i] == null) {
-						return true;
-					}
-				}
-				else if (typeArray[i] != null &&
-					typeArray[i].isAssignableFrom(type)) {
+		for (int i=0; i<typeArray.length; i++) {
+			if (type == null) {
+				if (typeArray[i] == null) {
 					return true;
 				}
+			}
+			else if (typeArray[i] != null &&
+				typeArray[i].isAssignableFrom(type)) {
+				return true;
 			}
 		}
 		return false;
@@ -270,8 +257,7 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	 *         <code>false</code>, otherwise
 	 */
 	public static boolean isImmutable(Class destinationType) {
-		return
-			destinationType.isPrimitive() ||
+		return destinationType.isPrimitive() ||
 			Number.class.isAssignableFrom(destinationType) ||
 			String.class.isAssignableFrom(destinationType);
 	}
