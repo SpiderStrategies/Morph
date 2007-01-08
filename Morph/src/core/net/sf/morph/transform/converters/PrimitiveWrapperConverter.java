@@ -1,9 +1,10 @@
 package net.sf.morph.transform.converters;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 
 import net.sf.morph.transform.DecoratedConverter;
-import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
 
 /**
@@ -15,83 +16,42 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Jun 14, 2006
  */
-public class PrimitiveWrapperConverter extends BaseTransformer implements DecoratedConverter, ExplicitTransformer {
+public class PrimitiveWrapperConverter extends BaseTransformer implements DecoratedConverter {
+
+	private static final HashMap TYPE_MAP = new HashMap() {
+		{
+			put(boolean.class, Boolean.class);
+			put(byte.class, Byte.class);
+			put(short.class, Short.class);
+			put(char.class, Character.class);
+			put(int.class, Integer.class);
+			put(long.class, Long.class);
+			put(float.class, Float.class);
+			put(double.class, Double.class);
+		}
+	};
+	private static final Class[] SOURCE_DEST_CLASSES;
+	static {
+		HashSet s = new HashSet(TYPE_MAP.keySet());
+		s.addAll(TYPE_MAP.values());
+		SOURCE_DEST_CLASSES = (Class[]) s.toArray(new Class[s.size()]);
+	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {
-		return new Class[] {
-			boolean.class, byte.class, char.class, short.class,
-			int.class, long.class, float.class, double.class,
-			Boolean.class, Byte.class, char.class, Short.class,
-			Integer.class, Long.class, Float.class, Double.class
-		};
+		return SOURCE_DEST_CLASSES;
 	}
 
 	protected Class[] getDestinationClassesImpl() throws Exception {
-		return getSourceClassesImpl();
+		return SOURCE_DEST_CLASSES;
 	}
 
 	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
-		return 
-			bothBoolean(destinationType, sourceType) ||
-			bothByte(destinationType, sourceType) ||
-			bothChar(destinationType, sourceType) ||
-			bothShort(destinationType, sourceType) ||
-			bothInt(destinationType, sourceType) ||
-			bothLong(destinationType, sourceType) ||
-			bothFloat(destinationType, sourceType) ||
-			bothDouble(destinationType, sourceType);
+		return destinationType != null && sourceType != null
+				&& (sourceType == TYPE_MAP.get(destinationType) || destinationType == TYPE_MAP.get(sourceType));
 	}
 
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
 		return source;
-	}
-
-	private boolean bothBoolean(Class destinationType, Class sourceType) {
-		return
-			Boolean.class.equals(destinationType) && boolean.class.equals(sourceType) ||
-			boolean.class.equals(destinationType) && Boolean.class.equals(sourceType);		
-	}
-	
-	private boolean bothByte(Class destinationType, Class sourceType) {
-		return
-			Byte.class.equals(destinationType) && byte.class.equals(sourceType) ||
-			byte.class.equals(destinationType) && Byte.class.equals(sourceType);		
-	}
-	
-	private boolean bothChar(Class destinationType, Class sourceType) {
-		return
-			Character.class.equals(destinationType) && char.class.equals(sourceType) ||
-			char.class.equals(destinationType) && Character.class.equals(sourceType);		
-	}
-	
-	private boolean bothShort(Class destinationType, Class sourceType) {
-		return
-			Short.class.equals(destinationType) && short.class.equals(sourceType) ||
-			short.class.equals(destinationType) && Short.class.equals(sourceType);		
-	}
-	
-	private boolean bothInt(Class destinationType, Class sourceType) {
-		return
-			Integer.class.equals(destinationType) && int.class.equals(sourceType) ||
-			int.class.equals(destinationType) && Integer.class.equals(sourceType);		
-	}
-	
-	private boolean bothLong(Class destinationType, Class sourceType) {
-		return
-			Long.class.equals(destinationType) && long.class.equals(sourceType) ||
-			long.class.equals(destinationType) && Long.class.equals(sourceType);		
-	}
-	
-	private boolean bothFloat(Class destinationType, Class sourceType) {
-		return
-			Float.class.equals(destinationType) && float.class.equals(sourceType) ||
-			float.class.equals(destinationType) && Float.class.equals(sourceType);		
-	}
-	
-	private boolean bothDouble(Class destinationType, Class sourceType) {
-		return
-			Double.class.equals(destinationType) && double.class.equals(sourceType) ||
-			double.class.equals(destinationType) && Double.class.equals(sourceType);		
 	}
 
 }
