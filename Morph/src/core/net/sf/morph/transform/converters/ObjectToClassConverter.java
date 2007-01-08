@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.ClassUtils;
 
 /**
  * Converts an object into that object's class.
@@ -30,17 +31,16 @@ public class ObjectToClassConverter extends BaseTransformer implements
 		DecoratedConverter {
 	
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
-		if (source == null) {
-			return null;
-		}
-		else {
-			return source.getClass();
-		}
+		return ClassUtils.getClass(source);
+	}
+
+	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
+		return destinationType == Class.class;
 	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return new Class[] { Object.class, float.class, double.class,
-				byte.class, short.class, int.class, long.class };
+				byte.class, short.class, int.class, long.class, boolean.class, char.class };
 	}
 
 	protected Class[] getDestinationClassesImpl() throws Exception {
