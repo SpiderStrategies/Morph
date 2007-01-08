@@ -38,10 +38,7 @@ public class MorphTestCase extends TestCase {
 		list.add(new BigDecimal(3));
 		
 		Object converted = Morph.convert(Integer[].class, list);
-		assertEquals(Integer[].class, converted.getClass());
-		
-		// this should not cause an error
-		Integer[] array = (Integer[]) converted;
+		assertTrue(converted instanceof Integer[]);
 		
 		list = new ArrayList();
 		list.add(new HashMap());
