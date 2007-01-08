@@ -16,12 +16,14 @@
 package net.sf.morph.transform.converters.totext;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import net.sf.morph.transform.converters.BaseConverterTestCase;
 import net.sf.morph.util.TestObjects;
@@ -104,14 +106,20 @@ public abstract class BaseToTextConverterTestCase extends BaseConverterTestCase 
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.DAY_OF_MONTH, 30);
 		// set to 11 o'clock eastern, compensating for the time zone offset
-		calendar.set(Calendar.HOUR_OF_DAY, 11 + 5);
+		calendar.set(Calendar.HOUR_OF_DAY, 11);
 		calendar.set(Calendar.MINUTE, 51);
 		calendar.set(Calendar.SECOND, 2);
 		calendar.set(Calendar.MILLISECOND, 0);
-		calendar.set(Calendar.ZONE_OFFSET, -5);
+		calendar.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 		String converted = "January 30, 2005 11:51:02 AM EST";
 		list.add(new ConvertedSourcePair(converted, calendar));
-		list.add(new ConvertedSourcePair(converted, calendar.getTime()));
+		//wrt Date conversion, we lose the TZ:
+		calendar = (Calendar) calendar.clone();
+		calendar.setTimeZone(TimeZone.getDefault());
+		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
+		df.setCalendar(calendar);
+		Date d = calendar.getTime();
+		list.add(new ConvertedSourcePair(df.format(d), d));
 	}
 
 }

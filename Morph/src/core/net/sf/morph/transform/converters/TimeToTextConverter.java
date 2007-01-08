@@ -16,7 +16,7 @@
 package net.sf.morph.transform.converters;
 
 import java.text.DateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.Locale;
 
 import net.sf.morph.Defaults;
@@ -35,8 +35,6 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  */
 public class TimeToTextConverter extends BaseTransformer implements Converter, DecoratedConverter {
 	
-	private static final DateFormat DEFAULT_DATE_FORMAT = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
-	
 	private DateFormat dateFormat;
 	private Converter timeConverter;
 	private Converter textConverter;
@@ -44,10 +42,10 @@ public class TimeToTextConverter extends BaseTransformer implements Converter, D
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 		
-		Date date = (Date) getTimeConverter().convert(Date.class, source, locale);
-		
-		String string = getDateFormat().format(date);
-		
+		Calendar calendar = (Calendar) getTimeConverter().convert(Calendar.class, source, locale);
+
+		String string = getDateFormat(calendar).format(calendar.getTime());
+
 		return getTextConverter().convert(destinationClass, string, locale);
 	}
 
@@ -60,29 +58,42 @@ public class TimeToTextConverter extends BaseTransformer implements Converter, D
 	}
 
 	public DateFormat getDateFormat() {
-		if (dateFormat == null) {
-			setDateFormat(DEFAULT_DATE_FORMAT);
-		}
-		return dateFormat;
+		return getDateFormat(null);
 	}
+
+	protected DateFormat getDateFormat(Calendar calendar) {
+		if (dateFormat != null) {
+			return dateFormat;
+		}
+		DateFormat result = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
+		if (calendar != null) {
+			result.setCalendar(calendar);
+		}
+		return result;
+	}
+
 	public void setDateFormat(DateFormat dateFormat) {
 		this.dateFormat = dateFormat;
 	}
+
 	public Converter getTextConverter() {
 		if (textConverter == null) {
 			setTextConverter(Defaults.createTextConverter());
 		}
 		return textConverter;
 	}
+
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;
 	}
+
 	public Converter getTimeConverter() {
 		if (timeConverter == null) {
 			setTimeConverter(Defaults.createTimeConverter());
 		}
 		return timeConverter;
 	}
+
 	public void setTimeConverter(Converter timeConverter) {
 		this.timeConverter = timeConverter;
 	}

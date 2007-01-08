@@ -17,7 +17,6 @@ package net.sf.morph.transform.converters;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import net.sf.morph.transform.Converter;
@@ -37,32 +36,18 @@ public class TimeConverter extends BaseTransformer implements Converter, Decorat
 	private static final Class[] SOURCE_AND_DESTINATION_TYPES = { Date.class, Calendar.class };
 
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
-
-		Date date;
-		if (source instanceof Date) {
-			date = (Date) source;
+		if (destinationClass.isInstance(source)) {
+			return source instanceof Date ? ((Date) source).clone() : ((Calendar) source).clone();
 		}
-		else if (source instanceof Calendar) {
-			date = ((Calendar) source).getTime();
+		if (Date.class.isAssignableFrom(destinationClass)) {
+			return ((Calendar) source).getTime();
 		}
-		else {
-			throw new TransformationException(destinationClass, source);
-		}
-		
 		if (Calendar.class.isAssignableFrom(destinationClass)) {
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(date);
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime((Date) source);
 			return calendar;
 		}
-		else if (Date.class.isAssignableFrom(destinationClass)) {
-			Date newDate = new Date();
-			newDate.setTime(date.getTime());
-			return newDate;
-		}
-		else {
-			throw new TransformationException(destinationClass, source);
-		}
-		
+		throw new TransformationException(destinationClass, source);
 	}
 	
 	protected Class[] getSourceClassesImpl() throws Exception {
