@@ -28,7 +28,7 @@ import net.sf.morph.reflect.SizableReflector;
 import net.sf.morph.util.ClassUtils;
 
 /**
- * An container reflector for Arrays.
+ * A container reflector for Arrays.
  * 
  * @author Matt Sgarlata
  * @since Nov 20, 2004
