@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2005 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -53,6 +53,7 @@ import net.sf.morph.transform.converters.TimeToNumberConverter;
 import net.sf.morph.transform.copiers.ContainerCopier;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopier;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.Int;
 import net.sf.morph.util.TransformerUtils;
 
 /**
@@ -61,7 +62,7 @@ import net.sf.morph.util.TransformerUtils;
  * tried in the order in which they appear in the <code>components</code>
  * property of this transformer.
  * </p>
- * 
+ *
  * <p>
  * By default this transformer is initialized with a set of transformers that
  * will meet basic needs. This list of transformers is subject to change in
@@ -71,27 +72,27 @@ import net.sf.morph.util.TransformerUtils;
  * newer version. A transformation's behavior may in some cases change between
  * releases, but we will avoid this whenever possible.
  * </p>
- * 
+ *
  * <p>
  * The default set of transformers includes both converters and copiers. For
  * calls to copy methods, only the copiers will be used. For calls to convert
  * methods, the converters <em>and</em> the copiers will be used, since all
  * Copiers provided by the Morph framework are also Converters.
  * </p>
- * 
+ *
  * <p>
  * Any delegates which implement
  * {@link net.sf.morph.transform.NodeCopier} will automatically have this
  * transformer marked as the parent transformer.  This is important for
  * performing deep copies of object graphs.
  * </p>
- * 
+ *
  * @author Matt Sgarlata
  * @since Dec 12, 2004
  */
 public class SimpleDelegatingTransformer extends BaseCompositeTransformer implements
 	SpecializableComposite, ExplicitTransformer, Transformer, DecoratedCopier, DecoratedConverter, Cloneable {
-	
+
 	protected Transformer[] createDefaultComponents() {
 		return new Transformer[] {
 			new DefaultToBooleanConverter(),
@@ -110,38 +111,38 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			new PropertyNameMatchingCopier()
 		};
 	}
-	
+
 //	private boolean failFast;
 	private Specializer specializer;
-	private transient ThreadLocal visitedSourceToDestinationMapThreadLocal = new ThreadLocal();
-	private transient ThreadLocal stackDepthThreadLocal = new ThreadLocal();
+	private transient ThreadLocal visitedSourceToDestinationMapThreadLocal = new ThreadLocal() {
+		protected Object initialValue() {
+			return new HashMap();
+		}
+	};
+	private transient ThreadLocal stackDepthThreadLocal = new ThreadLocal() {
+		protected Object initialValue() {
+			return new Int();
+		}
+	};
+
 	private transient Map copierRegistry = Collections.synchronizedMap(new HashMap());
 	private transient Map transformerRegistry = Collections.synchronizedMap(new HashMap());
-	
-	private Integer getStackDepth() {
-		return (Integer) stackDepthThreadLocal.get();
-	}
-	
-	private void setStackDepth(Integer stackDepth) {
-		stackDepthThreadLocal.set(stackDepth);
-	}
-	
+
 	public SimpleDelegatingTransformer() {
 		super();
 //		setFailFast(true);
 	}
-	
+
 	public SimpleDelegatingTransformer(Transformer[] components) {
 		this();
 		setComponents(components);
 	}
-	
+
 	protected void initializeImpl() throws Exception {
 		setNestedTransformer(this);
-		
 		super.initializeImpl();
 	}
-	
+
 	/**
 	 * Determines if one of the delegate transformers is capable of performing
 	 * the given transformation. This method is necessary because otherwise the
@@ -150,7 +151,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 * and another delegate was capable of transforming C to D, this transformer
 	 * would incorrectly state that transforming A to D and C to B was possible
 	 * even though they are not.
-	 * 
+	 *
 	 * @param destinationType
 	 *            the destination type to test
 	 * @param sourceType
@@ -171,7 +172,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		}
 		return false;
 	}
-	
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		Set sourceClasses = new HashSet();
 		for (int i=0; i<getComponents().length; i++) {
@@ -188,11 +189,11 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		}
 		return (Class[]) destinationClasses.toArray(new Class[destinationClasses.size()]);
 	}
-	
+
 	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType)
 		throws Exception {
 		incrementStackDepth();
-		
+
 		Class destinationType = ClassUtils.getClass(destination);
 		Class sourceType = ClassUtils.getClass(source);
 		if (!hasVisited(source, destinationType)) {
@@ -200,7 +201,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			recordVisit(source, destinationType, destination);
 			copier.copy(destination, source, locale);
 		}
-		
+
 		decrementStackDepth();
 		clearVisitedSourceToDestinationMapIfNecessary();
 	}
@@ -208,12 +209,12 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	protected Object convertImpl(Class destinationType, Object source,
 		Locale locale) throws Exception {
 		incrementStackDepth();
-		
+
 		Class sourceClass = ClassUtils.getClass(source);
 		Transformer transformer = getTransformer(destinationType, sourceClass);
-		
+
 		Object result;
-			
+
 		if (hasVisited(source, destinationType)) {
 			result = getCachedResult(source, destinationType);
 		}
@@ -224,41 +225,31 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 				destinationType, reuseableSource);
 			recordVisit(source, destinationType, newInstance);
 			nodeCopier.copy(newInstance, reuseableSource, locale);
-			result = newInstance;			
+			result = newInstance;
 		}
 		else {
 			Converter converter = (Converter) transformer;
 			result = converter.convert(destinationType, source, locale);
 		}
-		
+
 		decrementStackDepth();
 		clearVisitedSourceToDestinationMapIfNecessary();
-		
+
 		return result;
 	}
-	
+
 	protected void incrementStackDepth() {
-		if (getStackDepth() == null) {
-			setStackDepth(new Integer(0));
-		}
-		else {
-			setStackDepth(new Integer(getStackDepth().intValue() + 1));
-		}
+		((Int) stackDepthThreadLocal.get()).value++;
 	}
 
 	protected void decrementStackDepth() {
-		if (getStackDepth().equals(new Integer(0))) {
-			setStackDepth(null);
-		}
-		else {
-			setStackDepth(new Integer(getStackDepth().intValue() - 1));			
-		}
+		((Int) stackDepthThreadLocal.get()).value--;
 	}
-	
+
 	protected void clearVisitedSourceToDestinationMapIfNecessary() {
-		if (getStackDepth() == null) {
+		if (((Int) stackDepthThreadLocal.get()).value == 0) {
 			getVisitedSourceToDestinationMap().clear();
-		}		
+		}
 	}
 
 	protected void recordVisit(Object source, Class destinationType, Object destination) {
@@ -270,9 +261,9 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		Object key = new ObjectPair(source, destinationType);
 		return getVisitedSourceToDestinationMap().containsKey(key);
 	}
-	
+
 	protected Object getCachedResult(Object source, Class destinationType) {
-		Object key = new ObjectPair(source, destinationType);		
+		Object key = new ObjectPair(source, destinationType);
 		if (!getVisitedSourceToDestinationMap().containsKey(key)) {
 			throw new IllegalArgumentException(
 					"Cannot return a cached conversion result for "
@@ -287,16 +278,17 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	public Object specialize(Class compositeType) {
 		return getSpecializer().specialize(this, compositeType);
 	}
+
 	public boolean isSpecializable(Class type) throws CompositeException {
 		return getSpecializer().isSpecializable(this, type);
 	}
-	
+
 	/**
 	 * Finds a transformer of type <code>transformerType</code> that is
 	 * capable of transforming <code>sourceClass</code> to
 	 * <code>destinationClass</code>. Caches results in the
 	 * <code>registry</code>.
-	 * 
+	 *
 	 * @param registry
 	 *            a cache that remembers which transformers can be used for
 	 *            which transformations
@@ -315,16 +307,16 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		ObjectPair key = new ObjectPair(destinationClass, sourceClass);
 		Transformer transformer = (Transformer) registry.get(key);
 		if (transformer == null) {
-			transformer = getTransformer(transformerType, destinationClass, sourceClass); 
+			transformer = getTransformer(transformerType, destinationClass, sourceClass);
 			registry.put(key, transformer);
 		}
 		return transformer;
 	}
-	
+
 	/**
 	 * Finds a Copier that is capable of transforming <code>sourceClass</code>
 	 * to <code>destinationClass</code>.
-	 * 
+	 *
 	 * @param destinationClass
 	 *            the destinationClass of the transformation
 	 * @param sourceClass
@@ -337,11 +329,11 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	protected Copier getCopier(Class destinationClass, Class sourceClass) {
 		return (Copier) getTransformer(copierRegistry, Copier.class, destinationClass, sourceClass);
 	}
-	
+
 	/**
 	 * Finds a Transformer that is capable of transforming
 	 * <code>sourceClass</code> to <code>destinationClass</code>.
-	 * 
+	 *
 	 * @param destinationClass
 	 *            the destinationClass of the transformation
 	 * @param sourceClass
@@ -354,12 +346,12 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	protected Transformer getTransformer(Class destinationClass, Class sourceClass) {
 		return getTransformer(transformerRegistry, Transformer.class, destinationClass, sourceClass);
 	}
-	
+
 	/**
 	 * Finds a transformer of type <code>transformerType</code> that is
 	 * capable of transforming <code>sourceClass</code> to
 	 * <code>destinationClass</code>.
-	 * 
+	 *
 	 * @param transformerType
 	 *            the type of the returned transformer
 	 * @param destinationClass
@@ -392,9 +384,9 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 						return transformer;
 					}
 				}
-				
+
 			}
-			
+
 			throw new TransformationException(
 				"Could not find a transformer that can transform objects of "
 					+ ObjectUtils.getObjectDescription(sourceClass)
@@ -405,23 +397,23 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 //			return (Transformer) getCompositeDecorator().specialize(transformerType);
 //		}
 	}
-	
+
 	public Transformer[] getTransformers() {
 		return (Transformer[]) getComponents();
 	}
-	
+
 	public Object[] getComponents() {
 		if (components == null) {
 			setComponents(createDefaultComponents());
-		}		
+		}
 		return super.getComponents();
 	}
-	
+
 	public synchronized void setComponents(Object[] components) {
 		if (components == null) {
 			return;
 		}
-		
+
 		// set nested transformers for each component to this transformer
 		for (int i=0; i<components.length; i++) {
 			// if the component is a nested transformer
@@ -429,7 +421,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 				NodeCopier nestedTransformer = (NodeCopier) components[i];
 //				// if the nested transformer's graph transformer has not been set
 				if (nestedTransformer.getNestedTransformer() == null) {
-					nestedTransformer.setNestedTransformer(this);						
+					nestedTransformer.setNestedTransformer(this);
 				}
 			}
 		}
@@ -444,14 +436,14 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 //		this.failFast = failFast;
 //	}
 
-	
+
 	/**
 	 * Let the delegate do the logging
 	 */
 	protected boolean isPerformingLogging() {
 		return false;
 	}
-	
+
 	protected boolean isAutomaticallyHandlingNulls() {
 		return false;
 	}
@@ -465,14 +457,11 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 * transformed so far by this transformer. The keys in the Map are the
 	 * visited source nodes, and the values are the converted representation of
 	 * the node.
-	 * 
+	 *
 	 * @return a Map of all the nodes in the object graph that have been
 	 *         transformed so far by this transformer
 	 */
 	protected Map getVisitedSourceToDestinationMap() {
-		if (visitedSourceToDestinationMapThreadLocal.get() == null) {
-			visitedSourceToDestinationMapThreadLocal.set(new HashMap());
-		}
 		return (Map) visitedSourceToDestinationMapThreadLocal.get();
 	}
 //	/**
@@ -480,7 +469,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 //	 * transformed so far by this transformer. The keys in the Map are the
 //	 * visited source nodes, and the values are the converted representation of
 //	 * the node.
-//	 * 
+//	 *
 //	 * @param visitedSourceToDestinationMap
 //	 *            a Map of all the nodes in the object graph that have been
 //	 *            transformed so far by this transformer
