@@ -34,24 +34,17 @@ public class ListReflector
 	extends SortedSetReflector
 	implements IndexedContainerReflector, MutableIndexedContainerReflector, GrowableContainerReflector,
 	InstantiatingReflector, BeanReflector {
-	
+
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { List.class };
+
 	protected Object newInstanceImpl(Class interfaceClass) throws Exception {
-		if (interfaceClass.equals(List.class)) {
-			return new ArrayList();
-		}
-		else {
-			return super.newInstanceImpl(interfaceClass);
-		}
+		return interfaceClass == List.class ? new ArrayList() : super.newInstanceImpl(interfaceClass);
 	}
-	
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		List.class
-	};
-	
+
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
-	
+
 	protected Object setImpl(Object container, int index, Object propertyValue)
 		throws Exception {
 		return ((List) container).set(index, propertyValue);
