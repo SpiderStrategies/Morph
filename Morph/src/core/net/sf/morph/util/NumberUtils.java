@@ -16,14 +16,17 @@
 package net.sf.morph.util;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import net.sf.composite.util.ObjectUtils;
+import net.sf.morph.reflect.ReflectionException;
 
 /**
  * Various values and utility functions that are useful when working with
@@ -33,7 +36,37 @@ import net.sf.composite.util.ObjectUtils;
  * @since Dec 15, 2004
  */
 public abstract class NumberUtils {
-	
+
+	private static abstract class NumberFactory {
+		static Class[] paramTypes = new Class[] { String.class };
+		Number get(String s) {
+			try {
+				return (Number) iget(s);
+			} catch (Exception e) {
+				throw new ReflectionException(e);
+			}
+		}
+		protected abstract Object iget(String s) throws Exception;
+	}
+	private static class MethodNumberFactory extends NumberFactory {
+		private Method m;
+		MethodNumberFactory(Class c) throws Exception {
+			m = c.getMethod("valueOf", paramTypes);
+		}
+		protected Object iget(String s) throws Exception {
+			return m.invoke(null, new Object[] { s });
+		}
+	}
+	private static class ConstructorNumberFactory extends NumberFactory {
+		private Constructor cs;
+		ConstructorNumberFactory(Class c) throws Exception {
+			cs = c.getConstructor(paramTypes);
+		}
+		protected Object iget(String s) throws Exception {
+			return cs.newInstance(new Object[] { s });
+		}
+	}
+
 	/**
 	 * A Map of BigDecimals keyed by Class that indicate the maximum value that
 	 * the given (Number) Class may taken on.
@@ -46,7 +79,9 @@ public abstract class NumberUtils {
 	public static final Map MINIMUMS_FOR_TYPES;
 	
 	public static final Map WRAPPERS_FOR_PRIMITIVE_TYPES;
-	
+
+	public static final Map NUMBER_FACTORIES;
+
 	/**
 	 * Used by {@link NumberUtils#isNumber(Class)}.
 	 */
@@ -169,12 +204,31 @@ public abstract class NumberUtils {
 
 		// not sure if this is valid, but putting it in for now
 		WRAPPERS_FOR_PRIMITIVE_TYPES.put(Void.TYPE, Void.class);
-		
+
+		NUMBER_FACTORIES = new HashMap();
+		try {
+			for (Iterator it = WRAPPERS_FOR_PRIMITIVE_TYPES.entrySet().iterator(); it.hasNext();) {
+				Map.Entry e = (Map.Entry) it.next();
+				Class c = (Class) e.getValue();
+				if (c == Void.class) {
+					continue;
+				}
+				NumberFactory nf = new MethodNumberFactory(c);
+				NUMBER_FACTORIES.put(c, nf);
+				NUMBER_FACTORIES.put(e.getKey(), nf);
+			}
+			NUMBER_FACTORIES.put(BigInteger.class, new ConstructorNumberFactory(BigInteger.class));
+			NUMBER_FACTORIES.put(BigDecimal.class, new ConstructorNumberFactory(BigDecimal.class));
+		} catch (Exception e) {
+			throw new ReflectionException(e);
+		}
+
 		Set baseNumberTypes = new HashSet(MAXIMUMS_FOR_TYPES.keySet());
 		baseNumberTypes.add(Number.class);
 		BASE_NUMBER_TYPES = (Class[]) baseNumberTypes.toArray(new Class[baseNumberTypes.size()]);
+
 	}
-	
+
 	/**
 	 * Returns the maximum allowed value for the given type, which must be a
 	 * number.
@@ -212,12 +266,7 @@ public abstract class NumberUtils {
 	 *         the given number as a BigDecimal, otherwise
 	 */
 	public static BigDecimal numberToBigDecimal(Number number) {
-		if (number == null) {
-			return null;
-		}
-		else {
-			return new BigDecimal(number.toString());
-		}
+		return number == null ? null : new BigDecimal(number.toString());
 	}
 	
 	/**
@@ -248,16 +297,7 @@ public abstract class NumberUtils {
 	 *         <code>false</code>, otherwise.
 	 */
 	public static boolean isDecimal(Number number) {
-		if (number == null) {
-			return false;
-		}
-		else if (number instanceof Float || number instanceof Double ||
-			number instanceof BigDecimal) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return number != null && (number instanceof Float || number instanceof Double || number instanceof BigDecimal);
 	}
 
 	/**
@@ -265,10 +305,9 @@ public abstract class NumberUtils {
 	 */
 	protected static boolean isOutOfBoundsForType(Map boundMap, Number number,
 		Class type, int badCompareToResult) {
-		if (number == null || type.equals(BigInteger.class) || type.equals(BigDecimal.class)) {
+		if (number == null || type == BigInteger.class || type == BigDecimal.class) {
 			return false;
 		}
-		BigDecimal numberForComparison = NumberUtils.numberToBigDecimal(number);
 		BigDecimal boundForType = (BigDecimal) boundMap.get(type);
 		// if the comparison equals the bad compare to result, return true
 		// to indicate that the number is indeed out of bounds
@@ -276,12 +315,9 @@ public abstract class NumberUtils {
 			throw new IllegalArgumentException("Unable to determine bounds for type "
 				+ ObjectUtils.getObjectDescription(type));
 		}
-		else {
-			return numberForComparison.compareTo(boundForType) == 
-				badCompareToResult;
-		}
+		return NumberUtils.numberToBigDecimal(number).compareTo(boundForType) == badCompareToResult;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if <code>number</code> represents a value
 	 * too large to be stored in an instance of the given <code>type</code>.
@@ -298,8 +334,7 @@ public abstract class NumberUtils {
 	 *             if the maximum value cannot be determined for the given type
 	 */
 	public static boolean isTooBigForType(Number number, Class type) {
-		return isOutOfBoundsForType(MAXIMUMS_FOR_TYPES, number,
-			type, 1);
+		return isOutOfBoundsForType(MAXIMUMS_FOR_TYPES, number, type, 1);
 	}
 	
 	/**
@@ -319,8 +354,7 @@ public abstract class NumberUtils {
 	 *             if the minimum value cannot be determined for the given type
 	 */
 	public static boolean isTooSmallForType(Number number, Class type) {
-		return isOutOfBoundsForType(MINIMUMS_FOR_TYPES, number,
-			type, -1);
+		return isOutOfBoundsForType(MINIMUMS_FOR_TYPES, number, type, -1);
 	}
 	
 	/**
@@ -348,13 +382,7 @@ public abstract class NumberUtils {
 	}
 
 	public static Number getNumber(Class type, String s) throws Exception {
-		if (type.isPrimitive()) {
-			type = getWrapperForPrimitiveType(type);
-		}
-		Constructor constructor =
-			type.getConstructor(new Class[] { String.class });
-		return (Number) constructor.newInstance(new Object[] { s });
+		return ((NumberFactory) NUMBER_FACTORIES.get(type)).get(s);
 	}
-
 
 }
