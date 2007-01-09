@@ -24,7 +24,7 @@ public class LanguageUtils {
 	
 	public static boolean isInteger(String string) {
 		try {
-			Integer integer = new Integer(string);
+			Integer.parseInt(string);
 			return true;
 		}
 		catch (NumberFormatException e) {
