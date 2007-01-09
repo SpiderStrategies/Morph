@@ -94,12 +94,7 @@ public abstract class BaseLanguage implements Language, DecoratedLanguage {
 		
 		try {
 			Class type = getTypeImpl(target, expression);
-			if (type == null) {
-				return Object.class;
-			}
-			else {
-				return type;
-			}
+			return type == null ? Object.class : type;
 		}
 		catch (LanguageException e) {
 			throw e;
