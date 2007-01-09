@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2005 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -30,7 +30,7 @@ import net.sf.morph.context.HierarchicalContext;
  * takes care of logging and exception handling. Also implements the
  * {@link java.util.Map} interface.
  * </p>
- * 
+ *
  * @author Matt Sgarlata
  * @since Nov 29, 2004
  * @see net.sf.morph.context.support.BaseContext
@@ -38,16 +38,16 @@ import net.sf.morph.context.HierarchicalContext;
  */
 public abstract class BaseHierarchicalContext extends BaseContext implements
 	HierarchicalContext {
-	
+
 	private Context parentContext;
-	
+
 	/**
 	 * Creates a new, empty context.
 	 */
 	public BaseHierarchicalContext() {
 		super();
 	}
-	
+
 	/**
 	 * Creates a new, empty context with the specified parent.
 	 */
@@ -55,36 +55,36 @@ public abstract class BaseHierarchicalContext extends BaseContext implements
 		super();
 		this.parentContext = parentContext;
 	}
-	
+
 	protected abstract Object getHierarchicalImpl(String propertyName) throws Exception;
-	
+
 	protected abstract String[] getPropertyNamesHierarchicalImpl() throws Exception;
-	
+
 	protected abstract void setHierarchicalImpl(String propertyName, Object propertyValue) throws Exception;
-	
+
 	protected final Object getImpl(String propertyName) throws Exception {
 		Object value = null;
-		
+
 		if (getLog().isTraceEnabled()) {
 			getLog().trace("Getting property '" + propertyName + "' from context " + getClass().getName());
 		}
-		
-		try {			
+
+		try {
 			value = this.getHierarchicalImpl(propertyName);
 		}
 		catch (ContextException e) {
 			if (getLog().isDebugEnabled()) {
-				getLog().debug("Unable to retrieve property '" + propertyName + "' from context " + getClass().getName() + "; attempting to read property from parent context");				
+				getLog().debug("Unable to retrieve property '" + propertyName + "' from context " + getClass().getName() + "; attempting to read property from parent context");
 			}
 		}
-		
-		if (value == null && getParentContext() != null) {
-			return getParentContext().get(propertyName);
+		if (value == null) {
+			Context parent = getParentContext();
+			if (parent != null) {
+				value = parent.get(propertyName);
+			}
 		}
-		else {
-			return value;
-		}
-		
+		return value;
+
 //		// search the parent contexts
 //		Context currentContext = parentContext;
 //		int indent = 0;
@@ -100,10 +100,10 @@ public abstract class BaseHierarchicalContext extends BaseContext implements
 //		}
 //		return value;
 	}
-	
+
 	protected final String[] getPropertyNamesImpl() throws Exception {
 		String[] currentPropertyNames = this.getPropertyNamesHierarchicalImpl();
-		int size = currentPropertyNames == null ? 0 : currentPropertyNames.length; 
+		int size = currentPropertyNames == null ? 0 : currentPropertyNames.length;
 		Set propertyNames = new HashSet(size);
 		if (!ObjectUtils.isEmpty(currentPropertyNames)) {
 			propertyNames.addAll(Arrays.asList(currentPropertyNames));
@@ -122,36 +122,34 @@ public abstract class BaseHierarchicalContext extends BaseContext implements
 		return (String[])
 			propertyNames.toArray(new String[propertyNames.size()]);
 	}
-	
+
 	protected final void setImpl(String propertyName, Object propertyValue)
 		throws Exception {
-		
+
 		if (getLog().isTraceEnabled()) {
 			getLog().trace("Setting property '" + propertyName + "' to value " + ObjectUtils.getObjectDescription(propertyValue) + " for context " + ObjectUtils.getObjectDescription(this));
 		}
-		
-		try {			
+
+		try {
 			setHierarchicalImpl(propertyName, propertyValue);
 		}
 		catch (Exception e) {
 			if (getLog().isDebugEnabled()) {
-				getLog().debug("Unable to retrieve property '" + propertyName + "' from context " + ObjectUtils.getObjectDescription(this) + "; attempting to read property from parent context");				
+				getLog().debug("Unable to retrieve property '" + propertyName + "' from context " + ObjectUtils.getObjectDescription(this) + "; attempting to read property from parent context");
 			}
 			if (getParentContext() == null) {
 				throw e;
 			}
-			else {
-				getParentContext().set(propertyName, propertyValue);
-			}
-		}		
+			getParentContext().set(propertyName, propertyValue);
+		}
 	}
 
 	/**
 	 * Sets this context's parent context.
-	 * 
+	 *
 	 * @param parentContext
 	 *            this context's parent context
-	 */	
+	 */
 	public void setParentContext(Context parentContext) {
 		this.parentContext = parentContext;
 	}
