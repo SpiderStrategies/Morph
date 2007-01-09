@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import net.sf.composite.util.ObjectUtils;
-
 /**
  * Reads the contents of an Iterator and saves them so that the Iterator can be
  * iterated over multiple times.
@@ -30,81 +28,74 @@ import net.sf.composite.util.ObjectUtils;
  * @since Dec 5, 2004
  */
 public class ResetableIteratorWrapper implements Iterator {
+	private static final String NULL_ITERATOR = "The supplied iterator was null";
+	private static final String NEVER_SET = "You must set the iterator to wrap before calling this method";
+	private static final String ALREADY_SET = "You can only set the delegate iterator once";
+	private static final String NO_MORE = "There are no more elements to iterate over";
 
 	private boolean frozen;
 	private int index;
 	private List list;
-	
+
 	public ResetableIteratorWrapper() {
 		this.frozen = false;
 		this.index = 0;
 	}
-	
+
 	public ResetableIteratorWrapper(Iterator iterator) {
 		this();
 		setIterator(iterator);
 	}
 
-	public boolean hasNext() {
+	public synchronized boolean hasNext() {
 		if (!frozen) {
-			throw new IllegalStateException("You must set the iterator to wrap before calling this method");
+			throw new IllegalStateException(NEVER_SET);
 		}
-		if (ObjectUtils.isEmpty(list)) {
-			return false;
-		}
-		return index < list.size();
+		return list != null && index < list.size();
 	}
 
-	public Object next() {
-		if (!frozen) {
-			throw new IllegalStateException("You must set the iterator to wrap before calling this method");
+	public synchronized Object next() {
+		if (hasNext()) {
+			return list.get(index++);
 		}
-		if (list == null) {
-			throw new NoSuchElementException("The supplied iterator was null");
-		}
-		if (index == list.size()) {
-			throw new NoSuchElementException("There are no more elements to iterate over");
-		}
-		return list.get(index++);		
+		throw new NoSuchElementException(NO_MORE);
 	}
 
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}
-	
-	public void reset() {
+
+	public synchronized void reset() {
 		this.index = 0;
 	}
-	
+
 	/**
 	 * Returns a fresh copy of the wrapped iterator that is ready for another
 	 * iteration.
 	 * 
-	 * @return <code>null</code>, if the supplied 
+	 * @return <code>null</code> if the delegate iterator was never set
 	 */
-	public Iterator getIterator() {
-		if (list == null) {
-			return null;
-		}
-		else {
-			return list.iterator();
-		}
+	public synchronized Iterator getIterator() {
+		return list == null ? null : list.iterator();
 	}
-	
+
 	/**
 	 * Sets the delegate iterator for this wrapper.
+	 * @param iterator the Iterator to set
 	 * @throws IllegalStateException if the iterator has already been set
+	 * @throws IllegalArgumentException if the iterator is null
 	 */
-	public void setIterator(Iterator iterator) {
+	public synchronized void setIterator(Iterator iterator) {
 		if (frozen) {
-			throw new IllegalStateException("You can only set the delegate iterator once");
+			throw new IllegalStateException(ALREADY_SET);
+		}
+		if (iterator == null) {
+			throw new IllegalArgumentException(NULL_ITERATOR);
 		}
 		this.frozen = true;
-		if (iterator != null) {
-			list = new ArrayList();
-			while (iterator.hasNext()) {
-				list.add(iterator.next());
-			}
+		list = new ArrayList();
+		while (iterator.hasNext()) {
+			list.add(iterator.next());
 		}
 	}
 
