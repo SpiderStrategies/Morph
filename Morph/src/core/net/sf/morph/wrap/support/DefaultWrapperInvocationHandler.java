@@ -64,36 +64,33 @@ public class DefaultWrapperInvocationHandler implements WrapperInvocationHandler
 			if (declaringClass.equals(getWrapped().getClass())) {
 				return method.invoke(getWrapped(), args);
 			}
-			else {
-				Class wrapperClass = method.getDeclaringClass();
-				Class reflectorClass = (Class) getBiDirectionalReflectorWrapperMap().getKey(wrapperClass);
-				if (reflectorClass == null) {
-					throw new IllegalArgumentException("Cannot invoke method " + method + " because it is not declared in one of the recognized wrapper classes, which are: " + ObjectUtils.getObjectDescription(getReflectorWrapperMap().values()));
-				}
-				
-				Reflector reflector = (Reflector) CompositeUtils.specialize(getReflector(), reflectorClass);
-				
-				int wrapperNumArgs = method.getParameterTypes().length;
-				int reflectorNumArgs = wrapperNumArgs + 1;
-				
-				Class[] reflectorParameterTypes = new Class[reflectorNumArgs];
-				reflectorParameterTypes[0] = Object.class;
-				if (method.getParameterTypes() != null) {
-					System.arraycopy(method.getParameterTypes(), 0,
-						reflectorParameterTypes, 1, wrapperNumArgs);
-				}
-				
-				Object[] reflectorArgs = new Object[reflectorNumArgs];
-				reflectorArgs[0] = getWrapped();
-				if (args != null) {
-					System.arraycopy(args, 0, reflectorArgs, 1, wrapperNumArgs);
-				}
-				
-				Method reflectorMethod = reflector.getClass().getMethod(method.getName(), reflectorParameterTypes);
-				
-				return reflectorMethod.invoke(reflector, reflectorArgs);
+			Class wrapperClass = method.getDeclaringClass();
+			Class reflectorClass = (Class) getBiDirectionalReflectorWrapperMap().getKey(wrapperClass);
+			if (reflectorClass == null) {
+				throw new IllegalArgumentException("Cannot invoke method " + method + " because it is not declared in one of the recognized wrapper classes, which are: " + ObjectUtils.getObjectDescription(getReflectorWrapperMap().values()));
 			}
 			
+			Reflector reflector = (Reflector) CompositeUtils.specialize(getReflector(), reflectorClass);
+			
+			int wrapperNumArgs = method.getParameterTypes().length;
+			int reflectorNumArgs = wrapperNumArgs + 1;
+			
+			Class[] reflectorParameterTypes = new Class[reflectorNumArgs];
+			reflectorParameterTypes[0] = Object.class;
+			if (method.getParameterTypes() != null) {
+				System.arraycopy(method.getParameterTypes(), 0,
+					reflectorParameterTypes, 1, wrapperNumArgs);
+			}
+			
+			Object[] reflectorArgs = new Object[reflectorNumArgs];
+			reflectorArgs[0] = getWrapped();
+			if (args != null) {
+				System.arraycopy(args, 0, reflectorArgs, 1, wrapperNumArgs);
+			}
+			
+			Method reflectorMethod = reflector.getClass().getMethod(method.getName(), reflectorParameterTypes);
+			
+			return reflectorMethod.invoke(reflector, reflectorArgs);
 		}
 		// if an exception is thrown by the invoke method, just rethrow it
 		// without it wrapped in an InvocationTargetException
@@ -136,12 +133,7 @@ public class DefaultWrapperInvocationHandler implements WrapperInvocationHandler
 		return reflectorWrapperMap;
 	}
 	public void setReflectorWrapperMap(Map reflectorWrapperMap) {
-		if (reflectorWrapperMap instanceof BidirectionalMap) {
-			this.reflectorWrapperMap = reflectorWrapperMap;
-		}
-		else {
-			this.reflectorWrapperMap = new BidirectionalMap(reflectorWrapperMap);
-		}
+		this.reflectorWrapperMap = BidirectionalMap.getInstance(reflectorWrapperMap);
 	}
 
 	public Reflector getReflector() {
