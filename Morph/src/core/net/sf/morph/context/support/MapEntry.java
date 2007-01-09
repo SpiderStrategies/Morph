@@ -92,9 +92,8 @@ public class MapEntry implements Map.Entry {
             Object oldVal = this.value;
             this.value = val;
             return oldVal;
-        } else {
-            throw new UnsupportedOperationException();
         }
+        throw new UnsupportedOperationException();
     }
 
 
