@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2005 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -21,12 +21,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.composite.util.ObjectUtils;
-
 /**
  * Utility functions for working with container-like objects such as Collections
  * and arrays.
- * 
+ *
  * @author Matt Sgarlata
  * @since Mar 11, 2005
  */
@@ -35,7 +33,7 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 	/**
 	 * Determines if the given <code>array</code> contains the given
 	 * <code>value</code>.
-	 * 
+	 *
 	 * @param array
 	 *            the array to test
 	 * @param value
@@ -48,11 +46,8 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 		if (array == null) {
 			return false;
 		}
-		for (int i=0; i<array.length; i++) {
-			if (array[i] == null && value == null) {
-				return true;
-			}
-			if (array[i] != null && array[i].equals(value)) {
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] == value || (array[i] != null && array[i].equals(value))) {
 				return true;
 			}
 		}
@@ -62,7 +57,7 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 	/**
 	 * Determines if the given <code>collection</code> contains the given
 	 * <code>value</code>.
-	 * 
+	 *
 	 * @param collection
 	 *            the collection to test
 	 * @param value
@@ -72,17 +67,12 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 	 *         <code>false</code>, otherwise
 	 */
 	public static boolean contains(Collection collection, Object value) {
-		if (collection == null) {
-			return false;
-		}
-		else {
-			return collection.contains(value);
-		}			
+		return collection != null && collection.contains(value);
 	}
 
 //	/**
 //	 * Returns the union of multiple arrays as an array.  Implementation is O(n<sup>2</sup>).
-//	 * 
+//	 *
 //	 * @param arrays
 //	 *            a List of arrays
 //	 * @param componentType
@@ -97,21 +87,21 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 //		if (arrays == null) {
 //			return null;
 //		}
-//		
+//
 //		Set unionSet = new HashSet();
 //		for (int i=0; i<arrays.size(); i++) {
 //			if (!ObjectUtils.isEmpty(arrays.get(i))) {
 //				unionSet.addAll(Arrays.asList( ((Object[]) arrays.get(i)) ));
 //			}
 //		}
-//		
+//
 //		Object[] unionArray = (Object[]) ClassUtils.createArray(componentType, unionSet.size());
 //		return unionSet.toArray(unionArray);
 //	}
 //
 //	/**
 //	 * Returns the union of multiple arrays as an array.  Implementation is O(n<sup>2</sup>).
-//	 * 
+//	 *
 //	 * @param arrays
 //	 *            a List of arrays
 //	 * @return the union of the arrays
@@ -122,7 +112,7 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 
 	/**
 	 * Returns the intersection of multiple arrays as an array.  Implementation is O(n<sup>3</sup>).
-	 * 
+	 *
 	 * @param arrays
 	 *            a List of arrays
 	 * @param componentType
@@ -146,9 +136,6 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 					intersectionSet.remove(array[j]);
 				}
 			}
-			if (!ObjectUtils.isEmpty(arrays.get(i))) {
-				
-			}
 		}
 
 		Object[] intersectionArray = (Object[]) ClassUtils.createArray(componentType, intersectionSet.size());
@@ -157,7 +144,7 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 
 	/**
 	 * Returns the intersection of multiple arrays as an array.  Implementation is O(n<sup>3</sup>).
-	 * 
+	 *
 	 * @param arrays
 	 *            a List of arrays
 	 * @return the intersection of the arrays
