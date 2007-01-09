@@ -178,7 +178,7 @@ public class SimpleLanguage extends BaseLanguage {
 
 	public BeanReflector getReflector() {
 		if (reflector == null) {
-			return Defaults.createBeanReflector();
+			setReflector(Defaults.createBeanReflector());
 		}
 		return reflector;
 	}
