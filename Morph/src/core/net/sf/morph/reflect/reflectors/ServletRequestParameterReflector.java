@@ -44,14 +44,9 @@ public class ServletRequestParameterReflector extends BaseServletReflector {
 	protected Class getTypeImpl(Object bean, String propertyName)
 		throws Exception {
 		String[] values = getRequest(bean).getParameterValues(propertyName);
-		if (ObjectUtils.isEmpty(values) || values.length == 1) {
-			return String.class;
-		}
-		else {
-			return String[].class;
-		}
+		return ObjectUtils.isEmpty(values) || values.length == 1 ? String.class : String[].class;
 	}
-	
+
 	protected boolean isReadableImpl(Object bean, String propertyName)
 		throws Exception {
 		return ContainerUtils.contains(getPropertyNames(bean), propertyName);
@@ -64,12 +59,7 @@ public class ServletRequestParameterReflector extends BaseServletReflector {
 
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		String[] values = getRequest(bean).getParameterValues(propertyName);
-		if (ObjectUtils.isEmpty(values) || values.length == 1) {
-			return getRequest(bean).getParameter(propertyName);
-		}
-		else {
-			return values;
-		}
+		return ObjectUtils.isEmpty(values) || values.length == 1 ? getRequest(bean).getParameter(propertyName) : values;
 	}
 
 	protected void setImpl(Object bean, String propertyName, Object value)
