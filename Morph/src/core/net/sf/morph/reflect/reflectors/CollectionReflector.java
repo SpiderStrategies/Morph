@@ -60,12 +60,7 @@ public class CollectionReflector extends BaseContainerReflector implements Conta
 	}
 
 	protected Object newInstanceImpl(Class clazz) throws Exception {
-		if (clazz.equals(Collection.class)) {
-			return new ArrayList();
-		}
-		else {
-			return super.newInstanceImpl(clazz);
-		}
+		return clazz == Collection.class ? new ArrayList() : super.newInstanceImpl(clazz);
 	}
 
 	protected boolean addImpl(Object container, Object value) {
