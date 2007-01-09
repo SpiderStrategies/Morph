@@ -15,6 +15,8 @@
  */
 package net.sf.morph.reflect.reflectors;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -31,25 +33,28 @@ public class SortedSetReflector
 	extends SetReflector
 	implements IndexedContainerReflector, BeanReflector {
 
-	protected Object newInstanceImpl(Class interfaceClass) throws Exception {
-		if (interfaceClass.equals(SortedSet.class)) {
-			return new TreeSet();
-		}
-		else {
-			return super.newInstanceImpl(interfaceClass);
-		}
-	}
-	
 	private static final Class[] REFLECTABLE_TYPES = new Class[] {
 		SortedSet.class
 	};
-	
+
+	protected Object newInstanceImpl(Class interfaceClass) throws Exception {
+		return interfaceClass == SortedSet.class ? new TreeSet() : super.newInstanceImpl(interfaceClass);
+	}
+
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
-	
+
 	protected Object getImpl(Object container, int index) throws Exception {
-		return getCollection(container).toArray()[index];
+		Collection c = getCollection(container);
+		if (c == null || c.size() <= index) {
+			throw new IndexOutOfBoundsException(Integer.toString(index));
+		}
+		Iterator it = c.iterator();
+		for (int i = 0; i < index && it.hasNext(); i++) {
+			it.next();
+		}
+		return it.next();
 	}
 
 }
