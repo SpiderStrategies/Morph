@@ -15,7 +15,6 @@
  */
 package net.sf.morph.reflect.reflectors;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -120,8 +119,10 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 	public Class[] getReflectableClassesImpl() {
 		Set set = new HashSet();
 		for (int i=0; i<components.length; i++) {
-			Class[] reflectableClasses = ((Reflector) components[i]).getReflectableClasses(); 
-			set.addAll(Arrays.asList(reflectableClasses));
+			Class[] reflectableClasses = ((Reflector) components[i]).getReflectableClasses();
+			for (int j = 0; j < reflectableClasses.length; j++) {
+				set.add(reflectableClasses[j]);
+			}
 		}
 		return (Class[]) set.toArray(new Class[set.size()]); 
 	}
@@ -264,8 +265,6 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 	protected InstantiatingReflector getInstantiatingReflectorForClass(Class clazz) {
 		return (InstantiatingReflector) getReflector(InstantiatingReflector.class, clazz);
 	}
-	
-	
 	
 	public boolean isSpecializable(Class type) throws SpecializationException {
 		initialize();
