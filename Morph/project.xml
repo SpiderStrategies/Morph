@@ -81,6 +81,11 @@
       <email>sgarlatm@lists.sourceforge.net</email>
     </developer>
 
+    <developer>
+      <name>Matt Benson</name>
+      <id>matt.benson</id>
+      <email>gudnabrsam@yahoo.com</email>
+    </developer>
   </developers>
 
   <contributors>
@@ -90,10 +95,6 @@
 	  <email>AVolanis@rsasecurity.com</email>
     </contributor>
 
-    <contributor>
-      <name>Matt Benson</name>
-      <email>gudnabrsam@yahoo.com</email>
-    </contributor>
   </contributors>
 
   <dependencies>
