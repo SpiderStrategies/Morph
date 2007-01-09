@@ -30,17 +30,19 @@ import net.sf.composite.util.ObjectUtils;
  * @since Jan 8, 2005
  */
 public class ObjectIterator implements Iterator {
+	private static final NoSuchElementException NSEE = new NoSuchElementException(
+			"There is only one element in a " + ObjectUtils.getObjectDescription(ObjectIterator.class));
+	private static final UnsupportedOperationException UOE = new UnsupportedOperationException();
 
 	private Object object;
-	private boolean hasNext;
-	
+	private boolean hasNext = true;
+
 	public ObjectIterator(Object object) {
 		this.object = object;
-		this.hasNext = true;
 	}
-	
+
 	public void remove() {
-		throw new UnsupportedOperationException();
+		throw UOE;
 	}
 
 	public boolean hasNext() {
@@ -48,13 +50,11 @@ public class ObjectIterator implements Iterator {
 	}
 
 	public Object next() {
-		if (hasNext) {
-			hasNext = false;
-			return object;
+		if (!hasNext) {
+			throw NSEE;
 		}
-		else {
-			throw new NoSuchElementException("There is only one element in a " + ObjectUtils.getObjectDescription(ObjectIterator.class));
-		}
+		hasNext = false;
+		return object;
 	}
 
 }
