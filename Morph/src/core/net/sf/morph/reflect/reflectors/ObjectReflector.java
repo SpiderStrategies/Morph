@@ -119,40 +119,26 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 			if (mutator == null) {
 				return ClassUtils.getArrayClass(getIndexedMutator(bean, propertyName).getParameterTypes()[1]);
 			}
-			else {
-				return mutator.getParameterTypes()[0];	
-			}			
+			return mutator.getParameterTypes()[0];	
 		}
-		else {
-			Method accessor = getAccessor(bean, propertyName);
-			if (accessor == null) {
-				Method indexedAccessor = getIndexedAccessor(bean, propertyName);
-				return ClassUtils.getArrayClass(indexedAccessor.getReturnType());
-			}
-			else {
-				return accessor.getReturnType();
-			}
+		Method accessor = getAccessor(bean, propertyName);
+		if (accessor == null) {
+			Method indexedAccessor = getIndexedAccessor(bean, propertyName);
+			return ClassUtils.getArrayClass(indexedAccessor.getReturnType());
 		}
+		return accessor.getReturnType();
 	}
 	
 	protected boolean isReadableImpl(Object bean, String propertyName)
 		throws Exception {
-		if (ContainerUtils.contains(getPropertyNames(bean), propertyName)) {
-			return getReflectionInfo(bean.getClass()).isReadable(propertyName);
-		}
-		else {
-			return false;
-		}
+		return ContainerUtils.contains(getPropertyNames(bean), propertyName)
+				&& getReflectionInfo(bean.getClass()).isReadable(propertyName);
 	}
 	
 	protected boolean isWriteableImpl(Object bean, String propertyName)
 		throws Exception {
-		if (ContainerUtils.contains(getPropertyNames(bean), propertyName)) {
-			return getReflectionInfo(bean.getClass()).isWriteable(propertyName);
-		}
-		else {
-			return false;
-		}
+		return ContainerUtils.contains(getPropertyNames(bean), propertyName)
+				&& getReflectionInfo(bean.getClass()).isWriteable(propertyName);
 	}
 	
 	/**
@@ -168,60 +154,53 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 			// use it
 			return reflectionInfo.get(bean, propertyName);	
 		}
-		else { // we're using an indexed getter
-			List contents = new ArrayList();
-			boolean hasMoreElements = true;
-			Exception exception = null;
-			// try to read elements from the indexed getter
-			while (hasMoreElements) {
-				try {
-					Object value = reflectionInfo.get(bean, propertyName,
-						new Integer(contents.size()));
-					contents.add(value);
-				}
-				catch (Exception e) {
-					exception = e;
-					hasMoreElements = false;
-				}
+		// we're using an indexed getter
+		List contents = new ArrayList();
+		boolean hasMoreElements = true;
+		Exception exception = null;
+		// try to read elements from the indexed getter
+		while (hasMoreElements) {
+			try {
+				Object value = reflectionInfo.get(bean, propertyName,
+					new Integer(contents.size()));
+				contents.add(value);
 			}
-			
-			// if there are no elements ...
-			if (contents.size() == 0) {
-				// ... and our exception was NullPointer, that probably means
-				// there was no array available to start with, so return null
-				if (isExceptionOfType(exception, NullPointerException.class)) {
-					return null;
-				}
-				// ... and our exception was ArrayIndexOutOfBoundsException, 
-				// return an empty array
-				else if (isExceptionOfType(exception, ArrayIndexOutOfBoundsException.class)) {
-					return ClassUtils.createArray(getType(bean, propertyName).getComponentType(), 0);
-				}
-				// ... and we encountered a random exception
-				else {
-					// probably need to propagate this to the user
-					throw (Exception) exception.fillInStackTrace();
-				}
-			}
-			// if there are some elements ...
-			else {
-				// ... and we found the end of the list of valid elements
-				if (isExceptionOfType(exception, ArrayIndexOutOfBoundsException.class)) {
-					// create a new array of the required type
-					Object array = ClassUtils.createArray(getType(bean, propertyName).getComponentType(), contents.size());
-					// copy the contents we've constructed into the array
-					for (int i=0; i<contents.size(); i++) {
-						Array.set(array, i, contents.get(i));
-					}
-					return array;
-				}
-				// .. and we encountered an exception
-				else {
-					// rethrow the exception
-					throw (Exception) exception.fillInStackTrace();
-				}
+			catch (Exception e) {
+				exception = e;
+				hasMoreElements = false;
 			}
 		}
+		
+		// if there are no elements ...
+		if (contents.size() == 0) {
+			// ... and our exception was NullPointer, that probably means
+			// there was no array available to start with, so return null
+			if (isExceptionOfType(exception, NullPointerException.class)) {
+				return null;
+			}
+			// ... and our exception was ArrayIndexOutOfBoundsException, 
+			// return an empty array
+			if (isExceptionOfType(exception, ArrayIndexOutOfBoundsException.class)) {
+				return ClassUtils.createArray(getType(bean, propertyName).getComponentType(), 0);
+			}
+			// ... and we encountered a random exception
+			// probably need to propagate this to the user
+			throw (Exception) exception.fillInStackTrace();
+		}
+		// if there are some elements ...
+		// ... and we found the end of the list of valid elements
+		if (isExceptionOfType(exception, ArrayIndexOutOfBoundsException.class)) {
+			// create a new array of the required type
+			Object array = ClassUtils.createArray(getType(bean, propertyName).getComponentType(), contents.size());
+			// copy the contents we've constructed into the array
+			for (int i=0; i<contents.size(); i++) {
+				Array.set(array, i, contents.get(i));
+			}
+			return array;
+		}
+		// .. and we encountered an exception
+		// rethrow the exception
+		throw (Exception) exception.fillInStackTrace();
 	}
 	
 	private boolean isExceptionOfType(Exception exception, Class type) {
@@ -295,15 +274,11 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 					propertyName
 						+ " does not have any mutators, so it doesn't make sense to be checking if the setter for the property is primtive, since the property doesn't exist");
 			}
-			else {
-				// there is an indexed mutator, which means it's an array, which means its not a primitive type
-				return false;
-			}
+			// there is an indexed mutator, which means it's an array, which means its not a primitive type
+			return false;
 		}
 		// we're dealing with a simple mutator
-		else {
-			return mutator.getParameterTypes()[0].isPrimitive();
-		}
+		return mutator.getParameterTypes()[0].isPrimitive();
 	}
 	
 	protected ReflectionInfo getReflectionInfo(Class clazz) {
@@ -313,7 +288,6 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 			reflectionInfo = new ReflectionInfo(clazz);
 			reflectionCache.put(clazz, reflectionInfo);
 		}
-
 		return reflectionInfo;
 	}
 	
