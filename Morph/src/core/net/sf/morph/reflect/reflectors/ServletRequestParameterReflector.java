@@ -59,7 +59,7 @@ public class ServletRequestParameterReflector extends BaseServletReflector {
 
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		String[] values = getRequest(bean).getParameterValues(propertyName);
-		return ObjectUtils.isEmpty(values) || values.length == 1 ? getRequest(bean).getParameter(propertyName) : values;
+		return ObjectUtils.isEmpty(values) || values.length == 1 ? (Object) getRequest(bean).getParameter(propertyName) : values;
 	}
 
 	protected void setImpl(Object bean, String propertyName, Object value)
