@@ -18,6 +18,7 @@ package net.sf.morph.context.support;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -37,56 +38,51 @@ import net.sf.morph.util.ContainerUtils;
  * @since Nov 22, 2004
  */
 public class ContextMapBridge {
-	
+
 	protected Object getDelegate(Context context) {
-		return ((DelegatingContext) context).getDelegate();
+		return context instanceof DelegatingContext
+				? ((DelegatingContext) context).getDelegate() : null;
 	}
-	
+
 	public int size(Context context) {
-		checkContextNotNull(context);
-		return context.getPropertyNames().length;
+		return getPropertyNames(context).length;
 	}
 
 	public void clear(Context context) {
-		if (context instanceof DelegatingContext &&
-			getDelegate(context) instanceof Map) {
-			((Map) getDelegate(context)).clear();
-		}
-		else {
+		Object delegate = getDelegate(context);
+		if (!(delegate instanceof Map)) {
 			throw new UnsupportedOperationException();
 		}
+		((Map) delegate).clear();
 	}
 
 	public boolean isEmpty(Context context) {
-		checkContextNotNull(context);
-		return ObjectUtils.isEmpty(context.getPropertyNames());
+		return ObjectUtils.isEmpty(getPropertyNames(context));
 	}
 
 	public boolean containsKey(Context context, Object key) {
-		checkContextNotNull(context);
-		return ContainerUtils.contains(context.getPropertyNames(), key);
+		return ContainerUtils.contains(getPropertyNames(context), key);
 	}
 
 	public boolean containsValue(Context context, Object value) {
-		checkContextNotNull(context);
-		String[] propertyNames = context.getPropertyNames();
+		String[] propertyNames = getPropertyNames(context);
 		if (ObjectUtils.isEmpty(propertyNames)) {
 			return false;
 		}
-		else {
-			for (int i=0; i<propertyNames.length; i++) {
-				if (ObjectUtils.equals(context.get(propertyNames[i]), value)) {
-					return true;
-				}
+		for (int i=0; i<propertyNames.length; i++) {
+			if (ObjectUtils.equals(context.get(propertyNames[i]), value)) {
+				return true;
 			}
-			return false;
 		}
+		return false;
 	}
 
 	public Collection values(Context context) {
-		checkContextNotNull(context);
-		List values = new ArrayList();
-		String[] propertyNames = context.getPropertyNames();
+		String[] propertyNames = getPropertyNames(context);
+		if (ObjectUtils.isEmpty(propertyNames)) {
+			return Collections.EMPTY_LIST;
+		}
+		List values = new ArrayList(propertyNames.length);
 		for (int i=0; i<propertyNames.length; i++) {
 			values.add(context.get(propertyNames[i]));
 		}
@@ -95,69 +91,70 @@ public class ContextMapBridge {
 
 	public void putAll(Context context, Map t) {
 		checkContextNotNull(context);
-		if (t != null && !t.isEmpty()) {
-			Iterator iterator = t.keySet().iterator();
-			while (iterator.hasNext()) {
-				Object key = iterator.next();
-				put(context, key, t.get(key));
-			}
-		}		
+		if (t == null || t.isEmpty()) {
+			return;
+		}
+		for (Iterator it = t.entrySet().iterator(); it.hasNext();) {
+			Map.Entry e = (Map.Entry) it.next();
+			put(context, e.getKey(), e.getValue());
+		}
 	}
 
 	public Set entrySet(Context context) {
-		checkContextNotNull(context);
-		String[] propertyNames = context.getPropertyNames();
-		if (propertyNames == null) {
-			return new HashSet();
+		String[] propertyNames = getPropertyNames(context);
+		if (ObjectUtils.isEmpty(propertyNames)) {
+			return Collections.EMPTY_SET;
 		}
-		else {
-			Set set = new HashSet();
-			for (int i=0; i<propertyNames.length; i++) {
-				String propertyName = propertyNames[i];
-				MapEntry entry = new MapEntry(propertyName,
-					context.get(propertyName), false); 
-				set.add(entry);
-			}
-			return set;
+		Set set = new HashSet(propertyNames.length);
+		for (int i=0; i<propertyNames.length; i++) {
+			set.add(new MapEntry(propertyNames[i],
+					context.get(propertyNames[i]), false));
 		}
+		return set;
 	}
 
 	public Set keySet(Context context) {
-		checkContextNotNull(context);
-		return new HashSet(Arrays.asList(context.getPropertyNames()));
+		String[] propertyNames = getPropertyNames(context);
+		return ObjectUtils.isEmpty(propertyNames) ? Collections.EMPTY_SET
+				: new HashSet(Arrays.asList(propertyNames));
 	}
 
 	public Object get(Context context, Object key) {
-		checkContextNotNull(context);
-		return context.get((String) key);
+		return checkContextNotNull(context).get((String) key);
 	}
 
 	public Object remove(Context context, Object key) {
-		checkContextNotNull(context);
-		if (context instanceof DelegatingContext &&
-			getDelegate(context) instanceof Map) {
-			return ((Map) getDelegate(context)).remove(key);
+		Object delegate = getDelegate(context);
+		if (delegate instanceof Map) {
+			return ((Map) delegate).remove(key);
 		}
-		else {
-			throw new UnsupportedOperationException();
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	public Object put(Context context, Object key, Object value) {
-		checkContextNotNull(context);
 		if (!(key instanceof String)) {
 			throw new IllegalArgumentException("Only string keys can be used");
 		}
-		Object originalValue = context.get((String) key);
+		Object originalValue = checkContextNotNull(context).get((String) key);
 		context.set((String) key, value);
 		return originalValue;
 	}
-	
-	protected void checkContextNotNull(Context context)
+
+	protected Context checkContextNotNull(Context context)
 		throws IllegalArgumentException {
 		if (context == null) {
 			throw new IllegalArgumentException("context cannot be null");
 		}
+		return context;
 	}
 
+	/**
+	 * Convenience method
+	 * @param context non-null Context
+	 * @return propertyNames
+	 * @since Morph 1.0.2
+	 */
+	protected String[] getPropertyNames(Context context) {
+		return checkContextNotNull(context).getPropertyNames();
+	}
 }
