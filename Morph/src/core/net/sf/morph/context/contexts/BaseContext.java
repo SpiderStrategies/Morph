@@ -303,14 +303,13 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 	}
 
 	public ContextMapBridge getContextMapBridge() {
-		if (contextMapBridge == null) {
-			setContextMapBridge(DEFAULT_CONTEXT_MAP_BRIDGE);
-		}
-		return contextMapBridge;
+		return contextMapBridge == null ? DEFAULT_CONTEXT_MAP_BRIDGE : contextMapBridge;
 	}
+
 	protected Log getLog() {
 		return log;
 	}
+
 	protected void setLog(Log log) {
 		this.log = log;
 	}
