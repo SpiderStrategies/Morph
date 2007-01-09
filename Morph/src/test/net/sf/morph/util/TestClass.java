@@ -20,13 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 
 public class TestClass {
-	
-	private static final Log log = LogFactory.getLog(TestClass.class);
 	
 	public static final Number[] NUMBER_ARRAY = new Number[] { new Integer(1), new Long(2) };
 

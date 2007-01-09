@@ -26,17 +26,12 @@ import net.sf.morph.transform.converters.BaseConverterTestCase;
 import net.sf.morph.util.TestClass;
 import net.sf.morph.util.TestUtils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * @author Matt Sgarlata
  * @since Nov 16, 2004
  */
 public class PropertyNameMatchingCopierTestCase extends BaseConverterTestCase {
 
-	private static final Log log = LogFactory.getLog(PropertyNameMatchingCopierTestCase.class);
-	
 	private Copier copier;
 	
 	public PropertyNameMatchingCopierTestCase(String name) {

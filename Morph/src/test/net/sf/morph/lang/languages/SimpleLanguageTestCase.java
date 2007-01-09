@@ -6,9 +6,6 @@ import net.sf.morph.lang.Language;
 import net.sf.morph.util.TestClass;
 import net.sf.morph.util.TestUtils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * TODO need to test set methods
  * 
@@ -17,8 +14,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SimpleLanguageTestCase extends BaseLanguageTestCase {
 	
-	private static final Log log = LogFactory.getLog(SimpleLanguageTestCase.class);
-
 	protected Language createLanguage() {
 		return new LanguageDecorator();
 	}
