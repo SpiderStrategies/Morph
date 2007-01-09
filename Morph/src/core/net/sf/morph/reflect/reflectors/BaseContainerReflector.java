@@ -19,9 +19,6 @@ import java.util.Iterator;
 
 import net.sf.morph.reflect.ContainerReflector;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * <p>Convenient base class for ContainerReflectors. Validates arguments and takes
  * care of logging and exception handling.  All types of ContainerReflectors
@@ -35,8 +32,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class BaseContainerReflector extends BaseReflector implements
 	ContainerReflector {
-
-	private static final Log log = LogFactory.getLog(BaseContainerReflector.class);
 
 	protected abstract Class getContainedTypeImpl(Class clazz) throws Exception;
 	
