@@ -12,19 +12,21 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * An iterator over a ResultSet.  SQLExceptions are wrapped in MorphExceptions.
- * 
+ *
  * @author Matt Sgarlata
  * @since Dec 20, 2004
  */
 public class ResultSetIterator implements Iterator {
-	
+
 	private static final Log log = LogFactory.getLog(ResultSetIterator.class);
+	private static final NoSuchElementException NO_MORE = new NoSuchElementException("There are no more rows in the ResultSet");
+	private static final UnsupportedOperationException UNSUPPORTED = new UnsupportedOperationException();
 
 	private ResultSet resultSet;
 	private boolean hasNext;
 	// set to true if the current row has been successfully sent to the user
 	private boolean hasReturnedRow;
-	
+
 	public ResultSetIterator(ResultSet resultSet) {
 		this.resultSet = resultSet;
 		// initialize to true, since when we start the result set begins before
@@ -32,7 +34,7 @@ public class ResultSetIterator implements Iterator {
 		// first row, so we can consider it as having been already returned
 		this.hasReturnedRow = true;
 	}
-	
+
 	public boolean hasNext() {
 		if (hasReturnedRow) {
 			advanceToNextRow();
@@ -46,11 +48,9 @@ public class ResultSetIterator implements Iterator {
 			hasReturnedRow = true;
 			return resultSet;
 		}
-		else {
-			throw new NoSuchElementException("There are no more rows in the ResultSet");			
-		}
+		throw NO_MORE;
 	}
-	
+
 	protected void advanceToNextRow() throws MorphException {
 		try {
 			hasNext = resultSet.next();
@@ -69,6 +69,6 @@ public class ResultSetIterator implements Iterator {
 	}
 
 	public void remove() {
-		throw new UnsupportedOperationException();
-	}	
+		throw UNSUPPORTED;
+	}
 }
