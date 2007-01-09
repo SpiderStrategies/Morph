@@ -84,15 +84,13 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 		if (ObjectUtils.isEmpty(getRequestedToInstantiatedTypeMap())) {
 			return null; 
 		}
-		else if (getRequestedToInstantiatedTypeMap().size() == 1) {
+		if (getRequestedToInstantiatedTypeMap().size() == 1) {
 			return (Class) getRequestedToInstantiatedTypeMap().values().iterator().next();
 		}
-		else {
-			throw new IllegalStateException("This reflector has multiple "
-				+ "mappings of requested types to instantiated types, so a "
-				+ "single instantiated type cannot be returned.  The mappings "
-				+ "are " + getRequestedToInstantiatedTypeMap());
-		}
+		throw new IllegalStateException("This reflector has multiple "
+			+ "mappings of requested types to instantiated types, so a "
+			+ "single instantiated type cannot be returned.  The mappings "
+			+ "are " + getRequestedToInstantiatedTypeMap());
 	}
 	
 	/**
@@ -133,15 +131,13 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 		if (ObjectUtils.isEmpty(getRequestedToInstantiatedTypeMap())) {
 			return null; 
 		}
-		else if (getRequestedToInstantiatedTypeMap().size() == 1) {
+		if (getRequestedToInstantiatedTypeMap().size() == 1) {
 			return (Class) getRequestedToInstantiatedTypeMap().keySet().iterator().next();
 		}
-		else {
-			throw new IllegalStateException("This reflector has multiple "
-				+ "mappings of requested types to instantiated types, so a "
-				+ "single requested type cannot be returned.  The mappings "
-				+ "are " + getRequestedToInstantiatedTypeMap());
-		}
+		throw new IllegalStateException("This reflector has multiple "
+			+ "mappings of requested types to instantiated types, so a "
+			+ "single requested type cannot be returned.  The mappings "
+			+ "are " + getRequestedToInstantiatedTypeMap());
 	}
 	
 	/**
