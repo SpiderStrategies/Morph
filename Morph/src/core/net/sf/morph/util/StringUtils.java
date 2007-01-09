@@ -19,26 +19,23 @@ public class StringUtils {
 		if (toSearch == null && searchFor == null) {
 			return 0;
 		}
-		else if (searchFor == null || searchFor.length() == 0) {
+		if (searchFor == null || searchFor.length() == 0) {
 			return 0;
 		}
-		else {
-			int matchingIndex = 0;
-			int numOccurrences = 0;
-			for (int i=0; i<toSearch.length(); i++) {
-				if (toSearch.charAt(i) == searchFor.charAt(matchingIndex)) {
-					if (matchingIndex == searchFor.length() -1) {
-						matchingIndex = 0;
-						numOccurrences++;
-					}
-					else {
-						matchingIndex++;
-					}
+		int matchingIndex = 0;
+		int numOccurrences = 0;
+		for (int i=0; i<toSearch.length(); i++) {
+			if (toSearch.charAt(i) == searchFor.charAt(matchingIndex)) {
+				if (matchingIndex == searchFor.length() -1) {
+					matchingIndex = 0;
+					numOccurrences++;
+				}
+				else {
+					matchingIndex++;
 				}
 			}
-			return numOccurrences;
 		}
-		
+		return numOccurrences;
 	}
 
 	public static String repeat(String str, int repititions) {
@@ -54,20 +51,18 @@ public class StringUtils {
 		if (values == null) {
 			return null;
 		}
-		else {
-			StringBuffer buffer = new StringBuffer();
-			int length = Array.getLength(values);
-			for (int i = 0; i < length; i++) {
-				buffer.append(Array.get(values, i));
-				if (i < length - 2) {
-					buffer.append(", ");
-				}
-				if (i == length - 2) {
-					buffer.append(" and ");
-				}
+		StringBuffer buffer = new StringBuffer();
+		int length = Array.getLength(values);
+		for (int i = 0; i < length; i++) {
+			buffer.append(Array.get(values, i));
+			if (i < length - 2) {
+				buffer.append(", ");
 			}
-			return buffer.toString();
+			if (i == length - 2) {
+				buffer.append(" and ");
+			}
 		}
+		return buffer.toString();
 	}
 
 	public static String englishJoin(Collection values) {
@@ -95,8 +90,7 @@ public class StringUtils {
 		//build the metric id string
 		StringBuffer idBuff = new StringBuffer();
 		boolean firstIteration = true;
-		Collection collection = (Collection)
-			Morph.convert(List.class, object);
+		Collection collection = (Collection) Morph.convert(List.class, object);
 		for (Iterator iter = collection.iterator(); iter.hasNext();) {
 			if (firstIteration) {
 				firstIteration = false;

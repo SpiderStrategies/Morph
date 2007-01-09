@@ -66,9 +66,7 @@ public abstract class TransformerUtils {
 		if (transformer instanceof ExplicitTransformer) {
 			return ((ExplicitTransformer) transformer).isTransformable(destinationClass, sourceClass);
 		}
-		else {
-			return isImplicitlyTransformable(transformer, destinationClass, sourceClass);
-		}
+		return isImplicitlyTransformable(transformer, destinationClass, sourceClass);
 	}
 	
 //	public static boolean isTransformable(Transformer transformer, Class destinationClass, Class sourceClass,
@@ -152,7 +150,7 @@ public abstract class TransformerUtils {
 				throw new TransformationException("Unable to perform transformation", e);
 			}
 		}
-		else if (transformationType == Copier.TRANSFORMATION_TYPE_COPY.intValue()) {
+		if (transformationType == Copier.TRANSFORMATION_TYPE_COPY.intValue()) {
 			if (log.isTraceEnabled()) {
 				log.trace("Performing nested copy of "
 					+ ObjectUtils.getObjectDescription(source)
@@ -172,37 +170,31 @@ public abstract class TransformerUtils {
 		}
 		// shouldn't happen unless a new transformer type is introduced
 		// and this class has not yet been updated to handle it
-		else {
-			throw new TransformationException(
-				"Unable to perform transformation using transformer "
-					+ ObjectUtils.getObjectDescription(transformer));
-		}
-
+		throw new TransformationException(
+			"Unable to perform transformation using transformer "
+				+ ObjectUtils.getObjectDescription(transformer));
 	}
-	
 
 	public static Class getMappedDestinationType(Map typeMapping, Class requestedType) {
 		if (typeMapping == null) {
 			return null;
 		}
-		else {
-			// see if the requested type has been directly mapped to some other type
-			Class mappedDestinationType = (Class) typeMapping.get(requestedType);
-			// see if the requested type has been indirectly mapped to some other type
-			if (mappedDestinationType == null) {
-				Set keys = typeMapping.keySet();
-				for (Iterator i=keys.iterator(); i.hasNext(); ) {
-					Class type = (Class) i.next();
-					if (type.isAssignableFrom(requestedType)) {
-						mappedDestinationType = (Class) typeMapping.get(type);
-						break;
-					}
+		// see if the requested type has been directly mapped to some other type
+		Class mappedDestinationType = (Class) typeMapping.get(requestedType);
+		// see if the requested type has been indirectly mapped to some other type
+		if (mappedDestinationType == null) {
+			Set keys = typeMapping.keySet();
+			for (Iterator i=keys.iterator(); i.hasNext(); ) {
+				Class type = (Class) i.next();
+				if (type.isAssignableFrom(requestedType)) {
+					mappedDestinationType = (Class) typeMapping.get(type);
+					break;
 				}
 			}
-			return mappedDestinationType;
 		}
+		return mappedDestinationType;
 	}
-	
+
 //	public Transformer getTransformer(Transformer[] transformers, Class destinationClass, Class sourceClass) {
 //		for (int i=0; i<transformers.length; i++) {
 //			if (TransformerUtils.isTransformable(transformers[i], destinationClass, sourceClass)) {

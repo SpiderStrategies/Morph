@@ -25,7 +25,7 @@ import net.sf.morph.reflect.Reflector;
  * @since Nov 26, 2004
  */
 public abstract class ReflectorUtils {
-	
+
 	/**
 	 * Indicates whether the given reflector can support the operations
 	 * specified in <code>reflectorType</code> when reflecting instances of
@@ -59,15 +59,12 @@ public abstract class ReflectorUtils {
 		if (reflectorType == null) {
 			throw new IllegalArgumentException("The reflectorType must be specified");
 		}
-		
 		if (reflector instanceof CompositeReflector) {
 			return ((CompositeReflector) reflector).isReflectable(reflectedType, reflectorType);
 		}
-		else {
-			return reflectorType.isAssignableFrom(reflectorType) &&
-				ClassUtils.inheritanceContains(
-				reflector.getReflectableClasses(), reflectedType);
-		}
+		return reflectorType.isAssignableFrom(reflectorType) &&
+			ClassUtils.inheritanceContains(
+			reflector.getReflectableClasses(), reflectedType);
 	}
-	
+
 }
