@@ -22,7 +22,6 @@ import net.sf.morph.context.DelegatingContext;
 import net.sf.morph.context.HierarchicalContext;
 import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.util.ClassUtils;
-import net.sf.morph.util.ContainerUtils;
 
 /**
  * A context that delegates property storage to some delegate and uses
@@ -31,7 +30,7 @@ import net.sf.morph.util.ContainerUtils;
  * {@link net.sf.morph.reflect.reflectors.SimpleDelegatingReflector}, so
  * contexts can be created out of any type for which the reflector can expose a
  * BeanReflector.
- * 
+ *
  * @author Matt Sgarlata
  * @since Nov 21, 2004
  * @see net.sf.morph.context.support.SimpleReflectorContext
