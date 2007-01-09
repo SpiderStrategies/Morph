@@ -19,8 +19,7 @@ import org.apache.commons.logging.LogFactory;
 public class ResultSetIterator implements Iterator {
 
 	private static final Log log = LogFactory.getLog(ResultSetIterator.class);
-	private static final NoSuchElementException NO_MORE = new NoSuchElementException("There are no more rows in the ResultSet");
-	private static final UnsupportedOperationException UNSUPPORTED = new UnsupportedOperationException();
+	private static final String NO_MORE = "There are no more rows in the ResultSet";
 
 	private ResultSet resultSet;
 	private boolean hasNext;
@@ -48,7 +47,7 @@ public class ResultSetIterator implements Iterator {
 			hasReturnedRow = true;
 			return resultSet;
 		}
-		throw NO_MORE;
+		throw new NoSuchElementException(NO_MORE);
 	}
 
 	protected void advanceToNextRow() throws MorphException {
@@ -69,6 +68,6 @@ public class ResultSetIterator implements Iterator {
 	}
 
 	public void remove() {
-		throw UNSUPPORTED;
+		throw new UnsupportedOperationException();
 	}
 }
