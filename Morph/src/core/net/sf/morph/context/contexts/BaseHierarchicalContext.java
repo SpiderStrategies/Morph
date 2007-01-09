@@ -125,7 +125,6 @@ public abstract class BaseHierarchicalContext extends BaseContext implements
 	
 	protected final void setImpl(String propertyName, Object propertyValue)
 		throws Exception {
-		Object value = null;
 		
 		if (getLog().isTraceEnabled()) {
 			getLog().trace("Setting property '" + propertyName + "' to value " + ObjectUtils.getObjectDescription(propertyValue) + " for context " + ObjectUtils.getObjectDescription(this));
