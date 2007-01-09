@@ -124,15 +124,13 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 	}
 
 	protected Object newInstanceImpl(Class interfaceClass) throws Exception {
-		if (interfaceClass.equals(Map.class)) {
+		if (interfaceClass == Map.class) {
 			return new HashMap();
 		}
-		else if (interfaceClass.equals(SortedMap.class)) {
+		if (interfaceClass == SortedMap.class) {
 			return new TreeMap();
 		}
-		else {
-			return super.newInstanceImpl(interfaceClass);
-		}
+		return super.newInstanceImpl(interfaceClass);
 	}
 	
 	protected boolean addImpl(Object container, Object value) throws Exception {
@@ -144,36 +142,32 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 			Object returnVal = getMap(container).put(entry.getKey(), entry.getValue());
 			return ObjectUtils.equals(value, returnVal);
 		}
-		else if (isExtractKeys()) {
+		if (isExtractKeys()) {
 			Object returnVal = getMap(container).put(value, null);
 			return ObjectUtils.equals(value, returnVal);
 		}
-		else if (isExtractValues()) {
+		if (isExtractValues()) {
 			if (log.isWarnEnabled()) {
 				log.warn("The " + ObjectUtils.getObjectDescription(this) + " is set to " + getMapTreatment() + " so " + ObjectUtils.getObjectDescription(value) + " will be added to the Map with a null key");
 			}
 			Object returnVal = getMap(container).put(null, value);
 			return ObjectUtils.equals(value, returnVal);
 		}
-		else {
-			throw new ReflectionException("Unknown map treatment '" + getMapTreatment() + "'");
-		}
+		throw new ReflectionException("Unknown map treatment '" + getMapTreatment() + "'");
 	}
 	
 	protected Iterator getIteratorImpl(Object container) throws Exception {
 		if (isExtractEntries()) {
 			return getMap(container).entrySet().iterator();
 		}
-		else if (isExtractKeys()) {
+		if (isExtractKeys()) {
 			return getMap(container).keySet().iterator();
 		}
-		else if (isExtractValues()) {
+		if (isExtractValues()) {
 			return getMap(container).values().iterator();
 		}
-		else {
-			// this shouldn't ever happen
-			throw new ReflectionException("Invalid mapTreatment: " + getMapTreatment());
-		}
+		// this shouldn't ever happen
+		throw new ReflectionException("Invalid mapTreatment: " + getMapTreatment());
 	}
 	
 // bean
@@ -210,15 +204,13 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		if (propertyName.equals(IMPLICIT_PROPERTY_VALUES) && value == null) {
 			return getMap(bean).values();
 		}
-		else if (propertyName.equals(IMPLICIT_PROPERTY_KEYS) && value == null) {
+		if (propertyName.equals(IMPLICIT_PROPERTY_KEYS) && value == null) {
 			return getMap(bean).keySet();
 		}
-		else if (propertyName.equals(IMPLICIT_PROPERTY_ENTRIES) && value == null) {
+		if (propertyName.equals(IMPLICIT_PROPERTY_ENTRIES) && value == null) {
 			return getMap(bean).entrySet();
 		}
-		else {
-			return value;
-		}
+		return value;
 	}
 	protected void setImpl(Object bean, String propertyName, Object value)
 		throws Exception {
