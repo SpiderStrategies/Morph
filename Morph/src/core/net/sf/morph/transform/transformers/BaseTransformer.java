@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2005 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -60,16 +60,16 @@ import org.apache.commons.logging.LogFactory;
  * for better performance. This feature is turned on by default</li>
  * </ul>
  * </p>
- * 
+ *
  * @author Matt Sgarlata
  * @since Nov 26, 2004
  */
 public abstract class BaseTransformer implements Transformer, DecoratedTransformer {
-	
+
 	protected transient Log log = LogFactory.getLog(getClass());
-	
+
 	private static final String SPRING_LOCALE_CONTEXT_HOLDER_CLASS = "org.springframework.context.i18n.LocaleContextHolder";
-	
+
 	private boolean initialized = false;
 	private boolean cachingIsTransformableCalls = true;
 	private transient Map transformableCallCache;
@@ -77,14 +77,14 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	protected transient Class[] destinationClasses;
 	private Transformer nestedTransformer;
 	private Reflector reflector;
-	
-// isTransformable	
-	
+
+// isTransformable
+
 	/**
 	 * Default implementation for
 	 * {@link Transformer#isTransformable(Class, Class)} that assumes that each
 	 * source type can be converted into each destination type.
-	 * 
+	 *
 	 * @param destinationType
 	 *            the destination type to test
 	 * @param sourceType
@@ -104,9 +104,9 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	public final boolean isTransformable(Class destinationType,
 		Class sourceType) throws TransformationException {
 		initialize();
-		
+
 		// Note: null source and destination classes are allowed!
-		
+
 		// first, try to pull the source and destination from the cache
 		ObjectPair pair = null;
 		if (isCachingIsTransformableCalls()) {
@@ -117,7 +117,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 				return isTransformable.booleanValue();
 			}
 		}
-		
+
 		try {
 			boolean isTransformable = isTransformableImpl(destinationType, sourceType);
 			if (isCachingIsTransformableCalls()) {
@@ -141,13 +141,13 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 				+ destinationType, e);
 		}
 	}
-	
+
 // source and destination classes
-	
+
 	protected abstract Class[] getSourceClassesImpl() throws Exception;
-	
+
 	protected abstract Class[] getDestinationClassesImpl() throws Exception;
-	
+
 	public final Class[] getSourceClasses() throws TransformationException {
 		initialize();
 		return sourceClasses;
@@ -157,14 +157,14 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		initialize();
 		return destinationClasses;
 	}
-	
+
 	/**
 	 * Configures the <code>sourceClasses</code> property of this transformer.
 	 * Note that this method should be called before the transformer is used.
 	 * Otherwise, if another thread is in the middle of transforming an object
 	 * graph and this method is called, the behavior of the transformer can
 	 * change partway through the transformation.
-	 * 
+	 *
 	 * @param sourceClasses the new <code>sourceClasses</code> for this transformer
 	 */
 	protected synchronized void setSourceClasses(Class[] sourceClasses) {
@@ -178,7 +178,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * transformer is used. Otherwise, if another thread is in the middle of
 	 * transforming an object graph and this method is called, the behavior of
 	 * the transformer can change partway through the transformation.
-	 * 
+	 *
 	 * @param destinationClasses
 	 *            the new <code>destinationClasses</code> for this transformer
 	 */
@@ -186,30 +186,30 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		setInitialized(false);
 		this.destinationClasses = destinationClasses;
 	}
-	
+
 // initialize
-	
+
 	/**
 	 * Gives subclasses a chance to perform any computations needed to
 	 * initialize the transformer
 	 */
 	protected void initializeImpl() throws Exception {
-	
+
 	}
-	
+
 	protected final void initialize() throws TransformationException {
 		if (!initialized) {
 			if (log.isInfoEnabled()) {
 				log.info("Initializing transformer " + ObjectUtils.getObjectDescription(this));
 			}
-			
+
 			try {
 				if (sourceClasses == null) {
-					sourceClasses = getSourceClassesImpl();	
-				}				
+					sourceClasses = getSourceClassesImpl();
+				}
 				if (destinationClasses == null) {
-					destinationClasses = getDestinationClassesImpl();	
-				}				
+					destinationClasses = getDestinationClassesImpl();
+				}
 				if (ObjectUtils.isEmpty(sourceClasses)) {
 					throw new TransformationException(
 							"This transformer, "
@@ -222,14 +222,14 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 									+ ObjectUtils.getObjectDescription(this)
 									+ ", is invalid because it does specify any destinationClasses");
 				}
-				
+
 				transformableCallCache = Collections.synchronizedMap(new HashMap());
 				initializeImpl();
-				
+
 				if (nestedTransformer == null) {
 					nestedTransformer = Defaults.createTransformer();
-				}				
-				
+				}
+
 				initialized = true;
 			}
 			catch (TransformationException e) {
@@ -242,14 +242,14 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 			}
 		}
 	}
-	
+
 	/**
 	 * Retrieves the current Locale if none is specified in the method arguments
 	 * for a converter or copier.  Attempts to load the Locale using Spring's
 	 * {@link org.springframework.context.i18n.LocaleContextHolder}, if Spring
 	 * is on the classpath.  Otherwise, returns the default Locale by calling
 	 * {@link Locale#getDefault()}.
-	 * 
+	 *
 	 * @return the current Locale
 	 */
 	protected Locale getLocale() {
@@ -258,42 +258,42 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 			try {
 				Class contextHolderClass = Class.forName(SPRING_LOCALE_CONTEXT_HOLDER_CLASS);
 				Method getLocaleMethod =
-					contextHolderClass.getMethod("getLocale", null);
-				locale = (Locale) getLocaleMethod.invoke(null, null);
+					contextHolderClass.getMethod("getLocale", (Class[]) null);
+				locale = (Locale) getLocaleMethod.invoke(null, (Object[]) null);
 			}
 			catch (Exception e) {
 				log.warn("Unable to retrieve locale from Spring", e);
 			}
 		}
-		
+
 		if (locale == null) {
 			locale = Locale.getDefault();
 		}
-		
+
 		return locale;
 	}
 
 // convert
-	
+
 	public final Object convert(Class destinationClass, Object source,
 		Locale locale) {
 		initialize();
-		
+
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Converting " + ObjectUtils.getObjectDescription(source)
 				+ " to destination type "
 				+ ObjectUtils.getObjectDescription(destinationClass)
 				+ " in locale " + locale);
 		}
-		
+
 		if (locale == null) {
 			locale = getLocale();
 		}
-		
-		if (isAutomaticallyHandlingNulls() && source == null) {
+
+		if (source == null && isAutomaticallyHandlingNulls()) {
 			return null;
 		}
-		
+
 		try {
 			return convertImpl(destinationClass, source, locale);
 		}
@@ -301,26 +301,22 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 			throw (TransformationException) e;
 		}
 		catch (Throwable t) {
-			Class sourceClass = source == null ? null : source.getClass();
-			if (isTransformable(destinationClass, sourceClass)) {
+			if (isTransformable(destinationClass, ClassUtils.getClass(source))) {
 				throw new TransformationException(destinationClass, source, t);
 			}
-			else {
-				throw new TransformationException(
-						getClass().getName() + " cannot convert "
-							+ ObjectUtils.getObjectDescription(source)
-							+ " to an instance of "
-							+ ObjectUtils.getObjectDescription(destinationClass));
-			}
+			throw new TransformationException(
+					getClass().getName() + " cannot convert "
+						+ ObjectUtils.getObjectDescription(source)
+						+ " to an instance of "
+						+ ObjectUtils.getObjectDescription(destinationClass), t);
 		}
 	}
-	
+
 	public final Object convert(Class destinationClass, Object source)
 		throws TransformationException {
 		return convert(destinationClass, source, null);
 	}
-	
-	
+
 	/**
 	 * The implementation of the <code>convert</code> method, which may omit
 	 * the invalid argument checks already performed by this base class. By
@@ -329,7 +325,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * implementation should be fine as-is for Copiers, but Converters will need
 	 * to implement this method since they will not be implementing the copy
 	 * method.
-	 * 
+	 *
 	 * @param locale
 	 *            the locale in which the conversion should take place. for
 	 *            converters that are not locale-aware, the local argument can
@@ -342,67 +338,55 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		copyImpl(newInstance, reuseableSource, locale, Converter.TRANSFORMATION_TYPE_CONVERT);
 		return newInstance;
 	}
-	
+
 	protected Object createReusableSource(Class destinationClass, Object source) {
 		return source;
 	}
-	
-// equals	
-	
+
+// equals
+
 	public boolean equals(Object object1, Object object2, Locale locale) {
 		if (locale == null) {
 			locale = getLocale();
 		}
-		
-		if (object1 == null && object2 == null) {
-			return true;
-		}
-		else if (object1 == null) {
-			return equalsUnidirectionalTest(object2, null, locale);
-		}
-		else if (object2 == null) {
-			return equalsUnidirectionalTest(object1, null, locale);
-		}
-		else { // neither object is null
-			return
-				equalsUnidirectionalTest(object2, object1, locale) ||
-				equalsUnidirectionalTest(object2, object2, locale);
-		}
+		return object1 == object2
+				|| (object1 != null && equalsUnidirectionalTest(object1, object2, locale))
+				|| (object2 != null && equalsUnidirectionalTest(object2, object1, locale));
 	}
-	
+
 	public final boolean equals(Object object1, Object object2)
 		throws TransformationException {
 		return equals(object1, object2, null);
-	}	
+	}
 
 	protected boolean equalsUnidirectionalTest(Object cannotBeNull, Object canBeNull, Locale locale) {
 		return cannotBeNull.equals(convert(cannotBeNull.getClass(), canBeNull, locale));
 	}
-	
-// copy	
-	
+
+// copy
+
 	public final void copy(Object destination, Object source, Locale locale) throws TransformationException {
-		
+
 		initialize();
-		
+
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Copying information from "
 				+ ObjectUtils.getObjectDescription(source) + " to destination "
 				+ ObjectUtils.getObjectDescription(destination) + " in locale "
 				+ locale);
 		}
-		
+
 		if (destination == null) {
 			throw new TransformationException("Destination cannot be null");
 		}
 		if (source == null) {
 			throw new TransformationException("Source cannot be null");
 		}
-		
+
 		if (locale == null) {
 			locale = getLocale();
 		}
-		
+
 		try {
 			copyImpl(destination, source, locale, Copier.TRANSFORMATION_TYPE_COPY);
 		}
@@ -424,11 +408,11 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 			}
 		}
 	}
-	
+
 	public final void copy(Object destination, Object source) throws TransformationException {
 		copy(destination, source, null);
 	}
-	
+
 	/**
 	 * Implementation of the copy method.  By default, this method throws
 	 * UnsupportedOperationException.
@@ -437,7 +421,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		throw new UnsupportedOperationException();
 	}
 
-// misc utility methods	
+// misc utility methods
 
 	protected Object createNewInstanceImpl(Class destinationClass, Object source) throws Exception {
 		if (CompositeUtils.isSpecializable(getReflector(), InstantiatingReflector.class)) {
@@ -457,9 +441,9 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 
 		return destinationClass.newInstance();
 	}
-	
 
-	
+
+
 	public Object createNewInstance(Class destinationClass, Object source) {
 		try {
 			return createNewInstanceImpl(destinationClass, source);
@@ -473,7 +457,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	}
 
 // property getters and setters
-	
+
 	/**
 	 * Indicates if calls to the main transformation methods (convert, copy)
 	 * will cause a log message to be recorded
@@ -481,7 +465,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	protected boolean isPerformingLogging() {
 		return true;
 	}
-	
+
 	/**
 	 * Indicates whether <code>null</code> values will automatically be
 	 * converted to <code>null</code> by this base class before even calling
@@ -494,11 +478,13 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * happen automatically even if the source and destination classes don't
 	 * contain <code>null</code>, but for the sake of consistency the
 	 * <code>null</code>s should be included.
-	 * 
+	 *
 	 * @return whether <code>null</code> values will automatically be
 	 *         converted to <code>null</code> by this base class before even
 	 *         calling the subclass's
 	 *         {@link #convertImpl(Class, Object, Locale)} method
+	 *
+	 * @since Morph 1.0.2
 	 */
 	protected boolean isAutomaticallyHandlingNulls() {
 		return true;
@@ -512,17 +498,17 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 //		}
 		return nestedTransformer;
 	}
-	protected void setNestedTransformer(Transformer nestedTransformer) {		
+	protected void setNestedTransformer(Transformer nestedTransformer) {
 		this.nestedTransformer = nestedTransformer;
 	}
-	
+
 	protected boolean isInitialized() {
 		return initialized;
 	}
 	protected void setInitialized(boolean initialized) {
 		this.initialized = initialized;
 	}
-	
+
 	public boolean isCachingIsTransformableCalls() {
 		return cachingIsTransformableCalls;
 	}
@@ -536,22 +522,22 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	protected void setTransformableCallCache(Map transformableCallCache) {
 		this.transformableCallCache = transformableCallCache;
 	}
-	
+
 	protected Log getLog() {
 		return log;
 	}
 	protected void setLog(Log log) {
 		this.log = log;
 	}
-		
+
 	protected InstantiatingReflector getInstantiatingReflector() {
 		return (InstantiatingReflector) getReflector(InstantiatingReflector.class);
 	}
-	
+
 	protected Reflector getReflector(Class reflectorType) {
 		return (Reflector) CompositeUtils.specialize(getReflector(), reflectorType);
 	}
-	
+
 	public Reflector getReflector() {
 		if (reflector == null) {
 			setReflector(Defaults.createReflector());
