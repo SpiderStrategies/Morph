@@ -12,7 +12,11 @@ import net.sf.composite.util.ObjectUtils;
 public class BidirectionalMap extends HashMap {
 	
 	private final Map reverseMap; 
-	
+
+	public static BidirectionalMap getInstance(Map m) {
+		return m instanceof BidirectionalMap ? (BidirectionalMap) m : new BidirectionalMap(m);
+	}
+
 	public BidirectionalMap() {
 		super();
 		reverseMap = new HashMap();
