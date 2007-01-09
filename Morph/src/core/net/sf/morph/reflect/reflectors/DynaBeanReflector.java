@@ -55,12 +55,8 @@ public class DynaBeanReflector extends BaseBeanReflector {
 	}
 
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
-		if (IMPLICIT_PROPERTY_DYNA_CLASS.equals(propertyName)) {
-			return getDynaBean(bean).getDynaClass();
-		}
-		else {
-			return getDynaBean(bean).get(propertyName);
-		}
+		DynaBean dyna = getDynaBean(bean);
+		return IMPLICIT_PROPERTY_DYNA_CLASS.equals(propertyName) ? dyna.getDynaClass() : dyna.get(propertyName);
 	}
 
 	protected void setImpl(Object bean, String propertyName, Object value)
