@@ -18,6 +18,7 @@ package net.sf.morph.reflect.reflectors;
 import net.sf.morph.context.Context;
 import net.sf.morph.context.contexts.MapContext;
 import net.sf.morph.reflect.InstantiatingReflector;
+import net.sf.morph.util.ClassUtils;
 
 /**
  * A reflector that can expose the properties of any Context.
@@ -58,8 +59,7 @@ public class ContextReflector extends BaseBeanReflector implements Instantiating
 //			return getReflectorContext(bean).getBeanReflector().getType(bean, propertyName);
 //		}
 //		else {
-			Object object = getContext(bean).get(propertyName);
-			return object == null ? null : object.getClass();
+			return ClassUtils.getClass(getContext(bean).get(propertyName));
 //		}
 	}
 
@@ -96,11 +96,6 @@ public class ContextReflector extends BaseBeanReflector implements Instantiating
 	}
 
 	protected Object newInstanceImpl(Class clazz) throws Exception {
-		if (clazz.equals(Context.class)) {
-			return new MapContext();
-		}
-		else {
-			return super.newInstanceImpl(clazz);
-		}
+		return clazz == Context.class ? new MapContext() : super.newInstanceImpl(clazz);
 	}
 }
