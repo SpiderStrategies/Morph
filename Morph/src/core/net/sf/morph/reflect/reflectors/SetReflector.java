@@ -31,21 +31,14 @@ public class SetReflector
 	extends CollectionReflector
 	implements GrowableContainerReflector, InstantiatingReflector {
 
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { Set.class };
+
 	protected Object newInstanceImpl(Class interfaceClass) throws Exception {
-		if (interfaceClass.equals(Set.class)) {
-			return new HashSet();
-		}
-		else {
-			return super.newInstanceImpl(interfaceClass);
-		}
+		return interfaceClass == Set.class ? new HashSet() : super.newInstanceImpl(interfaceClass);
 	}
-	
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		Set.class
-	};
-	
+
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
-	
+
 }
