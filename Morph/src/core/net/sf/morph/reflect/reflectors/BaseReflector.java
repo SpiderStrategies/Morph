@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2005 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -47,7 +47,7 @@ import org.apache.commons.logging.LogFactory;
  * is automatically implemented for reflectors that implement
  * MutableIndexedContainerReflector.  See method JavaDoc for more information.
  * </p>
- * 
+ *
  * @author Matt Sgarlata
  * @since Nov 14, 2004
  */
@@ -55,23 +55,23 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 	protected transient Log log = LogFactory.getLog(getClass());
 
-// fields	
-	
+// fields
+
 	private boolean initialized;
 	private transient Class[] reflectableClasses;
 	private boolean cachingIsReflectableCalls = true;
 	private transient Map reflectableCallCache;
 
-// initialization	
-	
+// initialization
+
 	public BaseReflector() {
 		setInitialized(false);
 	}
-	
+
 	protected void initializeImpl() throws Exception {
-		
+
 	}
-	
+
 	protected final void initialize() throws ReflectionException {
 		if (!initialized) {
 			if (isPerformingLogging() && log.isInfoEnabled()) {
@@ -92,29 +92,29 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			}
 		}
 	}
-	
+
 // basic reflector, decoratedreflector
-	
+
 	public final Class[] getReflectableClasses() {
 		initialize();
 		return reflectableClasses;
 	}
-	
+
 	/**
 	 * Implementation of {@link Reflector#getReflectableClasses()}.
 	 */
 	protected abstract Class[] getReflectableClassesImpl() throws Exception;
-	
+
 	public final Wrapper getWrapper(Object object) {
 		if (log.isTraceEnabled()) {
 			log.trace("Creating wrapper for " + ObjectUtils.getObjectDescription(object));
 		}
-		
+
 		if (object == null) {
-			return null; 
+			return null;
 		}
 		checkIsReflectable(object);
-		
+
 		try {
 			return getWrapperImpl(object);
 		}
@@ -126,19 +126,19 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				+ ObjectUtils.getObjectDescription(object), e);
 		}
 	}
-	
+
 	/**
 	 * Implementation of {@link Reflector#getWrapper(Object)}.
 	 */
 	protected Wrapper getWrapperImpl(Object object) throws Exception {
 		WrapperInvocationHandler invocationHandler = createWrapperInvocationHandler(object);
-		
+
 		return (Wrapper) Proxy.newProxyInstance(
 			object.getClass().getClassLoader(),
 			invocationHandler.getInterfaces(object),
 			invocationHandler);
 	}
-	
+
 	protected WrapperInvocationHandler createWrapperInvocationHandler(Object object) {
 		return new DefaultWrapperInvocationHandler(object, this);
 	}
@@ -160,13 +160,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 	private boolean isReflectableInternal(Class reflectedType) {
 		initialize();
-		
+
 		if (reflectedType == null) {
 			throw new ReflectionException(
 				"Cannot determine if a null reflectedType is reflectable; please supply a reflectedType to the "
 					+ getClass().getName() + ".isReflectable method");
 		}
-		
+
 		// try to pull the isReflectable information from the cache
 		if (isCachingIsReflectableCalls()) {
 			Boolean isReflectable = (Boolean) getReflectableCallCache().get(reflectedType);
@@ -213,12 +213,8 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		}
 
 		try {
-			if (reflectorType == null) {
-				return isReflectableImpl(reflectedTyped);
-			}
-			else {
-				return isReflectableImpl(reflectedTyped, reflectorType);
-			}
+			return reflectorType == null
+					? isReflectableImpl(reflectedTyped) : isReflectableImpl(reflectedTyped, reflectorType);
 		}
 		catch (ReflectionException e) {
 			throw e;
@@ -240,7 +236,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 * Throws an exception if a the given object is not reflectable by this
 	 * reflector. Called before executing each method in this class to ensure
 	 * the reflector is being used properly.
-	 * 
+	 *
 	 * @param object
 	 *            the object to test
 	 * @throws ReflectionException
@@ -255,7 +251,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	}
 
 // instantiating reflector
-	
+
 	public final Object newInstance(Class clazz) {
 		if (clazz == null) {
 			throw new ReflectionException(
@@ -294,7 +290,6 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			log.trace("Creating new instance of "
 				+ ObjectUtils.getObjectDescription(clazz));
 		}
-		
 		return clazz.newInstance();
 	}
 
@@ -302,14 +297,14 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 	public final String[] getPropertyNames(Object bean)
 		throws ReflectionException {
-	
+
 		if (bean == null) {
 			throw new ReflectionException(
 				"Cannot determine the properties of a null bean.  Please supply a bean to the "
 					+ getClass().getName() + ".getPropertyNames method");
 		}
 		checkIsReflectable(bean);
-	
+
 		try {
 			String[] propertyNames = getPropertyNamesImpl(bean);
 			if (isPerformingLogging() && log.isTraceEnabled()) {
@@ -346,14 +341,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			}
 			return propertyNames;
 		}
-		else {
-			throw new UnsupportedOperationException();			
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	public final boolean isReadable(Object bean, String propertyName)
 		throws ReflectionException {
-	
+
 		if (bean == null && ObjectUtils.isEmpty(propertyName)) {
 			throw new ReflectionException(
 				"Please supply non-null arguments to the "
@@ -369,7 +362,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 					+ ObjectUtils.getObjectDescription(bean));
 		}
 		checkIsReflectable(bean);
-	
+
 		boolean isReadable;
 		try {
 			if (this instanceof SizableReflector &&
@@ -384,13 +377,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			else {
 				isReadable = isReadableImpl(bean, propertyName);
 			}
-			
+
 			if (isPerformingLogging() && log.isTraceEnabled()) {
 				log.trace("Property '" + propertyName + "' is"
 					+ (isReadable ? " " : " not ") + "readable in bean "
 					+ ObjectUtils.getObjectDescription(bean));
 			}
-			
 			return isReadable;
 		}
 		catch (ReflectionException e) {
@@ -410,12 +402,8 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 */
 	protected boolean isReadableImpl(Object bean, String propertyName)
 		throws Exception {
-		if (this instanceof IndexedContainerReflector) {
-			return isValidIndex(bean, propertyName);
-		}
-		else {
-			return ContainerUtils.contains(getPropertyNames(bean), propertyName);
-		}		
+		return this instanceof IndexedContainerReflector ? isValidIndex(bean, propertyName)
+				: ContainerUtils.contains(getPropertyNames(bean), propertyName);
 	}
 
 	public final boolean isWriteable(Object bean, String propertyName) {
@@ -439,43 +427,39 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		try {
 			Boolean isWriteable = null;
 			Exception exception = null;
-			
+
 			try {
 				isWriteable = Boolean.valueOf(isWriteableImpl(bean, propertyName));
 			}
 			catch (Exception e) {
 				exception = e;
 			}
-			
+
 			if (this instanceof SizableReflector &&
 				propertyName.equals(SizableReflector.IMPLICIT_PROPERTY_SIZE) &&
 				isWriteable == null) {
 				return false;
 			}
-			else if (this instanceof BeanReflector &&
+			if (this instanceof BeanReflector &&
 				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_CLASS) &&
 				isWriteable == null) {
 				return false;
 			}
-			else if (this instanceof BeanReflector &&
+			if (this instanceof BeanReflector &&
 				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES) &&
 				isWriteable == null) {
 				return false;
 			}
-			else {
-				if (exception == null) {
-					if (isPerformingLogging() && log.isTraceEnabled()) {
-						log.trace("Property '" + propertyName + "' is"
-							+ (isWriteable.booleanValue() ? " " : " not ")
-							+ "writeable in bean "
-							+ ObjectUtils.getObjectDescription(bean));
-					}
-					return isWriteable.booleanValue();
+			if (exception == null) {
+				if (isPerformingLogging() && log.isTraceEnabled()) {
+					log.trace("Property '" + propertyName + "' is"
+						+ (isWriteable.booleanValue() ? " " : " not ")
+						+ "writeable in bean "
+						+ ObjectUtils.getObjectDescription(bean));
 				}
-				else {
-					throw exception;
-				}
+				return isWriteable.booleanValue();
 			}
+			throw exception;
 		}
 		catch (ReflectionException e) {
 			throw e;
@@ -496,20 +480,15 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 */
 	protected boolean isWriteableImpl(Object bean, String propertyName)
 		throws Exception {
-		if (this instanceof IndexedContainerReflector &&
-			!(this instanceof MutableIndexedContainerReflector)) {
-			return false;
-		}
-		else {
-			return isReadableImpl(bean, propertyName);
-		}
+		return this instanceof MutableIndexedContainerReflector
+				|| !(this instanceof IndexedContainerReflector) && isReadableImpl(bean, propertyName);
 	}
 
 	protected boolean isValidIndex(Object bean, String propertyName) throws ReflectionException {
 		int size = ((IndexedContainerReflector) this).getSize(bean);
 		try {
-			int index = (new Integer(propertyName)).intValue();			
-			return (index >= 0) && (index <= (size - 1));
+			int index = (new Integer(propertyName)).intValue();
+			return index >= 0 && index <= size - 1;
 		}
 		catch (NumberFormatException e) {
 			return false;
@@ -523,7 +502,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				+ ObjectUtils.getObjectDescription(bean) + " to "
 				+ ObjectUtils.getObjectDescription(propertyValue));
 		}
-	
+
 		if (bean == null && ObjectUtils.isEmpty(propertyName)) {
 			throw new ReflectionException(
 				"Please supply non-null arguments to the "
@@ -544,7 +523,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				+ "' is not writeable in bean "
 				+ ObjectUtils.getObjectDescription(bean));
 		}
-	
+
 		try {
 			setImpl(bean, propertyName, propertyValue);
 		}
@@ -558,7 +537,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				+ propertyValue, e);
 		}
 	}
-	
+
 	/**
 	 * Implementation of {@link BeanReflector#set(Object, String, Object)}.
 	 * Implementation automatically provided for
@@ -567,13 +546,10 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 */
 	protected void setImpl(Object bean, String propertyName,
 		Object value) throws Exception {
-		if (this instanceof MutableIndexedContainerReflector) {
-			((MutableIndexedContainerReflector) this).set(bean,
-				(new Integer(propertyName)).intValue(), value);
-		}
-		else {
+		if (!(this instanceof MutableIndexedContainerReflector)) {
 			throw new UnsupportedOperationException();
 		}
+		((MutableIndexedContainerReflector) this).set(bean, Integer.parseInt(propertyName), value);
 	}
 
 	public final Object get(Object bean, String propertyName)
@@ -593,7 +569,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 					+ ObjectUtils.getObjectDescription(bean));
 		}
 		checkIsReflectable(bean);
-	
+
 		try {
 			Object value = null;
 			Exception exception = null;
@@ -612,7 +588,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			catch (Exception e) {
 				exception = e;
 			}
-			
+
 			// if we couldn't get the property and it's a implicit property,
 			// return the value of the implicit property
 			if (value == null &&
@@ -620,12 +596,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_CLASS)) {
 				return bean.getClass();
 			}
-			else if (value == null &&
+			if (value == null &&
 				this instanceof BeanReflector &&
 				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES)) {
 				return getPropertyNames(bean);
 			}
-			else if (value == null &&
+			if (value == null &&
 				this instanceof SizableReflector &&
 				propertyName.equals(SizableReflector.IMPLICIT_PROPERTY_SIZE)) {
 				return new Integer(getSize(bean));
@@ -633,21 +609,16 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			// if the returned value was null and the property wasn't a implicit
 			// property, rethrow any exception that was thrown, or if no
 			// exception was thrown, return the value (which will be null)
-			else {
-				if (exception == null) {
-					if (isPerformingLogging() && log.isTraceEnabled()) {
-						log.trace("Property '" + propertyName + "' has value "
-							+ ObjectUtils.getObjectDescription(value)
-							+ " in bean "
-							+ ObjectUtils.getObjectDescription(bean));
-					}
-					
-					return value;
+			if (exception == null) {
+				if (isPerformingLogging() && log.isTraceEnabled()) {
+					log.trace("Property '" + propertyName + "' has value "
+						+ ObjectUtils.getObjectDescription(value)
+						+ " in bean "
+						+ ObjectUtils.getObjectDescription(bean));
 				}
-				else {
-					throw exception;
-				}
+				return value;
 			}
+			throw exception;
 		}
 		catch (ReflectionException e) {
 			throw e;
@@ -668,23 +639,16 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	protected Object getImpl(Object bean, String propertyName)
 		throws Exception {
 		if (this instanceof IndexedContainerReflector) {
-			if (propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_CLASS) ||
-				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_SIZE)) {
-				return null;
-			}
-			else {
-				return ((IndexedContainerReflector) this).get(bean,
-					(new Integer(propertyName)).intValue());
-			}
+			return BeanReflector.IMPLICIT_PROPERTY_CLASS.equals(propertyName)
+					|| BeanReflector.IMPLICIT_PROPERTY_SIZE.equals(propertyName) ? null
+							: ((IndexedContainerReflector) this).get(bean, Integer.parseInt(propertyName));
 		}
-		else {
-			throw new UnsupportedOperationException();
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	public final Class getType(Object bean, String propertyName)
 		throws ReflectionException {
-	
+
 		if (bean == null && ObjectUtils.isEmpty(propertyName)) {
 			throw new ReflectionException(
 				"Please supply non-null arguments to the "
@@ -701,9 +665,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 					+ " for which you would like to know the type");
 		}
 		checkIsReflectable(bean);
-		
+
 		boolean hasPropertyDefined = ContainerUtils.contains(
-			getPropertyNames(bean), propertyName);		
+			getPropertyNames(bean), propertyName);
 		if (isStrictlyTyped() &&
 			!hasPropertyDefined &&
 			!SizableReflector.IMPLICIT_PROPERTY_SIZE.equals(propertyName) &&
@@ -713,7 +677,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				+ propertyName + "' because it is not a property of "
 				+ ObjectUtils.getObjectDescription(bean));
 		}
-		
+
 		// take care of implicit properties, if applicable
 		Class type = null;
 		if (!hasPropertyDefined) {
@@ -727,7 +691,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				type = Integer.TYPE;
 			}
 		}
-		
+
 		// if we aren't retrieving an implicit property, let the subclass handle
 		// the request
 		if (type == null) {
@@ -744,16 +708,16 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 						e);
 			}
 		}
-	
+
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Property '" + propertyName + "' has type "
 				+ ObjectUtils.getObjectDescription(type) + " in bean "
 				+ ObjectUtils.getObjectDescription(bean));
 		}
-	
+
 		return type;
 	}
-	
+
 	/**
 	 * Implementation of {@link BeanReflector#getType(Object, String)}.
 	 * Default implementation provided. For IndexedContainerReflectors,
@@ -764,29 +728,18 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 */
 	protected Class getTypeImpl(Object bean, String propertyName)
 		throws Exception {
-	
+
 		if (this instanceof IndexedContainerReflector) {
-			if (isValidIndex(bean, propertyName)) {				
+			if (isValidIndex(bean, propertyName)) {
 				return ((IndexedContainerReflector) this).getContainedType(
 						bean.getClass());
 			}
-			else {
-				throw new ReflectionException("'" + propertyName
-						+ "' is not a valid index in the container "
-						+ ObjectUtils.getObjectDescription(bean));
-			}
+			throw new ReflectionException("'" + propertyName
+					+ "' is not a valid index in the container "
+					+ ObjectUtils.getObjectDescription(bean));
 		}
-		else {
-			Object value = getImpl(bean, propertyName);
-			if (value == null) {
-				return null;
-			}
-			else {
-				return value.getClass(); 
-			}
-		}
+		return ClassUtils.getClass(getImpl(bean, propertyName));
 	}
-
 
 // container reflectors
 
@@ -833,10 +786,10 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		}
 		if (container == null) {
 			throw new ReflectionException(
-				"Cannot iterate through the contents of an empty container");
+				"Cannot iterate through the contents of null container");
 		}
 		checkIsReflectable(container);
-	
+
 		try {
 			return getIteratorImpl(container);
 		}
@@ -869,8 +822,8 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		}
 	}
 
-// sizable reflectors	
-	
+// sizable reflectors
+
 	public final int getSize(Object container) throws ReflectionException {
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Retrieving size of "
@@ -902,32 +855,30 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		if (this instanceof BeanReflector) {
 			return getPropertyNamesImpl(container).length;
 		}
-		else {
-			throw new UnsupportedOperationException();
-		}
+		throw new UnsupportedOperationException();
 	}
 
-// indexed container reflectors	
-	
+// indexed container reflectors
+
 	public final Object get(Object container, int index)
 		throws ReflectionException {
-	
+
 		if (container == null) {
 			throw new ReflectionException(
 				"Can't retrieve values from a null object");
 		}
 		checkIndex(container, index);
 		checkIsReflectable(container);
-	
+
 		try {
 			Object value = getImpl(container, index);
-	
+
 			if (isPerformingLogging() && log.isTraceEnabled()) {
 				log.trace("Item at index " + index + " has value "
 					+ ObjectUtils.getObjectDescription(value) + " in container "
 					+ ObjectUtils.getObjectDescription(container));
 			}
-	
+
 			return value;
 		}
 		catch (ReflectionException e) {
@@ -947,22 +898,22 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	}
 
 // mutable indexed container reflectors
-	
+
 	public final Object set(Object container, int index, Object propertyValue)
 		throws ReflectionException {
-	
+
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Setting item at index " + index + " for object "
 				+ ObjectUtils.getObjectDescription(container) + " to value "
 				+ ObjectUtils.getObjectDescription(propertyValue));
 		}
-	
+
 		if (container == null) {
 			throw new ReflectionException("Can't set values of a null object");
 		}
 		checkIndex(container, index);
 		checkIsReflectable(container);
-	
+
 		try {
 			return setImpl(container, index, propertyValue);
 		}
@@ -985,21 +936,21 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		throw new UnsupportedOperationException();
 	}
 
-// growable container reflectors	
-	
+// growable container reflectors
+
 	public final boolean add(Object container, Object value)
 		throws ReflectionException {
-	
+
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Adding item " + ObjectUtils.getObjectDescription(value)
 				+ " to container " + ObjectUtils.getObjectDescription(container));
 		}
-	
+
 		if (container == null) {
 			throw new ReflectionException("Can't add values of a null object");
 		}
 		checkIsReflectable(container);
-	
+
 		try {
 			return addImpl(container, value);
 		}
@@ -1021,14 +972,14 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	}
 
 // getters and setters
-	
+
 	/**
 	 * Indicates whether this reflector is writing log messages
 	 */
 	protected boolean isPerformingLogging() {
 		return true;
-	}	
-	
+	}
+
 	/**
 	 * Indicates whether this reflector is strictly typed.  If a reflector is
 	 * strictly typed, the {@link #getType(Object, String)} method will throw
@@ -1039,14 +990,14 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	public boolean isStrictlyTyped() {
 		return false;
 	}
-	
+
 	protected boolean isInitialized() {
 		return initialized;
 	}
 	protected void setInitialized(boolean initialized) {
 		this.initialized = initialized;
 	}
-	
+
 	public boolean isCachingIsReflectableCalls() {
 		return cachingIsReflectableCalls;
 	}
