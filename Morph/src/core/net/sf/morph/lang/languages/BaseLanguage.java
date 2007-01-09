@@ -167,12 +167,9 @@ public abstract class BaseLanguage implements Language, DecoratedLanguage {
 		
 		// first do any needed type conversion
 		Class type = getType(target, expression);
-		Class valueType = value == null ? null : value.getClass();
-		Object converted = value;
-		if (!type.equals(valueType)) {
-			converted = getConverter().convert(type, value, locale);
-		}
-		
+		Object converted = type.isInstance(value) ? value : getConverter()
+				.convert(type, value, locale);
+
 		try {
 			setImpl(target, expression, converted);
 		}
@@ -186,7 +183,7 @@ public abstract class BaseLanguage implements Language, DecoratedLanguage {
 					e);
 		}
 	}	
-	
+
 	public Converter getConverter() {
 		if (converter == null) {
 			setConverter(Defaults.createConverter());
