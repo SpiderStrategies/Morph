@@ -85,27 +85,25 @@ public abstract class NumberRounder {
 		if (ROUND_CEILING.equals(mode)) {
 			return BigDecimal.ROUND_CEILING;
 		}
-		else if (ROUND_DOWN.equals(mode)) {
+		if (ROUND_DOWN.equals(mode)) {
 			return BigDecimal.ROUND_DOWN;
 		}
-		else if (ROUND_FLOOR.equals(mode)) {
+		if (ROUND_FLOOR.equals(mode)) {
 			return BigDecimal.ROUND_FLOOR;
 		}
-		else if (ROUND_HALF_DOWN.equals(mode)) {
+		if (ROUND_HALF_DOWN.equals(mode)) {
 			return BigDecimal.ROUND_HALF_DOWN;
 		}
-		else if (ROUND_HALF_EVEN.equals(mode)) {
+		if (ROUND_HALF_EVEN.equals(mode)) {
 			return BigDecimal.ROUND_HALF_EVEN;
 		}
-		else if (ROUND_HALF_UP.equals(mode)) {
+		if (ROUND_HALF_UP.equals(mode)) {
 			return BigDecimal.ROUND_HALF_UP;
 		}
-		else if (ROUND_UP.equals(mode)) {
+		if (ROUND_UP.equals(mode)) {
 			return BigDecimal.ROUND_UP;
 		}
-		else {
-			throw new IllegalArgumentException("'" + mode + "' is not a valid rounding mode.  Please specify one of the constants defined in " + NumberRounder.class.getName());
-		}
+		throw new IllegalArgumentException("'" + mode + "' is not a valid rounding mode.  Please specify one of the constants defined in " + NumberRounder.class.getName());
 	}
 
 	/**
@@ -126,30 +124,19 @@ public abstract class NumberRounder {
 	 */
 	public static Number round(Number number, String mode)
 		throws IllegalArgumentException {
-		if (number == null) {
-			return null;
-		}
-		else if (NumberUtils.isDecimal(number)) {
-			int roundingMode = getBigDecimalRoundMode(mode);
-			BigDecimal bigDecimal;
-			if (number instanceof BigDecimal) {
-				bigDecimal = (BigDecimal) number;
-			}
-			else {
-				bigDecimal = new BigDecimal(number.toString());
-			}
-			BigDecimal rounded = bigDecimal.setScale(0, roundingMode);
+		if (NumberUtils.isDecimal(number)) {
+			BigDecimal bigDecimal = NumberUtils.numberToBigDecimal(number);
+			BigDecimal rounded = bigDecimal.setScale(0, getBigDecimalRoundMode(mode));
 			if (number instanceof BigDecimal) {
 				return rounded;
 			}
-			else if (number instanceof Double) {
+			if (number instanceof Double) {
 				return new Double(rounded.doubleValue());
 			}
-			else if (number instanceof Float) {
+			if (number instanceof Float) {
 				return new Float(rounded.floatValue());
 			}
 		}
-		
 		return number;
 	}
 
