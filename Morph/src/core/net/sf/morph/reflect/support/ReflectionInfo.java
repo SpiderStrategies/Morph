@@ -44,7 +44,7 @@ public class ReflectionInfo {
 				// if setter method detected
 				if (methodName.length() > 3 &&
 					methodName.indexOf("set") == 0 &&
-					methodName.substring(3, 4).equals(methodName.substring(3, 4).toUpperCase())) {
+					!Character.isLowerCase(methodName.charAt(3))) {
 					propertyName =
 						methodName.substring(3, 4).toLowerCase() +
 						methodName.substring(4);
