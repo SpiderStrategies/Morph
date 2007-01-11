@@ -18,7 +18,7 @@ package net.sf.morph.reflect;
 /**
  * A reflector that can instantiate objects. This allows the reflector to pick
  * implementations for interfaces, instantiate arrays, etc. Only classes that
- * are reflectable by this reflector should be instantiatable.
+ * are reflectable by this reflector should be instantiable.
  * 
  * @author Matt Sgarlata
  * @since Nov 27, 2004
