@@ -44,7 +44,7 @@ public class ReflectionInfo {
 				// if setter method detected
 				if (methodName.length() > 3 &&
 					methodName.indexOf("set") == 0 &&
-					!Character.isLowerCase(methodName.charAt(3))) {
+					Character.isUpperCase(methodName.charAt(3))) {
 					propertyName =
 						methodName.substring(3, 4).toLowerCase() +
 						methodName.substring(4);
@@ -61,7 +61,7 @@ public class ReflectionInfo {
 				// if normal getter method detected
 				else if (methodName.length() > 3 &&
 					methodName.indexOf("get") == 0 &&
-					methodName.substring(3, 4).equals(methodName.substring(3, 4).toUpperCase())) {
+					Character.isUpperCase(methodName.charAt(3))) {
 					propertyName =
 						methodName.substring(3, 4).toLowerCase() +
 						methodName.substring(4);
@@ -80,7 +80,7 @@ public class ReflectionInfo {
 					methods[i].getReturnType().equals(Boolean.TYPE) &&
                     parameterTypes.length == 0 &&
 					methodName.indexOf("is") == 0 &&
-					methodName.substring(2, 3).equals(methodName.substring(2, 3).toUpperCase())) {
+					Character.isUpperCase(methodName.charAt(2))) {
 					propertyName =
 						methodName.substring(2, 3).toLowerCase() +
 						methodName.substring(3);
