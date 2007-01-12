@@ -35,6 +35,8 @@ public class ObjectToClassConverter extends BaseTransformer implements
 		return ClassUtils.getClass(source);
 	}
 
+	// this isn't technically needed but will be faster than the default
+	// implementation in BaseTransformer
 	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
 		return destinationType == Class.class;
 	}
