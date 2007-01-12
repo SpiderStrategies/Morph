@@ -41,6 +41,7 @@ public class NumberToBooleanConverter extends BaseTransformer implements Convert
 		Locale locale) throws Exception {
 		
 		BigDecimal bigDecimal = new BigDecimal(source.toString());
+		// the .equals method doesn't work correctly for some reason, so use compareTo
 		return bigDecimal.compareTo(new BigDecimal(0)) == 0 ? Boolean.FALSE : Boolean.TRUE;
 	}
 
