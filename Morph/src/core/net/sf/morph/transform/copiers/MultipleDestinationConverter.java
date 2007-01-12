@@ -17,6 +17,8 @@ package net.sf.morph.transform.copiers;
 
 //import java.util.ArrayList;
 //import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import net.sf.morph.Defaults;
@@ -40,17 +42,18 @@ public class MultipleDestinationConverter extends BaseCompositeTransformer imple
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 
-//		Object[] components = getComponents();
-//		Class[] destTypes = getDestinationClassesForEachDestination();
-//		List destinationObjects = new ArrayList(components.length);
-//		for (int i=0; i<components.length; i++) {
-//			Converter converter = (Converter) components[i];
-//			Class destType = destTypes[i] == null ? Object.class : destTypes[i];
-//			Object converted = converter.convert(destType, source, locale);
-//			destinationObjects.add(converted);
-//		}
-		//huh? what did we just do?
-		return getContainerConverter().convert(destinationClass, source, locale);
+		// 
+		Object[] components = getComponents();
+		Class[] destTypes = getDestinationClassesForEachDestination();
+		List destinationObjects = new ArrayList(components.length);
+		for (int i=0; i<components.length; i++) {
+			Converter converter = (Converter) components[i];
+			//Class destType = destTypes[i] == null ? Object.class : destTypes[i];
+			Object converted = converter.convert(destTypes[i], source, locale);
+			destinationObjects.add(converted);
+		}
+
+		return getContainerConverter().convert(destinationClass, destinationObjects, locale);
 	}
 
 	public Class getComponentType() {
