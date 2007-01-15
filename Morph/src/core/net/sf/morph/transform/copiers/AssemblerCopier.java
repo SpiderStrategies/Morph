@@ -15,7 +15,6 @@
  */
 package net.sf.morph.transform.copiers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,7 +31,6 @@ import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.BaseCompositeTransformer;
-import net.sf.morph.util.ContainerUtils;
 
 /**
  * A copier that copies multiple source objects to a single destination object, implementing an "Assembler."
