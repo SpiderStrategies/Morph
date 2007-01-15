@@ -118,8 +118,9 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 	
 	public Class[] getReflectableClassesImpl() {
 		Set set = new HashSet();
-		for (int i=0; i<components.length; i++) {
-			Class[] reflectableClasses = ((Reflector) components[i]).getReflectableClasses();
+		Object[] reflectors = getComponents();
+		for (int i=0; i<reflectors.length; i++) {
+			Class[] reflectableClasses = ((Reflector) reflectors[i]).getReflectableClasses();
 			for (int j = 0; j < reflectableClasses.length; j++) {
 				set.add(reflectableClasses[j]);
 			}
