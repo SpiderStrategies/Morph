@@ -190,7 +190,28 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 				+ MutableIndexedContainerReflector.class.getName());
 		}
 	}
-	
+
+	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
+		// The code here for Iterators and Enumerations is not quite 
+		// as rigorous as it could be.  Being as rigorous as possible, we would
+		// take into account the possibility of converting from one type of
+		// Iterator to another type of Iterator or one type of Enumeration to
+		// another type of Enumeration.  That's kind of silly though because
+		// there aren't any stand-alone Iterator or Enumeration implementations
+		// that come with the JDK.  Thus, if any Iterator or Iterator subclass
+		// or Enumeration or Enumeration subclass is requested, we just return
+		// whatever type is most readily available.
+		boolean iter = Iterator.class.isAssignableFrom(destinationClass);
+		if (iter || Enumeration.class.isAssignableFrom(destinationClass)) {
+			// a newInstance call doesn't really make sense... just return the
+			// final Iterator that will be returned to the user of the
+			// ContainerCopier
+			Iterator iterator = getContainerReflector().getIterator(source);
+			return iter ? iterator : new IteratorEnumeration(iterator);
+		}
+		return super.convertImpl(destinationClass, source, locale);
+	}
+
 	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType)
 		throws TransformationException {
 		
@@ -256,27 +277,6 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 			Class containedType = ClassUtils.getContainedClass(destinationClass);
 			Object destination = ClassUtils.createArray(containedType, size);
 			return destination;
-		}
-		// The code here for Iterators and Enumerations is not quite 
-		// as rigorous as it could be.  Being as rigorous as possible, we would
-		// take into account the possibility of converting from one type of
-		// Iterator to another type of Iterator or one type of Enumeration to
-		// another type of Enumeration.  That's kind of silly though because
-		// there aren't any stand-alone Iterator or Enumeration implementations
-		// that come with the JDK.  Thus, if any Iterator or Iterator subclass
-		// or Enumeration or Enumeration subclass is requested, we just return
-		// whatever type is most readily available.
-		if (Iterator.class.isAssignableFrom(destinationClass)) {
-			// a newInstance call doesn't really make sense... just return the
-			// final Iterator that will be returned to the user of the
-			// ContainerCopier
-			return getContainerReflector().getIterator(source);
-		}
-		if (Enumeration.class.isAssignableFrom(destinationClass)) {
-			// a newInstance call doesn't really make sense... just return the
-			// final Enumeration that will be returned to the user of the
-			// ContainerCopier
-			return new IteratorEnumeration(getContainerReflector().getIterator(source));
 		}
 		return super.createNewInstanceImpl(destinationClass, source);
 	}
