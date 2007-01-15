@@ -54,7 +54,7 @@ import org.apache.commons.logging.LogFactory;
  * requiring subclasses to implement the methods in
  * {@link net.sf.morph.transform.Transformer}.</li>
  * <li>Provides protected methods that assist in the implementation of
- * transformers which are in turn composed of of other transformers.</li>
+ * transformers which are in turn composed of other transformers.</li>
  * <li>Optionally caches results of
  * {@link net.sf.morph.transform.DecoratedTransformer#isTransformable(Class, Class)}
  * for better performance. This feature is turned on by default</li>
