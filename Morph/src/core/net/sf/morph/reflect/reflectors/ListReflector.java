@@ -37,8 +37,8 @@ public class ListReflector
 
 	private static final Class[] REFLECTABLE_TYPES = new Class[] { List.class };
 
-	protected Object newInstanceImpl(Class interfaceClass) throws Exception {
-		return interfaceClass == List.class ? new ArrayList() : super.newInstanceImpl(interfaceClass);
+	protected Object newInstanceImpl(Class interfaceClass, Object parameters) throws Exception {
+		return interfaceClass == List.class ? new ArrayList() : super.newInstanceImpl(interfaceClass, parameters);
 	}
 
 	public Class[] getReflectableClassesImpl() {

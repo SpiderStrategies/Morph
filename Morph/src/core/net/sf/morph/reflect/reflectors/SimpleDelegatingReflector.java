@@ -194,9 +194,9 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 		return getMutableIndexedContainerReflector(container).set(container, index, propertyValue);
 	}
 
-	protected Object newInstanceImpl(Class clazz) throws Exception {
+	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
 		InstantiatingReflector reflector = getInstantiatingReflectorForClass(clazz);
-		return reflector.newInstance(clazz);
+		return reflector.newInstance(clazz, parameters);
 	}
 	
 	public boolean isReflectableImpl(Class reflectedType,

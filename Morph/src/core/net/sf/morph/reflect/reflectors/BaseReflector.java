@@ -252,7 +252,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 // instantiating reflector
 
-	public final Object newInstance(Class clazz) {
+	public final Object newInstance(Class clazz, Object parameters) {
 		if (clazz == null) {
 			throw new ReflectionException(
 				"You must specify the class for which a new instance is to be created");
@@ -264,28 +264,37 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 					+ ObjectUtils.getObjectDescription(this));
 		}
 		if (isPerformingLogging() && log.isTraceEnabled()) {
-			log.trace("Creating new instance of '" + ObjectUtils.getObjectDescription(clazz));
+			log.trace("Creating new instance of '" + ObjectUtils.getObjectDescription(clazz) + "(parameters " + ObjectUtils.getObjectDescription(parameters) + ")");
 		}
 
 		try {
-			return newInstanceImpl(clazz);
+			return newInstanceImpl(clazz, parameters);
 		}
 		catch (ReflectionException e) {
 			throw e;
 		}
 		catch (Exception e) {
 			throw new ReflectionException("Unable to create new instance of "
-				+ ObjectUtils.getObjectDescription(clazz), e);
+				+ ObjectUtils.getObjectDescription(clazz) + "(parameters " + ObjectUtils.getObjectDescription(parameters) + ")", e);
 		}
 	}
 
 	/**
+	 * This method will be removed in a subsequent release of Morph. Left in-place to flag subclasses that require modification.
+	 * 
+	 * @deprecated Use {@link #newInstanceImpl(Class, Object)} instead. Calls to this method will fail with an {@link UnsupportedOperationException}
+	 */
+	protected final Object newInstanceImpl(Class clazz) throws Exception {	
+		throw new UnsupportedOperationException("Deprecated method - use BaseReflector.newInstanceImpl(Class, Object) instead");
+	}
+	
+	/**
 	 * Implementation of
-	 * {@link net.sf.morph.reflect.InstantiatingReflector#newInstance(Class)}.
+	 * {@link net.sf.morph.reflect.InstantiatingReflector#newInstance(Class, Object)}.
 	 * Default implementation returns a new instance of the given class by
 	 * calling {@link Class#newInstance())}.
 	 */
-	protected Object newInstanceImpl(Class clazz) throws Exception {
+	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Creating new instance of "
 				+ ObjectUtils.getObjectDescription(clazz));

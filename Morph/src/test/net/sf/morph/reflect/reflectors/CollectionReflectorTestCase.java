@@ -97,8 +97,8 @@ public class CollectionReflectorTestCase extends
 	}
 	public void testNewInstance() {
 		// no exception should be thrown
-		getInstantiatingReflector().newInstance(Collection.class);
-		getInstantiatingReflector().newInstance(ArrayList.class);
+		getInstantiatingReflector().newInstance(Collection.class, null);
+		getInstantiatingReflector().newInstance(ArrayList.class, null);
 	}
 	
 

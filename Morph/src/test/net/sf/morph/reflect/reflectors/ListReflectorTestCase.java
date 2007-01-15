@@ -68,9 +68,9 @@ public class ListReflectorTestCase extends CollectionReflectorTestCase {
 	
 	public void testNewInstance() {
 		// no exception should be thrown
-		getInstantiatingReflector().newInstance(List.class);
-		getInstantiatingReflector().newInstance(ArrayList.class);
-		getInstantiatingReflector().newInstance(LinkedList.class);
+		getInstantiatingReflector().newInstance(List.class, null);
+		getInstantiatingReflector().newInstance(ArrayList.class, null);
+		getInstantiatingReflector().newInstance(LinkedList.class, null);
 	}
 	
 }

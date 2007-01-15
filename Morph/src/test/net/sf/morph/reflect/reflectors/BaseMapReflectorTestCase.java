@@ -81,8 +81,8 @@ public abstract class BaseMapReflectorTestCase extends BaseReflectorTestCase {
 	}
 
 	public void testNewInstance() {
-		getInstantiatingReflector().newInstance(Map.class);
-		getInstantiatingReflector().newInstance(SortedMap.class);
-		getInstantiatingReflector().newInstance(HashMap.class);
+		getInstantiatingReflector().newInstance(Map.class, null);
+		getInstantiatingReflector().newInstance(SortedMap.class, null);
+		getInstantiatingReflector().newInstance(HashMap.class, null);
 	}
 }

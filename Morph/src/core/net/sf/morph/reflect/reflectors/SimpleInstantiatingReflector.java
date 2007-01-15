@@ -61,13 +61,13 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 		return (Class[]) reflectableClasses.toArray(new Class[reflectableClasses.size()]);
 	}
 	
-	protected Object newInstanceImpl(Class requestedType) throws Exception {	
+	protected Object newInstanceImpl(Class requestedType, Object parameters) throws Exception {	
 		Class typeToInstantiate = TransformerUtils.getMappedDestinationType(
 				getRequestedToInstantiatedTypeMap(), requestedType);
 		if (typeToInstantiate == null) {
 			return requestedType;
 		}
-		return super.newInstanceImpl(typeToInstantiate);
+		return super.newInstanceImpl(typeToInstantiate, parameters);
 	}
 	
 	/**

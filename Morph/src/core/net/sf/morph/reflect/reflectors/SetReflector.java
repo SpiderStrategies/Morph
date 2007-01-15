@@ -33,8 +33,8 @@ public class SetReflector
 
 	private static final Class[] REFLECTABLE_TYPES = new Class[] { Set.class };
 
-	protected Object newInstanceImpl(Class interfaceClass) throws Exception {
-		return interfaceClass == Set.class ? new HashSet() : super.newInstanceImpl(interfaceClass);
+	protected Object newInstanceImpl(Class interfaceClass, Object parameters) throws Exception {
+		return interfaceClass == Set.class ? new HashSet() : super.newInstanceImpl(interfaceClass, parameters);
 	}
 
 	public Class[] getReflectableClassesImpl() {

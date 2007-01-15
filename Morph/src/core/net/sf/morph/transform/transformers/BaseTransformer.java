@@ -426,7 +426,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	protected Object createNewInstanceImpl(Class destinationClass, Object source) throws Exception {
 		if (CompositeUtils.isSpecializable(getReflector(), InstantiatingReflector.class)) {
 			try {
-				return getInstantiatingReflector().newInstance(destinationClass);
+				return getInstantiatingReflector().newInstance(destinationClass, source);
 			}
 			catch (Exception e) {
 				// write a warning to the log and fall back to the superclass'

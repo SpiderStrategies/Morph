@@ -1722,7 +1722,7 @@ public abstract class Morph {
 	 *             if an error occurrs
 	 */
 	public Object newInstance(Class clazz) throws ReflectionException {
-		return DEFAULT_INSTANTIATING_REFLECTOR.newInstance(clazz);
+		return DEFAULT_INSTANTIATING_REFLECTOR.newInstance(clazz, null);
 	}
 	
 	/**

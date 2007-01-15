@@ -47,8 +47,8 @@ public class SortedSetReflectorTestCase extends CollectionReflectorTestCase {
 	
 	public void testNewInstance() {
 		// no exception should be thrown
-		getInstantiatingReflector().newInstance(SortedSet.class);
-		getInstantiatingReflector().newInstance(TreeSet.class);
+		getInstantiatingReflector().newInstance(SortedSet.class, null);
+		getInstantiatingReflector().newInstance(TreeSet.class, null);
 	}
 	
 }

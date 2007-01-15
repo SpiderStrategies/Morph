@@ -59,8 +59,8 @@ public class CollectionReflector extends BaseContainerReflector implements Conta
 		return getCollection(container).iterator();
 	}
 
-	protected Object newInstanceImpl(Class clazz) throws Exception {
-		return clazz == Collection.class ? new ArrayList() : super.newInstanceImpl(clazz);
+	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
+		return clazz == Collection.class ? new ArrayList() : super.newInstanceImpl(clazz, parameters);
 	}
 
 	protected boolean addImpl(Object container, Object value) {

@@ -251,7 +251,7 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 		}
 	}
 	
-	protected Object newInstanceImpl(Class clazz) throws Exception {
+	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
 		return clazz.newInstance();
 	}
 	

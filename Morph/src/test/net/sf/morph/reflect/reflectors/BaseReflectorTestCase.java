@@ -93,19 +93,19 @@ public abstract class BaseReflectorTestCase extends TestCase {
 		if (canRunTest(InstantiatingReflector.class)) {
 			// test arguments
 			try {
-				getInstantiatingReflector().newInstance(null);
+				getInstantiatingReflector().newInstance(null, null);
 				fail("a class must be specified to instantiate; if one is not specified, an exception should be thrown");
 			}
 			catch (ReflectionException e) { }
 			
 			for (int i=0; i<reflectableObjects.size(); i++) {
-				getInstantiatingReflector().newInstance(reflectableObjects.get(i).getClass());
+				getInstantiatingReflector().newInstance(reflectableObjects.get(i).getClass(), null);
 			}
 			
 			if (nonReflectableObjects != null) {
 				for (int i=0; i<nonReflectableObjects.size(); i++) {
 					try {
-						getInstantiatingReflector().newInstance(nonReflectableObjects.get(i).getClass());
+						getInstantiatingReflector().newInstance(nonReflectableObjects.get(i).getClass(), null);
 						fail("If the object isn't reflectable, it shouldn't be instantiatable by this reflector");
 					}
 					catch (ReflectionException e) { }

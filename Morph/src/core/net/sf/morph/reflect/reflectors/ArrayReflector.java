@@ -71,7 +71,7 @@ public class ArrayReflector
 		return clazz.isArray();
 	}
 	
-	protected Object newInstanceImpl(Class clazz) throws Exception {
+	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
 		return ClassUtils.createArray(clazz.getComponentType(), 0);
 	}
 }

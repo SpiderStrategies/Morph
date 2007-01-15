@@ -123,14 +123,14 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		return REFLECTABLE_TYPES;
 	}
 
-	protected Object newInstanceImpl(Class interfaceClass) throws Exception {
+	protected Object newInstanceImpl(Class interfaceClass, Object parameters) throws Exception {
 		if (interfaceClass == Map.class) {
 			return new HashMap();
 		}
 		if (interfaceClass == SortedMap.class) {
 			return new TreeMap();
 		}
-		return super.newInstanceImpl(interfaceClass);
+		return super.newInstanceImpl(interfaceClass, parameters);
 	}
 	
 	protected boolean addImpl(Object container, Object value) throws Exception {

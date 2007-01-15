@@ -19,7 +19,10 @@ package net.sf.morph.reflect;
  * A reflector that can instantiate objects. This allows the reflector to pick
  * implementations for interfaces, instantiate arrays, etc. Only classes that
  * are reflectable by this reflector should be instantiable.
- * 
+ *
+ * <p>This reflector is designed to facilitate construction of both simple
+ * objects and objects that do not offer no-argument constructors.
+ *
  * @author Matt Sgarlata
  * @since Nov 27, 2004
  */
@@ -30,9 +33,13 @@ public interface InstantiatingReflector extends Reflector {
 	 * 
 	 * @param clazz
 	 *            the type for which we would like a new instance to be created
-	 * @throws ReflectionException
-	 *             if an error occurrs
+	 * @param parameters
+	 *            additional information that may be necessary for the implementation to
+	 *            create the required object (this may be null if the implementation does
+	 *            not require additional information or the particular object being
+	 *            requested does not require additional information)
+	 * @throws ReflectionException if an error occurs
 	 */
-	public Object newInstance(Class clazz) throws ReflectionException;
+	public Object newInstance(Class clazz, Object parameters) throws ReflectionException;
 
 }

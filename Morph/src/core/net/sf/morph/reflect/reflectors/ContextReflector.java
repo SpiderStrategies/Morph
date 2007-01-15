@@ -95,7 +95,7 @@ public class ContextReflector extends BaseBeanReflector implements Instantiating
 		getContext(bean).set(propertyName, value);
 	}
 
-	protected Object newInstanceImpl(Class clazz) throws Exception {
-		return clazz == Context.class ? new MapContext() : super.newInstanceImpl(clazz);
+	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
+		return clazz == Context.class ? new MapContext() : super.newInstanceImpl(clazz, parameters);
 	}
 }

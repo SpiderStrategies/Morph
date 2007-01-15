@@ -46,8 +46,8 @@ public class SetReflectorTestCase extends CollectionReflectorTestCase {
 
 	public void testNewInstance() {
 		// no exception should be thrown
-		getInstantiatingReflector().newInstance(Set.class);
-		getInstantiatingReflector().newInstance(HashSet.class);
+		getInstantiatingReflector().newInstance(Set.class, null);
+		getInstantiatingReflector().newInstance(HashSet.class, null);
 	}
 	
 }

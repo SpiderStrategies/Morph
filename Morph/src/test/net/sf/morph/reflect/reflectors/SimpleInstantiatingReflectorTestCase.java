@@ -61,11 +61,11 @@ public class SimpleInstantiatingReflectorTestCase extends BaseReflectorTestCase 
 	
 	public void testNewInstance() throws Exception {
 		// no exception should be thrown
-		getInstantiatingReflector().newInstance(Calendar.class);
-		getInstantiatingReflector().newInstance(GregorianCalendar.class);
+		getInstantiatingReflector().newInstance(Calendar.class, null);
+		getInstantiatingReflector().newInstance(GregorianCalendar.class, null);
 		
 		if (ClassUtils.isJdk14OrHigherPresent()) {
-			getInstantiatingReflector().newInstance(Class.forName("java.lang.CharSequence"));
+			getInstantiatingReflector().newInstance(Class.forName("java.lang.CharSequence"), null);
 		}
 	}
 

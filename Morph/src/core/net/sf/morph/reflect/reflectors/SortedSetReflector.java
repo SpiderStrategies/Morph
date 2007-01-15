@@ -37,8 +37,8 @@ public class SortedSetReflector
 		SortedSet.class
 	};
 
-	protected Object newInstanceImpl(Class interfaceClass) throws Exception {
-		return interfaceClass == SortedSet.class ? new TreeSet() : super.newInstanceImpl(interfaceClass);
+	protected Object newInstanceImpl(Class interfaceClass, Object parameters) throws Exception {
+		return interfaceClass == SortedSet.class ? new TreeSet() : super.newInstanceImpl(interfaceClass, parameters);
 	}
 
 	public Class[] getReflectableClassesImpl() {
