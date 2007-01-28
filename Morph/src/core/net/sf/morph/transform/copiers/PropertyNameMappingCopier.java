@@ -138,7 +138,7 @@ public class PropertyNameMappingCopier extends BasePropertyNameCopier {
             	(getLog().isWarnEnabled() || isErrorOnMissingProperty())) {
             	String message = "Failed to copy property '"
                     + sourceProperty + "' of " + ObjectUtils.getObjectDescription(source) + " to property '"
-                    + destinationProperty + "' of  " + destination;
+                    + destinationProperty + "' of  " + ObjectUtils.getObjectDescription(destination);
             	if (isErrorOnMissingProperty()) {
                     throw new TransformationException(message);
             	}
