@@ -15,9 +15,13 @@
  */
 package net.sf.morph.reflect.reflectors;
 
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.Iterator;
+
+import org.springframework.jdbc.support.JdbcUtils;
 
 import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.reflect.ContainerReflector;
@@ -25,12 +29,19 @@ import net.sf.morph.reflect.support.ResultSetIterator;
 import net.sf.morph.transform.TransformationException;
 
 /**
+ * <p>
  * Exposes the information in a ResultSet. This reflector can function both as a
  * container reflector and as a bean reflector. When functionining a container
  * reflector, this reflector exposes the rows in a ResultSet. As a bean
  * reflector, this reflector exposes the column names from a particular row of a
  * ResultSet as properties. The column names are always converted to all
  * lowercase.
+ * </p>
+ * 
+ * <p>
+ * Note: Code from the {@link #getImpl(Object, String)} method was taken from
+ * Spring's {@link JdbcUtils} class.
+ * </p>
  * 
  * @author Matt Sgarlata
  * @since Dec 18, 2004
@@ -89,19 +100,46 @@ public class ResultSetReflector
 			getIndexForColumn(bean, propertyName)));
 	}
 
-	protected boolean isReadableImpl(Object bean, String propertyName)
-		throws Exception {
-		return super.isReadable(bean, propertyName.toLowerCase());
-	}
-
 	protected boolean isWriteableImpl(Object bean, String propertyName)
 		throws Exception {
 		return getMetaData(bean).isWritable(
 			getIndexForColumn(bean, propertyName));
 	}
 
+	/**
+	 * NOTE: Code copied here from Spring's
+	 * {@link org.springframework.jdbc.support.JdbcUtils} class.
+	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
-		return getResultSet(bean).getObject(propertyName);
+		ResultSet rs = getResultSet(bean);
+		Object obj = rs.getObject(propertyName);		
+		if (obj instanceof Blob) {
+			obj = rs.getBytes(propertyName);
+		}
+		else if (obj instanceof Clob) {
+			obj = rs.getString(propertyName);
+		}
+		else if (obj != null && obj.getClass().getName().startsWith("oracle.sql.TIMESTAMP")) {
+			obj = rs.getTimestamp(propertyName);
+		}
+		else if (obj != null && obj.getClass().getName().startsWith("oracle.sql.DATE")) {
+			int index = getIndexForColumn(bean, propertyName);
+			String metaDataClassName = rs.getMetaData().getColumnClassName(index);
+			if ("java.sql.Timestamp".equals(metaDataClassName) ||
+					"oracle.sql.TIMESTAMP".equals(metaDataClassName)) {
+				obj = rs.getTimestamp(propertyName);
+			}
+			else {
+				obj = rs.getDate(propertyName);
+			}
+		}
+		else if (obj != null && obj instanceof java.sql.Date) {
+			int index = getIndexForColumn(bean, propertyName);
+			if ("java.sql.Timestamp".equals(rs.getMetaData().getColumnClassName(index))) {
+				obj = rs.getTimestamp(propertyName);
+			}
+		}
+		return obj;
 	}
 
 	protected void setImpl(Object bean, String propertyName, Object value)
