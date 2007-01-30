@@ -497,7 +497,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		int size = ((IndexedContainerReflector) this).getSize(bean);
 		try {
 			int index = (new Integer(propertyName)).intValue();
-			return index >= 0 && index <= size - 1;
+			return index >= 0 && index < size;
 		}
 		catch (NumberFormatException e) {
 			return false;
