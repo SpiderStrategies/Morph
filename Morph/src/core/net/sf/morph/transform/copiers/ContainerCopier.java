@@ -207,7 +207,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 			// final Iterator that will be returned to the user of the
 			// ContainerCopier
 			Iterator iterator = getContainerReflector().getIterator(source);
-			return iter ? iterator : new IteratorEnumeration(iterator);
+			return iter ? (Object) iterator : new IteratorEnumeration(iterator);
 		}
 		return super.convertImpl(destinationClass, source, locale);
 	}
