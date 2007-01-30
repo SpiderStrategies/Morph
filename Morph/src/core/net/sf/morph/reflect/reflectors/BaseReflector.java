@@ -346,7 +346,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			int size = ((IndexedContainerReflector) this).getSize(bean);
 			String[] propertyNames = new String[size];
 			for (int i=0; i<size; i++) {
-				propertyNames[i] = (new Integer(i)).toString();
+				propertyNames[i] = Integer.toString(i);
 			}
 			return propertyNames;
 		}
