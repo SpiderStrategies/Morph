@@ -25,6 +25,7 @@ import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.reflect.Reflector;
 import net.sf.morph.reflect.SizableReflector;
 import net.sf.morph.util.TestClass;
+import net.sf.morph.util.TestUtils;
 
 import org.apache.commons.beanutils.WrapDynaBean;
 
@@ -42,7 +43,7 @@ public class DynaBeanReflectorTestCase extends BaseReflectorTestCase {
 		// the BeanReflector.IMPLICIT_PROPERTY_CLASS is not included, because
 		// DynaBeans sometimes include this property and there's not really
 		// a way for us to distinguish between when the property was included
-		// because of Reflection on an underlying object and when a DynaClalss
+		// because of Reflection on an underlying object and when a DynaClass
 		// was created that explicitly had a class property defined
 		List list = new ArrayList();
 		list.add(SizableReflector.IMPLICIT_PROPERTY_SIZE);
@@ -78,7 +79,7 @@ public class DynaBeanReflectorTestCase extends BaseReflectorTestCase {
 			return;
 		}
 		Object value = getBeanReflector().get(bean, name);
-		
+		value = TestUtils.getDifferentInstance(getBeanReflector().getType(bean, name), value);
 		// if the property is writeable
 		if (getBeanReflector().isWriteable(bean, name) &&
 			!name.equals("class") &&

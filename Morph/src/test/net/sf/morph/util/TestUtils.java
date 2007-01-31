@@ -16,15 +16,18 @@
 package net.sf.morph.util;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import junit.framework.TestCase;
 import net.sf.composite.util.ObjectUtils;
@@ -39,29 +42,19 @@ import org.apache.commons.logging.LogFactory;
 public class TestUtils {
 
 	private static final Log log = LogFactory.getLog(TestUtils.class);
-	
+	private static final Class[] ONE_STRING = new Class[] { String.class };
+
 	public static boolean contains(Object[] array, Object object) {
-		if (object == null || array == null) {
-			return false;
-		}
-		else {
-			for (int i=0; i<array.length; i++) {
-				if (equals(array[i], object)) {
-					return true;
-				}
+		for (int i=0; array != null && i<array.length; i++) {
+			if (equals(array[i], object)) {
+				return true;
 			}
-			return false;
 		}
+		return false;
 	}
-	
-	
+
 	public static boolean contains(Collection collection, Object value) {
-		if (collection == null) {
-			return false;
-		}
-		else {
-			return contains(collection.toArray(), value);
-		}			
+		return collection != null && contains(collection.toArray(), value);
 	}
 
 	public static boolean equals(Object object1, Object object2) {
@@ -70,127 +63,66 @@ public class TestUtils {
 				+ ObjectUtils.getObjectDescription(object1) + " and "
 				+ ObjectUtils.getObjectDescription(object2));
 		}
-		// if both objects are null they are equal
-		if (object1 == null && object2 == null) {
+		// if both objects are == (incl. null) they are equal
+		if (object1 == object2) {
 			return true;
 		}
 		// if one object is null and the other is not, the two objects aren't
 		// equal
-		else if (object1 == null || object2 == null) {
+		if (object1 == null || object2 == null) {
 			return false;
 		}
-		else if (object1 instanceof Calendar && object2 instanceof Calendar) {
+		if (object1 instanceof Calendar && object2 instanceof Calendar) {
 			return equals(((Calendar) object1).getTime(), ((Calendar) object2).getTime());
-//			Date date1 = (Date) object1;
-//			Date date2 = (Date) object2;
-//			return date1.getTime() == date2.getTime();
 		}
-		else if (object1 instanceof Comparable && object2 instanceof Comparable &&
-			object1.getClass().equals(object2.getClass())) {
-			Comparable comparable1 = (Comparable) object1;
-			Comparable comparable2 = (Comparable) object2;
-			return comparable1.compareTo(comparable2) == 0;
+		if (object1 instanceof Comparable && object1.getClass() == object2.getClass()) {
+			return ((Comparable) object1).compareTo(object2) == 0;
 		}
-		else if (object1 instanceof Map.Entry && object2 instanceof Map.Entry) {
-			if (!object1.getClass().equals(object2.getClass())) {
+		if (object1 instanceof Map.Entry && object2 instanceof Map.Entry) {
+			if (object1.getClass() != object2.getClass()) {
 				return false;
 			}
-			else {
-				Map.Entry me1 = (Map.Entry) object1;
-				Map.Entry me2 = (Map.Entry) object2;
-				if (equals(me1.getKey(), me2.getKey()) &&
-					equals(me1.getValue(), me2.getValue())) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
+			Map.Entry me1 = (Map.Entry) object1;
+			Map.Entry me2 = (Map.Entry) object2;
+			return equals(me1.getKey(), me2.getKey())
+					&& equals(me1.getValue(), me2.getValue());
 		}
-		// if both objets are arrays
-		else if (object1.getClass().isArray() && object2.getClass().isArray()) {
+		// if both objects are arrays
+		if (object1.getClass().isArray() && object2.getClass().isArray()) {
 			// if the arrays aren't of the same class, the two objects aren't
 			// equal
-			if (!object1.getClass().equals(object2.getClass())) {
+			if (object1.getClass() != object2.getClass()) {
 				return false;
 			}
-			else { // same type of array
-				// if the arrays are different sizes, they aren't equal
-				if (Array.getLength(object1) != Array.getLength(object2)) {
-					return false;
-				}
-				else { // arrays are the same size
-					// iterate through the arrays and check if all elements are
-					// equal
-					for (int i=0; i<Array.getLength(object1); i++) {
-						// if both of the items we are examining are null
-						if (Array.get(object1, i) == null && Array.get(object2, i) == null) {
-							// keep looping through the array (do nothing here)
-						}
-						// if one item is null and the other isn't
-						else if (Array.get(object1, i) == null || Array.get(object2, i) == null) {
-							// the arrays aren't equal							
-							return false;
-						}
-						// if one item isn't equal to the other
-						else if (!TestUtils.equals(Array.get(object1, i), Array.get(object2, i))) {
-							// the arrays aren't equal
-							return false;
-						}
-					}
-					// if we iterated through both arrays and found no items
-					// that weren't equal to each other, the collections are
-					// equal
-					return true;
-				}
-			}
-		}
-		else if (object1 instanceof Set && object2 instanceof Set) {
-			// if the sets aren't of the same type, they aren't equal
-			if (!object1.getClass().equals(object2.getClass())) {
+			// else, same type of array
+			// if the arrays are different sizes, they aren't equal
+			if (Array.getLength(object1) != Array.getLength(object2)) {
 				return false;
 			}
-			else { // same type of set
-				Set set1 = (Set) object1;
-				Set set2 = (Set) object2;
-				// if the sets aren't the same size, they aren't equal
-				if (set1.size() != set2.size()) {
+			// else arrays are the same size
+			// iterate through the arrays and check if all elements are
+			// equal
+			for (int i=0; i<Array.getLength(object1); i++) {
+				// if one item isn't equal to the other
+				if (!equals(Array.get(object1, i), Array.get(object2, i))) {
+					// the arrays aren't equal
 					return false;
 				}
-				else { // sets are the same size
-					// if both the sets are empty, they are equal
-					if (set1.isEmpty() && set2.isEmpty()) {
-						return true;
-					}
-					else { // sets aren't empty
-						Iterator iterator1 = set1.iterator();
-						while (iterator1.hasNext()) {
-							if (!contains(set2, iterator1.next())) {
-								return false;
-							}
-						}
-						return true;
-					}
-				}
 			}
+			// if we iterated through both arrays and found no items
+			// that weren't equal to each other, the collections are
+			// equal
+			return true;
 		}
-		else if (object1 instanceof Iterator && object2 instanceof Iterator) {
+		if (object1 instanceof Iterator && object2 instanceof Iterator) {
 			Iterator iterator1 = (Iterator) object1;
 			Iterator iterator2 = (Iterator) object2;
 			while (iterator1.hasNext()) {
-				Object item1 = iterator1.next();
-				Object item2 = iterator2.next();
-				// if both of the items we are examining are null
-				if (item1 == null && item2 == null) {
-					// keep looping through the array (do nothing here)
-				}
-				// if one item is null and the other isn't
-				else if (item1 == null || item2 == null) {
-					// the arrays aren't equal							
+				if (!iterator2.hasNext()) {
 					return false;
 				}
 				// if one item isn't equal to the other
-				else if (!equals(item1, item2)) {
+				if (!equals(iterator1.next(), iterator2.next())) {
 					// the arrays aren't equal
 					return false;
 				}
@@ -198,58 +130,59 @@ public class TestUtils {
 			// if we iterated through both collections and found
 			// no items that weren't equal to each other, the
 			// collections are equal
-			return true;
+			return !iterator2.hasNext();
 		}
-		else if (object1 instanceof Enumeration && object2 instanceof Enumeration) {
-			Enumeration e1 = (Enumeration) object1;
-			Enumeration e2 = (Enumeration) object2;
-			return equals(new EnumerationIterator(e1), new EnumerationIterator(e2));
+		if (object1 instanceof Enumeration && object2 instanceof Enumeration) {
+			return equals(new EnumerationIterator((Enumeration) object1),
+					new EnumerationIterator((Enumeration) object2));
 		}
-		else if ((object1 instanceof List && object2 instanceof List) ||
+		if ((object1 instanceof List && object2 instanceof List) ||
 			(object1 instanceof SortedSet && object2 instanceof SortedSet)) {
 			// if the collections aren't of the same type, they aren't equal
-			if (!object1.getClass().equals(object2.getClass())) {
+			if (object1.getClass() != object2.getClass()) {
 				return false;
 			}
-			else { // same type of collection
-				Collection collection1 = (Collection) object1;
-				Collection collection2 = (Collection) object2;
-				// if the collections aren't the same size, they aren't equal
-				if (collection1.size() != collection2.size()) {
+			// else same type of collection
+			return equals(((Collection) object1).iterator(), ((Collection) object2).iterator());
+		}
+		if (object1 instanceof Set && object2 instanceof Set) {
+			// if the sets aren't of the same type, they aren't equal
+			if (object1.getClass() != object2.getClass()) {
+				return false;
+			}
+			// else same type of set
+			Set set1 = (Set) object1;
+			Set set2 = (Set) object2;
+			// if the sets aren't the same size, they aren't equal
+			if (set1.size() != set2.size()) {
+				return false;
+			}
+			// else sets are the same size
+			Iterator iterator1 = set1.iterator();
+			while (iterator1.hasNext()) {
+				if (!contains(set2, iterator1.next())) {
 					return false;
 				}
-				else { // collections are the same size
-					// if both the collections are empty, they are equal
-					if (collection1.isEmpty() && collection2.isEmpty()) {
-						return true;
-					}
-					else { // collections aren't empty
-						return equals(collection1.iterator(), collection2.iterator());
-					}
-				}
 			}
+			return true;
 		}
-		else if (object1 instanceof Map && object2 instanceof Map) {
+		if (object1 instanceof Map && object2 instanceof Map) {
 			return equals(((Map) object1).entrySet(), ((Map) object2).entrySet());
 		}
-		else if (object1.getClass().equals(object2.getClass()) &&
-			object1 instanceof StringBuffer) {
+		if (object1.getClass() == object2.getClass() && object1 instanceof StringBuffer) {
 			return object1.toString().equals(object2.toString());
 		}
 		// for primitives, use their equals methods
-		else if (object1.getClass().equals(object2.getClass()) &&
-			(object1 instanceof Date || object1 instanceof Calendar ||
-			object1 instanceof String || object1 instanceof Number ||
-			object1 instanceof Boolean || object1 instanceof StringBuffer ||
+		if (object1.getClass() == object2.getClass() &&
+			(object1 instanceof String || object1 instanceof Number ||
+			object1 instanceof Boolean || //object1 instanceof StringBuffer ||
 			object1 instanceof Character)) {
 			return object1.equals(object2);
 		}
 		// for non-primitives, compare field-by-field
-		else {
-			return MorphEqualsBuilder.reflectionEquals(object1, object2);
-		}
+		return MorphEqualsBuilder.reflectionEquals(object1, object2);
 	}
-	
+
 	public static void assertEquals(Object expected, Object actual) {
 		TestCase.assertTrue("Expected " + 
 			ObjectUtils.getObjectDescription(expected) + " but was "
@@ -257,43 +190,66 @@ public class TestUtils {
 				actual));
 	}
 
-
 	public static Object getInstance(Class type) throws InstantiationException, IllegalAccessException {
+		return getDifferentInstance(type, null);
+	}
+
+	/**
+	 * Return a "not-same" instance.
+	 * @param type
+	 * @param o
+	 * @return
+	 */
+	public static Object getDifferentInstance(Class type, Object o) {
 		if (type == null) {
 			throw new IllegalArgumentException("Non-null type must be specified");
 		}
-		if (type.isPrimitive()) {
-			if (Long.TYPE.equals(type)) {
-				return new Long(0);
-			}
-			else if (Integer.TYPE.equals(type)) {
-				return new Integer(0);
-			}
-			else if (type.equals(Short.TYPE)) {
-				return new Short("0");
-			}
-			else if (type.equals(Character.TYPE)) {
-				return new Character('0');
-			}
-			else if (type.equals(Byte.TYPE)) {
-				return new Byte("0");
-			}
-			else if (type.equals(Double.TYPE)) {
-				return new Double(0);
-			}
-			else if (type.equals(Float.TYPE)) {
-				return new Float(0);
-			}
-			else if (type.equals(Boolean.TYPE)) {
-				return Boolean.FALSE;
-			}
-			else { // shouldn't ever make it here
-				throw new IllegalStateException("The supplied type, '" + ObjectUtils.getObjectDescription(type) + "' is not one of the primitive types defined as of J2SE 1.5");
+		type = wrapPrimitive(type);
+		if (o != null && !type.isInstance(o)) {
+			throw new IllegalArgumentException("Negative example object should be of type " + type);
+		}
+		if (type == Number.class) {
+			type = Integer.class;
+		}
+		if (Number.class.isAssignableFrom(type)) {
+			byte b = (byte) (o == null ? 0 : ((Number) o).byteValue() + 1);
+			try {
+				return type.getConstructor(ONE_STRING).newInstance(new Object[] { Byte.toString(b) });
+			} catch (Exception e) {
+				throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
 			}
 		}
-		else {
-			return ClassUtils.newInstance(type);
+		if (type == Character.class) {
+			char c = (char) (o == null ? 0 : ((Character) o).charValue() + 1);
+			return new Character(c);
 		}
+		if (type == Boolean.class) {
+			return o == Boolean.TRUE ? Boolean.FALSE : Boolean.TRUE;
+		}
+		if (type.isArray()) {
+			return Array.newInstance(type.getComponentType(), 0);
+		}
+		if (type == Class.class) {
+			return o == Object.class ? Class.class : Object.class;
+		}
+		return ClassUtils.newInstance(convertCommonInterfaces(type));
 	}
 
+	private static Class wrapPrimitive(Class type) {
+		return type == Integer.TYPE ? Integer.class
+				: type == Long.TYPE ? Long.class
+						: type == Short.TYPE ? Short.class
+								: type == Character.TYPE ? Character.class
+										: type == Byte.TYPE ? Byte.class
+												: type == Double.TYPE ? Double.class
+														: type == Float.TYPE ? Float.class
+																: type == Boolean.TYPE ? Boolean.class
+																		: type;
+	}
+
+	private static Class convertCommonInterfaces(Class type) {
+		return type == Map.class ? HashMap.class : type == Set.class ? HashSet.class
+				: type == SortedSet.class ? TreeSet.class : Collection.class
+						.isAssignableFrom(type) ? ArrayList.class : type;
+	}
 }

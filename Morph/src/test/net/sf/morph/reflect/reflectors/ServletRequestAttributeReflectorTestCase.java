@@ -31,7 +31,9 @@ public class ServletRequestAttributeReflectorTestCase extends
 	}
 
 	public void testSetNull() {
+		MockHttpServletRequest req = new MockHttpServletRequest();
+		req.setAttribute("test", "non-null");
 		// this should not throw an exception
-		getBeanReflector().set(new MockHttpServletRequest(), "test", null);
+		getBeanReflector().set(req, "test", null);
 	}
 }

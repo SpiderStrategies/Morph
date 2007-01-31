@@ -257,9 +257,12 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	 *         <code>false</code>, otherwise
 	 */
 	public static boolean isImmutable(Class destinationType) {
-		return destinationType.isPrimitive() ||
-			Number.class.isAssignableFrom(destinationType) ||
-			String.class.isAssignableFrom(destinationType);
+		return destinationType != null && (
+				destinationType.isPrimitive() ||
+				Number.class.isAssignableFrom(destinationType) ||
+				String.class.isAssignableFrom(destinationType)
+			);
+		//TODO add Boolean, Character
 	}
 
 //	public static Class inheritanceIntersection(Class[] types) {

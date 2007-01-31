@@ -369,14 +369,11 @@ public abstract class BaseReflectorTestCase extends TestCase {
 			// loop through all the reflectable objects
 			for (int i=0; i<reflectableObjects.size(); i++) {
 				Object reflectable = reflectableObjects.get(i);
-				if (ClassUtils.inheritanceContains(getMutableIndexedReflector().getReflectableClasses(), reflectable.getClass())) {
-					for (int j=0; j<getSizableReflector().getSize(reflectable); j++) {
-						if (reflectable == null || !getContainerReflector().getContainedType(reflectable.getClass()).isPrimitive()) {
-							getMutableIndexedReflector().set(reflectable, j, null);
-						}
-						else {
-							getMutableIndexedReflector().set(reflectable, j, TestUtils.getInstance(ClassUtils.getContainedClass(reflectable.getClass())));
-						}
+				MutableIndexedContainerReflector reflector = getMutableIndexedReflector();
+				if (ClassUtils.inheritanceContains(reflector.getReflectableClasses(), reflectable.getClass())) {
+					for (int j=0; j<reflector.getSize(reflectable); j++) {
+						Class type = reflector.getContainedType(reflectable.getClass());
+						reflector.set(reflectable, j, TestUtils.getDifferentInstance(type, reflector.get(reflectable, j)));
 					}
 				}
 			}
@@ -550,23 +547,18 @@ public abstract class BaseReflectorTestCase extends TestCase {
 	}
 	
 	protected void doTestReadableProperty(Object bean, String name) throws ReflectionException {
-		Object value = getBeanReflector().get(bean, name);
-		
-		// if the property is writeable
-		if (getBeanReflector().isWriteable(bean, name)) {
-			// make sure the set method works
-			getBeanReflector().set(bean, name, value);
-		}
-		else {
-			// make sure the set method doesn't work
-			try {
-				getBeanReflector().set(bean, name, value);
-				fail("The property shouldn't be writeable");
-			}
-			catch (ReflectionException e) { }
+		BeanReflector reflector = getBeanReflector();
+
+		Object value = reflector.get(bean, name);
+
+		try {
+			reflector.set(bean, name, TestUtils.getDifferentInstance(reflector.getType(bean, name), value));
+			assertTrue("able to set non-writeable property " + name, reflector.isWriteable(bean, name));
+		} catch (ReflectionException e) {
+			assertFalse("unable to set writeable property " + name, reflector.isWriteable(bean, name));
 		}
 	}
-	
+
 	protected void doTestImplicitProperties(Object bean, String[] propertyNames) throws ReflectionException {
 		// test out the implicit properties
 		for (int j=0; j<implicitPropertyNames.size(); j++) {
