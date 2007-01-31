@@ -528,12 +528,6 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		}
 		checkIsReflectable(bean);
 
-		if (!isWriteable(bean, propertyName)) {
-			throw new ReflectionException("The property '" + propertyName
-				+ "' is not writeable in bean "
-				+ ObjectUtils.getObjectDescription(bean));
-		}
-
 		try { //don't bother setting if already same or immutable and equal
 			Object currentValue = get(bean, propertyName);
 			if (propertyValue == currentValue
@@ -547,6 +541,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				log.trace("Ignoring exception encountered getting property " + propertyName
 						+ " for object " + ObjectUtils.getObjectDescription(bean));
 			}
+		}
+
+		if (!isWriteable(bean, propertyName)) {
+			throw new ReflectionException("The property '" + propertyName
+				+ "' is not writeable in bean "
+				+ ObjectUtils.getObjectDescription(bean));
 		}
 
 		try {

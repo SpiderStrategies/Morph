@@ -224,7 +224,7 @@ public class TestUtils {
 			return new Character(c);
 		}
 		if (type == Boolean.class) {
-			return o == Boolean.TRUE ? Boolean.FALSE : Boolean.TRUE;
+			return o != null && ((Boolean) o).booleanValue() ? Boolean.FALSE : Boolean.TRUE;
 		}
 		if (type.isArray()) {
 			return Array.newInstance(type.getComponentType(), 0);
