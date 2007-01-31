@@ -15,6 +15,15 @@
  */
 package net.sf.morph.util;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.MorphException;
 import net.sf.morph.reflect.ReflectionException;
@@ -22,7 +31,7 @@ import net.sf.morph.transform.TransformationException;
 
 /**
  * Class manipulation utilities.  Note that some code was copied from the
- * Spring framework.
+ * Spring framework.  Some other code was copied from Apache Ant.
  * 
  * @author Matt Sgarlata
  * @author Keith Donald
@@ -31,24 +40,12 @@ import net.sf.morph.transform.TransformationException;
  * @since Nov 6, 2004
  */
 public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
-	
-	/**
-	 * Suffix for array class name.  "Borrowed" from the Spring framework.  
-	 */
-	public static final String ARRAY_SUFFIX = "[]";
 
-	/**
-	 * All primitive classes.  "Borrowed" from the Spring framework.
-	 */
-	public static Class[] PRIMITIVE_TYPES = { boolean.class, byte.class,
-		char.class, short.class, int.class, long.class, float.class,
-		double.class };
-	
 	/**
 	 * All the base array classes.  Multidimensional arrays are subclasses of
 	 * these fundamental array types.
 	 */
-	public static Class[] ARRAY_TYPES = {
+	public static final Class[] ARRAY_TYPES = {
 		Object[].class,
 		long[].class,
 		int[].class,
@@ -59,10 +56,37 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 		float[].class,
 		boolean[].class
 	};
-	
+
+	private static final Set IMMUTABLE_TYPES;
+	private static final Map PRIMITIVE_TYPE_MAP;
+
+	static {
+		//from Ant:
+		Class[] primitives = {
+				Boolean.TYPE, Byte.TYPE, Character.TYPE, Short.TYPE, Integer.TYPE,
+				Long.TYPE, Float.TYPE, Double.TYPE };
+		Class[] wrappers = {
+				Boolean.class, Byte.class, Character.class, Short.class, Integer.class,
+				Long.class, Float.class, Double.class };
+		Map ptm = new HashMap(8);
+		for (int i = 0; i < primitives.length; i++) {
+			ptm.put(primitives[i], wrappers[i]);
+		}
+		PRIMITIVE_TYPE_MAP = Collections.unmodifiableMap(ptm);
+
+		//we couldn't use all Numbers for immutables even if we wanted to:
+		//Java 1.6 adds AtomicInteger and AtomicLong, which ARE mutable!
+		Set immutable = new HashSet(19);
+		immutable.addAll(Arrays.asList(primitives));
+		immutable.addAll(Arrays.asList(wrappers));
+		immutable.add(String.class);
+		immutable.add(BigInteger.class);
+		immutable.add(BigDecimal.class);
+		IMMUTABLE_TYPES = Collections.unmodifiableSet(immutable);
+	}
+
 	/**
-	 * Returns an array version of the given class (for example, converts Long
-	 * to Long[]).
+	 * Returns an array version of the given class (for example, converts Long to Long[]).
 	 */
 	public static Class getArrayClass(Class componentType) {
 		return createArray(componentType, 0).getClass();
@@ -179,24 +203,6 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	public static boolean isVelocityPresent() {
 		return isClassPresent("org.apache.velocity.VelocityContext");
 	}
-	
-	/**
-	 * Determines if the given <code>object</code> is a primitive (int, long,
-	 * etc).
-	 * 
-	 * @param object
-	 *            the object to test
-	 * @return <code>true</code> if the object is a primitive or <br>
-	 *         <code>false</code>, otherwise
-	 * @throws IllegalArgumentException
-	 *             if <code>object</code> is <code>null</code>.
-	 */
-	public static boolean isPrimitive(Object object) {
-		if (object == null) {
-			throw new IllegalArgumentException("Object cannot be null");
-		}
-		return ContainerUtils.contains(PRIMITIVE_TYPES, object.getClass());
-	}
 
 	/**
 	 * Determines if <code>type</code> is equal to or a subtype of any of the
@@ -248,21 +254,50 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	/**
 	 * Determines whether the given <code>destinationType</code> is one of the
 	 * primitive immutable types provided by the JDK (i.e. a Number or a
-	 * String).
+	 * String).  Note that JDK 1.6 adds AtomicLong and AtomicInteger, which
+	 * are <em>not</em> immutable.
 	 * 
 	 * @param destinationType
 	 *            the type to examine
-	 * @return <code>true</code> if the <code>destinationType</code> is a
+	 * @return <code>true</code> if the <code>destinationType</code> is an immutable
 	 *         number or a String or <br>
 	 *         <code>false</code>, otherwise
 	 */
 	public static boolean isImmutable(Class destinationType) {
-		return destinationType != null && (
-				destinationType.isPrimitive() ||
-				Number.class.isAssignableFrom(destinationType) ||
-				String.class.isAssignableFrom(destinationType)
-			);
-		//TODO add Boolean, Character
+		return IMMUTABLE_TYPES.contains(destinationType);
+	}
+
+	/**
+	 * Get the known immutable types.
+	 * @return Class[]
+	 */
+	public static Class[] getImmutableTypes() {
+		return (Class[]) IMMUTABLE_TYPES.toArray(new Class[IMMUTABLE_TYPES.size()]);
+	}
+
+	/**
+	 * Get the wrapper type for the specified class (if any).
+	 * @param c a (presumably primitive) Class.
+	 * @return the wrapper class for <code>c</code>, if <code>c</code> is primitive, else null. 
+	 */
+	public static Class getPrimitiveWrapper(Class c) {
+		return (Class) PRIMITIVE_TYPE_MAP.get(c);
+	}
+
+	/**
+	 * Get all the primitive classes.
+	 * @return Class[]
+	 */
+	public static Class[] getPrimitiveTypes() {
+		return (Class[]) PRIMITIVE_TYPE_MAP.keySet().toArray(new Class[PRIMITIVE_TYPE_MAP.size()]);
+	}
+
+	/**
+	 * Get all the primitive wrapper classes.
+	 * @return Class[]
+	 */
+	public static Class[] getWrapperTypes() {
+		return (Class[]) PRIMITIVE_TYPE_MAP.values().toArray(new Class[PRIMITIVE_TYPE_MAP.size()]);
 	}
 
 //	public static Class inheritanceIntersection(Class[] types) {

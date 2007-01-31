@@ -15,6 +15,8 @@
  */
 package net.sf.morph.transform.converters;
 
+import net.sf.morph.util.ClassUtils;
+
 /**
  * An identity converter that only converts immutable types.
  * 
@@ -23,12 +25,8 @@ package net.sf.morph.transform.converters;
  */
 public class ImmutableTypesOnlyIdentityConverter extends IdentityConverter {
 
-	public static final Class[] IMMUTABLE_TYPES = {
-		boolean.class, byte.class,
-			char.class, short.class, int.class, long.class, float.class,
-			double.class, null, Number.class, String.class, Boolean.class,
-			Character.class };
-	
+	private static final Class[] IMMUTABLE_TYPES = ClassUtils.getImmutableTypes();
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return IMMUTABLE_TYPES;
 	}
@@ -36,5 +34,5 @@ public class ImmutableTypesOnlyIdentityConverter extends IdentityConverter {
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return IMMUTABLE_TYPES;
 	}
-	
+
 }

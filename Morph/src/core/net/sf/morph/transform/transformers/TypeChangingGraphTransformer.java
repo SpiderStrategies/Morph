@@ -27,9 +27,9 @@ import net.sf.morph.reflect.reflectors.SimpleInstantiatingReflector;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.converters.IdentityConverter;
-import net.sf.morph.transform.converters.ImmutableTypesOnlyIdentityConverter;
 import net.sf.morph.transform.copiers.ContainerCopier;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopier;
+import net.sf.morph.util.ClassUtils;
 import net.sf.morph.util.TransformerUtils;
 import net.sf.morph.util.TypeMap;
 
@@ -112,9 +112,9 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 		pnmc.setReflector(reflector);
 		
 		IdentityConverter identityConverter = getIdentityConverter();
-		identityConverter.setSourceClasses(ImmutableTypesOnlyIdentityConverter.IMMUTABLE_TYPES);
-		identityConverter.setDestinationClasses(ImmutableTypesOnlyIdentityConverter.IMMUTABLE_TYPES);
-		
+		identityConverter.setSourceClasses(ClassUtils.getImmutableTypes());
+		identityConverter.setDestinationClasses(ClassUtils.getImmutableTypes());
+
 		this.setReflector(reflector);
 	}
 	

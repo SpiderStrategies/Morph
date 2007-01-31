@@ -204,7 +204,9 @@ public class TestUtils {
 		if (type == null) {
 			throw new IllegalArgumentException("Non-null type must be specified");
 		}
-		type = wrapPrimitive(type);
+		if (type.isPrimitive()) {
+			type = ClassUtils.getPrimitiveWrapper(type);
+		}
 		if (o != null && !type.isInstance(o)) {
 			throw new IllegalArgumentException("Negative example object should be of type " + type);
 		}
@@ -233,18 +235,6 @@ public class TestUtils {
 			return o == Object.class ? Class.class : Object.class;
 		}
 		return ClassUtils.newInstance(convertCommonInterfaces(type));
-	}
-
-	private static Class wrapPrimitive(Class type) {
-		return type == Integer.TYPE ? Integer.class
-				: type == Long.TYPE ? Long.class
-						: type == Short.TYPE ? Short.class
-								: type == Character.TYPE ? Character.class
-										: type == Byte.TYPE ? Byte.class
-												: type == Double.TYPE ? Double.class
-														: type == Float.TYPE ? Float.class
-																: type == Boolean.TYPE ? Boolean.class
-																		: type;
 	}
 
 	private static Class convertCommonInterfaces(Class type) {
