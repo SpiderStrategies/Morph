@@ -20,7 +20,7 @@ import java.util.Locale;
 
 /**
  * An informal test outside of JUnit that compares the speed of Morph to doing
- * primative conversions manually.
+ * primitive conversions manually.
  * 
  * @author Matt Sgarlata
  * @since Feb 2, 2006
