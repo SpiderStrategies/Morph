@@ -281,10 +281,6 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 		return super.createNewInstanceImpl(destinationClass, source);
 	}
 
-	public Object createNewInstance(Class destinationClass, Object source) {
-		return super.createNewInstance(destinationClass, source);
-	}
-
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		Set set = new HashSet();
 		set.addAll(Arrays.asList(getGrowableContainerReflector().getReflectableClasses()));
