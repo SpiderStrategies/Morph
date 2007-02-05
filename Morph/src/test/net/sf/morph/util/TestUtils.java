@@ -160,7 +160,8 @@ public class TestUtils {
 			// else sets are the same size
 			Iterator iterator1 = set1.iterator();
 			while (iterator1.hasNext()) {
-				if (!contains(set2, iterator1.next())) {
+				Object next = iterator1.next();
+				if (!contains(set2, next)) {
 					return false;
 				}
 			}
