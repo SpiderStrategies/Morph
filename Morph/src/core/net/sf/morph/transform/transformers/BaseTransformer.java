@@ -334,7 +334,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 		Object reuseableSource = createReusableSource(destinationClass, source);
-		Object newInstance = createNewInstanceImpl(destinationClass, reuseableSource);
+		Object newInstance = createNewInstance(destinationClass, reuseableSource);
 		copyImpl(newInstance, reuseableSource, locale, Converter.TRANSFORMATION_TYPE_CONVERT);
 		return newInstance;
 	}
