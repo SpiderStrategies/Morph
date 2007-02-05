@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.morph.transform.Copier;
+import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.converters.BaseConverterTestCase;
 import net.sf.morph.util.TestClass;
@@ -37,7 +38,12 @@ public class PropertyNameMatchingCopierTestCase extends BaseConverterTestCase {
 	public PropertyNameMatchingCopierTestCase(String name) {
 		super(name);
 	}
-	
+
+	protected void setUp() throws Exception {
+		super.setUp();
+		copier = (Copier) transformer;
+	}
+
 	private void doCopyTest1(Object object, Map map) {
 		Map generatedMap = new HashMap();
 		copier.copy(generatedMap, object, null);
@@ -63,7 +69,7 @@ public class PropertyNameMatchingCopierTestCase extends BaseConverterTestCase {
 		TestUtils.assertEquals(generatedObject, object);
 	}
 	
-	public void doCopyTest() {
+	public void testCopy() {
 		doCopyTest1(TestClass.getEmptyObject(), TestClass.getEmptyMap());
 		doCopyTest1(TestClass.getPartialObject(), TestClass.getPartialMap());
 		doCopyTest1(TestClass.getFullObject(), TestClass.getFullMap());
@@ -74,11 +80,21 @@ public class PropertyNameMatchingCopierTestCase extends BaseConverterTestCase {
 
 		doCopyTest3(TestClass.getEmptyObject(), TestClass.getEmptyMap());
 		doCopyTest3(TestClass.getPartialObject(), TestClass.getPartialMap());
-		doCopyTest3(TestClass.getFullObject(), TestClass.getFullMap());
+		try {
+			doCopyTest3(TestClass.getFullObject(), TestClass.getFullMap());
+			fail("should fail because funkyArray is null");
+		} catch (TransformationException e) {
+			assertTrue(e.getCause().getMessage().contains("funkyArray"));
+		}
 
 		doCopyTest4(TestClass.getEmptyObject(), TestClass.getEmptyMap());
 		doCopyTest4(TestClass.getPartialObject(), TestClass.getPartialMap());
-		doCopyTest4(TestClass.getFullObject(), TestClass.getFullMap());
+		try {
+			doCopyTest4(TestClass.getFullObject(), TestClass.getFullMap());
+			fail("should fail because funkyArray is null");
+		} catch (TransformationException e) {
+			assertTrue(e.getCause().getMessage().contains("funkyArray"));
+		}
 	}
 
 	public List createInvalidDestinationClasses() throws Exception {

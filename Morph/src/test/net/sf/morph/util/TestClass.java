@@ -40,6 +40,7 @@ public class TestClass {
 		map.put("myLongValue", null);
 		map.put("array", null);
 		map.put("numberArray", null);
+		map.put("funkyArray", null);
 		map.put("bigDecimal", null);
 		map.put("string", null);
 		return map;
@@ -65,6 +66,7 @@ public class TestClass {
 		partialMap.put("myLongValue", new Long(13));
 		partialMap.put("array", null);
 		partialMap.put("numberArray", null);
+		partialMap.put("funkyArray", null);
 		partialMap.put("bigDecimal", null);
 		partialMap.put("string", null);
 		return partialMap;
