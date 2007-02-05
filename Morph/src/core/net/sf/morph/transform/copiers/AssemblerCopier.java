@@ -34,9 +34,9 @@ import net.sf.morph.transform.transformers.BaseCompositeTransformer;
 
 /**
  * A copier that copies multiple source objects to a single destination object, implementing an "Assembler."
- * 
+ *
  * @see http://www.martinfowler.com/eaaCatalog/dataTransferObject.html
- * 
+ *
  * @author Matt Benson
  * @since Morph 1.0.2
  */
