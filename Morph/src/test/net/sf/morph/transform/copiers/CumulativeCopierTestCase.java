@@ -31,12 +31,12 @@ import net.sf.morph.util.TestUtils;
  * @author Matt Sgarlata
  * @author Matt Benson
  */
-public class CompositeCopierTestCase extends BaseConverterTestCase {
+public class CumulativeCopierTestCase extends BaseConverterTestCase {
 	private static final String[] PROPERTIES = new String[] { "myMap", "anObject", "array", "numberArray" };
 
 	private Copier copier;
 
-	public CompositeCopierTestCase(String name) {
+	public CumulativeCopierTestCase(String name) {
 		super(name);
 	}
 
@@ -126,7 +126,7 @@ public class CompositeCopierTestCase extends BaseConverterTestCase {
 		components[0].setPropertiesToCopy(PROPERTIES);
 		components[1] = new PropertyNameMatchingCopier();
 		components[1].setPropertiesToIgnore(PROPERTIES);
-		CompositeCopier result = new CompositeCopier();
+		CumulativeCopier result = new CumulativeCopier();
 		result.setComponents(components);
 		return result;
 	}

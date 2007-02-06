@@ -25,13 +25,13 @@ import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.transformers.BaseCompositeTransformer;
 
 /**
- * CompositeTransformer whose children must be Copiers and which invokes
+ * Composite Transformer whose children must be Copiers and which invokes
  * each child Copier in turn in the course of performing a copy operation.
  *
  * @author Matt Benson
  * @since Morph 1.0.2
  */
-public class CompositeCopier extends BaseCompositeTransformer implements
+public class CumulativeCopier extends BaseCompositeTransformer implements
 		DecoratedCopier, DecoratedConverter {
 
 	protected void initializeImpl() throws Exception {
