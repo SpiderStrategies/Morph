@@ -197,7 +197,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 
 	}
 
-	protected final void initialize() throws TransformationException {
+	protected synchronized final void initialize() throws TransformationException {
 		if (!initialized) {
 			if (log.isInfoEnabled()) {
 				log.info("Initializing transformer " + ObjectUtils.getObjectDescription(this));
