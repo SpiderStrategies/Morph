@@ -528,23 +528,23 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		}
 		checkIsReflectable(bean);
 
-			try { //don't bother setting if already same or immutable and equal
-				Object currentValue = get(bean, propertyName);
-				if (propertyValue == currentValue
-						|| (ClassUtils.isImmutable(getType(bean, propertyName)) && ObjectUtils
-								.equals(propertyValue, currentValue))) {
-					//if the property doesn't already exist, this is probably a MapReflector and we want to add anyway 
-					if (ContainerUtils.contains(getPropertyNames(bean), propertyName)) {
-						return;
-					}
-				}
-			} catch (ReflectionException e) {
-				//simply ignore, maybe we can set but not get:
-				if (isPerformingLogging() && log.isTraceEnabled()) {
-					log.trace("Ignoring exception encountered getting property " + propertyName
-							+ " for object " + ObjectUtils.getObjectDescription(bean));
+		try { //don't bother setting if already same or immutable and equal
+			Object currentValue = get(bean, propertyName);
+			if (propertyValue == currentValue
+					|| (ClassUtils.isImmutable(getType(bean, propertyName)) && ObjectUtils
+							.equals(propertyValue, currentValue))) {
+				//if the property doesn't already exist, this is probably a MapReflector and we want to add anyway 
+				if (ContainerUtils.contains(getPropertyNames(bean), propertyName)) {
+					return;
 				}
 			}
+		} catch (ReflectionException e) {
+			//simply ignore, maybe we can set but not get:
+			if (isPerformingLogging() && log.isTraceEnabled()) {
+				log.trace("Ignoring exception encountered getting property " + propertyName
+						+ " for object " + ObjectUtils.getObjectDescription(bean));
+			}
+		}
 
 		if (!isWriteable(bean, propertyName)) {
 			throw new ReflectionException("The property '" + propertyName
