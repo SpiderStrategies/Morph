@@ -204,6 +204,8 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 			}
 
 			try {
+				initializeImpl();
+
 				if (sourceClasses == null) {
 					sourceClasses = getSourceClassesImpl();
 				}
@@ -224,7 +226,6 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 				}
 
 				transformableCallCache = Collections.synchronizedMap(new HashMap());
-				initializeImpl();
 
 				if (nestedTransformer == null) {
 					nestedTransformer = Defaults.createTransformer();
