@@ -294,6 +294,10 @@ public abstract class BaseConverterTestCase extends BaseTransformerTestCase {
 		public void setSource(Object source) {
 			this.source = source;
 		}
+
+		public ConvertedSourcePair invert() {
+			return new ConvertedSourcePair(source, converted);
+		}
 	}
 
 	public abstract List createInvalidDestinationClasses() throws Exception;
