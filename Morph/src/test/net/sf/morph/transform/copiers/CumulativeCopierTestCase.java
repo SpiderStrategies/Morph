@@ -23,7 +23,6 @@ import java.util.Map;
 import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
-import net.sf.morph.transform.converters.BaseConverterTestCase;
 import net.sf.morph.util.TestClass;
 import net.sf.morph.util.TestUtils;
 
@@ -31,7 +30,7 @@ import net.sf.morph.util.TestUtils;
  * @author Matt Sgarlata
  * @author Matt Benson
  */
-public class CumulativeCopierTestCase extends BaseConverterTestCase {
+public class CumulativeCopierTestCase extends BaseCopierTestCase {
 	private static final String[] PROPERTIES = new String[] { "myMap", "anObject", "array", "numberArray" };
 
 	private Copier copier;
