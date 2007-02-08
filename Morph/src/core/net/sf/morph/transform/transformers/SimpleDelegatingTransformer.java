@@ -209,32 +209,31 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	protected Object convertImpl(Class destinationType, Object source,
 		Locale locale) throws Exception {
 		incrementStackDepth();
-
-		Class sourceClass = ClassUtils.getClass(source);
-		Transformer transformer = getTransformer(destinationType, sourceClass);
-
 		Object result;
-
-		if (hasVisited(source, destinationType)) {
-			result = getCachedResult(source, destinationType);
+		try {
+			Class sourceClass = ClassUtils.getClass(source);
+			Transformer transformer = getTransformer(destinationType, sourceClass);
+	
+			if (hasVisited(source, destinationType)) {
+				result = getCachedResult(source, destinationType);
+			}
+			else if (transformer instanceof NodeCopier) {
+				NodeCopier nodeCopier = (NodeCopier) transformer;
+				Object reuseableSource = nodeCopier.createReusableSource(destinationType, source);
+				Object newInstance = nodeCopier.createNewInstance(
+					destinationType, reuseableSource);
+				recordVisit(source, destinationType, newInstance);
+				nodeCopier.copy(newInstance, reuseableSource, locale);
+				result = newInstance;
+			}
+			else {
+				Converter converter = (Converter) transformer;
+				result = converter.convert(destinationType, source, locale);
+			}
+		} finally {
+			decrementStackDepth();
+			clearVisitedSourceToDestinationMapIfNecessary();
 		}
-		else if (transformer instanceof NodeCopier) {
-			NodeCopier nodeCopier = (NodeCopier) transformer;
-			Object reuseableSource = nodeCopier.createReusableSource(destinationType, source);
-			Object newInstance = nodeCopier.createNewInstance(
-				destinationType, reuseableSource);
-			recordVisit(source, destinationType, newInstance);
-			nodeCopier.copy(newInstance, reuseableSource, locale);
-			result = newInstance;
-		}
-		else {
-			Converter converter = (Converter) transformer;
-			result = converter.convert(destinationType, source, locale);
-		}
-
-		decrementStackDepth();
-		clearVisitedSourceToDestinationMapIfNecessary();
-
 		return result;
 	}
 
