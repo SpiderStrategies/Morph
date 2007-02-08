@@ -489,8 +489,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 */
 	protected boolean isWriteableImpl(Object bean, String propertyName)
 		throws Exception {
-		return this instanceof MutableIndexedContainerReflector
-				|| !(this instanceof IndexedContainerReflector) && isReadableImpl(bean, propertyName);
+		if (this instanceof IndexedContainerReflector &&
+			!(this instanceof MutableIndexedContainerReflector)) {
+			return false;
+		}
+		else {
+			return isReadableImpl(bean, propertyName);
+		}
 	}
 
 	protected boolean isValidIndex(Object bean, String propertyName) throws ReflectionException {
@@ -667,9 +672,14 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	protected Object getImpl(Object bean, String propertyName)
 		throws Exception {
 		if (this instanceof IndexedContainerReflector) {
-			return BeanReflector.IMPLICIT_PROPERTY_CLASS.equals(propertyName)
-					|| BeanReflector.IMPLICIT_PROPERTY_SIZE.equals(propertyName) ? null
-							: ((IndexedContainerReflector) this).get(bean, Integer.parseInt(propertyName));
+			if (propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_CLASS) ||
+				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_SIZE)) {
+				return null;
+			}
+			else {
+				return ((IndexedContainerReflector) this).get(bean,
+					(new Integer(propertyName)).intValue());
+			}
 		}
 		throw new UnsupportedOperationException();
 	}
