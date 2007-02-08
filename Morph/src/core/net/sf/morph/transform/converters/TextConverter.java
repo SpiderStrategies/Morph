@@ -23,12 +23,13 @@ import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
 
 /**
- * Converts the basic text types, {@link java.lang.String},
- * {@link java.lang.StringBuffer} and {@link java.lang.Character}, from one
- * time type to another. Empty Strings and StringBuffers with lengths of zero
- * are converted to <code>null</code> Characters, and non-empty Strings and
- * StringBuffers are converted to Characters by returning the first character in
- * the String or StringBuffer.
+ * Converts text types ({@link java.lang.String},
+ * {@link java.lang.StringBuffer} and {@link java.lang.Character},
+ * <code>char[]</code> and <code>byte[]</code> from one type to another.
+ * Empty Strings, StringBuffers with lengths of zero and empty character and
+ * byte arrays are converted to <code>null</code> Characters, and non-empty
+ * Strings and StringBuffers are converted to Characters by returning the first
+ * character in the String or StringBuffer.
  * 
  * @author Matt Sgarlata
  * @since Jan 2, 2005
