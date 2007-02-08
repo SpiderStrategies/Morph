@@ -97,6 +97,9 @@ public class TextToNumberConverterTestCase extends BaseConverterTestCase {
 		list.add(new ConvertedSourcePair(new Float(2.5), "2.5"));
 		list.add(new ConvertedSourcePair(new Float(2.9), "2.9"));
 		
+		list.add(new ConvertedSourcePair(new Float(12345.67), "12345.67"));
+		list.add(new ConvertedSourcePair(new Float(12345.67), "12,345.67"));
+		
 		return list;
 	}
 	
