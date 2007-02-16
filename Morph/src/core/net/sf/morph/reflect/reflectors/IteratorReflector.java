@@ -37,7 +37,7 @@ public class IteratorReflector extends BaseContainerReflector {
 		return (Iterator) container;
 	}
 
-	public Class[] getReflectableClassesImpl() {
+	protected Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
 
