@@ -53,6 +53,7 @@ import net.sf.morph.transform.converters.TimeToNumberConverter;
 import net.sf.morph.transform.copiers.ContainerCopier;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopier;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.Int;
 import net.sf.morph.util.TransformerUtils;
 
@@ -114,6 +115,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 
 //	private boolean failFast;
 	private Specializer specializer;
+
 	private transient ThreadLocal visitedSourceToDestinationMapThreadLocal = new ThreadLocal() {
 		protected Object initialValue() {
 			return new HashMap();
@@ -135,12 +137,15 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 
 	public SimpleDelegatingTransformer(Transformer[] components) {
 		this();
+		setNestedTransformer(this);
 		setComponents(components);
 	}
 
 	protected void initializeImpl() throws Exception {
-		setNestedTransformer(this);
 		super.initializeImpl();
+		if (getNestedTransformer() == null) {
+			setNestedTransformer(this);
+		}
 	}
 
 	/**
@@ -206,35 +211,31 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		clearVisitedSourceToDestinationMapIfNecessary();
 	}
 
-	protected Object convertImpl(Class destinationType, Object source,
-		Locale locale) throws Exception {
+	protected Object convertImpl(Class destinationType, Object source, Locale locale)
+			throws Exception {
 		incrementStackDepth();
-		Object result;
 		try {
 			Class sourceClass = ClassUtils.getClass(source);
 			Transformer transformer = getTransformer(destinationType, sourceClass);
-	
+
 			if (hasVisited(source, destinationType)) {
-				result = getCachedResult(source, destinationType);
+				return getCachedResult(source, destinationType);
 			}
-			else if (transformer instanceof NodeCopier) {
+			if (transformer instanceof NodeCopier) {
 				NodeCopier nodeCopier = (NodeCopier) transformer;
 				Object reuseableSource = nodeCopier.createReusableSource(destinationType, source);
-				Object newInstance = nodeCopier.createNewInstance(
-					destinationType, reuseableSource);
+				Object newInstance = nodeCopier.createNewInstance(destinationType,
+						reuseableSource);
 				recordVisit(source, destinationType, newInstance);
 				nodeCopier.copy(newInstance, reuseableSource, locale);
-				result = newInstance;
+				return newInstance;
 			}
-			else {
-				Converter converter = (Converter) transformer;
-				result = converter.convert(destinationType, source, locale);
-			}
+			Converter converter = (Converter) transformer;
+			return converter.convert(destinationType, source, locale);
 		} finally {
 			decrementStackDepth();
 			clearVisitedSourceToDestinationMapIfNecessary();
 		}
-		return result;
 	}
 
 	protected void incrementStackDepth() {
@@ -409,25 +410,27 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	}
 
 	public synchronized void setComponents(Object[] components) {
-		if (components == null) {
-			return;
-		}
-
-		// set nested transformers for each component to this transformer
-		for (int i=0; i<components.length; i++) {
-			// if the component is a nested transformer
-			if (components[i] instanceof NodeCopier) {
-				NodeCopier nestedTransformer = (NodeCopier) components[i];
-//				// if the nested transformer's graph transformer has not been set
-				if (nestedTransformer.getNestedTransformer() == null) {
-					nestedTransformer.setNestedTransformer(this);
-				}
-			}
+		if (this.components == components) {
+			return; //it could happen... :|
 		}
 		this.components = components;
 		transformerRegistry.clear();
 		copierRegistry.clear();
+
+		if (isInitialized() && components != null) {
+			updateNestedTransformerComponents(getNestedTransformer(), null);
+		}
 	}
+
+	protected void updateNestedTransformerComponents(Transformer incoming, Transformer outgoing) {
+		NodeCopier[] nodeCopiers = (NodeCopier[]) ContainerUtils.getElementsOfType(components, NodeCopier.class);
+		for (int i = 0; i < nodeCopiers.length; i++) {
+			if (nodeCopiers[i].getNestedTransformer() == outgoing) {
+				nodeCopiers[i].setNestedTransformer(incoming);
+			}
+		}
+	}
+
 //	public boolean isFailFast() {
 //		return failFast;
 //	}
@@ -489,4 +492,22 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		this.specializer = specializer;
 	}
 
+	protected Object createReusableSource(Class destinationClass, Object source) {
+		Transformer t = getTransformer(destinationClass, ClassUtils.getClass(source));
+		return t instanceof NodeCopier ? ((NodeCopier) t).createReusableSource(
+				destinationClass, source) : super.createReusableSource(destinationClass,
+				source);
+	}
+
+	protected void setNestedTransformer(Transformer nestedTransformer) {
+		Transformer old = getNestedTransformer();
+		if (nestedTransformer == old) {
+			return;
+		}
+		super.setNestedTransformer(nestedTransformer);
+		if (nestedTransformer == null) {
+			nestedTransformer = this;
+		}
+		updateNestedTransformerComponents(nestedTransformer, old);
+	}
 }

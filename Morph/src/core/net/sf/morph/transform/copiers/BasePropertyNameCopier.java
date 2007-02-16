@@ -80,9 +80,18 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 	}
 	
 	protected Transformer chooseTransformer(String sourceProperty, Object source, String destinationProperty, Object destination, Locale locale, Integer preferredTransformationType) {
-		if (getPropertyTransformers() != null &&
-			getPropertyTransformers().containsKey(sourceProperty)) {
-			return (Transformer) getPropertyTransformers().get(sourceProperty);
+		Map m = getPropertyTransformers();
+		if (m != null) {
+			Transformer t = (Transformer) m.get(sourceProperty);
+			if (t != null) {
+				if (t instanceof NodeCopier) {
+					NodeCopier nc = (NodeCopier) t;
+					if (nc.getNestedTransformer() == null) {
+						nc.setNestedTransformer(getNestedTransformer());
+					}
+				}
+				return t;
+			}
 		}
 		return getNestedTransformer();	
 	}
