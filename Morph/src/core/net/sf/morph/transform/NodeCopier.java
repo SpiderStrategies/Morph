@@ -68,7 +68,7 @@ public interface NodeCopier extends Copier {
 	/**
 	 * Sets the transformer used to perform nested transformations.
 	 * 
-	 * @param nestedTranformemr
+	 * @param nestedTransformer
 	 *            the transformer used to perform nested transformations
 	 */
 	public void setNestedTransformer(Transformer nestedTransformer);
