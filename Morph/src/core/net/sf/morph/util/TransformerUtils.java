@@ -114,7 +114,7 @@ public abstract class TransformerUtils {
 		int transformationType;
 		
 		// if the transformer is a Copier and no preference for transformation
-		// type was specified or a preference for a copy operation was speciifed,
+		// type was specified or a preference for a copy operation was specified,
 		// perform a copy operation
 		if (// there is a non-null destination we can copy to
 			destination != null &&
