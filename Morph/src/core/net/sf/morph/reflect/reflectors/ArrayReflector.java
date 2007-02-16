@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,6 +24,7 @@ import net.sf.morph.reflect.ContainerReflector;
 import net.sf.morph.reflect.IndexedContainerReflector;
 import net.sf.morph.reflect.InstantiatingReflector;
 import net.sf.morph.reflect.MutableIndexedContainerReflector;
+import net.sf.morph.reflect.Reflector;
 import net.sf.morph.reflect.SizableReflector;
 import net.sf.morph.util.ClassUtils;
 
@@ -33,10 +34,18 @@ import net.sf.morph.util.ClassUtils;
  * @author Matt Sgarlata
  * @since Nov 20, 2004
  */
-public class ArrayReflector
-	extends BaseContainerReflector
-	implements ContainerReflector, IndexedContainerReflector, MutableIndexedContainerReflector, SizableReflector, BeanReflector, InstantiatingReflector {
-	
+public class ArrayReflector extends BaseContainerReflector implements ContainerReflector,
+		IndexedContainerReflector, MutableIndexedContainerReflector, SizableReflector,
+		BeanReflector, InstantiatingReflector {
+
+	private static final SimpleDelegatingReflector SOURCE_REFLECTOR = new SimpleDelegatingReflector() {
+		protected Reflector[] createDefaultComponents() {
+			return new Reflector[] {
+					new ArrayReflector(), new CollectionReflector(),
+					new ResetableIteratorWrapperReflector(), new ObjectReflector() };
+		}
+	};
+
 	protected Class[] getReflectableClassesImpl() {
 		return ClassUtils.ARRAY_TYPES;
 	}
@@ -70,8 +79,9 @@ public class ArrayReflector
 	protected boolean isReflectableImpl(Class clazz) throws Exception {
 		return clazz.isArray();
 	}
-	
+
 	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
-		return ClassUtils.createArray(clazz.getComponentType(), 0);
+		int length = parameters == null ? 0 : SOURCE_REFLECTOR.getSize(parameters);
+		return ClassUtils.createArray(clazz.getComponentType(), length);
 	}
 }

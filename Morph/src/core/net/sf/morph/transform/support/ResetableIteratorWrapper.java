@@ -99,4 +99,14 @@ public class ResetableIteratorWrapper implements Iterator {
 		}
 	}
 
+	/**
+	 * Get the size of the underlying Iterator.
+	 * @return int
+	 */
+	public int size() {
+		if (!frozen) {
+			throw new IllegalStateException(NEVER_SET);
+		}
+		return list.size();
+	}
 }
