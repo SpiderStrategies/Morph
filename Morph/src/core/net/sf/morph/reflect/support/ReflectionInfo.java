@@ -1,12 +1,12 @@
 /*
- * Copyright 2004-2005 the original author or authors.
- * 
+ * Copyright 2005, 2007 the original author or authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -25,7 +25,7 @@ import net.sf.morph.util.NumberUtils;
 
 /**
  * Provides easy access to the property information for a class.
- * 
+ *
  * @author Matt Sgarlata
  * @author Alexander Volanis
  * @since Feb 3, 2005
@@ -33,11 +33,11 @@ import net.sf.morph.util.NumberUtils;
 public class ReflectionInfo {
 	private Map propertyAccessMethods = new HashMap();
 	private String[] propertyNames;
-	
+
 	public ReflectionInfo(Class clazz) {
 		String propertyName;
 		Method[] methods = clazz.getMethods();
-		for (int i=0; i<methods.length; i++) {
+		for (int i = 0; i < methods.length; i++) {
 			String methodName = methods[i].getName();
             Class[] parameterTypes = methods[i].getParameterTypes();
 			if (!Modifier.isStatic(methods[i].getModifiers())) {
@@ -88,24 +88,19 @@ public class ReflectionInfo {
 				}
 			}
 		}
-		
 		propertyNames = (String[]) propertyAccessMethods.keySet().toArray(
-			new String[propertyAccessMethods.size()]);			
+			new String[propertyAccessMethods.size()]);
 	}
 
 	protected MethodHolder createOrRetrieveMethodHolder(String propertyName) {
-		MethodHolder holder;
-		if (propertyAccessMethods.containsKey(propertyName)) {
-			holder = (MethodHolder)
-				propertyAccessMethods.get(propertyName);
-		}
-		else {
+		MethodHolder holder = (MethodHolder) propertyAccessMethods.get(propertyName);
+		if (holder == null) {
 			holder = new MethodHolder();
 			propertyAccessMethods.put(propertyName, holder);
 		}
 		return holder;
 	}
-	
+
     protected void registerAccessor(String propertyName, Method method) {
         createOrRetrieveMethodHolder(propertyName).setAccessor(method);
     }
@@ -113,7 +108,7 @@ public class ReflectionInfo {
     protected void registerMutator(String propertyName, Method method) {
         createOrRetrieveMethodHolder(propertyName).setMutator(method);
     }
-    
+
     protected void registerIndexedAccessor(String propertyName, Method method) {
         createOrRetrieveMethodHolder(propertyName).setIndexedAccessor(method);
     }
@@ -121,7 +116,7 @@ public class ReflectionInfo {
     protected void registerIndexedMutator(String propertyName, Method method) {
         createOrRetrieveMethodHolder(propertyName).setIndexedMutator(method);
     }
-    
+
 	public MethodHolder getMethodHolder(String propertyName) {
 		return (MethodHolder) propertyAccessMethods.get(propertyName);
 	}
@@ -138,7 +133,7 @@ public class ReflectionInfo {
 		getMethodHolder(propertyName).invokeIndexedMutator(bean, index,
 			value);
 	}
-    
+
 	public boolean isWriteable(String propertyName) {
 		return
 			getMethodHolder(propertyName) != null &&
@@ -164,10 +159,9 @@ public class ReflectionInfo {
     public Object get(Object bean, String propertyName) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         return getMethodHolder(propertyName).invokeAccessor(bean);
     }
-    
+
     public Object get(Object bean, String propertyName, Object index) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         return getMethodHolder(propertyName).invokeIndexedAccessor(bean, index);
     }
-    
-	
+
 }

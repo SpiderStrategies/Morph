@@ -1,12 +1,12 @@
 /*
- * Copyright 2004-2005 the original author or authors.
- * 
+ * Copyright 2004-2005, 2007 the original author or authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -19,7 +19,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +33,6 @@ import net.sf.morph.reflect.support.MethodHolder;
 import net.sf.morph.reflect.support.ObjectIterator;
 import net.sf.morph.reflect.support.ReflectionInfo;
 import net.sf.morph.util.ClassUtils;
-import net.sf.morph.util.ContainerUtils;
-
 
 /**
  * <p>
@@ -43,67 +40,66 @@ import net.sf.morph.util.ContainerUtils;
  * the <a href="http://java.sun.com/products/javabeans/index.jsp">JavaBeans </a>
  * specification. Also exposes any Object as a container.
  * </p>
- * 
+ *
  * <p>
  * When an object is exposed as a container, the <code>getContainer</code>
  * method returns an iterator that just iterates over the one reflected object.
  * The <code>getType</code> method returns the type as specified by the
  * property's setter method, if one is available.  If no mutator is available, the
  * <code>getType</code> method returns the type as specified by the property's
- * getter method. 
+ * getter method.
  * </p>
- * 
+ *
  * @author Matt Sgarlata
  * @author Alexander Volanis
  * @since Nov 7, 2004
  */
 public class ObjectReflector extends BaseBeanReflector implements InstantiatingReflector, ContainerReflector {
-	
+
 	private static final Class[] REFLECTABLE_TYPES = new Class[] {
 		Object.class
 	};
-	
+
 	/**
 	 * Indicates whether primitive assignments to <code>null</code> are allowed.
 	 * If they are allowed, primitive assignments to <code>null</code> will be
 	 * ignored.  If they are not allowed, a ReflectionException will be thrown.
 	 */
 	private boolean allowNullPrimitiveAssignment = true;
-	
-	private static final Map reflectionCache =
-		Collections.synchronizedMap(new WeakHashMap());
-	
+
+	private static final Map reflectionCache = new WeakHashMap();
+
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
-	
+
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		String[] propertyNames = getReflectionInfo(bean.getClass()).getPropertyNames();
 		List propertyNamesWithoutClass = new ArrayList();
-		for (int i=0; i<propertyNames.length; i++) {
+		for (int i = 0; i < propertyNames.length; i++) {
 			if (!BeanReflector.IMPLICIT_PROPERTY_CLASS.equals(propertyNames[i])) {
 				propertyNamesWithoutClass.add(propertyNames[i]);
 			}
 		}
 		return (String[]) propertyNamesWithoutClass.toArray(new String[propertyNamesWithoutClass.size()]);
 	}
-	
+
 	private Method getMutator(Object bean, String propertyName) throws Exception {
 		return getMethodHolder(bean, propertyName).getMutator();
 	}
-	
+
 	private Method getAccessor(Object bean, String propertyName) throws Exception {
 		return getMethodHolder(bean, propertyName).getAccessor();
 	}
-	
+
 	private Method getIndexedMutator(Object bean, String propertyName) throws Exception {
 		return getMethodHolder(bean, propertyName).getIndexedMutator();
 	}
-	
+
 	private Method getIndexedAccessor(Object bean, String propertyName) throws Exception {
 		return getMethodHolder(bean, propertyName).getIndexedAccessor();
 	}
-	
+
 	private MethodHolder getMethodHolder(Object bean, String propertyName) {
 		return getReflectionInfo(bean.getClass()).getMethodHolder(propertyName);
 	}
@@ -119,7 +115,7 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 			if (mutator == null) {
 				return ClassUtils.getArrayClass(getIndexedMutator(bean, propertyName).getParameterTypes()[1]);
 			}
-			return mutator.getParameterTypes()[0];	
+			return mutator.getParameterTypes()[0];
 		}
 		Method accessor = getAccessor(bean, propertyName);
 		if (accessor == null) {
@@ -128,19 +124,17 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 		}
 		return accessor.getReturnType();
 	}
-	
+
 	protected boolean isReadableImpl(Object bean, String propertyName)
 		throws Exception {
-		return ContainerUtils.contains(getPropertyNames(bean), propertyName)
-				&& getReflectionInfo(bean.getClass()).isReadable(propertyName);
+		return getReflectionInfo(bean.getClass()).isReadable(propertyName);
 	}
-	
+
 	protected boolean isWriteableImpl(Object bean, String propertyName)
 		throws Exception {
-		return ContainerUtils.contains(getPropertyNames(bean), propertyName)
-				&& getReflectionInfo(bean.getClass()).isWriteable(propertyName);
+		return getReflectionInfo(bean.getClass()).isWriteable(propertyName);
 	}
-	
+
 	/**
 	 * Retrieves the value of the property <code>propertyName</code> in bean
 	 * <code>bean</code>. If the property is an indexed property that is only
@@ -152,7 +146,7 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 		// if a simple getter is available
 		if (reflectionInfo.getMethodHolder(propertyName).getAccessor() != null) {
 			// use it
-			return reflectionInfo.get(bean, propertyName);	
+			return reflectionInfo.get(bean, propertyName);
 		}
 		// we're using an indexed getter
 		List contents = new ArrayList();
@@ -170,7 +164,7 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 				hasMoreElements = false;
 			}
 		}
-		
+
 		// if there are no elements ...
 		if (contents.size() == 0) {
 			// ... and our exception was NullPointer, that probably means
@@ -178,7 +172,7 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 			if (isExceptionOfType(exception, NullPointerException.class)) {
 				return null;
 			}
-			// ... and our exception was ArrayIndexOutOfBoundsException, 
+			// ... and our exception was ArrayIndexOutOfBoundsException,
 			// return an empty array
 			if (isExceptionOfType(exception, ArrayIndexOutOfBoundsException.class)) {
 				return ClassUtils.createArray(getType(bean, propertyName).getComponentType(), 0);
@@ -193,7 +187,7 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 			// create a new array of the required type
 			Object array = ClassUtils.createArray(getType(bean, propertyName).getComponentType(), contents.size());
 			// copy the contents we've constructed into the array
-			for (int i=0; i<contents.size(); i++) {
+			for (int i = 0; i < contents.size(); i++) {
 				Array.set(array, i, contents.get(i));
 			}
 			return array;
@@ -202,20 +196,11 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 		// rethrow the exception
 		throw (Exception) exception.fillInStackTrace();
 	}
-	
+
 	private boolean isExceptionOfType(Exception exception, Class type) {
-		if (exception instanceof InvocationTargetException) {
-			InvocationTargetException ite = (InvocationTargetException) exception;
-			if (ite.getTargetException().getClass().equals(type)) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else {
-			return false;
-		}
+		return exception instanceof InvocationTargetException
+				&& type.isInstance(((InvocationTargetException) exception)
+						.getTargetException());
 	}
 
 	protected void setImpl(Object bean, String propertyName, Object value)
@@ -250,19 +235,19 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 			}
 		}
 	}
-	
+
 	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
 		return clazz.newInstance();
 	}
-	
+
 	protected Class getContainedTypeImpl(Class clazz) throws Exception {
 		return Object.class;
 	}
-	
+
 	protected Iterator getIteratorImpl(Object container) throws Exception {
 		return new ObjectIterator(container);
 	}
-	
+
 	protected boolean isPrimitiveSetter(Object bean, String propertyName) throws Exception {
 		Method mutator = getMutator(bean, propertyName);
 		// if we're dealing with an indexed mutator
@@ -280,17 +265,18 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 		// we're dealing with a simple mutator
 		return mutator.getParameterTypes()[0].isPrimitive();
 	}
-	
+
 	protected ReflectionInfo getReflectionInfo(Class clazz) {
-		ReflectionInfo reflectionInfo =
-			(ReflectionInfo) reflectionCache.get(clazz);
-		if (reflectionInfo == null) {
-			reflectionInfo = new ReflectionInfo(clazz);
-			reflectionCache.put(clazz, reflectionInfo);
+		synchronized (reflectionCache) {
+			ReflectionInfo reflectionInfo = (ReflectionInfo) reflectionCache.get(clazz);
+			if (reflectionInfo == null) {
+				reflectionInfo = new ReflectionInfo(clazz);
+				reflectionCache.put(clazz, reflectionInfo);
+			}
+			return reflectionInfo;
 		}
-		return reflectionInfo;
 	}
-	
+
 	/**
 	 * Returns <code>true</code>.
 	 * @return <code>true</code>
@@ -304,7 +290,7 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 	 * allowed. If they are allowed, primitive assignments to <code>null</code>
 	 * will be ignored. If they are not allowed, a ReflectionException will be
 	 * thrown.
-	 * 
+	 *
 	 * @return whether primitive assignments to <code>null</code> are allowed
 	 */
 	public boolean isAllowNullPrimitiveAssignment() {
@@ -315,13 +301,12 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 	 * Sets whether primitive assignments to <code>null</code> are allowed. If
 	 * they are allowed, primitive assignments to <code>null</code> will be
 	 * ignored. If they are not allowed, a ReflectionException will be thrown.
-	 * 
+	 *
 	 * @param allowNullPrimitiveAssignment
 	 *            whether primitive assignments to <code>null</code> are
 	 *            allowed
 	 */
-	public void setAllowNullPrimitiveAssignment(
-		boolean allowNullPrimitiveAssignment) {
+	public void setAllowNullPrimitiveAssignment(boolean allowNullPrimitiveAssignment) {
 		this.allowNullPrimitiveAssignment = allowNullPrimitiveAssignment;
 	}
 
