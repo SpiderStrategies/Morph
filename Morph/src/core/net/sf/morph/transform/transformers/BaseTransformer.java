@@ -292,6 +292,9 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		}
 
 		if (source == null && isAutomaticallyHandlingNulls()) {
+			if (destinationClass != null && destinationClass.isPrimitive()) {
+				throw new TransformationException(destinationClass, source);
+			}
 			return null;
 		}
 
@@ -299,7 +302,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 			return convertImpl(destinationClass, source, locale);
 		}
 		catch (TransformationException e) {
-			throw (TransformationException) e;
+			throw e;
 		}
 		catch (Throwable t) {
 			if (isTransformable(destinationClass, ClassUtils.getClass(source))) {
@@ -400,13 +403,11 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 						+ ObjectUtils.getObjectDescription(source) + " to destination "
 						+ ObjectUtils.getObjectDescription(destination), e);
 			}
-			else {
-				throw new TransformationException("The " + getClass().getName()
-						+ " cannot copy source '" + source + "' (class "
-						+ source.getClass().getName() + ") to destination '"
-						+ destination + "' (class " + destination.getClass().getName()
-						+ ")");
-			}
+			throw new TransformationException("The " + getClass().getName()
+					+ " cannot copy source '" + source + "' (class "
+					+ source.getClass().getName() + ") to destination '"
+					+ destination + "' (class " + destination.getClass().getName()
+					+ ")");
 		}
 	}
 
