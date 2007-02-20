@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.morph.reflect.BeanReflector;
-import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.reflect.Reflector;
 import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.TestClass;
@@ -136,22 +134,4 @@ public class ObjectReflectorTestCase extends BaseReflectorTestCase {
 		return new ObjectReflector();
 	}
 
-	protected void setPropertyToRandomValue(Object bean, String propertyName) throws Exception {
-		// make sure writeable properties are writeable and
-		// properties that aren't writeable aren't writeable
-		BeanReflector beanReflector = getBeanReflector();
-		boolean writeable = beanReflector.isWriteable(bean, propertyName);
-		try {
-			beanReflector.set(bean, propertyName, TestUtils.getDifferentInstance(
-					beanReflector.getType(bean, propertyName), beanReflector.get(bean,
-							propertyName)));
-			assertTrue("The property shouldn't be writeable", writeable);
-		} catch (ReflectionException e) {
-			assertFalse(
-					"ReflectionException was thrown but it shouldn't have been.  Error msg: "
-							+ e.getMessage(), writeable);
-		}
-	}
-
-	
 }
