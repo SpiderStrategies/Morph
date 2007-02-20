@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.reflect.Reflector;
 import net.sf.morph.util.ContainerUtils;
@@ -138,22 +139,17 @@ public class ObjectReflectorTestCase extends BaseReflectorTestCase {
 	protected void setPropertyToRandomValue(Object bean, String propertyName) throws Exception {
 		// make sure writeable properties are writeable and
 		// properties that aren't writeable aren't writeable
-		if (getBeanReflector().isWriteable(bean, propertyName)) {
-			try {
-				getBeanReflector().set(bean, propertyName, null);
-			}
-			catch (ReflectionException e) {
-				if (!((ObjectReflector) reflector).isPrimitiveSetter(bean, propertyName)) {
-					fail("ReflectionException was thrown but it shouldn't have been.  Error msg: " + e.getMessage());
-				}
-			}
-		}
-		else {
-			try {
-				getBeanReflector().set(bean, propertyName, null);
-				fail("The property shouldn't be writeable");
-			}
-			catch (ReflectionException e) { }
+		BeanReflector beanReflector = getBeanReflector();
+		boolean writeable = beanReflector.isWriteable(bean, propertyName);
+		try {
+			beanReflector.set(bean, propertyName, TestUtils.getDifferentInstance(
+					beanReflector.getType(bean, propertyName), beanReflector.get(bean,
+							propertyName)));
+			assertTrue("The property shouldn't be writeable", writeable);
+		} catch (ReflectionException e) {
+			assertFalse(
+					"ReflectionException was thrown but it shouldn't have been.  Error msg: "
+							+ e.getMessage(), writeable);
 		}
 	}
 

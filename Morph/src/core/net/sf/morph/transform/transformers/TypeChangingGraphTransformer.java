@@ -95,7 +95,7 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 		SimpleDelegatingReflector reflector = new SimpleDelegatingReflector();
 		List components = new ArrayList(Arrays.asList(reflector.getComponents()));
 		components.add(0, instantiatingReflector);		
-		reflector.setComponents((Reflector[]) components.toArray(new Reflector[components.size()]));
+		reflector.setComponents(components.toArray(new Reflector[components.size()]));
 		return reflector;
 	}
 	

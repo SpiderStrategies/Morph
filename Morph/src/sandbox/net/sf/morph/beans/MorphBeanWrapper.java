@@ -180,10 +180,8 @@ public class MorphBeanWrapper implements BeanWrapper {
 				}
 				throw new TypeMismatchException(getPropertyChangeEvent(propertyName, value), requiredType, e);
 			}
-			else {
-				throw new MethodInvocationException(getPropertyChangeEvent(
-					propertyName, value), e);
-			}
+			throw new MethodInvocationException(getPropertyChangeEvent(
+				propertyName, value), e);
 		}
 	}
 	public void setPropertyValues(Map map) throws BeansException {

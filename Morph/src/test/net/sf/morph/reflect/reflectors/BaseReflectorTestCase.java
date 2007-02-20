@@ -327,21 +327,19 @@ public abstract class BaseReflectorTestCase extends TestCase {
 				fail("Invalid index should throw an exception");
 			}
 			catch (ReflectionException e) { }
-			
-			if (getMutableIndexedReflector() instanceof SizableReflector) {
-				for (int i=0; i<reflectableObjects.size(); i++) {
-					Object reflectable = reflectableObjects.get(i);
-					try {
-						getMutableIndexedReflector().set(reflectable,
-							getSizableReflector().getSize(reflectable), null);
-						fail("Can't retrieve items that are out of the bounds");
-					}
-					catch (ReflectionException e) { }
+
+			for (int i=0; i<reflectableObjects.size(); i++) {
+				Object reflectable = reflectableObjects.get(i);
+				try {
+					getMutableIndexedReflector().set(reflectable,
+						getSizableReflector().getSize(reflectable), null);
+					fail("Can't retrieve items that are out of the bounds");
 				}
+				catch (ReflectionException e) { }
 			}
 		}
 	}
-	
+
 	public void testAddArgumentChecking() {
 		if (canRunTest(GrowableContainerReflector.class)) {
 			try {
@@ -351,7 +349,7 @@ public abstract class BaseReflectorTestCase extends TestCase {
 			catch (ReflectionException e) { }
 		}
 	}
-	
+
 	public void testGetForIndexedReflectors() {
 		if (canRunTest(IndexedContainerReflector.class)) {
 			// loop through all the reflectable objects

@@ -58,7 +58,7 @@ public class TypeChangingGraphTransformerTestCase extends TestCase {
 	
 	public void testConvert() {
 		Person source = createMatt();
-		Converter converter = (Converter) createTransformer();
+		Converter converter = createTransformer();
 		
 		Object converted = converter.convert(PersonTo.class, source, null);
 		performAssertions(converted);
@@ -74,7 +74,7 @@ public class TypeChangingGraphTransformerTestCase extends TestCase {
 	
 	public void testCopy() {
 		Person source = createMatt();
-		Copier copier = (Copier) createTransformer();
+		Copier copier = createTransformer();
 		
 		Object copied = new PersonTo();
 		copier.copy(copied, source, null);

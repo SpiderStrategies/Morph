@@ -142,9 +142,7 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 				throw new ContextException("Could not retrieve property '" + expression + "' from this context", e);
 			}
 		}
-		else {
-			return getLanguage().get(this, expression);
-		}
+		return getLanguage().get(this, expression);
 	}
 
 	public final void set(String expression, Object value)

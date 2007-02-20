@@ -18,7 +18,7 @@ public class NestedDelegatingCopierTestCase extends DelegatingCopierTestCase {
 			(t[i] instanceof NodeCopier ? nodeCopiers : others).add(t[i]);
 		}
 		child.setComponents(nodeCopiers.toArray(new Transformer[nodeCopiers.size()]));
-		others.add((Transformer) ProxyUtils.getProxy(child, NodeCopier.class));
+		others.add(ProxyUtils.getProxy(child, NodeCopier.class));
 		SimpleDelegatingTransformer result = new SimpleDelegatingTransformer();
 		result.setComponents(others.toArray(new Transformer[others.size()]));
 		return result;

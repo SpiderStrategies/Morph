@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,8 +16,9 @@
 package net.sf.morph.transform.converters;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import net.sf.morph.Defaults;
 import net.sf.morph.transform.Converter;
@@ -36,44 +37,85 @@ import net.sf.morph.util.StringUtils;
  * @since Jan 2, 2005
  */
 public class TextToClassConverter extends BaseTransformer implements Converter, DecoratedConverter {
-
-	private static final Class[] DESTINATION_TYPES = { Class.class };
 	public static final String ARRAY_INDICATOR = "[]";
-	
+
+	private static final HashMap CACHE_MAP = new HashMap();
+	private static final Class[] DESTINATION_TYPES = { Class.class };
+
+	//one default instance:
+	private static final Converter DEFAULT_TEXT_CONVERTER = Defaults.createTextConverter();
+
 	private Converter textConverter;
-	
+	private boolean useCache = true;
+
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-		String string = (String) getTextConverter().convert(String.class,
-			source, locale);
-		string = StringUtils.removeWhitespace(string);
-		int n = StringUtils.numOccurrences(string, ARRAY_INDICATOR);
-		if (n == 0) {
-			return Class.forName(string);
+		String string = StringUtils.removeWhitespace((String) getTextConverter().convert(
+				String.class, source, locale));
+		Class result;
+		Map cache = useCache ? getCache() : null;
+		Object lock = useCache ? (Object) cache : string; //trick to synch on optional cache w/o duplicating code
+		synchronized (lock) {
+			result = useCache ? (Class) cache.get(string) : null;
+			if (result == null) {
+				int arrayAt = string.indexOf(ARRAY_INDICATOR);
+				Class c = Class.forName(arrayAt < 0 ? string : string.substring(0, arrayAt));
+				result = arrayAt < 0 ? c : Array.newInstance(c,
+						new int[StringUtils.numOccurrences(string, ARRAY_INDICATOR)])
+						.getClass();
+				if (useCache) {
+					cache.put(string, result);
+				}
+			}
 		}
-		else {
-			String className = string.substring(0, string.indexOf(ARRAY_INDICATOR));
-			Class containedType = Class.forName(className);
-			int[] dimensions = new int[n];
-			Arrays.fill(dimensions, 0);
-			return Array.newInstance(containedType, dimensions).getClass();
-		}
-		
+		return result;
 	}
+
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return DESTINATION_TYPES;
 	}
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getTextConverter().getSourceClasses();
 	}
+
 	public Converter getTextConverter() {
 		if (textConverter == null) {
-			setTextConverter(Defaults.createTextConverter());
+			setTextConverter(DEFAULT_TEXT_CONVERTER);
 		}
 		return textConverter;
 	}
+
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;
 	}
-	
+
+	/**
+	 * Get the useCache of this TextToClassConverter.
+	 * @return the useCache
+	 */
+	public boolean isUseCache() {
+		return useCache;
+	}
+
+	/**
+	 * Set the useCache of this TextToClassConverter.
+	 * @param useCache the useCache to set
+	 */
+	public void setUseCache(boolean useCache) {
+		this.useCache = useCache;
+	}
+
+	private Map getCache() {
+		Map result;
+		synchronized (CACHE_MAP) {
+			Converter cnv = getTextConverter();
+			result = (Map) CACHE_MAP.get(cnv);
+			if (result == null) {
+				result = new HashMap();
+				CACHE_MAP.put(cnv, result);
+			}
+		}
+		return result;
+	}
 }

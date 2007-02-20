@@ -31,20 +31,16 @@ import net.sf.morph.util.TestUtils;
 public abstract class BaseConverterTestCase extends BaseTransformerTestCase {
 
 	protected Object[] listToArray(Class componentType, List list) {
-		if (ObjectUtils.isEmpty(list)) {
-			return (Object[]) ClassUtils.createArray(componentType, 0);
-		}
-		else {
-			Object[] array = (Object[]) ClassUtils.createArray(componentType, list.size());
-			return list.toArray(array);
-		}
+		int size = ObjectUtils.isEmpty(list) ? 0 : list.size();
+		Object[] array = (Object[]) ClassUtils.createArray(componentType, size);
+		return size == 0 ? array : list.toArray(array);
 	}
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();		
 		invalidDestinationClasses = (Class[]) listToArray(Class.class, createInvalidDestinationClasses());
 		invalidPairs = (ConvertedSourcePair[]) listToArray(ConvertedSourcePair.class, createInvalidPairs());
-		invalidSources = (Object[]) listToArray(Object.class, createInvalidSources());
+		invalidSources = listToArray(Object.class, createInvalidSources());
 		invalidSourceClasses = (Class[]) listToArray(Class.class, createInvalidSourceClasses());
 		validPairs = (ConvertedSourcePair[]) listToArray(ConvertedSourcePair.class, createValidPairs());
 		destinationClasses = (Class[]) listToArray(Class.class, createDestinationClasses());

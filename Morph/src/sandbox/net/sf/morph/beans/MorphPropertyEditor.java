@@ -59,10 +59,7 @@ public class MorphPropertyEditor extends PropertyEditorSupport {
 		if (getToTextConverter() == null) {
 			return Morph.convertToString(getValue());
 		}
-		else {
-			return (String) getToTextConverter().convert(String.class,
-				getValue(), null);
-		}
+		return (String) getToTextConverter().convert(String.class, getValue(), null);
 	}
 
 	public void setAsText(String text) throws IllegalArgumentException {

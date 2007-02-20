@@ -45,15 +45,15 @@ public class MorphTestCase extends TestCase {
 		list.add(new HashMap());
 		Map[] result = new Map[] { new HashMap(), new HashMap() } ;
 		
-		converted = (Map[]) Morph.convert(Map[].class, list);
-		assertEquals(Map[].class, converted.getClass());
+		converted = Morph.convert(Map[].class, list);
+		assertSame(Map[].class, converted.getClass());
 		TestUtils.assertEquals(result, converted);
 		
 		list = new ArrayList();
 		list.add(new Integer(2));
 		list.add(new Integer(3));
-		converted = (Set) Morph.convert(Set.class, list);
-		assertEquals(HashSet.class, converted.getClass());
+		converted = Morph.convert(Set.class, list);
+		assertSame(HashSet.class, converted.getClass());
 		TestUtils.assertEquals(converted, new HashSet(list));
 		
 		list = new ArrayList();

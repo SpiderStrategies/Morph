@@ -489,20 +489,15 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 */
 	protected boolean isWriteableImpl(Object bean, String propertyName)
 		throws Exception {
-		if (this instanceof IndexedContainerReflector &&
-			!(this instanceof MutableIndexedContainerReflector)) {
-			return false;
-		}
-		else {
-			return isReadableImpl(bean, propertyName);
-		}
+		return (!(this instanceof IndexedContainerReflector)
+				|| this instanceof MutableIndexedContainerReflector)
+				&& isReadableImpl(bean, propertyName);
 	}
 
 	protected boolean isValidIndex(Object bean, String propertyName) throws ReflectionException {
-		int size = ((IndexedContainerReflector) this).getSize(bean);
 		try {
-			int index = (new Integer(propertyName)).intValue();
-			return index >= 0 && index < size;
+			int index = Integer.parseInt(propertyName);
+			return index >= 0 && index < getSize(bean);
 		}
 		catch (NumberFormatException e) {
 			return false;
@@ -671,17 +666,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 */
 	protected Object getImpl(Object bean, String propertyName)
 		throws Exception {
-		if (this instanceof IndexedContainerReflector) {
-			if (propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_CLASS) ||
-				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_SIZE)) {
-				return null;
-			}
-			else {
-				return ((IndexedContainerReflector) this).get(bean,
-					(new Integer(propertyName)).intValue());
-			}
+		if (!(this instanceof IndexedContainerReflector)) {
+			throw new UnsupportedOperationException();
 		}
-		throw new UnsupportedOperationException();
+		return BeanReflector.IMPLICIT_PROPERTY_CLASS.equals(propertyName)
+				|| BeanReflector.IMPLICIT_PROPERTY_SIZE.equals(propertyName) ? null
+				: get(bean, Integer.parseInt(propertyName));
 	}
 
 	public final Class getType(Object bean, String propertyName)

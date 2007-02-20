@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -93,14 +93,8 @@ public class ReflectorHierarchicalContext extends BaseHierarchicalContext implem
 
 	protected Object getHierarchicalImpl(String propertyName) throws Exception {
 		checkConfiguration();
-//		String[] propertyNames = getBeanReflector().getPropertyNames(getDelegate());
-//		if (ContainerUtils.contains(propertyNames, propertyName)) {
-		if (getBeanReflector().isReadable(getDelegate(), propertyName)) {
-			return getBeanReflector().get(getDelegate(), propertyName);
-		}
-		else {
-			return null;
-		}
+		return getBeanReflector().isReadable(getDelegate(), propertyName)
+				? getBeanReflector().get(getDelegate(), propertyName) : null;
 	}
 
 	protected void setHierarchicalImpl(String propertyName, Object propertyValue)

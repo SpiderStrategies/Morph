@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -113,32 +113,27 @@ public class NumberConverter extends BaseTransformer implements Converter, Decor
 		if (destinationClass.isAssignableFrom(ClassUtils.getClass(source))) {
 			return source;
 		}
-		else {			
-			checkNotOutOfBounds(destinationClass, (Number) source);
-			
-			String numberStr;
-			if (isDecimal(destinationClass)) {
-				numberStr = source.toString();
-			}
-			else {
-				BigDecimal bigDecimal = new BigDecimal(source.toString());
-				bigDecimal = bigDecimal.setScale(0,
-					NumberRounder.getBigDecimalRoundMode(getRoundingMethod()));
-				numberStr = bigDecimal.toString();
-			}
-			return NumberUtils.getNumber(destinationClass, numberStr);
+		checkNotOutOfBounds(destinationClass, (Number) source);
+		
+		String numberStr;
+		if (isDecimal(destinationClass)) {
+			numberStr = source.toString();
 		}
+		else {
+			BigDecimal bigDecimal = new BigDecimal(source.toString());
+			bigDecimal = bigDecimal.setScale(0,
+				NumberRounder.getBigDecimalRoundMode(getRoundingMethod()));
+			numberStr = bigDecimal.toString();
+		}
+		return NumberUtils.getNumber(destinationClass, numberStr);
 	}
 	
 	protected boolean isDecimal(Class numberType) {
-		return
-			BigDecimal.class.isAssignableFrom(numberType) ||
-			Double.class.isAssignableFrom(numberType) ||
-			Float.class.isAssignableFrom(numberType) ||
-			double.class.equals(numberType) ||
-			float.class.equals(numberType);
+		return numberType == double.class || numberType == Double.class
+				|| numberType == float.class || numberType == Float.class
+				|| BigDecimal.class.isAssignableFrom(numberType);
 	}
-	
+
 //	/**
 //	 * Gets whether this converter should ensure that data remains consistent
 //	 * when conversions are performed. The default behavior for Java allows for
@@ -186,6 +181,7 @@ public class NumberConverter extends BaseTransformer implements Converter, Decor
 		}
 		return roundingMethod;
 	}
+
 	public void setRoundingMethod(
 		String roundingMethod) {
 		this.roundingMethod = roundingMethod;

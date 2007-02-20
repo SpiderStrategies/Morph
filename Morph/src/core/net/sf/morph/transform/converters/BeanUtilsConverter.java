@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -58,19 +58,20 @@ public class BeanUtilsConverter extends BaseTransformer implements Converter, De
 	 * in ConvertUtils.
 	 */
 	public ConvertUtilsBean getConvertUtilsBean() {
-		if (convertUtilsBean == null)
-		{
-			return MyConvertUtilsBeanHack.getInstance();
+		if (convertUtilsBean == null) {
+			setConvertUtilsBean(MyConvertUtilsBeanHack.getInstance());
 		}
-		else
-		{
-			return getConvertUtilsBean();
-		}
+		return convertUtilsBean;
 	}
+
+	/**
+	 * Set the ConvertUtilsBean to use.
+	 * @param convertUtilsBean
+	 */
 	public void setConvertUtilsBean(ConvertUtilsBean convertUtilsBean) {
 		this.convertUtilsBean = convertUtilsBean;
 	}
-	
+
 	/**
 	 * A hack that allows us to directly access the default ConvertUtilsBean
 	 * instance that is used by the static methods in ConvertUtils

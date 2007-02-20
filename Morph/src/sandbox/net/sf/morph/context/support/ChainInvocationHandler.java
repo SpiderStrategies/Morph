@@ -45,9 +45,7 @@ class ChainInvocationHandler extends DelegatingInvocationHandler implements Invo
 			method.getDeclaringClass().isAssignableFrom(ReflectorHierarchicalContext.class)) {
 			return getReflectorHierarchicalContext();
 		}
-		else {
-			return super.getDelegate(proxy, method, args);
-		}
+		return super.getDelegate(proxy, method, args);
 	}
 
 	protected ReflectorHierarchicalContext getReflectorHierarchicalContext() {

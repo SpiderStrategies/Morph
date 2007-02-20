@@ -112,7 +112,7 @@ public class ChainedConverter extends BaseCompositeTransformer implements Conver
 	 * @return
 	 */
 	private List getConversionPath(Class destinationType, Class sourceType, Converter[] chain, int index) {
-		Converter c = (Converter) chain[index];
+		Converter c = chain[index];
 		if (index + 1 == chain.length) {
 			if (TransformerUtils.isTransformable(c, destinationType, sourceType)) {
 				ArrayList result = new ArrayList();
