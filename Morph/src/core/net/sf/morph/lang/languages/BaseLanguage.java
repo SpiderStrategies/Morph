@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -47,16 +47,16 @@ public abstract class BaseLanguage implements Language, DecoratedLanguage {
 
 	private Converter converter;
 	
-	public abstract boolean isPropertyImpl(String expression)
+	protected abstract boolean isPropertyImpl(String expression)
 		throws Exception;
 	
-	public abstract Class getTypeImpl(Object target, String expression)
+	protected abstract Class getTypeImpl(Object target, String expression)
 		throws Exception;
 
-	public abstract Object getImpl(Object target, String expression)
+	protected abstract Object getImpl(Object target, String expression)
 		throws Exception;
 
-	public abstract void setImpl(Object target, String expression, Object value)
+	protected abstract void setImpl(Object target, String expression, Object value)
 		throws Exception;
 
 	public final boolean isProperty(String expression) throws LanguageException {

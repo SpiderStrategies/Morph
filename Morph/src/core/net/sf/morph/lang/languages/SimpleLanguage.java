@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -103,11 +103,11 @@ public class SimpleLanguage extends BaseLanguage {
 	private ExpressionParser expressionParser = DEFAULT_EXPRESSION_PARSER;
 	private BeanReflector reflector;
 	
-	public boolean isPropertyImpl(String expression) throws Exception {
+	protected boolean isPropertyImpl(String expression) throws Exception {
 		return expressionParser.parse(expression).length == 1;
 	}
 
-	public Class getTypeImpl(Object target, String expression) throws Exception {
+	protected Class getTypeImpl(Object target, String expression) throws Exception {
 		if (ObjectUtils.isEmpty(expression)) {
 			return target.getClass();
 		}		
@@ -124,7 +124,7 @@ public class SimpleLanguage extends BaseLanguage {
 		return getReflector().getType(value, token);
 	}
 
-	public Object getImpl(Object target, String expression) throws Exception {
+	protected Object getImpl(Object target, String expression) throws Exception {
 		if (ObjectUtils.isEmpty(expression)) {
 			return target;
 		}
@@ -143,7 +143,7 @@ public class SimpleLanguage extends BaseLanguage {
 		return value;
 	}
 
-	public void setImpl(Object target, String expression, Object value) throws Exception {
+	protected void setImpl(Object target, String expression, Object value) throws Exception {
 		if (ObjectUtils.isEmpty(expression)) {
 			target = value;
 		}

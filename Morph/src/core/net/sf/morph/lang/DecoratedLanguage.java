@@ -122,6 +122,7 @@ public interface DecoratedLanguage extends Language {
 	 * @throws InvalidExpressionException
 	 *             if <code>expression</code> is empty or not a valid
 	 *             expression
+	 * @deprecated why would we need both signatures (Object, String, Locale, Class) and (Object, String, Class, Locale)?
 	 */
 	public Object get(Object target, String expression, Locale locale,
 		Class destinationClass) throws LanguageException, TransformationException;

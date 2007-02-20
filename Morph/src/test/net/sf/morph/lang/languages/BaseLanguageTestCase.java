@@ -44,7 +44,7 @@ public abstract class BaseLanguageTestCase extends TestCase {
 			}
 			catch (LanguageException e) { }
 			try {
-				getDecoratedLanguage().get(null, "anything", Locale.getDefault(), TestClass.class);
+				getDecoratedLanguage().get(null, "anything", TestClass.class, Locale.getDefault());
 				fail("language.get(null, <anything>, <anthing>) should throw a LanguageException");
 			}
 			catch (LanguageException e) { }
