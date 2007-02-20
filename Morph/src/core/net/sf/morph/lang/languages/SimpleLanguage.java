@@ -88,7 +88,7 @@ import net.sf.morph.reflect.BeanReflector;
  * <p>
  * A simple language that will work for most use cases, but has the limitation
  * that bean property names cannot be numbers. Numbers like 123 are always
- * considered indicies into an indexed object. For example, <code>123</code>
+ * considered indices into an indexed object. For example, <code>123</code>
  * is an invalid bean property name in this language, but <code>12Monkies</code>
  * and <code>fridayThe13th</code> are valid property names.
  * </p>
