@@ -1,12 +1,12 @@
 /*
- * Copyright 2004-2005 the original author or authors.
- * 
+ * Copyright 2004-2005, 2007 the original author or authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -32,18 +32,18 @@ import org.apache.log4j.Logger;
 /**
  * Converts basic text types into primtive numbers or {@link java.lang.Number}
  * objects.
- * 
+ *
  * @author Matt Sgarlata
  * @since Jan 4, 2005
  */
 public class TextToNumberConverter extends BaseTransformer implements Converter, DecoratedConverter {
-	
+
 	private static final char RIGHT_PARENTHESES = ')';
 
 	private static final char LEFT_PARENTHESES = '(';
 
 	private static final Logger logger = Logger.getLogger(TextToNumberConverter.class);
-	
+
 	/**
 	 * Constant indicating whitespace characters should be ignored when
 	 * converting text to numbers. This is the default treatment of whitespace
@@ -56,7 +56,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * TransformationException will be thrown if whitespace is in the text).
 	 */
 	public static final int WHITESPACE_REJECT = 1;
-	
+
 	/**
 	 * Constant indicating currency symbols should be ignored when converting
 	 * text to numbers. This is the default treatment of currency symbols by
@@ -70,7 +70,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * the text).
 	 */
 	public static final int CURRENCY_REJECT = 1;
-	
+
 	/**
 	 * Constant indicating percentage symbols should be ignored when converting
 	 * text to numbers.
@@ -92,7 +92,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * thrown. This is the default treatment of percentages by this converter.
 	 */
 	public static final int PERCENTAGE_CONVERT_TO_DECIMAL = 2;
-	
+
 	/**
 	 * Constant indicating parentheses should be ignored when converting
 	 * text to numbers.
@@ -114,7 +114,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * parentheses by this converter.
 	 */
 	public static final int PARENTHESES_NEGATE = 2;
-	
+
 	/**
 	 * The converter used to convert text types from one type to another.
 	 */
@@ -123,7 +123,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * The converter used to convert number types from one type to another.
 	 */
 	private Converter numberConverter;
-	
+
 	/**
 	 * Configuration option indicating how whitespace should be treated
 	 * by this converter.  Default is {@link #WHITESPACE_IGNORE}.
@@ -144,23 +144,17 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * this converter.  Default is {@link #PARENTHESES_NEGATE}.
 	 */
 	private int parenthesesHandling = PARENTHESES_NEGATE;
-	
+
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-		
-		if (destinationClass.isPrimitive() && source == null) {
-			throw new TransformationException(destinationClass, source);
-		}
-		
+
 		if (ObjectUtils.isEmpty(source)) {
 			return null;
 		}
-		else {
-			
-			// convert the source to a String
-			String string = (String) getTextConverter().convert(String.class,
-				source, locale);
-			
+		// convert the source to a String
+		String string = (String) getTextConverter().convert(String.class,
+			source, locale);
+
 //			// if a custom numberFormat has been specified, ues that for the
 //			// conversion
 //			if (numberFormat != null) {
@@ -168,83 +162,66 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 //				synchronized (numberFormat) {
 //					number = numberFormat.parse(string);
 //				}
-//				
+//
 //				// convert the number to the destination class requested
 //				return getNumberConverter().convert(destinationClass, number,
 //					locale);
 //			}
-			
-			// strip out the characters that should be ignored
-			StringBuffer charactersToParse = new StringBuffer();
-//			if (symbolsToIgnore == null	) {
-//				charactersToParse.append(string);
-//			}
-//			else {
-//				for (int i=0; i<string.length(); i++) {
-//					char currentChar = string.charAt(i);
-//					Character currentCharacter = new Character(currentChar); 
-//					if (!ignoredSet.contains(currentCharacter) &&
-//						!(Character.getType(currentChar) == Character.CURRENCY_SYMBOL)) {
-//						charactersToParse.append(currentCharacter);
-//					}
-//				}
-//			}
-			
-			boolean append;
-			for (int i=0; i<string.length(); i++) {
-				char currentChar = string.charAt(i);
-				append = true;
-				if (getWhitespaceHandling() == WHITESPACE_IGNORE
-					&& Character.isWhitespace(currentChar)) {
-					append = false;
-				}
-				if (getCurrencyHandling() == CURRENCY_IGNORE
-					&& Character.getType(currentChar) == Character.CURRENCY_SYMBOL) {
-					append = false;
-				}
-				if (getPercentageHandling() == PERCENTAGE_IGNORE) {
-					DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale); 
-					if (currentChar == symbols.getPercent()) {
-						append = false;
-					}
-				}
-				if (getParenthesesHandling() == PARENTHESES_IGNORE) {
-					if (currentChar == LEFT_PARENTHESES
-						|| currentChar == RIGHT_PARENTHESES) {
-						append = false;
-					}
-				}
-				if (append) {
-					charactersToParse.append(currentChar);
-				}
-			}
-			
-			int lastCharIndex = charactersToParse.length() - 1;
-			// if this is a number enclosed with parentheses and we should be
-			// negating values in parentheses
-			if (getParenthesesHandling() == PARENTHESES_NEGATE &&
-				charactersToParse.charAt(0) == LEFT_PARENTHESES &&
-				charactersToParse.charAt(lastCharIndex) == RIGHT_PARENTHESES) {
-				// delete the closing paran
-				charactersToParse.deleteCharAt(lastCharIndex);				
-				// delete the opening paran
-				charactersToParse.deleteCharAt(0);
-				// add a minus symbol, to indicate the number is negative
-				DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
-				charactersToParse.insert(0, symbols.getMinusSign());
-			}
-			
-			NumberFormat format = null;
-			ParsePosition position = null;
-			Number number = null;
-			Object returnVal = null;
-			String stringToParse = charactersToParse.toString();
 
-// could not get this to work for some reason			
+		// strip out the characters that should be ignored
+		StringBuffer charactersToParse = new StringBuffer();
+
+		for (int i = 0; i < string.length(); i++) {
+			char currentChar = string.charAt(i);
+			if (getWhitespaceHandling() == WHITESPACE_IGNORE
+				&& Character.isWhitespace(currentChar)) {
+				continue;
+			}
+			if (getCurrencyHandling() == CURRENCY_IGNORE
+				&& Character.getType(currentChar) == Character.CURRENCY_SYMBOL) {
+				continue;
+			}
+			if (getPercentageHandling() == PERCENTAGE_IGNORE) {
+				DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
+				if (currentChar == symbols.getPercent()) {
+					continue;
+				}
+			}
+			if (getParenthesesHandling() == PARENTHESES_IGNORE) {
+				if (currentChar == LEFT_PARENTHESES
+					|| currentChar == RIGHT_PARENTHESES) {
+					continue;
+				}
+			}
+			charactersToParse.append(currentChar);
+		}
+
+		int lastCharIndex = charactersToParse.length() - 1;
+		// if this is a number enclosed with parentheses and we should be
+		// negating values in parentheses
+		if (getParenthesesHandling() == PARENTHESES_NEGATE &&
+			charactersToParse.charAt(0) == LEFT_PARENTHESES &&
+			charactersToParse.charAt(lastCharIndex) == RIGHT_PARENTHESES) {
+			// delete the closing paran
+			charactersToParse.deleteCharAt(lastCharIndex);
+			// delete the opening paran
+			charactersToParse.deleteCharAt(0);
+			// add a minus symbol, to indicate the number is negative
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
+			charactersToParse.insert(0, symbols.getMinusSign());
+		}
+
+		NumberFormat format = null;
+		ParsePosition position = null;
+		Number number = null;
+		Object returnVal = null;
+		String stringToParse = charactersToParse.toString();
+
+// could not get this to work for some reason
 //			// try to do the conversion assuming the source is a currency value
 //			format = NumberFormat.getCurrencyInstance(locale);
 //			position = new ParsePosition(0);
-//			number = format.parse(stringWithoutIgnoredSymbolsStr, position);			
+//			number = format.parse(stringWithoutIgnoredSymbolsStr, position);
 //			if (isParseSuccessful(stringWithoutIgnoredSymbolsStr, position)) {
 //				// convert the number to the destination class requested
 //				returnVal = getNumberConverter().convert(destinationClass, number,
@@ -252,38 +229,18 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 //				if (logger.isDebugEnabled()) {
 //					logger.debug("Successfully parsed '" + source + "' as a currency value of " + returnVal);
 //				}
-//				return returnVal;				
+//				return returnVal;
 //			}
 //			else {
 //				if (logger.isDebugEnabled()) {
 //					logger.debug("Could not perform conversion of '" + source + "' by treating the source as a currency value");
-//				}	
+//				}
 //			}
-			
-			// try to do the conversion to decimal assuming the source is a
-			// percentage
-			if (getPercentageHandling() == PERCENTAGE_CONVERT_TO_DECIMAL) {
-				format = NumberFormat.getPercentInstance(locale);
-				position = new ParsePosition(0);
-				number = format.parse(stringToParse, position);
-				if (isParseSuccessful(stringToParse, position)) {			
-					// convert the number to the destination class requested
-					returnVal = getNumberConverter().convert(destinationClass, number,
-						locale);
-					if (logger.isDebugEnabled()) {
-						logger.debug("Successfully parsed '" + source + "' as a percentage with value " + returnVal);
-					}
-					return returnVal;
-				}
-				else {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Could not perform conversion of '" + source + "' by treating the source as a percentage");
-					}
-				}
-			}
 
-			// try to do the conversion as a regular number
-			format = NumberFormat.getInstance(locale);
+		// try to do the conversion to decimal assuming the source is a
+		// percentage
+		if (getPercentageHandling() == PERCENTAGE_CONVERT_TO_DECIMAL) {
+			format = NumberFormat.getPercentInstance(locale);
 			position = new ParsePosition(0);
 			number = format.parse(stringToParse, position);
 			if (isParseSuccessful(stringToParse, position)) {
@@ -291,40 +248,49 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 				returnVal = getNumberConverter().convert(destinationClass, number,
 					locale);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Successfully parsed '" + source + "' as a number or currency value of " + returnVal);
+					logger.debug("Successfully parsed '" + source + "' as a percentage with value " + returnVal);
 				}
 				return returnVal;
 			}
-			else {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Could not perform conversion of '" + source + "' by treating the source as a regular number or currency value");
-				}
+			if (logger.isDebugEnabled()) {
+				logger.debug("Could not perform conversion of '" + source + "' by treating the source as a percentage");
 			}
-			
+		}
+
+		// try to do the conversion as a regular number
+		format = NumberFormat.getInstance(locale);
+		position = new ParsePosition(0);
+		number = format.parse(stringToParse, position);
+		if (isParseSuccessful(stringToParse, position)) {
+			// convert the number to the destination class requested
+			returnVal = getNumberConverter().convert(destinationClass, number,
+				locale);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Successfully parsed '" + source + "' as a number or currency value of " + returnVal);
+			}
+			return returnVal;
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Could not perform conversion of '" + source + "' by treating the source as a regular number or currency value");
+		}
+
 //			// if the first character of the string is a currency symbol
 //			if (Character.getType(stringWithoutIgnoredSymbolsStr.charAt(0)) == Character.CURRENCY_SYMBOL) {
 //				// try doing the conversion as a regular number by stripping off the first character
 //				format = NumberFormat.getInstance(locale);
 //				position = new ParsePosition(1);
 //				number = format.parse(stringWithoutIgnoredSymbolsStr, position);
-//				if (isParseSuccessful(stringWithoutIgnoredSymbolsStr, position)) {					
+//				if (isParseSuccessful(stringWithoutIgnoredSymbolsStr, position)) {
 //					// convert the number to the destination class requested
 //					return getNumberConverter().convert(destinationClass, number,
 //						locale);
 //				}
-//				else {
-//					if (logger.isDebugEnabled()) {
-//						logger.debug("Could not perform conversion of '" + source + "' by stripping the first character and treating as a normal number");
-//					}	
-//				}				
-//			}			
-			
-			throw new TransformationException(destinationClass, source);
-		}
-	}
-	
-	protected boolean isAutomaticallyHandlingNulls() {
-		return false;
+//				if (logger.isDebugEnabled()) {
+//					logger.debug("Could not perform conversion of '" + source + "' by stripping the first character and treating as a normal number");
+//				}
+//			}
+
+		throw new TransformationException(destinationClass, source);
 	}
 
 	protected boolean isParseSuccessful(String stringWithoutIgnoredSymbolsStr, ParsePosition position) {
@@ -342,7 +308,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 
 	/**
 	 * Sets the converter used to convert text types from one type to another.
-	 * 
+	 *
 	 * @return the converter used to convert text types from one type to another
 	 */
 	public Converter getNumberConverter() {
@@ -353,7 +319,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	}
 	/**
 	 * Sets the converter used to convert text types from one type to another.
-	 * 
+	 *
 	 * @param numberConverter
 	 *            the converter used to convert text types from one type to
 	 *            another
@@ -363,7 +329,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	}
 	/**
 	 * Gets the converter used to convert text types from one type to another.
-	 * 
+	 *
 	 * @return the converter used to convert text types from one type to another
 	 */
 	public Converter getTextConverter() {
@@ -374,7 +340,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	}
 	/**
 	 * Sets the converter used to convert text types from one type to another.
-	 * 
+	 *
 	 * @param textConverter
 	 *            the converter used to convert text types from one type to
 	 *            another
@@ -386,7 +352,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	/**
 	 * Retrieves the configuration option indicating how currencies should be
 	 * treated by this converter. Default is {@link #CURRENCY_IGNORE}.
-	 * 
+	 *
 	 * @return the configuration option indicating how currencies should be
 	 *         treated by this converter
 	 */
@@ -397,7 +363,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	/**
 	 * Sets the configuration option indicating how currencies should be treated
 	 * by this converter. Default is {@link #CURRENCY_IGNORE}.
-	 * 
+	 *
 	 * @param currencyHandling
 	 *            the configuration option indicating how currencies should be
 	 *            treated by this converter. Default is {@link #CURRENCY_IGNORE}.
@@ -409,7 +375,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	/**
 	 * Retrieves the configuration option indicating how parantheses should be
 	 * treated by this converter. Default is {@link #PARENTHESES_NEGATE}.
-	 * 
+	 *
 	 * @return the configuration option indicating how parantheses should be
 	 *         treated by this converter. Default is {@link #PARENTHESES_NEGATE}.
 	 */
@@ -420,7 +386,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	/**
 	 * Sets the configuration option indicating how parantheses should be
 	 * treated by this converter. Default is {@link #PARENTHESES_NEGATE}.
-	 * 
+	 *
 	 * @param parenthesesHandling
 	 *            the configuration option indicating how parantheses should be
 	 *            treated by this converter. Default is
@@ -444,7 +410,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * Sets the configuration option indicating how percentages should be
 	 * treated by this converter. Default is
 	 * {@link #PERCENTAGE_CONVERT_TO_DECIMAL}.
-	 * 
+	 *
 	 * @param percentageHandling
 	 *            the configuration option indicating how percentages should be
 	 *            treated by this converter. Default is
@@ -457,7 +423,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	/**
 	 * Gets the configuration option indicating how whitespace should be treated
 	 * by this converter. Default is {@link #WHITESPACE_IGNORE}.
-	 * 
+	 *
 	 * @return the configuration option indicating how whitespace should be
 	 *         treated by this converter. Default is {@link #WHITESPACE_IGNORE}.
 	 */
@@ -468,7 +434,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	/**
 	 * Sets the configuration option indicating how whitespace should be treated
 	 * by this converter. Default is {@link #WHITESPACE_IGNORE}.
-	 * 
+	 *
 	 * @param whitespaceHandling
 	 *            the configuration option indicating how whitespace should be
 	 *            treated by this converter. Default is
@@ -477,5 +443,5 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	public void setWhitespaceHandling(int whitespaceHandling) {
 		this.whitespaceHandling = whitespaceHandling;
 	}
-	
+
 }
