@@ -51,6 +51,7 @@ import net.sf.morph.transform.converters.TextToTimeConverter;
 import net.sf.morph.transform.converters.TimeConverter;
 import net.sf.morph.transform.converters.TimeToNumberConverter;
 import net.sf.morph.transform.copiers.ContainerCopier;
+import net.sf.morph.transform.copiers.ObjectToMapCopier;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopier;
 import net.sf.morph.util.ClassUtils;
 import net.sf.morph.util.ContainerUtils;
@@ -85,7 +86,8 @@ import net.sf.morph.util.TransformerUtils;
  * Any delegates which implement
  * {@link net.sf.morph.transform.NodeCopier} will automatically have this
  * transformer marked as the parent transformer.  This is important for
- * performing deep copies of object graphs.
+ * performing deep copies of object graphs.  Note that it is safe for a SimpleDelegatingTransformer
+ * to implement the NodeCopier interface <em>only</em> if all its components do so.
  * </p>
  *
  * @author Matt Sgarlata
@@ -423,7 +425,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	}
 
 	protected void updateNestedTransformerComponents(Transformer incoming, Transformer outgoing) {
-		NodeCopier[] nodeCopiers = (NodeCopier[]) ContainerUtils.getElementsOfType(components, NodeCopier.class);
+		NodeCopier[] nodeCopiers = (NodeCopier[]) ContainerUtils.getElementsOfType(getComponents(), NodeCopier.class);
 		for (int i = 0; i < nodeCopiers.length; i++) {
 			if (nodeCopiers[i].getNestedTransformer() == outgoing) {
 				nodeCopiers[i].setNestedTransformer(incoming);
