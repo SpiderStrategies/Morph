@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -259,26 +259,6 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 		return destinationClass.isArray() ? new ResetableIteratorWrapper(
 				getContainerReflector().getIterator(source))
 				: super.createReusableSource(destinationClass, source);
-	}
-	
-	protected Object createNewInstanceImpl(Class destinationClass, Object source) throws Exception {
-		if (destinationClass.isArray()) {
-			ResetableIteratorWrapper iterator = (ResetableIteratorWrapper) source;
-			
-			// determine the size of the source
-			int size = 0;
-			while (iterator.hasNext()) {
-				iterator.next();
-				size++;
-			}
-			iterator.reset();
-			
-			// create the destination array
-			Class containedType = ClassUtils.getContainedClass(destinationClass);
-			Object destination = ClassUtils.createArray(containedType, size);
-			return destination;
-		}
-		return super.createNewInstanceImpl(destinationClass, source);
 	}
 
 	protected Class[] getDestinationClassesImpl() throws Exception {
