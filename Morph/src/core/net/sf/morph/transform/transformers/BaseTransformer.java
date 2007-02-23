@@ -440,11 +440,8 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 				}
 			}
 		}
-
 		return destinationClass.newInstance();
 	}
-
-
 
 	public Object createNewInstance(Class destinationClass, Object source) {
 		try {
