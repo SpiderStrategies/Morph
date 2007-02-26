@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -94,6 +94,18 @@ import net.sf.morph.util.TransformerUtils;
 public class SimpleDelegatingTransformer extends BaseCompositeTransformer implements
 	SpecializableComposite, ExplicitTransformer, Transformer, DecoratedCopier, DecoratedConverter, Cloneable {
 
+	private static class MapThreadLocal extends ThreadLocal {
+		protected Object initialValue() {
+			return new HashMap();
+		}
+	}
+
+	private static class StackDepthThreadLocal extends ThreadLocal {
+		protected Object initialValue() {
+			return new Int();
+		}
+	}
+
 	private static Transformer createObjectToMapCopier() {
 		PropertyNameMatchingCopier result = new PropertyNameMatchingCopier();
 		result.setDestinationClasses(new Class[] { Map.class });
@@ -122,16 +134,8 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 
 	private Specializer specializer;
 
-	private transient ThreadLocal visitedSourceToDestinationMapThreadLocal = new ThreadLocal() {
-		protected Object initialValue() {
-			return new HashMap();
-		}
-	};
-	private transient ThreadLocal stackDepthThreadLocal = new ThreadLocal() {
-		protected Object initialValue() {
-			return new Int();
-		}
-	};
+	private transient ThreadLocal visitedSourceToDestinationMapThreadLocal = new MapThreadLocal();
+	private transient ThreadLocal stackDepthThreadLocal = new StackDepthThreadLocal();
 
 	private transient Map copierRegistry = Collections.synchronizedMap(new HashMap());
 	private transient Map transformerRegistry = Collections.synchronizedMap(new HashMap());
@@ -439,7 +443,12 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	}
 
 	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+		SimpleDelegatingTransformer result = (SimpleDelegatingTransformer) super.clone();
+		result.copierRegistry = Collections.synchronizedMap(new HashMap());
+		result.transformerRegistry = Collections.synchronizedMap(new HashMap());
+		result.visitedSourceToDestinationMapThreadLocal = new MapThreadLocal();
+		result.stackDepthThreadLocal = new StackDepthThreadLocal();
+		return result;
 	}
 
 	/**
