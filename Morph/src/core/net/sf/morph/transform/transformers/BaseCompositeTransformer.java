@@ -19,7 +19,9 @@ import net.sf.composite.Defaults;
 import net.sf.composite.SimpleComposite;
 import net.sf.composite.StrictlyTypedComposite;
 import net.sf.composite.validate.ComponentValidator;
+import net.sf.morph.transform.NodeCopier;
 import net.sf.morph.transform.Transformer;
+import net.sf.morph.util.ContainerUtils;
 
 /**
  * @author Matt Sgarlata
@@ -62,6 +64,30 @@ public abstract class BaseCompositeTransformer extends BaseTransformer implement
 
 	public void setComponentValidator(ComponentValidator componentValidator) {
 		this.componentValidator = componentValidator;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setNestedTransformer(net.sf.morph.transform.Transformer)
+	 */
+	protected void setNestedTransformer(Transformer nestedTransformer) {
+		Transformer old = getNestedTransformer();
+		if (nestedTransformer == old) {
+			return;
+		}
+		super.setNestedTransformer(nestedTransformer);
+		if (nestedTransformer == null) {
+			nestedTransformer = this;
+		}
+		updateNestedTransformerComponents(nestedTransformer, old);
+	}
+
+	protected void updateNestedTransformerComponents(Transformer incoming, Transformer outgoing) {
+		NodeCopier[] nodeCopiers = (NodeCopier[]) ContainerUtils.getElementsOfType(getComponents(), NodeCopier.class);
+		for (int i = 0; i < nodeCopiers.length; i++) {
+			if (nodeCopiers[i].getNestedTransformer() == outgoing) {
+				nodeCopiers[i].setNestedTransformer(incoming);
+			}
+		}
 	}
 
 }

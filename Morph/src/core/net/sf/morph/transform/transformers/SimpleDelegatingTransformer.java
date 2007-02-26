@@ -51,10 +51,8 @@ import net.sf.morph.transform.converters.TextToTimeConverter;
 import net.sf.morph.transform.converters.TimeConverter;
 import net.sf.morph.transform.converters.TimeToNumberConverter;
 import net.sf.morph.transform.copiers.ContainerCopier;
-import net.sf.morph.transform.copiers.ObjectToMapCopier;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopier;
 import net.sf.morph.util.ClassUtils;
-import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.Int;
 import net.sf.morph.util.TransformerUtils;
 
@@ -96,6 +94,12 @@ import net.sf.morph.util.TransformerUtils;
 public class SimpleDelegatingTransformer extends BaseCompositeTransformer implements
 	SpecializableComposite, ExplicitTransformer, Transformer, DecoratedCopier, DecoratedConverter, Cloneable {
 
+	private static Transformer createObjectToMapCopier() {
+		PropertyNameMatchingCopier result = new PropertyNameMatchingCopier();
+		result.setDestinationClasses(new Class[] { Map.class });
+		return result;
+	}
+
 	protected Transformer[] createDefaultComponents() {
 		return new Transformer[] {
 			new DefaultToBooleanConverter(),
@@ -110,12 +114,12 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			new TimeToNumberConverter(),
 			new NumberConverter(),
 			new TimeConverter(),
+			createObjectToMapCopier(),
 			new ContainerCopier(),
 			new PropertyNameMatchingCopier()
 		};
 	}
 
-//	private boolean failFast;
 	private Specializer specializer;
 
 	private transient ThreadLocal visitedSourceToDestinationMapThreadLocal = new ThreadLocal() {
@@ -134,7 +138,6 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 
 	public SimpleDelegatingTransformer() {
 		super();
-//		setFailFast(true);
 	}
 
 	public SimpleDelegatingTransformer(Transformer[] components) {
@@ -424,23 +427,6 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		}
 	}
 
-	protected void updateNestedTransformerComponents(Transformer incoming, Transformer outgoing) {
-		NodeCopier[] nodeCopiers = (NodeCopier[]) ContainerUtils.getElementsOfType(getComponents(), NodeCopier.class);
-		for (int i = 0; i < nodeCopiers.length; i++) {
-			if (nodeCopiers[i].getNestedTransformer() == outgoing) {
-				nodeCopiers[i].setNestedTransformer(incoming);
-			}
-		}
-	}
-
-//	public boolean isFailFast() {
-//		return failFast;
-//	}
-//	public void setFailFast(boolean failFast) {
-//		this.failFast = failFast;
-//	}
-
-
 	/**
 	 * Let the delegate do the logging
 	 */
@@ -501,15 +487,4 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 				source);
 	}
 
-	protected void setNestedTransformer(Transformer nestedTransformer) {
-		Transformer old = getNestedTransformer();
-		if (nestedTransformer == old) {
-			return;
-		}
-		super.setNestedTransformer(nestedTransformer);
-		if (nestedTransformer == null) {
-			nestedTransformer = this;
-		}
-		updateNestedTransformerComponents(nestedTransformer, old);
-	}
 }
