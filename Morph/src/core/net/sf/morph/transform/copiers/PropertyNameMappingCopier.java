@@ -66,6 +66,7 @@ public class PropertyNameMappingCopier extends BasePropertyNameCopier {
 
 	protected void initializeImpl()
         throws Exception {
+		super.initializeImpl();
         if (ObjectUtils.isEmpty(mapping)) {
             throw new TransformationException(
                 "You must specify which properties you would like the "
@@ -133,7 +134,6 @@ public class PropertyNameMappingCopier extends BasePropertyNameCopier {
 				missingProperty = true;
 			}
 
-            
             if (missingProperty &&
             	(getLog().isWarnEnabled() || isErrorOnMissingProperty())) {
             	String message = "Failed to copy property '"
@@ -142,9 +142,7 @@ public class PropertyNameMappingCopier extends BasePropertyNameCopier {
             	if (isErrorOnMissingProperty()) {
                     throw new TransformationException(message);
             	}
-            	if (getLog().isWarnEnabled()) {
-                	getLog().warn(message);
-            	}
+               	getLog().warn(message);
             }
         }
     }
