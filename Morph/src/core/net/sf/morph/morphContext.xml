@@ -2,7 +2,7 @@
 
 <beans
 	default-lazy-init="true">
-		
+
 <!--============================================================================
 |
 | REFLECTORS
@@ -12,71 +12,71 @@
 	<bean
 		name="listReflector"
 		class="net.sf.morph.reflect.reflectors.ListReflector"/>
-		
+
 	<bean
 		name="sortedSetReflector"
 		class="net.sf.morph.reflect.reflectors.SortedSetReflector"/>
-	
+
 	<bean
 		name="setReflector"
 		class="net.sf.morph.reflect.reflectors.SetReflector"/>
-		
+
 	<bean
 		name="enumerationReflector"
 		class="net.sf.morph.reflect.reflectors.EnumerationReflector"/>
-		
+
 	<bean
 		name="iteratorReflector"
 		class="net.sf.morph.reflect.reflectors.IteratorReflector"/>
-		
+
 	<bean
 		name="arrayReflector"
 		class="net.sf.morph.reflect.reflectors.ArrayReflector"/>
-		
+
 	<bean
 		name="collectionReflector"
 		class="net.sf.morph.reflect.reflectors.CollectionReflector"/>
-		
+
 	<bean
 		name="resultSetReflector"
 		class="net.sf.morph.reflect.reflectors.ResultSetReflector"/>
-		
+
 	<bean
 		name="contextReflector"
 		class="net.sf.morph.reflect.reflectors.ContextReflector"/>
-		
+
 	<bean
 		name="mapReflector"
 		class="net.sf.morph.reflect.reflectors.MapReflector"/>
-	
+
 	<bean
 		name="servletContextAttributeReflector"
 		class="net.sf.morph.reflect.reflectors.ServletContextAttributeReflector"/>
-		
+
 	<bean
 		name="httpSessionAttributeReflector"
 		class="net.sf.morph.reflect.reflectors.HttpSessionAttributeReflector"/>
-		
+
 	<bean
 		name="servletRequestAttributeReflector"
 		class="net.sf.morph.reflect.reflectors.ServletRequestAttributeReflector"/>
-		
+
 	<bean
 		name="pageContextAttributeReflector"
 		class="net.sf.morph.reflect.reflectors.PageContextAttributeReflector"/>
-		
+
 	<bean
 		name="dynaBeanReflector"
 		class="net.sf.morph.reflect.reflectors.DynaBeanReflector"/>
-		
+
 	<bean
 		name="objectReflector"
 		class="net.sf.morph.reflect.reflectors.ObjectReflector"/>
-		
+
 	<bean
 		name="simpleInstantiatingReflector"
 		class="net.sf.morph.reflect.reflectors.SimpleInstantiatingReflector"/>
-		
+
 	<bean
 		name="delegatingReflector"
 		class="net.sf.morph.reflect.reflectors.SimpleDelegatingReflector"/>
@@ -90,23 +90,23 @@
 	<bean
 		name="defaultToBooleanConverter"
 		class="net.sf.morph.transform.converters.DefaultToBooleanConverter"/>
-		
+
 	<bean
 		name="nullConverter"
 		class="net.sf.morph.transform.converters.DefaultToTextConverter"/>
-		
+
 	<bean
 		name="identityConverter"
 		class="net.sf.morph.transform.converters.IdentityConverter"/>
-		
+
 	<bean
 		name="immutableTypesOnlyIdentityConverter"
 		class="net.sf.morph.transform.converters.ImmutableTypesOnlyIdentityConverter"/>
-		
+
 	<bean
 		name="defaultToTextConverter"
 		class="net.sf.morph.transform.converters.DefaultToTextConverter"/>
-		
+
 	<bean
 		name="textToNumberConverter"
 		class="net.sf.morph.transform.converters.TextToNumberConverter"/>
@@ -114,19 +114,19 @@
 	<bean
 		name="textToTimeConverter"
 		class="net.sf.morph.transform.converters.TextToTimeConverter"/>
-		
+
 	<bean
 		name="numberToTimeConverter"
 		class="net.sf.morph.transform.converters.NumberToTimeConverter"/>
-		
+
 	<bean
 		name="timeToNumberConverter"
 		class="net.sf.morph.transform.converters.TimeToNumberConverter"/>
-		
+
 	<bean
 		name="numberConverter"
 		class="net.sf.morph.transform.converters.NumberConverter"/>
-		
+
 	<bean
 		name="textConverter"
 		class="net.sf.morph.transform.converters.TextConverter"/>
@@ -134,15 +134,15 @@
 	<bean
 		name="timeConverter"
 		class="net.sf.morph.transform.converters.TimeConverter"/>
-		
+
 	<bean
 		name="containerCopier"
 		class="net.sf.morph.transform.copiers.ContainerCopier"/>
-		
+
 	<bean
 		name="propertyNameMatchingCopier"
-		class="net.sf.morph.transform.copiers.PropertyNameMatchingCopier"/>		
-		
+		class="net.sf.morph.transform.copiers.PropertyNameMatchingCopier"/>
+
 	<bean
 		name="delegatingTransformer"
 		class="net.sf.morph.transform.transformers.SimpleDelegatingTransformer">
@@ -151,20 +151,24 @@
 				<ref bean="defaultToBooleanConverter"/>
 				<ref bean="nullConverter"/>
 				<ref bean="identityConverter"/>
+				<bean class="net.sf.morph.transform.converters.ObjectToClassConverter" />
+				<ref bean="textConverter"/>
 				<ref bean="defaultToTextConverter"/>
 				<ref bean="textToNumberConverter"/>
 				<ref bean="textToTimeConverter"/>
 				<ref bean="numberToTimeConverter"/>
 				<ref bean="timeToNumberConverter"/>
 				<ref bean="numberConverter"/>
-				<ref bean="textConverter"/>
 				<ref bean="timeConverter"/>
+				<bean class="net.sf.morph.transform.copiers.PropertyNameMatchingCopier">
+					<property name="destinationClasses" value="java.util.Map" />
+				</bean>
 				<ref bean="containerCopier"/>
 				<ref bean="propertyNameMatchingCopier"/>
 			</list>
 		</property>
 	</bean>
-			
+
 <!--============================================================================
 |
 | MISC
