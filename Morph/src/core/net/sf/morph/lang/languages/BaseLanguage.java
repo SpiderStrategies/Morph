@@ -140,12 +140,12 @@ public abstract class BaseLanguage implements Language, DecoratedLanguage {
 	}
 	public final Object get(Object target, String expression, Class destinationClass,
 		Locale locale) throws LanguageException, TransformationException {
-		return get(target, expression, locale, destinationClass);
+		Object object = get(target, expression);
+		return getConverter().convert(destinationClass, object, locale);
 	}
 	public final Object get(Object target, String expression, Locale locale,
 		Class destinationClass) throws LanguageException, TransformationException {
-		Object object = get(target, expression);
-		return getConverter().convert(destinationClass, object, locale);
+		return get(target, expression, destinationClass, locale);
 	}
 	
 	public void set(Object target, String expression, Object value,
