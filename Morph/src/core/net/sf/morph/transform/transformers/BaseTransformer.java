@@ -56,7 +56,7 @@ import org.apache.commons.logging.LogFactory;
  * <li>Provides protected methods that assist in the implementation of
  * transformers which are in turn composed of other transformers.</li>
  * <li>Optionally caches results of
- * {@link net.sf.morph.transform.DecoratedTransformer#isTransformable(Class, Class)}
+ * {@link ExplicitTransformer#isTransformable(Class, Class)}
  * for better performance. This feature is turned on by default</li>
  * </ul>
  * </p>
