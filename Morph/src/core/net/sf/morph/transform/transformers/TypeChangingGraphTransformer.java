@@ -60,7 +60,6 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 	 * Construct a new TypeChangingGraphTransformer.
 	 */
 	public TypeChangingGraphTransformer() {
-		setAppendDefaultComponents(true);
 	}
 
 	protected Transformer getTransformer(Class transformerType) {

@@ -133,7 +133,6 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	}
 
 	private Specializer specializer;
-	private boolean appendDefaultComponents = getClass() == SimpleDelegatingTransformer.class;
 
 	private transient ThreadLocal visitedSourceToDestinationMapThreadLocal = new MapThreadLocal();
 	private transient ThreadLocal stackDepthThreadLocal = new StackDepthThreadLocal();
@@ -141,16 +140,40 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	private transient Map copierRegistry = Collections.synchronizedMap(new HashMap());
 	private transient Map transformerRegistry = Collections.synchronizedMap(new HashMap());
 
+	/**
+	 * Construct a new SimpleDelegatingTransformer.
+	 */
 	public SimpleDelegatingTransformer() {
 		super();
 	}
 
+	/**
+	 * Construct a new SimpleDelegatingTransformer.
+	 * @param components
+	 */
 	public SimpleDelegatingTransformer(Transformer[] components) {
-		setComponents(components);
+		this(components, false);
 	}
 
+	/**
+	 * Construct a new SimpleDelegatingTransformer.
+	 * @param components
+	 * @param appendDefaultComponents
+	 */
 	public SimpleDelegatingTransformer(Transformer[] components, boolean appendDefaultComponents) {
-		setAppendDefaultComponents(appendDefaultComponents);
+		if (appendDefaultComponents) {
+			Transformer[] defaultComponents = createDefaultComponents();
+			if (ObjectUtils.isEmpty(components)) {
+				components = defaultComponents;
+			}
+			else {
+				Transformer[] newComponents = (Transformer[]) ClassUtils.createArray(
+						getComponentType(), components.length + defaultComponents.length);
+				System.arraycopy(components, 0, newComponents, 0, components.length);
+				System.arraycopy(defaultComponents, 0, newComponents, components.length, defaultComponents.length);
+				components = newComponents;
+			}
+		}
 		setComponents(components);
 	}
 
@@ -412,29 +435,12 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 
 	public Object[] getComponents() {
 		if (components == null) {
-			iSetComponents(createDefaultComponents());
+			setComponents(createDefaultComponents());
 		}
 		return super.getComponents();
 	}
 
 	public synchronized void setComponents(Object[] components) {
-		if (isAppendDefaultComponents()) {
-			Transformer[] defaultComponents = createDefaultComponents();
-			if (ObjectUtils.isEmpty(components)) {
-				components = defaultComponents;
-			}
-			else {
-				Object[] newComponents = (Object[]) ClassUtils.createArray(
-						getComponentType(), components.length + defaultComponents.length);
-				System.arraycopy(components, 0, newComponents, 0, components.length);
-				System.arraycopy(defaultComponents, 0, newComponents, components.length, defaultComponents.length);
-				components = newComponents;
-			}
-		}
-		iSetComponents(components);
-	}
-
-	private void iSetComponents(Object[] components) {
 		if (this.components == components) {
 			return;
 		}
@@ -496,22 +502,6 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return t instanceof NodeCopier ? ((NodeCopier) t).createReusableSource(
 				destinationClass, source) : super.createReusableSource(destinationClass,
 				source);
-	}
-
-	/**
-	 * Get the appendDefaultComponents of this SimpleDelegatingTransformer.
-	 * @return the appendDefaultComponents
-	 */
-	public synchronized boolean isAppendDefaultComponents() {
-		return appendDefaultComponents;
-	}
-
-	/**
-	 * Set the appendDefaultComponents of this SimpleDelegatingTransformer.
-	 * @param appendDefaultComponents the appendDefaultComponents to set
-	 */
-	public synchronized void setAppendDefaultComponents(boolean appendDefaultComponents) {
-		this.appendDefaultComponents = appendDefaultComponents;
 	}
 
 }
