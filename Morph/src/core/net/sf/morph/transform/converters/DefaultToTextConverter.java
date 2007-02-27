@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -72,24 +72,22 @@ public class DefaultToTextConverter extends SimpleDelegatingTransformer implemen
 		return getTextConverter().getDestinationClasses();
 	}
 
-	public Object[] getComponents() {
-		if (components == null) {
-			setComponents(new Transformer[] {
-				new BooleanToTextConverter(),
-				new TimeToTextConverter(),
-				new NumberToTextConverter(),
-				new ObjectToTextConverter()
-			});
-		}
-		return super.getComponents();
+	/* (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.SimpleDelegatingTransformer#createDefaultComponents()
+	 */
+	protected Transformer[] createDefaultComponents() {
+		return new Transformer[] {
+				new BooleanToTextConverter(), new TimeToTextConverter(),
+				new NumberToTextConverter(), new ObjectToTextConverter() };
 	}
-	
+
 	public Converter getTextConverter() {
 		if (textConverter == null) {
 			setTextConverter(Defaults.createTextConverter());
 		}
 		return textConverter;
 	}
+
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;
 	}
