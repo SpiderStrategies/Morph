@@ -146,7 +146,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	}
 
 	public SimpleDelegatingTransformer(Transformer[] components) {
-		this(components, true);
+		setComponents(components);
 	}
 
 	public SimpleDelegatingTransformer(Transformer[] components, boolean appendDefaultComponents) {
