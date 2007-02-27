@@ -117,7 +117,7 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 	public Class[] getReflectableClassesImpl() {
 		Set set = new HashSet();
 		Object[] reflectors = getComponents();
-		for (int i=0; i<reflectors.length; i++) {
+		for (int i = 0; i < reflectors.length; i++) {
 			Class[] reflectableClasses = ((Reflector) reflectors[i]).getReflectableClasses();
 			for (int j = 0; j < reflectableClasses.length; j++) {
 				set.add(reflectableClasses[j]);
@@ -131,17 +131,21 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		return getBeanReflector(bean).get(bean, propertyName);
 	}
+
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		return getBeanReflector(bean).getPropertyNames(bean);
 	}
+
 	protected Class getTypeImpl(Object bean, String propertyName)
 		throws Exception {
 		return getBeanReflector(bean).getType(bean, propertyName);
 	}
+
 	protected boolean isReadableImpl(Object bean, String propertyName)
 		throws Exception {
 		return getBeanReflector(bean).isReadable(bean, propertyName);
 	}
+
 	protected boolean isWriteableImpl(Object bean, String propertyName)
 		throws Exception {
 		return getBeanReflector(bean).isWriteable(bean, propertyName);
