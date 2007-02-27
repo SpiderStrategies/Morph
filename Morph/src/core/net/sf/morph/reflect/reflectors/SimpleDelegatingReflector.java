@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -63,6 +63,44 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 	private Specializer specializer;
 	private ComponentValidator componentValidator;
 
+	/**
+	 * Construct a new SimpleDelegatingReflector.
+	 */
+	public SimpleDelegatingReflector() {
+		this(null, true);
+	}
+
+	/**
+	 * Construct a new SimpleDelegatingReflector.
+	 * @param components
+	 */
+	public SimpleDelegatingReflector(Reflector[] components) {
+		this(components, false);
+	}
+
+	/**
+	 * Construct a new SimpleDelegatingReflector.
+	 * @param components
+	 * @param appendDefaultComponents if true, the components returned from createDefaultComponents() will be added.
+	 */
+	public SimpleDelegatingReflector(Reflector[] components, boolean appendDefaultComponents) {
+		if (appendDefaultComponents) {
+			Reflector[] defaultComponents = createDefaultComponents();
+			if (ObjectUtils.isEmpty(components)) {
+				components = defaultComponents;
+			}
+			else {
+				//use getComponentType() in case a subclass tightens from Reflector;
+				Reflector[] newComponents = (Reflector[]) ClassUtils.createArray(
+						getComponentType(), components.length + defaultComponents.length);
+				System.arraycopy(components, 0, newComponents, 0, components.length);
+				System.arraycopy(defaultComponents, 0, newComponents, components.length, defaultComponents.length);
+				components = newComponents;
+			}
+		}
+		setComponents(components);
+	}
+
 	protected Reflector[] createDefaultComponents() {
 		List componentList = new LinkedList();
 
@@ -101,10 +139,6 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 		componentList.add(new ObjectReflector());
 
 		return (Reflector[]) componentList.toArray(new Reflector[componentList.size()]);
-	}
-
-	public SimpleDelegatingReflector() {
-		super();
 	}
 
 // internal state initialization/validation
