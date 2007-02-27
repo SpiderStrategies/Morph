@@ -55,7 +55,14 @@ import net.sf.morph.util.TypeMap;
 public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 	
 	private Map sourceToDestinationTypeMapping;
-	
+
+	/**
+	 * Construct a new TypeChangingGraphTransformer.
+	 */
+	public TypeChangingGraphTransformer() {
+		setAppendDefaultComponents(true);
+	}
+
 	protected Transformer getTransformer(Class transformerType) {
 		Object[] components = getComponents();
 		for (int i=0; i<components.length; i++) {
