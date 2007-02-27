@@ -373,38 +373,33 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 *             if no suitable transformer could be found
 	 */
 	private Transformer getTransformer(Class transformerType, Class destinationClass, Class sourceClass) throws TransformationException {
-//		if (transformerType.isAssignableFrom(ClassUtils.getContainedClass(getComponents().getClass()))) {
-			for (int i=0; i<components.length; i++) {
-				// if the transformer is the correct type
-				Transformer transformer = (Transformer) components[i];
-				if (transformerType.isAssignableFrom(transformer.getClass())) {
-					// if the transformer is capable of performing the transformation
-					if (TransformerUtils.isTransformable(
-							transformer, destinationClass, sourceClass)) {
-						if (getLog().isTraceEnabled()) {
-							getLog().trace("Using "
-								+ ClassUtils.getUnqualifiedClassName(transformerType)
-								+ " " + transformer.getClass().getName()
-								+ " to transform "
-								+ ObjectUtils.getObjectDescription(sourceClass)
-								+ " to "
-								+ ObjectUtils.getObjectDescription(destinationClass));
-						}
-						return transformer;
+		for (int i=0; i<components.length; i++) {
+			// if the transformer is the correct type
+			Transformer transformer = (Transformer) components[i];
+			if (transformerType.isAssignableFrom(transformer.getClass())) {
+				// if the transformer is capable of performing the transformation
+				if (TransformerUtils.isTransformable(
+						transformer, destinationClass, sourceClass)) {
+					if (getLog().isTraceEnabled()) {
+						getLog().trace("Using "
+							+ ClassUtils.getUnqualifiedClassName(transformerType)
+							+ " " + transformer.getClass().getName()
+							+ " to transform "
+							+ ObjectUtils.getObjectDescription(sourceClass)
+							+ " to "
+							+ ObjectUtils.getObjectDescription(destinationClass));
 					}
+					return transformer;
 				}
-
 			}
 
-			throw new TransformationException(
-				"Could not find a transformer that can transform objects of "
-					+ ObjectUtils.getObjectDescription(sourceClass)
-					+ " to objects of "
-					+ ObjectUtils.getObjectDescription(destinationClass));
-//		}
-//		else {
-//			return (Transformer) getCompositeDecorator().specialize(transformerType);
-//		}
+		}
+
+		throw new TransformationException(
+			"Could not find a transformer that can transform objects of "
+				+ ObjectUtils.getObjectDescription(sourceClass)
+				+ " to objects of "
+				+ ObjectUtils.getObjectDescription(destinationClass));
 	}
 
 	public Transformer[] getTransformers() {
@@ -463,20 +458,6 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	protected Map getVisitedSourceToDestinationMap() {
 		return (Map) visitedSourceToDestinationMapThreadLocal.get();
 	}
-//	/**
-//	 * Sets a Map of all the nodes in the object graph that have been
-//	 * transformed so far by this transformer. The keys in the Map are the
-//	 * visited source nodes, and the values are the converted representation of
-//	 * the node.
-//	 *
-//	 * @param visitedSourceToDestinationMap
-//	 *            a Map of all the nodes in the object graph that have been
-//	 *            transformed so far by this transformer
-//	 */
-//	protected void setVisitedSourceToDestinationMap(
-//		Map visitedSourceToDestinationMap) {
-//		visitedSourceToDestinationMapThreadLocal.set(visitedSourceToDestinationMap);
-//	}
 
 	public Specializer getSpecializer() {
 		if (specializer == null) {
