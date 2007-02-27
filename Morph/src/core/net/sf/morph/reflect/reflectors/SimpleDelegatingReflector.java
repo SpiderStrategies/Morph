@@ -62,7 +62,6 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 	private Object[] components;
 	private Specializer specializer;
 	private ComponentValidator componentValidator;
-	private boolean failFast;
 
 	protected Reflector[] createDefaultComponents() {
 		List componentList = new LinkedList();
@@ -112,7 +111,6 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 
 	protected void initializeImpl() throws Exception {
 		super.initializeImpl();
-
 		getComponentValidator().validate(this);
 	}
 
@@ -196,7 +194,7 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 
 	public boolean isReflectableImpl(Class reflectedType,
 			Class reflectorType) throws ReflectionException {
-		for (int i=0; i<getComponents().length; i++) {
+		for (int i = 0; i < getComponents().length; i++) {
 			Reflector component = (Reflector) getComponents()[i];
 			if (reflectorType.isAssignableFrom(component.getClass()) &&
 				ClassUtils.inheritanceContains(component.getReflectableClasses(), reflectedType)) {
@@ -207,7 +205,7 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 	}
 
 	protected Reflector getReflector(Class reflectorType, Class reflectedType) {
-		for (int i=0; i<getComponents().length; i++) {
+		for (int i = 0; i < getComponents().length; i++) {
 			Reflector component = (Reflector) getComponents()[i];
 			if (reflectorType.isAssignableFrom(component.getClass()) &&
 					ClassUtils.inheritanceContains(component.getReflectableClasses(), reflectedType)) {
@@ -296,14 +294,6 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 	public void setComponents(Object[] components) {
 		setInitialized(false);
 		this.components = components;
-	}
-
-	public boolean isFailFast() {
-		return failFast;
-	}
-
-	public void setFailFast(boolean failFast) {
-		this.failFast = failFast;
 	}
 
 	public Specializer getSpecializer() {
