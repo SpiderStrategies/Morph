@@ -27,7 +27,8 @@ import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Converts basic text types into primtive numbers or {@link java.lang.Number}
@@ -42,7 +43,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 
 	private static final char LEFT_PARENTHESES = '(';
 
-	private static final Logger logger = Logger.getLogger(TextToNumberConverter.class);
+	private static final Log logger = LogFactory.getLog(TextToNumberConverter.class);
 
 	/**
 	 * Constant indicating whitespace characters should be ignored when
