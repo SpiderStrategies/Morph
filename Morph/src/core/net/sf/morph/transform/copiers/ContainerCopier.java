@@ -144,7 +144,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 		if (ClassUtils.isImmutable(destinationContainedType)) {
 			preferredTransformationType = Converter.TRANSFORMATION_TYPE_CONVERT;
 		}
-				
+
 		// if we can just add items to the end of the existing container
 		if (ReflectorUtils.isReflectable(getReflector(),
 			destination.getClass(), GrowableContainerReflector.class)) {
@@ -156,13 +156,12 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 				sourceValue, locale, Converter.TRANSFORMATION_TYPE_CONVERT);
 			// ... add to the end of the existing container
 			getGrowableContainerReflector().add(destination, convertedValue);
-			
 		}
 		// else we are overwriting a value at a given index of the destination
 		// container
 		else if (ReflectorUtils.isReflectable(getReflector(),
 			destination.getClass(), MutableIndexedContainerReflector.class)) {
-			
+
 			// we may want to do a copy or a convert, depending on the
 			// capabilities of our graph transformer and whether a copy operation
 			// is preferred.  this logic is implemented in the transformGraph
