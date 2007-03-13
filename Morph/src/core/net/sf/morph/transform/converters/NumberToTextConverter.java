@@ -30,7 +30,7 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Jan 26, 2006
  */
-public class NumberToTextConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class NumberToTextConverter extends BaseTransformer implements DecoratedConverter {
 
 	private Converter textConverter;
 	private Converter numberConverter;
