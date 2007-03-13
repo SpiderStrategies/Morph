@@ -148,7 +148,7 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 		getComponentValidator().validate(this);
 	}
 
-	public Class[] getReflectableClassesImpl() {
+	protected Class[] getReflectableClassesImpl() {
 		Set set = new HashSet();
 		Object[] reflectors = getComponents();
 		for (int i = 0; i < reflectors.length; i++) {
