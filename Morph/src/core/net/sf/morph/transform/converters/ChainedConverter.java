@@ -1,12 +1,12 @@
 /*
- * Copyright 2004-2005 the original author or authors.
- * 
+ * Copyright 2004-2005, 2007 the original author or authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -29,35 +29,26 @@ import net.sf.morph.util.TransformerUtils;
 
 /**
  * Runs one or more converters in a chain.
- * 
+ *
  * @author Matt Sgarlata
  * @since Nov 24, 2004
  */
 public class ChainedConverter extends BaseCompositeTransformer implements Converter, DecoratedConverter {
-	
+
 	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
 		return getConversionPath(destinationType, sourceType, getChain()) != null;
-	}
-
-	protected void logIntermediateDestination(Converter[] chain, String destination, int conversionNumber) {
-		if (log.isInfoEnabled()) {
-			log.info("Conversion " + conversionNumber + " of " + chain.length
-				+ " using "
-				+ ObjectUtils.getObjectDescription(chain[conversionNumber - 1])
-				+ " will be to " + destination);
-		}
 	}
 
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 		Converter[] chain = getChain();
-		
+
 		if (log.isTraceEnabled()) {
 			log.trace("Using chain to convert "
 				+ ObjectUtils.getObjectDescription(source) + " to "
 				+ ObjectUtils.getObjectDescription(destinationClass));
 		}
-		
+
 		Class sourceType = ClassUtils.getClass(source);
 		List conversionPath = getConversionPath(destinationClass, sourceType, chain);
 		if (conversionPath == null) {
@@ -87,12 +78,8 @@ public class ChainedConverter extends BaseCompositeTransformer implements Conver
 		}
 	}
 
-	protected String getComponentsPropertyName() {
-		return "chain";
-	}
-
 	protected Class[] getDestinationClassesImpl() throws Exception {
-		return getChain()[getChain().length-1].getDestinationClasses();
+		return getChain()[getChain().length - 1].getDestinationClasses();
 	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {
@@ -134,11 +121,17 @@ public class ChainedConverter extends BaseCompositeTransformer implements Conver
 		return null;
 	}
 
-	public Converter[] getChain() {
-		return (Converter[]) getComponents();
+	protected synchronized Converter[] getChain() {
+		Object[] components = getComponents();
+		Converter[] chain;
+		if (components instanceof Converter[]) {
+			chain = (Converter[]) components;
+		} else {
+			chain = new Converter[components.length];
+			System.arraycopy(components, 0, chain, 0, chain.length);
+			setComponents(chain);
+		}
+		return chain;
 	}
 
-	public void setChain(Converter[] chain) throws TransformationException {
-		setComponents(chain);
-	}
 }

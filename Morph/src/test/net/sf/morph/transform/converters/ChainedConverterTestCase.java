@@ -33,7 +33,7 @@ public class ChainedConverterTestCase extends TextToNumberConverterTestCase {
 		chain.add(new TextToNumberConverter());
 		chain.add(new DefaultToTextConverter());
 		chain.add(new TextToNumberConverter());
-		chainedConverter.setChain((Converter[]) chain.toArray(new Converter[chain.size()]));
+		chainedConverter.setComponents(chain.toArray(new Converter[chain.size()]));
 		return chainedConverter;
 	}
 }

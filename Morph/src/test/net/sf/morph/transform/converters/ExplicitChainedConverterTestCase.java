@@ -55,7 +55,7 @@ public class ExplicitChainedConverterTestCase extends TestCase {
 	private ChainedConverter cc = new ChainedConverter();
 
 	{
-		cc.setChain(new Converter[] {
+		cc.setComponents(new Converter[] {
 
 		new TestConverter(new TypeMap() {
 			{
