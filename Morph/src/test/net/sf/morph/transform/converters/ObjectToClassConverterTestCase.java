@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,6 +16,7 @@
 package net.sf.morph.transform.converters;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,9 +53,7 @@ public class ObjectToClassConverterTestCase extends BaseConverterTestCase {
 	}
 
 	public List createDestinationClasses() throws Exception {
-		List list = new ArrayList();
-		list.add(Class.class);
-		return list;
+		return Collections.singletonList(Class.class);
 	}
 
 	protected Transformer createTransformer() {
