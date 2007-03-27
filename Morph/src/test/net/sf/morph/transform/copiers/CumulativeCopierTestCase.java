@@ -16,6 +16,7 @@
 package net.sf.morph.transform.copiers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +99,7 @@ public class CumulativeCopierTestCase extends BaseCopierTestCase {
 	}
 
 	public List createInvalidDestinationClasses() throws Exception {
-		return null;
+		return Collections.singletonList(Object.class);
 	}
 
 	public List createInvalidPairs() throws Exception {
@@ -125,6 +126,7 @@ public class CumulativeCopierTestCase extends BaseCopierTestCase {
 		components[0].setPropertiesToCopy(PROPERTIES);
 		components[1] = new PropertyNameMatchingCopier();
 		components[1].setPropertiesToIgnore(PROPERTIES);
+		components[1].setDestinationClasses(new Class[] { TestClass.class, Map.class });
 		CumulativeCopier result = new CumulativeCopier();
 		result.setComponents(components);
 		return result;

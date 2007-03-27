@@ -17,11 +17,13 @@ package net.sf.morph.transform.copiers;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 
 import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
+import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.BaseCompositeTransformer;
 
 /**
@@ -33,6 +35,22 @@ import net.sf.morph.transform.transformers.BaseCompositeTransformer;
  */
 public class CumulativeCopier extends BaseCompositeTransformer implements
 		DecoratedCopier, DecoratedConverter {
+
+	private static abstract class ClassStrategy {
+		abstract Class[] get(Transformer t);
+	}
+
+	private static final ClassStrategy SOURCE = new ClassStrategy() {
+		Class[] get(Transformer t) {
+			return t.getSourceClasses();
+		}
+	};
+
+	private static final ClassStrategy DEST = new ClassStrategy() {
+		Class[] get(Transformer t) {
+			return t.getDestinationClasses();
+		}
+	};
 
 	protected void initializeImpl() throws Exception {
 		super.initializeImpl();
@@ -50,12 +68,7 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 	 * @return Class[]
 	 */
 	protected synchronized Class[] getDestinationClassesImpl() throws Exception {
-		Copier[] copiers = (Copier[]) getComponents();
-		HashSet s = new HashSet(Arrays.asList(copiers[0].getDestinationClasses()));
-		for (int i = 1; i < copiers.length; i++) {
-			s.retainAll(Arrays.asList(copiers[i].getDestinationClasses()));
-		}
-		return (Class[]) s.toArray(new Class[s.size()]);
+		return getClasses(DEST);
 	}
 
 	/**
@@ -64,10 +77,30 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 	 * @return Class[]
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
-		Copier[] copiers = (Copier[]) getComponents();
-		HashSet s = new HashSet(Arrays.asList(copiers[0].getSourceClasses()));
-		for (int i = 1; i < copiers.length; i++) {
-			s.retainAll(Arrays.asList(copiers[i].getSourceClasses()));
+		return getClasses(SOURCE);
+	}
+
+	private Class[] getClasses(ClassStrategy strategy) {
+		Transformer[] t = (Transformer[]) getComponents();
+		HashSet s = new HashSet(Arrays.asList(strategy.get(t[0])));
+
+		for (int i = 1; i < t.length; i++) {
+			HashSet survivors = new HashSet();
+			Class[] c = strategy.get(t[i]);
+			for (int j = 0; j < c.length; j++) {
+				for (Iterator it = s.iterator(); it.hasNext();) {
+					Class test = (Class) it.next();
+					if (test.isAssignableFrom(c[j])) {
+						survivors.add(c[j]);
+						break;
+					}
+					if (c[j].isAssignableFrom(test)) {
+						survivors.add(test);
+						break;
+					}
+				}
+			}
+			s = survivors;
 		}
 		return (Class[]) s.toArray(new Class[s.size()]);
 	}
