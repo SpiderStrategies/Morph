@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,7 +26,6 @@ import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.NodeCopier;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.BaseReflectorTransformer;
-import net.sf.morph.util.ClassUtils;
 import net.sf.morph.util.TransformerUtils;
 
 /**
@@ -117,10 +116,6 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 			destinationValue = getBeanReflector().get(destination,
 					destinationProperty);	
 		}
-		if (isImmutable(destinationType)) {
-			preferredTransformationType = Converter.TRANSFORMATION_TYPE_CONVERT;
-		}
-		
 		// choose a transformer to use
 		Transformer transformer = chooseTransformer(sourceProperty,
 			source, destinationProperty, destination, locale,
@@ -144,13 +139,10 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 		}
 	}
 
-	protected boolean isImmutable(Class destinationType) {
-	    return ClassUtils.isImmutable(destinationType);
-    }
-
 	public Transformer getNestedTransformer() {
 		return super.getNestedTransformer();
 	}
+
 	public void setNestedTransformer(Transformer transformer) {
 		super.setNestedTransformer(transformer);
 	}
@@ -158,18 +150,23 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 	public Map getPropertyTransformers() {
 		return propertyTransformers;
 	}
+
 	public void setPropertyTransformers(Map propertyTransformers) {
 		this.propertyTransformers = propertyTransformers;
 	}
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return sourceClasses == null ? SOURCE_AND_DESTINATION_TYPES : sourceClasses;
 	}
+
 	public void setSourceClasses(Class[] sourceClasses) {
 		super.setSourceClasses(sourceClasses);
 	}
+
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return destinationClasses == null ? SOURCE_AND_DESTINATION_TYPES : destinationClasses;
 	}
+
 	public void setDestinationClasses(Class[] destinationClasses) {
 		super.setDestinationClasses(destinationClasses);
 	}

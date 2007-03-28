@@ -82,6 +82,8 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 		immutable.add(String.class);
 		immutable.add(BigInteger.class);
 		immutable.add(BigDecimal.class);
+		immutable.add(null);
+		immutable.add(Class.class);
 		IMMUTABLE_TYPES = Collections.unmodifiableSet(immutable);
 	}
 
@@ -91,24 +93,6 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	public static Class getArrayClass(Class componentType) {
 		return createArray(componentType, 0).getClass();
 	}
-	
-//	/**
-//	 * Replacement for <code>Class.newInstance()</code> that throws a
-//	 * {@link ReflectionException} instead of a {@link ClassNotFoundException}.
-//	 * 
-//	 * @param clazz
-//	 *            the class for which a new instance is to be created
-//	 * @return an instance of the specified class
-//	 * @throws ReflectionException
-//	 *             if a new instance of the requested class could not be created
-//	 */
-//	public static Object newInstance(Class clazz) throws ReflectionException {
-//		try {
-//			clazz
-//		}
-//		()
-//		return reflector.newInstance(clazz);
-//	}
 	
 	/**
 	 * Returns a new instance of the class denoted by <code>type</code>. The
@@ -265,6 +249,15 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	 */
 	public static boolean isImmutable(Class destinationType) {
 		return IMMUTABLE_TYPES.contains(destinationType);
+	}
+
+	/**
+	 * Determines whether the given object is an immutable object.
+	 * @param o
+	 * @return
+	 */
+	public static boolean isImmutableObject(Object o) {
+		return isImmutable(getClass(o));
 	}
 
 	/**

@@ -110,30 +110,17 @@ public abstract class TransformerUtils {
 	public static Object transform(Transformer transformer, Class destinationType, Object destination,
 		Object source, Locale locale, Integer preferredTransformationType)
 		throws TransformationException {
-		
-		int transformationType;
-		
-		// if the transformer is a Copier and no preference for transformation
-		// type was specified or a preference for a copy operation was specified,
-		// perform a copy operation
-		if (// there is a non-null destination we can copy to
-			destination != null &&
-			// the transformer is a copier
-			transformer instanceof Copier &&
-			// the transformation type was not specified or a copy was requested
-			(
-				preferredTransformationType == null ||
-				preferredTransformationType.equals(Copier.TRANSFORMATION_TYPE_COPY)
-			)
-		) {
-			transformationType = Copier.TRANSFORMATION_TYPE_COPY.intValue();
-		}		
-		// otherwise, do a convert operation
-		else {
-			transformationType = Converter.TRANSFORMATION_TYPE_CONVERT.intValue();
+
+		//default to preferredTransformationType if specified, else by Transformer type
+		Integer xform = preferredTransformationType != null ? preferredTransformationType
+				: transformer instanceof Copier ? Transformer.TRANSFORMATION_TYPE_COPY
+						: Transformer.TRANSFORMATION_TYPE_CONVERT;
+
+		//next, override impossible copy operations
+		if (Transformer.TRANSFORMATION_TYPE_COPY.equals(xform) && ClassUtils.isImmutableObject(destination)) {
+			xform = Transformer.TRANSFORMATION_TYPE_CONVERT;
 		}
-		
-		if (transformationType == Converter.TRANSFORMATION_TYPE_CONVERT.intValue()) {
+		if (Transformer.TRANSFORMATION_TYPE_CONVERT.equals(xform)) {
 			if (log.isTraceEnabled()) {
 				log.trace("Performing nested conversion of "
 					+ ObjectUtils.getObjectDescription(source)
@@ -150,7 +137,7 @@ public abstract class TransformerUtils {
 				throw new TransformationException("Unable to perform transformation", e);
 			}
 		}
-		if (transformationType == Copier.TRANSFORMATION_TYPE_COPY.intValue()) {
+		if (Transformer.TRANSFORMATION_TYPE_COPY.equals(xform)) {
 			if (log.isTraceEnabled()) {
 				log.trace("Performing nested copy of "
 					+ ObjectUtils.getObjectDescription(source)
