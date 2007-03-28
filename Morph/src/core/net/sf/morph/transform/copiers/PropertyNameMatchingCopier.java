@@ -72,7 +72,7 @@ public class PropertyNameMatchingCopier extends BasePropertyNameCopier {
 
 		List unreadableProperties = null;
 		List unwriteableProperties = null;
-		if (getLog().isTraceEnabled()) {
+		if (isErrorOnMissingProperty() || getLog().isTraceEnabled()) {
 			unreadableProperties = new ArrayList();
 			unwriteableProperties = new ArrayList();
 		}
