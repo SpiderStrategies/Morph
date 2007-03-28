@@ -232,19 +232,20 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	}
 
 	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType)
-		throws Exception {
+			throws Exception {
 		incrementStackDepth();
-
-		Class destinationType = ClassUtils.getClass(destination);
-		Class sourceType = ClassUtils.getClass(source);
-		if (!hasVisited(source, destinationType)) {
-			Copier copier = getCopier(destinationType, sourceType);
-			recordVisit(source, destinationType, destination);
-			copier.copy(destination, source, locale);
+		try {
+			Class destinationType = ClassUtils.getClass(destination);
+			Class sourceType = ClassUtils.getClass(source);
+			if (!hasVisited(source, destinationType)) {
+				Copier copier = getCopier(destinationType, sourceType);
+				recordVisit(source, destinationType, destination);
+				copier.copy(destination, source, locale);
+			}
+		} finally {
+			decrementStackDepth();
+			clearVisitedSourceToDestinationMapIfNecessary();
 		}
-
-		decrementStackDepth();
-		clearVisitedSourceToDestinationMapIfNecessary();
 	}
 
 	protected Object convertImpl(Class destinationType, Object source, Locale locale)
