@@ -76,6 +76,7 @@ public abstract class BaseReflectorTestCase extends TestCase {
 		List implicitPropertyNames = new ArrayList();
 		if (canRunTest(BeanReflector.class)) {
 			implicitPropertyNames.add(BeanReflector.IMPLICIT_PROPERTY_CLASS);
+			implicitPropertyNames.add(BeanReflector.IMPLICIT_PROPERTY_THIS);
 			implicitPropertyNames.add(BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES);
 		}
 		if (canRunTest(SizableReflector.class)) {
@@ -415,13 +416,16 @@ public abstract class BaseReflectorTestCase extends TestCase {
 			assertEquals(Class.class, getBeanReflector().getType(
 				reflectableObjects.get(0),
 				BeanReflector.IMPLICIT_PROPERTY_CLASS));
+			assertEquals(ClassUtils.getClass(reflectableObjects.get(0)), getBeanReflector().getType(
+					reflectableObjects.get(0),
+					BeanReflector.IMPLICIT_PROPERTY_THIS));
 			assertEquals(String[].class, getBeanReflector().getType(
 				reflectableObjects.get(0),
 				BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
 			assertEquals(int.class,
 				getBeanReflector().getType(reflectableObjects.get(0),
 					BeanReflector.IMPLICIT_PROPERTY_SIZE));
-
+			
 		}
 	}
 	

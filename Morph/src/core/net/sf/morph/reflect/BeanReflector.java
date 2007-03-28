@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -29,6 +29,8 @@ public interface BeanReflector extends Reflector, SizableReflector {
 	public static final String IMPLICIT_PROPERTY_CLASS = "class";
 
 	public static final String IMPLICIT_PROPERTY_PROPERTY_NAMES = "propertyNames";
+
+	public static final String IMPLICIT_PROPERTY_THIS = "this";
 
 	/**
 	 * Gets the names of the properties which are currently defined for the

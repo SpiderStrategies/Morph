@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -380,7 +380,8 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			}
 			else if (this instanceof BeanReflector &&
 				(propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_CLASS) ||
-				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES))) {
+				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES) ||
+				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_THIS))) {
 				isReadable = true;
 			}
 			else {
@@ -444,20 +445,18 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				exception = e;
 			}
 
-			if (this instanceof SizableReflector &&
-				propertyName.equals(SizableReflector.IMPLICIT_PROPERTY_SIZE) &&
-				isWriteable == null) {
-				return false;
-			}
-			if (this instanceof BeanReflector &&
-				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_CLASS) &&
-				isWriteable == null) {
-				return false;
-			}
-			if (this instanceof BeanReflector &&
-				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES) &&
-				isWriteable == null) {
-				return false;
+			if (isWriteable == null) {
+				if (this instanceof SizableReflector
+						&& propertyName.equals(SizableReflector.IMPLICIT_PROPERTY_SIZE)) {
+					return false;
+				}
+				if (this instanceof BeanReflector
+						&& (BeanReflector.IMPLICIT_PROPERTY_CLASS.equals(propertyName)
+								|| BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES
+										.equals(propertyName) || BeanReflector.IMPLICIT_PROPERTY_THIS
+								.equals(propertyName))) {
+					return false;
+				}
 			}
 			if (exception == null) {
 				if (isPerformingLogging() && log.isTraceEnabled()) {
@@ -533,8 +532,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			if (propertyValue == currentValue
 					|| (ClassUtils.isImmutable(getType(bean, propertyName)) && ObjectUtils
 							.equals(propertyValue, currentValue))) {
-				//if the property doesn't already exist, this is probably a MapReflector and we want to add anyway 
-				if (ContainerUtils.contains(getPropertyNames(bean), propertyName)) {
+				//ignore "this"; else if the property doesn't already exist, this is probably a MapReflector and we want to add anyway 
+				if (BeanReflector.IMPLICIT_PROPERTY_THIS.equals(propertyName)
+						|| ContainerUtils.contains(getPropertyNames(bean), propertyName)) {
 					return;
 				}
 			}
@@ -630,6 +630,11 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				return getPropertyNames(bean);
 			}
 			if (value == null &&
+				this instanceof BeanReflector &&
+				propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_THIS)) {
+				return bean;
+			}
+			if (value == null &&
 				this instanceof SizableReflector &&
 				propertyName.equals(SizableReflector.IMPLICIT_PROPERTY_SIZE)) {
 				return new Integer(getSize(bean));
@@ -670,7 +675,8 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw new UnsupportedOperationException();
 		}
 		return BeanReflector.IMPLICIT_PROPERTY_CLASS.equals(propertyName)
-				|| BeanReflector.IMPLICIT_PROPERTY_SIZE.equals(propertyName) ? null
+				|| BeanReflector.IMPLICIT_PROPERTY_SIZE.equals(propertyName)
+				|| BeanReflector.IMPLICIT_PROPERTY_THIS.equals(propertyName) ? null
 				: get(bean, Integer.parseInt(propertyName));
 	}
 
@@ -700,6 +706,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			!hasPropertyDefined &&
 			!SizableReflector.IMPLICIT_PROPERTY_SIZE.equals(propertyName) &&
 			!BeanReflector.IMPLICIT_PROPERTY_CLASS.equals(propertyName) &&
+			!BeanReflector.IMPLICIT_PROPERTY_THIS.equals(propertyName) &&
 			!BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES.equals(propertyName)) {
 			throw new ReflectionException("Cannot determine type of property '"
 				+ propertyName + "' because it is not a property of "
@@ -714,6 +721,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			}
 			else if (propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES)) {
 				type = String[].class;
+			}
+			else if (propertyName.equals(BeanReflector.IMPLICIT_PROPERTY_THIS)) {
+				type = ClassUtils.getClass(bean);
 			}
 			else if (propertyName.equals(SizableReflector.IMPLICIT_PROPERTY_SIZE)) {
 				type = Integer.TYPE;
