@@ -121,11 +121,11 @@
 		<!-- build the Composite JAR -->
 		<echo message="Building Composite..."/>
 		<ant
-			antfile="${path.composite}/build.xml"
+			antfile="${path.composite}/legacy-build.xml"
 			inheritAll="false"
 			target="jar"/>
 		<!-- Load the project.version property from the Composite package -->
-		<loadproperties srcFile="${path.composite}/build.properties">
+		<loadproperties srcFile="${path.composite}/legacy-build.properties">
 			<filterchain>
 				<linecontains>
 					<contains value="project.version.composite"/>
