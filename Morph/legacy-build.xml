@@ -53,7 +53,7 @@
 	<target name="prepare">
 		<record name="build.log" />
 
-		<property file="build.properties"/>
+		<property file="legacy-build.properties"/>
 
 		<property name="distname" value="morph-${project.version.morph}"/>
 
