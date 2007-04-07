@@ -1,0 +1,16 @@
+<!-- just like default, but with Maven2 resolver added -->
+<ivyconf>
+	<conf defaultResolver="default" />
+	<include url="${ivy.default.conf.dir}/ivyconf-public.xml" />
+	<include url="${ivy.default.conf.dir}/ivyconf-shared.xml" />
+	<include url="${ivy.default.conf.dir}/ivyconf-local.xml" />
+	<include url="${ivy.default.conf.dir}/ivyconf-main-chain.xml" />
+
+	<resolvers>
+		<chain name="default" returnFirst="true">
+			<resolver ref="local" />
+			<resolver ref="main" />
+			<ibiblio name="m2" m2compatible="true" />
+		</chain>
+	</resolvers>
+</ivyconf>
