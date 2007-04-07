@@ -15,6 +15,7 @@
  */
 package net.sf.morph.reflect.support;
 
+import java.beans.Introspector;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -45,9 +46,7 @@ public class ReflectionInfo {
 				if (methodName.length() > 3 &&
 					methodName.indexOf("set") == 0 &&
 					Character.isUpperCase(methodName.charAt(3))) {
-					propertyName =
-						methodName.substring(3, 4).toLowerCase() +
-						methodName.substring(4);
+					propertyName = Introspector.decapitalize(methodName.substring(3));
                     // check for number of arguments
                     if (parameterTypes.length == 1) {
                         registerMutator(propertyName, methods[i]);
@@ -62,9 +61,7 @@ public class ReflectionInfo {
 				else if (methodName.length() > 3 &&
 					methodName.indexOf("get") == 0 &&
 					Character.isUpperCase(methodName.charAt(3))) {
-					propertyName =
-						methodName.substring(3, 4).toLowerCase() +
-						methodName.substring(4);
+					propertyName = Introspector.decapitalize(methodName.substring(3));
                     // check for standard accesor
                     if (parameterTypes.length == 0) {
                         registerAccessor(propertyName, methods[i]);
@@ -75,15 +72,13 @@ public class ReflectionInfo {
                         registerIndexedAccessor(propertyName, methods[i]);
                     }
 				}
-				// if boolean getter method detected
+				// if boolean getter method detected - PRIMITIVE ONLY like java.beans!
 				else if (methodName.length() > 2 &&
 					methods[i].getReturnType().equals(Boolean.TYPE) &&
                     parameterTypes.length == 0 &&
 					methodName.indexOf("is") == 0 &&
 					Character.isUpperCase(methodName.charAt(2))) {
-					propertyName =
-						methodName.substring(2, 3).toLowerCase() +
-						methodName.substring(3);
+					propertyName = Introspector.decapitalize(methodName.substring(2));
 					registerAccessor(propertyName, methods[i]);
 				}
 			}
