@@ -6,7 +6,7 @@
   <organization>
     <name>SourceForge</name>
     <url>http://www.sourceforge.net/</url>
-	<logo>http://sourceforge.net/sflogo.php?group_id=124910&amp;type=5</logo>
+    <logo>http://sourceforge.net/sflogo.php?group_id=124910&amp;type=5</logo>
   </organization>
   <inceptionYear>2004</inceptionYear>
   <package>net.sf.morph</package>
@@ -29,10 +29,10 @@
 
   <repository>
     <connection>
-      scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot/morph:morph1
+      scm:svn://development.spiderstrategies.com/morph
     </connection>
     <url>
-      http://cvs.sourceforge.net/viewcvs.py/morph/morph1/
+      svn://development.spiderstrategies.com/morph
     </url>
   </repository>
 
@@ -92,7 +92,7 @@
 
     <contributor>
       <name>Alexander Volanis</name>
-	  <email>AVolanis@rsasecurity.com</email>
+      <email>AVolanis@rsasecurity.com</email>
     </contributor>
 
   </contributors>
@@ -102,7 +102,7 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
       <url>http://jakarta.apache.org/commons/logging</url>
     </dependency>
 
@@ -149,14 +149,14 @@
     </dependency>
 
     <dependency>
-      <groupId>spring</groupId>
+      <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
       <version>1.2.5</version>
       <url>http://www.springframework.org</url>
     </dependency>
 
     <dependency>
-      <groupId>spring</groupId>
+      <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
       <version>1.2.5</version>
       <url>http://www.springframework.org</url>
