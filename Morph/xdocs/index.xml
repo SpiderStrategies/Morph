@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2001-2004, 2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@
   <body>
     <section name="Morph">
 	  <subsection name="Current Version">
-        <p>Morph 1.0:
+        <p>Morph 1.0.2:
 		<a href="http://sourceforge.net/project/showfiles.php?group_id=124910">Download</a> |
 		<a href="reference/index.html">Reference Document</a> |
 		<a href="apidocs/index.html">JavaDoc</a> |
