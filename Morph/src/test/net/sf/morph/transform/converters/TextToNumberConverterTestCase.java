@@ -137,11 +137,11 @@ public class TextToNumberConverterTestCase extends BaseConverterTestCase {
 		Locale dutch = new Locale("nl");
 		
 		convertedDouble = (Double)
-			getConverter().convert(Double.class, "€4.444,44", dutch);
+			getConverter().convert(Double.class, "\u20ac4.444,44", dutch);
 		assertEquals(4444.44d, convertedDouble.doubleValue(), precision);
 	
 		convertedDouble = (Double)
-			getConverter().convert(Double.class, "€ 4.444,44", dutch);
+			getConverter().convert(Double.class, "\u20ac 4.444,44", dutch);
 		assertEquals(4444.44d, convertedDouble.doubleValue(), precision);
 
 		convertedFloat = (Float)
@@ -163,11 +163,11 @@ public class TextToNumberConverterTestCase extends BaseConverterTestCase {
 		Locale belgium = new Locale("nl", "BE");
 		
 		convertedDouble = (Double)
-			getConverter().convert(Double.class, "4.444,44€", belgium);
+			getConverter().convert(Double.class, "4.444,44\u20ac", belgium);
 		assertEquals(4444.44d, convertedDouble.doubleValue(), precision);
 	
 		convertedDouble = (Double)
-			getConverter().convert(Double.class, "4.444,44 €", belgium);
+			getConverter().convert(Double.class, "4.444,44 \u20ac", belgium);
 		assertEquals(4444.44d, convertedDouble.doubleValue(), precision);
 
 		

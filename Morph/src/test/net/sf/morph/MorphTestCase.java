@@ -109,8 +109,8 @@ public class MorphTestCase extends TestCase {
 		
 		Locale dutch = new Locale("nl");
 		
-		assertEquals(4444.44d, Morph.convertToDouble("€4.444,44", dutch), precision);
-		assertEquals(4444.44d, Morph.convertToDouble("€ 4.444,44", dutch), precision);
+		assertEquals(4444.44d, Morph.convertToDouble("\u20ac4.444,44", dutch), precision);
+		assertEquals(4444.44d, Morph.convertToDouble("\u20ac 4.444,44", dutch), precision);
 		assertEquals(.35, Morph.convertToFloat("35%", dutch), precision);
 		assertEquals(.0035, Morph.convertToFloat(",35%", dutch), precision);
 		assertEquals(3.5, Morph.convertToFloat("350%", dutch), precision);
