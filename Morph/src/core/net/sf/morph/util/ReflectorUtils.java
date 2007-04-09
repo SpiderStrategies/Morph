@@ -62,9 +62,9 @@ public abstract class ReflectorUtils {
 		if (reflector instanceof CompositeReflector) {
 			return ((CompositeReflector) reflector).isReflectable(reflectedType, reflectorType);
 		}
-		return reflectorType.isAssignableFrom(reflectorType) &&
-			ClassUtils.inheritanceContains(
-			reflector.getReflectableClasses(), reflectedType);
+		return reflectorType.isInstance(reflector)
+				&& ClassUtils.inheritanceContains(reflector.getReflectableClasses(),
+						reflectedType);
 	}
 
 }
