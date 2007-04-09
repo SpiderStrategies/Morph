@@ -191,15 +191,15 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		}
 	}
 
-	public final boolean isReflectable(Class reflectedTyped, Class reflectorType) throws ReflectionException {
+	public final boolean isReflectable(Class reflectedType, Class reflectorType) throws ReflectionException {
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Testing if "
-				+ ObjectUtils.getObjectDescription(reflectedTyped)
+				+ ObjectUtils.getObjectDescription(reflectedType)
 				+ " can be reflected with a "
 				+ ObjectUtils.getObjectDescription(reflectorType));
 		}
 
-		if (reflectedTyped == null) {
+		if (reflectedType == null) {
 			throw new ReflectionException(
 				"Cannot determine if a null reflectedType is reflectable; please supply a reflectedType to the "
 					+ getClass().getName() + ".isReflectable method");
@@ -214,14 +214,14 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 		try {
 			return reflectorType == null
-					? isReflectableImpl(reflectedTyped) : isReflectableImpl(reflectedTyped, reflectorType);
+					? isReflectableImpl(reflectedType) : isReflectableImpl(reflectedType, reflectorType);
 		}
 		catch (ReflectionException e) {
 			throw e;
 		}
 		catch (Exception e) {
 			throw new ReflectionException("Unable to determine if reflectedType '"
-				+ reflectedTyped.getClass().getName() + "' is reflectable", e);
+				+ reflectedType.getClass().getName() + "' is reflectable", e);
 		}
 	}
 
