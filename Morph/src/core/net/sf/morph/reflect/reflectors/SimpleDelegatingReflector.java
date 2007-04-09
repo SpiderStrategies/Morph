@@ -43,6 +43,7 @@ import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.reflect.Reflector;
 import net.sf.morph.reflect.SizableReflector;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.ReflectorUtils;
 
 /**
  * Reflector that can be used to combine multiple bean reflectors.  By default,
@@ -230,23 +231,26 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 		return reflector.newInstance(clazz, parameters);
 	}
 
-	public boolean isReflectableImpl(Class reflectedType,
-			Class reflectorType) throws ReflectionException {
-		for (int i = 0; i < getComponents().length; i++) {
-			Reflector component = (Reflector) getComponents()[i];
-			if (reflectorType.isAssignableFrom(component.getClass()) &&
-				ClassUtils.inheritanceContains(component.getReflectableClasses(), reflectedType)) {
-				return true;
-			}
-		}
-		return false;
+	public boolean isReflectableImpl(Class reflectedType, Class reflectorType)
+			throws ReflectionException {
+		return safeGetReflector(reflectorType, reflectedType) != null;
 	}
 
 	protected Reflector getReflector(Class reflectorType, Class reflectedType) {
+		Reflector result = safeGetReflector(reflectorType, reflectedType);
+		if (result == null) {
+			throw new ReflectionException("Could not find a "
+					+ ClassUtils.getUnqualifiedClassName(reflectorType)
+					+ " that can reflect "
+					+ ObjectUtils.getObjectDescription(reflectedType));
+		}
+		return result;
+	}
+
+	private Reflector safeGetReflector(Class reflectorType, Class reflectedType) {
 		for (int i = 0; i < getComponents().length; i++) {
 			Reflector component = (Reflector) getComponents()[i];
-			if (reflectorType.isAssignableFrom(component.getClass()) &&
-					ClassUtils.inheritanceContains(component.getReflectableClasses(), reflectedType)) {
+			if (ReflectorUtils.isReflectable(component, reflectedType, reflectorType)) {
 				if (log.isTraceEnabled()) {
 					log.trace("Using "
 						+ component.getClass().getName()
@@ -256,10 +260,7 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 				return component;
 			}
 		}
-		throw new ReflectionException("Could not find a "
-				+ ClassUtils.getUnqualifiedClassName(reflectorType)
-				+ " that can reflect "
-				+ ObjectUtils.getObjectDescription(reflectedType));
+		return null;
 	}
 
 	protected BeanReflector getBeanReflector(Object bean) {
