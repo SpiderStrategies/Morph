@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import junit.framework.TestCase;
+import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.util.TestUtils;
 
@@ -194,6 +196,19 @@ public class MorphTestCase extends TestCase {
 		Morph.copy(destination, source);
 		
 		assertEquals(destination.getBooleanProperty(), Boolean.TRUE);
+	}
+	
+	public void testGetSize() {
+		try {
+			Morph.getSize(null);
+			fail("Exception should be thrown when retrieving the size of a null object");
+		}
+		catch (ReflectionException e) {
+			// this is the expected behavior
+		}
+		assertEquals(0, Morph.getSize(new StringTokenizer("")));
+		assertEquals(1, Morph.getSize(new StringTokenizer("1")));
+		assertEquals(2, Morph.getSize(new StringTokenizer("two words")));
 	}
 	
 }
