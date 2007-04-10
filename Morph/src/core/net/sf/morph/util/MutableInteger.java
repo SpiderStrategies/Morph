@@ -16,22 +16,26 @@
 package net.sf.morph.util;
 
 /**
- * Holder for a mutable int.  Good for ThreadLocal stacks, etc.
+ * Holder for a mutable int. Good for ThreadLocal stacks, etc.
+ * 
+ * @author Matt Benson
+ * @since Morph 1.0.2
  */
-public class Int {
+public class MutableInteger {
 	public int value;
 
 	/**
 	 * Construct a new Int with the default value (0).
 	 */
-	public Int() {
+	public MutableInteger() {
 	}
 
 	/**
 	 * Construct a new Int with the specified value.
+	 * 
 	 * @param value
 	 */
-	public Int(int value) {
+	public MutableInteger(int value) {
 		this.value = value;
 	}
 }

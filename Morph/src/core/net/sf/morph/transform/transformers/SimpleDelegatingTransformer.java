@@ -53,7 +53,7 @@ import net.sf.morph.transform.converters.TimeToNumberConverter;
 import net.sf.morph.transform.copiers.ContainerCopier;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopier;
 import net.sf.morph.util.ClassUtils;
-import net.sf.morph.util.Int;
+import net.sf.morph.util.MutableInteger;
 import net.sf.morph.util.TransformerUtils;
 
 /**
@@ -102,7 +102,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 
 	private static class StackDepthThreadLocal extends ThreadLocal {
 		protected Object initialValue() {
-			return new Int();
+			return new MutableInteger();
 		}
 	}
 
@@ -276,15 +276,15 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	}
 
 	protected void incrementStackDepth() {
-		((Int) stackDepthThreadLocal.get()).value++;
+		((MutableInteger) stackDepthThreadLocal.get()).value++;
 	}
 
 	protected void decrementStackDepth() {
-		((Int) stackDepthThreadLocal.get()).value--;
+		((MutableInteger) stackDepthThreadLocal.get()).value--;
 	}
 
 	protected void clearVisitedSourceToDestinationMapIfNecessary() {
-		if (((Int) stackDepthThreadLocal.get()).value == 0) {
+		if (((MutableInteger) stackDepthThreadLocal.get()).value == 0) {
 			getVisitedSourceToDestinationMap().clear();
 		}
 	}

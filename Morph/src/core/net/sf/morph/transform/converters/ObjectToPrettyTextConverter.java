@@ -22,7 +22,7 @@ import java.util.Set;
 
 import net.sf.morph.transform.Converter;
 import net.sf.morph.util.ClassUtils;
-import net.sf.morph.util.Int;
+import net.sf.morph.util.MutableInteger;
 import net.sf.morph.util.TransformerUtils;
 
 /**.
@@ -51,7 +51,7 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 	private Converter beanToPrettyTextConverter;
 	private static ThreadLocal currentLevelThreadLocal = new ThreadLocal() {
 		protected Object initialValue() {
-			return new Int(-1);
+			return new MutableInteger(-1);
 		}
 	};
 	private Set typesUsingToString;
@@ -62,7 +62,7 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 	}
 	
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
-		Int currentLevel = (Int) currentLevelThreadLocal.get();
+		MutableInteger currentLevel = (MutableInteger) currentLevelThreadLocal.get();
 		currentLevel.value++;
 
 		try {
