@@ -28,6 +28,7 @@ import net.sf.morph.util.ReflectorUtils;
  * 
  * @author Matt Sgarlata
  * @since Dec 20, 2004
+ * @deprecated it's not clear what the intent of this copier was
  */
 public class ContainerOfBeansCopier extends ContainerCopier {
 
