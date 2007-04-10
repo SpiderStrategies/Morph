@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.springframework.mock.web.MockHttpServletRequest;
+
 import junit.framework.TestCase;
 import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.transform.TransformationException;
@@ -209,6 +211,29 @@ public class MorphTestCase extends TestCase {
 		assertEquals(0, Morph.getSize(new StringTokenizer("")));
 		assertEquals(1, Morph.getSize(new StringTokenizer("1")));
 		assertEquals(2, Morph.getSize(new StringTokenizer("two words")));
+	}
+	
+	// has to be public or Morph barphs
+	public static final class DomainObject {
+		Integer[] array;
+		
+		public Integer[] getArray() {
+        	return array;
+        }
+
+		public void setArray(Integer[] array) {
+        	this.array = array;
+        }
+	}
+	
+	public void testWebLikeDataBinding() {
+		Map map = new HashMap();
+		map.put("array", "1,2");
+		DomainObject object = new DomainObject();
+		Morph.copy(object, map);
+		
+		assertEquals(new Integer(1), object.getArray()[0]);
+		assertEquals(new Integer(2), object.getArray()[1]);
 	}
 	
 }
