@@ -215,16 +215,29 @@ public abstract class BaseConverterTestCase extends BaseTransformerTestCase {
 		}
 	}
 
+	/**
+	 * Verifies that conversions fail with the supplied list of invalid
+	 * source objects.  Note that most transformers don't test their own
+	 * isTransformable method before attempting to perform a confusion for
+	 * performance reasons.  This means a transformer may actually be able to
+	 * handle inputs that it wasn't originally designed to handle.  In this
+	 * case, it's recommended to just reduce the supplied list of source classes
+	 * than worry about why extra inputs are allowed.
+	 *
+	 */
 	public void testInvalidSources() {
 		// invalidSources
 		if (getInvalidSources() != null) {
 			for (int i = 0; i < getInvalidSources().length; i++) {
 				for (int j=0; j < getDestinationClasses().length; j++) {
 					try {
-						getConverter().convert(getDestinationClasses()[j],
-							getInvalidSources()[i], null);
-						fail("convert(" + getDestinationClasses()[j].getName() + ", "
-							+ ObjectUtils.getObjectDescription(getInvalidSources()[i])
+						// use local variables for ease of debugging
+						Class destinationClass = getDestinationClasses()[j];
+						Object source = getInvalidSources()[i];
+						getConverter().convert(destinationClass,
+							source, null);
+						fail("convert(" + destinationClass.getName() + ", "
+							+ ObjectUtils.getObjectDescription(source)
 							+ ") should throw a TransformationException");
 					} catch (TransformationException e) {
 					}
