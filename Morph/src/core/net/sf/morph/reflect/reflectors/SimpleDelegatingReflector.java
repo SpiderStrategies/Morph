@@ -109,9 +109,11 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 		componentList.add(new ListReflector());
 		componentList.add(new SortedSetReflector());
 		componentList.add(new SetReflector());
+		componentList.add(new StringTokenizerReflector());
 		componentList.add(new EnumerationReflector());
 		componentList.add(new IteratorReflector());
-		componentList.add(new ArrayReflector());
+		// have to do this to avoid an infinite loop 
+		componentList.add(new ArrayReflector(this));
 		componentList.add(new CollectionReflector());
 
 		// result set reflector acts as a container and as a bean reflector
