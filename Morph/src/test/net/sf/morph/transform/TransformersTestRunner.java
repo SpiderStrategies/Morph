@@ -40,6 +40,7 @@ import net.sf.morph.transform.copiers.DelegatingCopierTestCase;
 import net.sf.morph.transform.copiers.NestedDelegatingCopierTestCase;
 import net.sf.morph.transform.copiers.PartialPropertyNameMatchingCopierTestCase;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopierTestCase;
+import net.sf.morph.transform.copiers.TextToContainerCopierTestCase;
 import net.sf.morph.transform.transformers.SimpleDelegatingTransformerTestCase;
 import net.sf.morph.transform.transformers.TypeChangingGraphTransformerTestCase;
 
@@ -62,6 +63,7 @@ public class TransformersTestRunner extends TestRunner {
 		suite.addTestSuite(AssemblerCopierTestCase.class);
 		suite.addTestSuite(AssemblerCopierComponentsTestCase.class);
 		suite.addTestSuite(CumulativeCopierTestCase.class);
+		suite.addTestSuite(TextToContainerCopierTestCase.class);
 
 		// CONVERTERS
 
