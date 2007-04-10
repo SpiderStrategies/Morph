@@ -109,4 +109,9 @@ public class ResetableIteratorWrapper implements Iterator {
 		}
 		return list.size();
 	}
+	
+	public String toString() {
+		return "ResetableIteratorWrapper" + list;
+	}
+	
 }
