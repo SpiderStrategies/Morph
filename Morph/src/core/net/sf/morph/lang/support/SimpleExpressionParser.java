@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import net.sf.morph.util.MorphStringTokenizer;
 import net.sf.morph.util.StringUtils;
 
 /**
@@ -32,7 +33,7 @@ public class SimpleExpressionParser extends BaseExpressionParser implements Expr
 	private static final String DELIMITERS = "[]()\"'.";
 	
 	public List parseImpl(String expression) throws Exception {
-		StringTokenizer tokenizer = new StringTokenizer(
+		StringTokenizer tokenizer = new MorphStringTokenizer(
 			StringUtils.removeWhitespace(expression), DELIMITERS);
 		// Don't use a converter to do this conversion because that makes
 		// testing of morph difficult and it isn't as fast as doing the

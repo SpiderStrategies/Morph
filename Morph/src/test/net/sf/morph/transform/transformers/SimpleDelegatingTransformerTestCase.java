@@ -20,10 +20,10 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.converters.BaseConverterTestCase;
+import net.sf.morph.util.MorphStringTokenizer;
 
 /**
  * 
@@ -76,7 +76,7 @@ public class SimpleDelegatingTransformerTestCase extends BaseConverterTestCase {
 		List pairs = new ArrayList();
 		
 		Integer[] intArray = new Integer[] { new Integer(123), new Integer(456) };
-		Enumeration e = new StringTokenizer("123,456", ",");
+		Enumeration e = new MorphStringTokenizer("123,456", ",");
 		pairs.add(new ConvertedSourcePair(intArray, e));
 		
 		return pairs;
