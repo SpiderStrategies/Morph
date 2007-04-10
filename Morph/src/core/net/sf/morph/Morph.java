@@ -1592,6 +1592,31 @@ public abstract class Morph {
 	}
 
 	/**
+	 * Specifies the least restrictive type that may be assigned to the given
+	 * property. In the case of a weakly typed bean, the correct value to return
+	 * is simply <code>Object.class</code>, which indicates that any type can
+	 * be assigned to the given property.
+	 * 
+	 * @param beanType
+	 *            the type of the bean
+	 * @param propertyName
+	 *            the name of the property
+	 * @return the least restrictive type that may be assigned to the given
+	 *         property. In the case of a weakly typed bean, the correct value
+	 *         to return is simply <code>Object.class</code>, which indicates
+	 *         that any type can be assigned to the given property
+	 * @throws ReflectionException
+	 *             if <code>beanType</code> or <code>propertyName</code> are
+	 *             <code>null</code> or <br>
+	 *             if the type could not be retrieved for some reason
+	 */
+	public static Class getType(Class beanType, String propertyName)
+		throws ReflectionException {
+		Object bean = DEFAULT_INSTANTIATING_REFLECTOR.newInstance(beanType, null);
+		return DEFAULT_BEAN_REFLECTOR.getType(bean, propertyName);
+	}
+
+	/**
 	 * Specifies whether the given property is readable. A reflector can always
 	 * determine if a property is readable by attempting to read the property
 	 * value, so this method can be counted on to truly indicate whether or not
@@ -1654,7 +1679,7 @@ public abstract class Morph {
 	 *             the type of the elements that are container could not be
 	 *             determined
 	 */
-	public Class getContainedType(Class clazz) throws ReflectionException {
+	public static Class getContainedType(Class clazz) throws ReflectionException {
 		return DEFAULT_CONTAINER_REFLECTOR.getContainedType(clazz);
 	}
 
@@ -1672,7 +1697,7 @@ public abstract class Morph {
 	 *             if <code>container</code> is <code>null</code> or <br>
 	 *             the Iterator could not be created for some reason
 	 */
-	public Iterator getIterator(Object container) throws ReflectionException {
+	public static Iterator getIterator(Object container) throws ReflectionException {
 		return DEFAULT_CONTAINER_REFLECTOR.getIterator(container);
 	}
 	
@@ -1689,7 +1714,7 @@ public abstract class Morph {
 	 * @throws ReflectionException
 	 *             if an error occurrs
 	 */
-	public boolean add(Object container, Object value) throws ReflectionException {
+	public static boolean add(Object container, Object value) throws ReflectionException {
 		return DEFAULT_GROWABLE_CONTAINER_REFLECTOR.add(container, value);
 	}
 	
@@ -1709,7 +1734,7 @@ public abstract class Morph {
 	 *             the object at the specified index could not be retrieved for
 	 *             some reason
 	 */
-	public Object get(Object container, int index) throws ReflectionException {
+	public static Object get(Object container, int index) throws ReflectionException {
 		return DEFAULT_INDEXED_CONTAINER_REFLECTOR.get(container, index);
 	}
 
@@ -1721,7 +1746,7 @@ public abstract class Morph {
 	 * @throws ReflectionException
 	 *             if an error occurrs
 	 */
-	public Object newInstance(Class clazz) throws ReflectionException {
+	public static Object newInstance(Class clazz) throws ReflectionException {
 		return DEFAULT_INSTANTIATING_REFLECTOR.newInstance(clazz, null);
 	}
 	
@@ -1743,7 +1768,7 @@ public abstract class Morph {
 	 *             the object at the specified index could not be set for some
 	 *             reason
 	 */
-	public Object set(Object container, int index, Object propertyValue)
+	public static Object set(Object container, int index, Object propertyValue)
 		throws ReflectionException {
 		return DEFAULT_MUTABLE_INDEXED_CONTAINER_REFLECTOR.set(container, index, propertyValue);
 	}
@@ -1760,7 +1785,7 @@ public abstract class Morph {
 	 *             if <code>object</code> is <code>null</code> or the
 	 *             number of elements in the object could not be determined
 	 */
-	public int getSize(Object object) throws ReflectionException {
+	public static int getSize(Object object) throws ReflectionException {
 		return DEFAULT_SIZABLE_REFLECTOR.getSize(object);
 	}
 	
