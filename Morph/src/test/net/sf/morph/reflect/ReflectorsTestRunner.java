@@ -38,6 +38,7 @@ import net.sf.morph.reflect.reflectors.ServletRequestParameterReflectorTestCase;
 import net.sf.morph.reflect.reflectors.SetReflectorTestCase;
 import net.sf.morph.reflect.reflectors.SimpleInstantiatingReflectorTestCase;
 import net.sf.morph.reflect.reflectors.SortedSetReflectorTestCase;
+import net.sf.morph.reflect.reflectors.StringTokenizerReflectorTestCase;
 import net.sf.morph.reflect.reflectors.VelocityContextReflectorTestCase;
 
 /**
@@ -55,6 +56,7 @@ public class ReflectorsTestRunner extends TestRunner {
 		suite.addTest(DelegatingIndexedContainerReflectorTestRunner.suite());
 		suite.addTestSuite(DynaBeanReflectorTestCase.class);
 		suite.addTestSuite(HttpSessionAttributeReflectorTestCase.class);
+		suite.addTestSuite(StringTokenizerReflectorTestCase.class);
 		suite.addTestSuite(EnumerationReflectorTestCase.class);
 		suite.addTestSuite(ExtractEntriesMapReflectorTestCase.class);
 		suite.addTestSuite(ExtractKeysMapReflectorTestCase.class);
