@@ -76,11 +76,10 @@ public class TextToContainerCopierTestCase extends BaseCopierTestCase {
     }
 
 	public List createInvalidSources() throws Exception {
-	    List list = new ArrayList();
-	    list.add(new HashSet());
-	    list.add(new Integer(3));
-	    list.add(Integer.class);
-	    return list;
+		// this converter can actually handle just about any input, it will
+		// just put the String representation of whatever the input is into a
+		// collection
+	    return null;
     }
 
 	public List createValidPairs() throws Exception {
