@@ -19,12 +19,12 @@ import java.lang.reflect.Array;
 import java.util.Iterator;
 
 import net.sf.composite.util.ArrayIterator;
+import net.sf.morph.Defaults;
 import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.reflect.ContainerReflector;
 import net.sf.morph.reflect.IndexedContainerReflector;
 import net.sf.morph.reflect.InstantiatingReflector;
 import net.sf.morph.reflect.MutableIndexedContainerReflector;
-import net.sf.morph.reflect.Reflector;
 import net.sf.morph.reflect.SizableReflector;
 import net.sf.morph.util.ClassUtils;
 
@@ -37,14 +37,24 @@ import net.sf.morph.util.ClassUtils;
 public class ArrayReflector extends BaseContainerReflector implements ContainerReflector,
 		IndexedContainerReflector, MutableIndexedContainerReflector, SizableReflector,
 		BeanReflector, InstantiatingReflector {
-
-	private static final SimpleDelegatingReflector SOURCE_REFLECTOR = new SimpleDelegatingReflector() {
-		protected Reflector[] createDefaultComponents() {
-			return new Reflector[] {
-					new ArrayReflector(), new CollectionReflector(),
-					new ResetableIteratorWrapperReflector(), new ObjectReflector() };
-		}
-	};
+	
+	private SizableReflector sourceReflector;
+	
+	public ArrayReflector() {
+	    super();
+	    // by default use the best reflectors available to Morph to try to
+	    // determine the size of the (optional) parameter to the newInstance
+	    // method which indicates the size of the array to be created.  If
+	    // a static list of reflectors is enumerated here, new reflectors
+	    // added to morph won't automatically get added here (as was recently
+	    // the case with the StringTokenizerReflector)
+	    sourceReflector = Defaults.createSizableReflector();
+    }
+	
+	public ArrayReflector(SizableReflector sourceReflector) {
+		super();
+		this.sourceReflector = sourceReflector;
+	}
 
 	protected Class[] getReflectableClassesImpl() {
 		return ClassUtils.ARRAY_TYPES;
@@ -81,7 +91,15 @@ public class ArrayReflector extends BaseContainerReflector implements ContainerR
 	}
 
 	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
-		int length = parameters == null ? 0 : SOURCE_REFLECTOR.getSize(parameters);
+		int length = parameters == null ? 0 : getSourceReflector().getSize(parameters);
 		return ClassUtils.createArray(clazz.getComponentType(), length);
 	}
+
+	public SizableReflector getSourceReflector() {
+    	return sourceReflector;
+    }
+
+	public void setSourceReflector(SizableReflector sourceReflector) {
+    	this.sourceReflector = sourceReflector;
+    }
 }
