@@ -163,9 +163,9 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 			destination.getClass(), MutableIndexedContainerReflector.class)) {
 
 			// we may want to do a copy or a convert, depending on the
-			// capabilities of our graph transformer and whether a copy operation
-			// is preferred.  this logic is implemented in the transformGraph
-			// method
+			// capabilities of our graph transformer and whether a copy
+			// operation is preferred. this logic is implemented in the
+			// TransformerUtils.transform method method
 			Object destinationValue = getMutableIndexedContainerReflector().get(
 				destination, index);
 			Object transformedValue = TransformerUtils.transform(
