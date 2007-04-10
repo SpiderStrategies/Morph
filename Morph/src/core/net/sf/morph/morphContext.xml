@@ -145,29 +145,7 @@
 
 	<bean
 		name="delegatingTransformer"
-		class="net.sf.morph.transform.transformers.SimpleDelegatingTransformer">
-		<property name="delegates">
-			<list>
-				<ref bean="defaultToBooleanConverter"/>
-				<ref bean="nullConverter"/>
-				<ref bean="identityConverter"/>
-				<bean class="net.sf.morph.transform.converters.ObjectToClassConverter" />
-				<ref bean="textConverter"/>
-				<ref bean="defaultToTextConverter"/>
-				<ref bean="textToNumberConverter"/>
-				<ref bean="textToTimeConverter"/>
-				<ref bean="numberToTimeConverter"/>
-				<ref bean="timeToNumberConverter"/>
-				<ref bean="numberConverter"/>
-				<ref bean="timeConverter"/>
-				<bean class="net.sf.morph.transform.copiers.PropertyNameMatchingCopier">
-					<property name="destinationClasses" value="java.util.Map" />
-				</bean>
-				<ref bean="containerCopier"/>
-				<ref bean="propertyNameMatchingCopier"/>
-			</list>
-		</property>
-	</bean>
+		class="net.sf.morph.transform.transformers.SimpleDelegatingTransformer"/>
 
 <!--============================================================================
 |
