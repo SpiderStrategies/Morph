@@ -75,7 +75,7 @@ public class ContainerCopierTestCase extends BaseCopierTestCase {
 		list.add(new ConvertedSourcePair(to.emptyList.iterator(), to.emptyVector.elements()));
 		list.add(new ConvertedSourcePair(to.emptyVector.elements(), to.emptyList.iterator()));
 		list.add(new ConvertedSourcePair(to.oneTwoThreeList.iterator(), to.oneTwoThreeVector.elements()));
-		list.add(new ConvertedSourcePair(to.oneTwoThreeVector.elements(), to.oneTwoThreeList.iterator()));		
+		list.add(new ConvertedSourcePair(to.oneTwoThreeVector.elements(), to.oneTwoThreeList.iterator()));
 		
 		return list;
 	}
@@ -95,6 +95,20 @@ public class ContainerCopierTestCase extends BaseCopierTestCase {
 		list.add(Collection.class);
 		list.add(Map.class);
 		return list;
+	}
+	
+	public void testConvert() {
+		int[] result = (int[])
+			getConverter().convert(int[].class, new String[] { "1", "2" });
+		assertEquals(1, result[0]);
+		assertEquals(2, result[1]);
+	}
+	
+	public void testCopy() {
+		int[] destination = new int[] { 1, 2 };
+		getCopier().copy(destination, new String[] { "3", "4" });
+		assertEquals(3, destination[0]);
+		assertEquals(4, destination[1]);
 	}
 
 	protected Transformer createTransformer() {
