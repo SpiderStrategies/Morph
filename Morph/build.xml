@@ -1,5 +1,5 @@
 <project name="morph" default="build" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
-  <!-- requires Apache Ant >= 1.6.5 -->
+  <!-- requires Apache Ant >= 1.7.0 -->
 
   <property file="build.properties" />
 
@@ -231,7 +231,7 @@
   </target>
 
   <target name="-check-maven" depends="-site-uptodate" unless="site-uptodate">
-    <fail unless="env.MAVEN_HOME" />
+    <fail unless="env.MAVEN_HOME" message="Maven 1.x required.  See http://maven.apache.org/maven-1.x/start/install.html"/>
     <fail message="Maven 1.x required; Maven 2.x found.">
       <condition>
         <available file="${env.MAVEN_HOME}/bin/mvn" />
@@ -271,7 +271,7 @@
     <delete file="velocity.log" />
   </target>
 
-  <target name="dist" depends="-dist-bin,-dist-src"
+  <target name="dist" depends="-check-maven,-dist-bin,-dist-src"
           description="Prepare distribution files">
     <checksum fileext=".md5" algorithm="MD5">
       <fileset id="arc" dir="${dist.dir}" includes="*.zip,*.tar.gz,*.tar.bz2" />
