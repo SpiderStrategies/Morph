@@ -71,6 +71,10 @@ public class BooleanToTextConverter extends BaseTransformer implements Converter
 		return Boolean.FALSE.toString();
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	public Converter getTextConverter() {
 		if (textConverter == null) {
 			setTextConverter(Defaults.createTextConverter());

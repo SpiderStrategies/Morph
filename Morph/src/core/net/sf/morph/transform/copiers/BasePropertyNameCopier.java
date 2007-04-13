@@ -139,10 +139,18 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 		}
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+		// this transformer can recursively call other transformers, so we don't
+		// want to eat user defined exceptions
+	    return false;
+    }
+
+	// overriden to make this public
 	public Transformer getNestedTransformer() {
 		return super.getNestedTransformer();
 	}
 
+	// overriden to make this public
 	public void setNestedTransformer(Transformer transformer) {
 		super.setNestedTransformer(transformer);
 	}

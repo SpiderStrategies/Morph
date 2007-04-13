@@ -185,5 +185,10 @@ public class NumberConverter extends BaseTransformer implements Converter, Decor
 	public void setRoundingMethod(
 		String roundingMethod) {
 		this.roundingMethod = roundingMethod;
-	}	
+	}
+
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+	
 }

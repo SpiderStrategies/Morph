@@ -53,4 +53,8 @@ public class NumberToBooleanConverter extends BaseTransformer implements Convert
 		return DESTINATION_TYPES;
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 }

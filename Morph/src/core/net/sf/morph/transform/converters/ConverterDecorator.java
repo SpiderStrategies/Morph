@@ -23,34 +23,42 @@ import net.sf.morph.transform.transformers.BaseTransformer;
 
 /**
  * Decorates any Converter so that it implements 
- * {@link net.sf.morph.transform.DecoratedConverter}.
+ * {@link net.sf.morph.transform.DecoratedConverter}.  Example usage:
+ * 
+ * <pre>
+ * Converter myConverter = new MyConverter();
+ * DecoratedConverter decoratedConverter = new DecoratedConverter(myConverter);
+ * 
+ * // now use decoratedConverter instead of myConverter
+ * StringBuffer buffer = decoratedConverter.convert(StringBuffer.class, "no locale needed");
+ * </pre>
  * 
  * @author Matt Sgarlata
  * @since Dec 5, 2004
  */
 public class ConverterDecorator extends BaseTransformer implements Converter, DecoratedConverter {
 	
-	private Converter converter;
+	private Converter nestedConverter;
 	
 	public ConverterDecorator() {
 		super();
 	}
 	
 	public ConverterDecorator(Converter converter) {
-		this.converter = converter;
+		this.nestedConverter = converter;
 	}
 
 	/**
 	 * @return Returns the converter.
 	 */
 	public Converter getNestedConverter() {
-		return converter;
+		return nestedConverter;
 	}
 	/**
 	 * @param converter The converter to set.
 	 */
-	public void setConverter(Converter converter) {
-		this.converter = converter;
+	public void setNestedConverter(Converter converter) {
+		this.nestedConverter = converter;
 	}
 
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
@@ -64,4 +72,11 @@ public class ConverterDecorator extends BaseTransformer implements Converter, De
 	public Class[] getDestinationClassesImpl() {
 		return getNestedConverter().getDestinationClasses();
 	}
+
+	protected boolean isWrappingRuntimeExceptions() {
+	    // the whole point of this converter is for decorating user defined
+		// transformers, so we don't want to eat their exceptions ;)
+	    return false;
+    }
+	
 }

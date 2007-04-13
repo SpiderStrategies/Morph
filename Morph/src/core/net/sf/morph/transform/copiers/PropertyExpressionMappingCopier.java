@@ -211,4 +211,9 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 	public Transformer getNestedTransformer() {
 		return super.getNestedTransformer();
 	}
+
+	protected boolean isWrappingRuntimeExceptions() {
+	    return false;
+    }
+	
 }

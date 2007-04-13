@@ -49,6 +49,10 @@ public class TimeToTextConverter extends BaseTransformer implements Converter, D
 		return getTextConverter().convert(destinationClass, string, locale);
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getTimeConverter().getSourceClasses();
 	}

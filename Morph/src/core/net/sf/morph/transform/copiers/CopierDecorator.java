@@ -17,7 +17,6 @@ package net.sf.morph.transform.copiers;
 
 import java.util.Locale;
 
-import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
@@ -30,16 +29,16 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Dec 5, 2004
  */
-public class CopierDecorator extends BaseTransformer implements Copier, DecoratedCopier, Converter, DecoratedConverter {
+public class CopierDecorator extends BaseTransformer implements DecoratedCopier, DecoratedConverter {
 	
-	private Copier copier;
+	private Copier nestedCopier;
 	
 	public CopierDecorator() {
 		super();
 	}
 	
 	public CopierDecorator(Copier copier) {
-		setCopier(copier);
+		setNestedCopier(copier);
 	}
 
 	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType)
@@ -51,20 +50,26 @@ public class CopierDecorator extends BaseTransformer implements Copier, Decorate
 	 * @return Returns the copier.
 	 */
 	public Copier getNestedCopier() {
-		return copier;
+		return nestedCopier;
 	}
 	/**
 	 * @param copier The copier to set.
 	 */
-	public void setCopier(Copier copier) {
-		this.copier = copier;
+	public void setNestedCopier(Copier copier) {
+		this.nestedCopier = copier;
 	}
 
 	public Class[] getSourceClassesImpl() {
-		return copier.getSourceClasses();
+		return nestedCopier.getSourceClasses();
 	}
 
 	public Class[] getDestinationClassesImpl() {
-		return copier.getDestinationClasses();
+		return nestedCopier.getDestinationClasses();
 	}
+
+	protected boolean isWrappingRuntimeExceptions() {
+	    // the whole point of this copier is for decorating user defined
+		// transformers, so we don't want to eat their exceptions ;)
+	    return false;
+    }
 }

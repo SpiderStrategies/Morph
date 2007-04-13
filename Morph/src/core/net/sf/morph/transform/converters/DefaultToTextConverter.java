@@ -25,6 +25,7 @@ import net.sf.morph.util.ContainerUtils;
 /**
  * Converts an object to a textual representation by delegating to
  * {@link net.sf.morph.transform.converters.ContainerToPrettyTextConverter},
+ * {@link net.sf.morph.transform.converters.BooleanToTextConverter}, 
  * {@link net.sf.morph.transform.converters.TimeToTextConverter},
  * {@link net.sf.morph.transform.converters.NumberToTextConverter} and
  * {@link net.sf.morph.transform.converters.ObjectToTextConverter}.
@@ -76,9 +77,9 @@ public class DefaultToTextConverter extends SimpleDelegatingTransformer implemen
 	 * @see net.sf.morph.transform.transformers.SimpleDelegatingTransformer#createDefaultComponents()
 	 */
 	protected Transformer[] createDefaultComponents() {
-		return new Transformer[] {
-				new BooleanToTextConverter(), new TimeToTextConverter(),
-				new NumberToTextConverter(), new ObjectToTextConverter() };
+		return new Transformer[] { new ContainerToPrettyTextConverter(),
+		        new BooleanToTextConverter(), new TimeToTextConverter(),
+		        new NumberToTextConverter(), new ObjectToTextConverter() };
 	}
 
 	public Converter getTextConverter() {

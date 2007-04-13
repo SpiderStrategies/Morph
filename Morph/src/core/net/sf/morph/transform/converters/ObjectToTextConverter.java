@@ -46,6 +46,10 @@ public class ObjectToTextConverter extends BaseTransformer implements Converter,
 			locale);
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_TYPES;
 	}

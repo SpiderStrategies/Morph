@@ -19,12 +19,22 @@ import net.sf.morph.transform.DecoratedTransformer;
 import net.sf.morph.transform.Transformer;
 
 /**
- * Decorates any Transformer so that it implements DecoratedTransformer.
+ * Decorates any Transformer so that it implements DecoratedTransformer.  Example usage:
+ * 
+ * <pre>
+ * Transformer myTransformer = new MyTransformer();
+ * DecoratedTransformer decoratedTransformer = new DecoratedTransformer(myTransformer);
+ * 
+ * // now use decoratedTransformer instead of myTransformer
+ * if (decoratedTransformer.isTransformable(destinationType, sourceType)) {
+ *     ...
+ * }
+ * </pre>
  * 
  * @author Matt Sgarlata
  * @since Dec 5, 2004
  */
-public class TransformerDecorator extends BaseTransformer implements Transformer, DecoratedTransformer {
+public class TransformerDecorator extends BaseTransformer implements DecoratedTransformer {
 	
 	private Transformer transformer;
 	
@@ -42,6 +52,12 @@ public class TransformerDecorator extends BaseTransformer implements Transformer
 	public Class[] getDestinationClassesImpl() {
 		return transformer.getDestinationClasses();
 	}
+
+	protected boolean isWrappingRuntimeExceptions() {
+	    // the whole point of this converter is for decorating user defined
+		// transformers, so we don't want to eat their exceptions ;)
+	    return false;
+    }
 
 	/**
 	 * @return Returns the transformer.

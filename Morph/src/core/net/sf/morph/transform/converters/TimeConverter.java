@@ -58,4 +58,8 @@ public class TimeConverter extends BaseTransformer implements Converter, Decorat
 		return SOURCE_AND_DESTINATION_TYPES;
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 }

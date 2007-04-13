@@ -25,6 +25,8 @@ import net.sf.morph.transform.transformers.BaseTransformer;
 import org.apache.commons.beanutils.ConvertUtilsBean;
 
 /**
+ * A converter which delegates to Commons BeanUtils.
+ * 
  * @author Matt Sgarlata
  * @since October 25, 2004
  */
@@ -76,10 +78,8 @@ public class BeanUtilsConverter extends BaseTransformer implements Converter, De
 	 * A hack that allows us to directly access the default ConvertUtilsBean
 	 * instance that is used by the static methods in ConvertUtils
 	 */
-	private static class MyConvertUtilsBeanHack extends ConvertUtilsBean
-	{
-		public static ConvertUtilsBean getInstance()
-		{
+	private static class MyConvertUtilsBeanHack extends ConvertUtilsBean {
+		public static ConvertUtilsBean getInstance() {
 			return ConvertUtilsBean.getInstance();
 		}
 	}
@@ -87,6 +87,12 @@ public class BeanUtilsConverter extends BaseTransformer implements Converter, De
 	protected boolean isNaivelyConvertible(Class destinationClass, Class sourceClass) {
 		return true;
 	}
+
+	protected boolean isWrappingRuntimeExceptions() {
+		// let runtime ConvertUtils exceptions be thrown if there are any (but
+		// I'm pretty sure they're all checked so will have to be wrapped)
+	    return false;
+    }
 
 	public Class[] getSourceClassesImpl() {
 		return ALL_OBJECTS;

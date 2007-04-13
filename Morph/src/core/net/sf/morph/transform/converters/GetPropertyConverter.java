@@ -24,6 +24,9 @@ import net.sf.morph.transform.transformers.BaseReflectorTransformer;
 
 /**
  * A Converter that converts an object to one of its own properties.
+ * 
+ * @author Matt Benson
+ * @since Morph 1.0.2
  */
 public class GetPropertyConverter extends BaseReflectorTransformer implements DecoratedConverter {
 	private String propertyName;
@@ -33,6 +36,7 @@ public class GetPropertyConverter extends BaseReflectorTransformer implements De
 	 * Construct a new GetPropertyConverter.
 	 */
 	public GetPropertyConverter() {
+		super();
 	}
 
 	/**
@@ -40,6 +44,7 @@ public class GetPropertyConverter extends BaseReflectorTransformer implements De
 	 * @param propertyName
 	 */
 	public GetPropertyConverter(String propertyName) {
+		this();
 		setPropertyName(propertyName);
 	}
 
@@ -63,7 +68,7 @@ public class GetPropertyConverter extends BaseReflectorTransformer implements De
 	 * Get the propertyName of this GetPropertyConverter.
 	 * @return the propertyName
 	 */
-	public synchronized String getPropertyName() {
+	public String getPropertyName() {
 		return propertyName;
 	}
 
@@ -71,7 +76,7 @@ public class GetPropertyConverter extends BaseReflectorTransformer implements De
 	 * Set the propertyName of this GetPropertyConverter.
 	 * @param propertyName the propertyName to set
 	 */
-	public synchronized void setPropertyName(String propertyName) {
+	public void setPropertyName(String propertyName) {
 		this.propertyName = propertyName;
 	}
 

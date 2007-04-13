@@ -74,6 +74,10 @@ public class IdentityConverter extends BaseTransformer implements Converter, Dec
 		return false;
 	}
 	
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return DEFAULT_SOURCE_AND_DESTINATION_TYPES;
 	}

@@ -273,6 +273,12 @@ public class ContainerCopier extends BaseReflectorTransformer implements Copier,
 		return getContainerReflector().getReflectableClasses();
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+		// this transformer can recursively call other transformers, so we don't
+		// want to eat user defined exceptions
+	    return false;
+    }
+
 	public Transformer getNestedTransformer() {
 		return super.getNestedTransformer();
 	}

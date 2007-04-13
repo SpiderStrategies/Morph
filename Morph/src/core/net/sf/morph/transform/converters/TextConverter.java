@@ -64,6 +64,10 @@ public class TextConverter extends BaseTransformer implements Converter, Decorat
 		throw new TransformationException(destinationClass, source);
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_AND_DESTINATION_TYPES;
 	}

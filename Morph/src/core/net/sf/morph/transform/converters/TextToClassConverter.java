@@ -118,4 +118,9 @@ public class TextToClassConverter extends BaseTransformer implements Converter, 
 		}
 		return result;
 	}
+
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+	
 }

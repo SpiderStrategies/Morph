@@ -71,6 +71,10 @@ public class ArbitraryTypeMappingConverter extends BaseTransformer implements Co
 		return DESTINATION_CLASSES;
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	/**
 	 * Returns the mapping of types to objects
 	 * @return Returns the mapping.
@@ -84,4 +88,5 @@ public class ArbitraryTypeMappingConverter extends BaseTransformer implements Co
 	public void setMapping(Map mapping) {
 		this.mapping = mapping;
 	}
+	
 }

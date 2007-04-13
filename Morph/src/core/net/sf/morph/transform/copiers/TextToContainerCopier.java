@@ -143,6 +143,10 @@ public class TextToContainerCopier extends BaseTransformer implements DecoratedC
 		return getTextConverter().getSourceClasses();
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return false;
+    }
+
 	/**
 	 * Returns the characters that are used to separate the different elements
 	 * to be copied to the container.

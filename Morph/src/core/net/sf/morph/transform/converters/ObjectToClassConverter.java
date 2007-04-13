@@ -41,6 +41,10 @@ public class ObjectToClassConverter extends BaseTransformer implements
 		return destinationType == Class.class;
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return new Class[] { Object.class, float.class, double.class,
 				byte.class, short.class, int.class, long.class, boolean.class, char.class };

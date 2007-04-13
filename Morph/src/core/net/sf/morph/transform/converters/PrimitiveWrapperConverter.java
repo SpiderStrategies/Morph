@@ -44,4 +44,8 @@ public class PrimitiveWrapperConverter extends BaseTransformer implements Decora
 		return source;
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 }

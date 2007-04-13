@@ -45,16 +45,18 @@ public class PropertyEditorManagerConverter extends BaseTransformer implements C
 
 		PropertyEditor propertyEditor =
 			PropertyEditorManager.findEditor(destinationClass);
-		if (source == null)
-		{
+		if (source == null) {
 			propertyEditor.setAsText(null);
 		}
-		else
-		{
+		else {
 			propertyEditor.setAsText(source.toString());
 		}
 		return propertyEditor.getValue();
 	}
+
+	protected boolean isWrappingRuntimeExceptions() {
+	    return false;
+    }
 
 	public Class[] getSourceClassesImpl() {
 		return ALL_OBJECTS;

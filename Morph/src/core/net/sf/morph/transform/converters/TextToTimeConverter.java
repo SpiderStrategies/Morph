@@ -53,6 +53,10 @@ public class TextToTimeConverter extends BaseTransformer implements Converter, D
 		return getTimeConverter().getSourceClasses();
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	public DateFormat getDateFormat() {
 		if (dateFormat == null) {
 			setDateFormat(DEFAULT_DATE_FORMAT);

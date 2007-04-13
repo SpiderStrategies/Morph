@@ -88,7 +88,7 @@ public abstract class BaseToTextConverterTestCase extends BaseConverterTestCase 
 	
 	protected void addContainerConversions(List list) {
 		list.add(new ConvertedSourcePair("{}", to.emptyList));
-		list.add(new ConvertedSourcePair("{1|2|3}", to.oneTwoThreeList));
+		list.add(new ConvertedSourcePair("{1,2,3}", to.oneTwoThreeList));
 	}
 	
 	protected void addObjectConversions(List list) {

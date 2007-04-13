@@ -101,17 +101,16 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 	}
 
 	/**
-	 * Sets the String, StringBuffer, and Character values that will be
-	 * converted to <code>false</code>. The strings are not case-sensitive.
+	 * Sets the values that will be converted to <code>false</code>. The
+	 * strings are not case-sensitive.
 	 * 
 	 * @param falseText
-	 *            the String, StringBuffer, and Character values that will be
-	 *            converted to <code>false</code>. The strings are not
-	 *            case-sensitive.
+	 *            the values that will be converted to <code>false</code>.
+	 *            The strings are not case-sensitive.
 	 */
 	public void setFalseText(String[] falseStrings) {
+		falseStrings = changeToLowerCase(falseStrings);
 		this.falseText = falseStrings;
-		changeToLowerCase(falseStrings);
 	}
 
 	/**
@@ -130,27 +129,36 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 	}
 
 	/**
-	 * Sets the String, StringBuffer, and Character values that will be
-	 * converted to <code>true</code>. The strings are not case-sensitive.
+	 * Sets the values that will be converted to <code>true</code>. The
+	 * strings are not case-sensitive.
 	 * 
 	 * @param trueText
-	 *            the String, StringBuffer, and Character values that will be
-	 *            converted to <code>true</code>. The strings are not
-	 *            case-sensitive.
+	 *            the values that will be converted to <code>true</code>. The
+	 *            strings are not case-sensitive.
 	 */
 	public void setTrueText(String[] trueStrings) {
+		trueStrings = changeToLowerCase(trueStrings);
 		this.trueText = trueStrings;
-		changeToLowerCase(trueStrings);
 	}
 
 	protected boolean isAutomaticallyHandlingNulls() {
 		return false;
 	}
 
-	private void changeToLowerCase(String[] array) {
-		for (int i = 0; i < array.length; i++) {
-			array[i] = array[i].toLowerCase();
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
+	private String[] changeToLowerCase(String[] array) {
+		if (array == null) {
+			return null;
 		}
+		
+		String[] lowerCase = new String[array.length];
+		for (int i = 0; i < array.length; i++) {
+			lowerCase[i] = array[i].toLowerCase();
+		}
+		return lowerCase;
 	}
 
 	/**

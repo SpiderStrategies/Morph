@@ -44,6 +44,10 @@ public class ObjectToBooleanConverter extends BaseTransformer implements Convert
 		return ObjectUtils.isEmpty(source) ? Boolean.FALSE : Boolean.TRUE;
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_TYPES;
 	}

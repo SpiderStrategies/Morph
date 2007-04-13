@@ -52,6 +52,10 @@ public class TimeToNumberConverter extends BaseTransformer implements Converter,
 		return false;
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getTimeConverter().getSourceClasses();
 	}

@@ -17,6 +17,7 @@ package net.sf.morph.transform.converters;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -44,7 +45,7 @@ public class ContainerToPrettyTextConverter extends BaseToPrettyTextConverter {
 	
 	public static final String DEFAULT_PREFIX = "{";
 	public static final String DEFAULT_SUFFIX = "}";	
-	public static final String DEFAULT_SEPARATOR = "|";
+	public static final String DEFAULT_SEPARATOR = ",";
 
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
@@ -75,21 +76,21 @@ public class ContainerToPrettyTextConverter extends BaseToPrettyTextConverter {
 		// but for this converter we don't want objects to be valid sources
 		// to convert objects to text, the ObjectToTextConverter should be used
 		// instead
-		ArrayList al = null;
-		Class[] c = getContainerReflector().getReflectableClasses();
-		for (int i = 0; i < c.length; i++) {
-			if (c[i] == Object.class) {
-				if (al == null) {
-					al = new ArrayList(c.length - 1);
+		List list = null;
+		Class[] reflectableClasses = getContainerReflector().getReflectableClasses();
+		for (int i = 0; i < reflectableClasses.length; i++) {
+			if (reflectableClasses[i] == Object.class) {
+				if (list == null) {
+					list = new ArrayList(reflectableClasses.length - 1);
 					for (int j = 0; j < i; j++) {
-						al.add(j, c[j]);
+						list.add(j, reflectableClasses[j]);
 					}
 				}
-			} else if (al != null) {
-				al.add(c[i]);
+			} else if (list != null) {
+				list.add(reflectableClasses[i]);
 			}
 		}
-		return al == null ? c : (Class[]) al.toArray(new Class[al.size()]);
+		return list == null ? reflectableClasses : (Class[]) list.toArray(new Class[list.size()]);
 	}
 
 	public String getSeparator() {

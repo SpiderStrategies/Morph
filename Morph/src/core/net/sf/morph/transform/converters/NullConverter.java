@@ -50,6 +50,10 @@ public class NullConverter extends BaseTransformer implements Converter, Decorat
 		return false;
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_TYPES;
 	}

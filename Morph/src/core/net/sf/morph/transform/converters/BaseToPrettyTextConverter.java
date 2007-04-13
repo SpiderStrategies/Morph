@@ -47,6 +47,10 @@ public abstract class BaseToPrettyTextConverter extends BaseReflectorTransformer
 		return false;
 	}
 	
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	public String getSeparator() {
 		return separator;
 	}

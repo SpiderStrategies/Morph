@@ -121,4 +121,8 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 		}
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return false;
+    }
+
 }

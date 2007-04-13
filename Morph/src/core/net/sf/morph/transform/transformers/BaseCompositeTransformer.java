@@ -90,4 +90,13 @@ public abstract class BaseCompositeTransformer extends BaseTransformer implement
 		}
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+		// composite transformers will often have user specified components,
+		// in which case we want to allow user user defined RuntimeExceptions
+		// to propogate up the stack.  Morph transformers will already throw
+		// TransformationExceptions so if all the composites are transformers
+		// that come with Morph, TransformationExceptions will get thrown
+	    return false;
+    }
+
 }

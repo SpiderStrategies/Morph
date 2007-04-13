@@ -104,6 +104,10 @@ public class ArbitraryObjectMappingConverter extends BaseTransformer implements 
 		return getClasses(mapping.values(), mapping.keySet());
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	public boolean isBidirectional() {
 		return bidirectional;
 	}
@@ -144,7 +148,4 @@ public class ArbitraryObjectMappingConverter extends BaseTransformer implements 
 		throw new UnsupportedOperationException();
 	}
 
-	public Object transformGraph(Class destinationType, Object destination, Object source, Locale locale, Integer preferredTransformationType) throws TransformationException {
-		return convert(destinationType, source, locale);
-	}
 }

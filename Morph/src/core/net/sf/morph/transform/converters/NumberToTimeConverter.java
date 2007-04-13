@@ -52,6 +52,10 @@ public class NumberToTimeConverter extends BaseTransformer implements Converter,
 		return getTimeConverter().getDestinationClasses();
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	public Converter getNumberConverter() {
 		if (numberConverter == null) {
 			setNumberConverter(Defaults.createNumberConverter());

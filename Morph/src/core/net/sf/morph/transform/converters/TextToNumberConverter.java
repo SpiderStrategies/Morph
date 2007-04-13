@@ -299,6 +299,10 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 			position.getIndex() == stringWithoutIgnoredSymbolsStr.length();
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getTextConverter().getSourceClasses();
 	}

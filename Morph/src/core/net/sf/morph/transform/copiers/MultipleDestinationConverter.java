@@ -15,8 +15,6 @@
  */
 package net.sf.morph.transform.copiers;
 
-//import java.util.ArrayList;
-//import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -86,4 +84,9 @@ public class MultipleDestinationConverter extends BaseCompositeTransformer imple
 	public void setDestinationClassesForEachDestination(Class[] destinations) {
 		this.destinationClassesForEachDestination = destinations;
 	}
+
+	protected boolean isWrappingRuntimeExceptions() {
+	    return false;
+    }
+	
 }

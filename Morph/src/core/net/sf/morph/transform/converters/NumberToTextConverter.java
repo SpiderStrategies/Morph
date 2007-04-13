@@ -105,4 +105,8 @@ public class NumberToTextConverter extends BaseTransformer implements DecoratedC
 		return numberFormat;
 	}
 
+	protected boolean isWrappingRuntimeExceptions() {
+	    return true;
+    }
+
 }
