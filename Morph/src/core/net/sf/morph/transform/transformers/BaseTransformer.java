@@ -419,8 +419,9 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		if (destination == null) {
 			throw new TransformationException("Destination cannot be null");
 		}
-		if (source == null) {
-			throw new TransformationException("Source cannot be null");
+
+		if (source == null && isAutomaticallyHandlingNulls()) {
+			throw new TransformationException("Cannot handle null copy source");
 		}
 
 		if (locale == null) {
