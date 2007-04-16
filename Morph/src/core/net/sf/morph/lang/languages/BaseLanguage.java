@@ -20,7 +20,6 @@ import java.util.Locale;
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.Defaults;
 import net.sf.morph.lang.DecoratedLanguage;
-import net.sf.morph.lang.Language;
 import net.sf.morph.lang.LanguageException;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.TransformationException;
@@ -37,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Matt Sgarlata
  * @since Nov 28, 2004
  */
-public abstract class BaseLanguage implements Language, DecoratedLanguage {
+public abstract class BaseLanguage implements DecoratedLanguage {
 	
 	private transient Log log = LogFactory.getLog(getClass());
 	

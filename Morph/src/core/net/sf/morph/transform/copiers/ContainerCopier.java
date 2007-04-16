@@ -27,7 +27,6 @@ import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.reflect.GrowableContainerReflector;
 import net.sf.morph.reflect.MutableIndexedContainerReflector;
 import net.sf.morph.transform.Converter;
-import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.NodeCopier;
@@ -80,7 +79,7 @@ import net.sf.morph.util.TypeMap;
  * @author Matt Sgarlata
  * @since Nov 27, 2004
  */
-public class ContainerCopier extends BaseReflectorTransformer implements Copier, DecoratedCopier, Converter, DecoratedConverter, NodeCopier {
+public class ContainerCopier extends BaseReflectorTransformer implements DecoratedCopier, DecoratedConverter, NodeCopier {
 	
 	// map of Class to Class
 	private Map containedSourceToDestinationTypeMap;
