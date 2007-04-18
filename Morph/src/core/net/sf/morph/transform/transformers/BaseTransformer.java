@@ -581,6 +581,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 //		}
 		return nestedTransformer;
 	}
+
 	protected void setNestedTransformer(Transformer nestedTransformer) {
 		this.nestedTransformer = nestedTransformer;
 	}
