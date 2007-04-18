@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -208,7 +208,7 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 		if (typeArray == null) {
 			return false;
 		}
-		for (int i=0; i<typeArray.length; i++) {
+		for (int i = 0; i < typeArray.length; i++) {
 			if (type == null) {
 				if (typeArray[i] == null) {
 					return true;
