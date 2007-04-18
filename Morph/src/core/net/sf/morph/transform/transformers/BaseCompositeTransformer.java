@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -38,8 +38,8 @@ public abstract class BaseCompositeTransformer extends BaseTransformer implement
 	// until the user tries to perform an operation
 	protected void initializeImpl() throws Exception {
 		super.initializeImpl();
-		
 		getComponentValidator().validate(this);
+		updateNestedTransformerComponents(getNestedTransformer(), null);
 	}
 
 // information about the components of a composite transformer 	
@@ -71,17 +71,14 @@ public abstract class BaseCompositeTransformer extends BaseTransformer implement
 	 */
 	protected void setNestedTransformer(Transformer nestedTransformer) {
 		Transformer old = getNestedTransformer();
-		if (nestedTransformer == old) {
-			return;
-		}
 		super.setNestedTransformer(nestedTransformer);
-		if (nestedTransformer == null) {
-			nestedTransformer = this;
-		}
 		updateNestedTransformerComponents(nestedTransformer, old);
 	}
 
 	protected void updateNestedTransformerComponents(Transformer incoming, Transformer outgoing) {
+		if (incoming == outgoing) {
+			return;
+		}
 		NodeCopier[] nodeCopiers = (NodeCopier[]) ContainerUtils.getElementsOfType(getComponents(), NodeCopier.class);
 		for (int i = 0; i < nodeCopiers.length; i++) {
 			if (nodeCopiers[i].getNestedTransformer() == outgoing) {
