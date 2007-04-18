@@ -20,7 +20,9 @@ import java.util.Locale;
 import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
+import net.sf.morph.transform.NodeCopier;
 import net.sf.morph.transform.TransformationException;
+import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
 
 /**
@@ -29,47 +31,81 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Dec 5, 2004
  */
-public class CopierDecorator extends BaseTransformer implements DecoratedCopier, DecoratedConverter {
-	
+public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
+		DecoratedConverter {
+
 	private Copier nestedCopier;
-	
+
+	/**
+	 * Create a new CopierDecorator.
+	 */
 	public CopierDecorator() {
 		super();
 	}
-	
+
+	/**
+	 * Create a new CopierDecorator.
+	 * @param copier
+	 */
 	public CopierDecorator(Copier copier) {
 		setNestedCopier(copier);
 	}
 
-	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType)
-		throws TransformationException {
+	/* (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	 */
+	protected void copyImpl(Object destination, Object source, Locale locale,
+			Integer preferredTransformationType) throws TransformationException {
 		getNestedCopier().copy(destination, source, locale);
 	}
-	
+
 	/**
-	 * @return Returns the copier.
+	 * @return Returns the nested copier.
 	 */
 	public Copier getNestedCopier() {
 		return nestedCopier;
 	}
+
 	/**
-	 * @param copier The copier to set.
+	 * @param copier The nested copier to set.
 	 */
 	public void setNestedCopier(Copier copier) {
 		this.nestedCopier = copier;
+		if (copier instanceof NodeCopier) {
+			((NodeCopier) copier).setNestedTransformer(getNestedTransformer());
+		}
 	}
 
+	/* (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
+	 */
 	public Class[] getSourceClassesImpl() {
 		return nestedCopier.getSourceClasses();
 	}
 
+	/* (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
+	 */
 	public Class[] getDestinationClassesImpl() {
 		return nestedCopier.getDestinationClasses();
 	}
 
+	/* (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#isWrappingRuntimeExceptions()
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
-	    // the whole point of this copier is for decorating user defined
+		// the whole point of this copier is for decorating user defined
 		// transformers, so we don't want to eat their exceptions ;)
-	    return false;
-    }
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setNestedTransformer(net.sf.morph.transform.Transformer)
+	 */
+	protected void setNestedTransformer(Transformer nestedTransformer) {
+		super.setNestedTransformer(nestedTransformer);
+		if (nestedCopier instanceof NodeCopier) {
+			((NodeCopier) nestedCopier).setNestedTransformer(nestedTransformer);
+		}
+	}
 }
