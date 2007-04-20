@@ -432,17 +432,38 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 				+ ObjectUtils.getObjectDescription(destinationClass));
 	}
 
-	public Transformer[] getTransformers() {
-		return (Transformer[]) getComponents();
+	/**
+	 * Get our components as a typesafe Transformer array.
+	 * @return Transformer[]
+	 */
+	public synchronized Transformer[] getTransformers() {
+		Object[] c = getComponents();
+		Transformer[] t;
+		if (c instanceof Transformer[]) {
+			t = (Transformer[]) c;
+		} else {
+			t = new Transformer[c.length];
+			System.arraycopy(c, 0, t, 0, c.length);
+			components = t;
+		}
+		return t;
 	}
 
-	public Object[] getComponents() {
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#getComponents()
+	 */
+	public synchronized Object[] getComponents() {
 		if (components == null) {
 			setComponents(createDefaultComponents());
 		}
 		return super.getComponents();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#setComponents(java.lang.Object[])
+	 */
 	public synchronized void setComponents(Object[] components) {
 		if (this.components == components) {
 			return;
@@ -451,7 +472,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		transformerRegistry.clear();
 		copierRegistry.clear();
 
-		if (isInitialized() && components != null) {
+		if (components != null) {
 			updateNestedTransformerComponents(getNestedTransformer(), null);
 		}
 	}
