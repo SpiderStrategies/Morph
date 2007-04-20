@@ -88,15 +88,32 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 			HashSet survivors = new HashSet();
 			Class[] c = strategy.get(t[i]);
 			for (int j = 0; j < c.length; j++) {
+				if (s.contains(c[j])) {
+					survivors.add(c[j]);
+					break;
+				}
+				if (c[j] == null) {
+					break;
+				}
 				for (Iterator it = s.iterator(); it.hasNext();) {
-					Class test = (Class) it.next();
-					if (test.isAssignableFrom(c[j])) {
+					Class next = (Class) it.next();
+					if (next != null && next.isAssignableFrom(c[j])) {
 						survivors.add(c[j]);
 						break;
 					}
-					if (c[j].isAssignableFrom(test)) {
-						survivors.add(test);
+				}
+			}
+			if (!survivors.containsAll(s)) {
+				for (Iterator it = s.iterator(); it.hasNext();) {
+					Class next = (Class) it.next();
+					if (survivors.contains(next) || next == null) {
 						break;
+					}
+					for (int j = 0; j < c.length; j++) {
+						if (c[j] != null && c[j].isAssignableFrom(next)) {
+							survivors.add(next);
+							break;
+						}
 					}
 				}
 			}
