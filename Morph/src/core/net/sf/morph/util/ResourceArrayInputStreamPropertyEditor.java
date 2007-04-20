@@ -24,7 +24,7 @@ import org.springframework.core.io.support.ResourceArrayPropertyEditor;
 import org.springframework.util.StringUtils;
 
 /**
- * Drop-in replacement for Spring's InputStreamPropertyEditor
+ * Drop-in replacement for Spring's InputStreamEditor
  * to convert one or more Resources to an InputStream.
  * @author Matt Benson
  */
