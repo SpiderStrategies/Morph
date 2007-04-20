@@ -37,6 +37,7 @@ import net.sf.morph.transform.TransformationException;
  * @author Keith Donald
  * @author Rob Harrop
  * @author Juergen Hoeller
+ * @author Matt Benson
  * @since Nov 6, 2004
  */
 public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
