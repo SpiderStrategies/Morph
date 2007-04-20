@@ -26,6 +26,7 @@ import net.sf.morph.lang.DecoratedLanguage;
 import net.sf.morph.lang.Language;
 import net.sf.morph.lang.languages.LanguageDecorator;
 import net.sf.morph.lang.languages.SimpleLanguage;
+import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
@@ -56,6 +57,7 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		if (language == null) {
 			SimpleLanguage lang = Defaults.createLanguage();
 			lang.setConverter((Converter) getNestedTransformer());
+			lang.setReflector((BeanReflector) getReflector(BeanReflector.class));
 			setLanguage(lang);
 		}
 		return language;
