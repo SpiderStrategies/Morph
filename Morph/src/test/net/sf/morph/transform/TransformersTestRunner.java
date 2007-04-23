@@ -18,8 +18,6 @@ package net.sf.morph.transform;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-import net.sf.morph.transform.converters.ChainedConverterTestCase;
-import net.sf.morph.transform.converters.ExplicitChainedConverterTestCase;
 import net.sf.morph.transform.converters.GetPropertyConverterTestCase;
 import net.sf.morph.transform.converters.IdentityConverterTestCase;
 import net.sf.morph.transform.converters.NumberConverterTestCase;
@@ -41,6 +39,8 @@ import net.sf.morph.transform.copiers.NestedDelegatingCopierTestCase;
 import net.sf.morph.transform.copiers.PartialPropertyNameMatchingCopierTestCase;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopierTestCase;
 import net.sf.morph.transform.copiers.TextToContainerCopierTestCase;
+import net.sf.morph.transform.transformers.ChainedTransformerTestCase;
+import net.sf.morph.transform.transformers.ExplicitChainedTransformerTestCase;
 import net.sf.morph.transform.transformers.SimpleDelegatingTransformerTestCase;
 import net.sf.morph.transform.transformers.TypeChangingGraphTransformerTestCase;
 
@@ -85,10 +85,8 @@ public class TransformersTestRunner extends TestRunner {
 
 		// COMPOSITE CONVERTERS
 
-		suite.addTestSuite(ChainedConverterTestCase.class);
 		suite.addTestSuite(DelegatingCopierTestCase.class);
 		suite.addTestSuite(NestedDelegatingCopierTestCase.class);
-		suite.addTestSuite(ExplicitChainedConverterTestCase.class);
 
 		// MISC TESTS
 
@@ -99,6 +97,8 @@ public class TransformersTestRunner extends TestRunner {
 
 		suite.addTestSuite(SimpleDelegatingTransformerTestCase.class);
 		suite.addTestSuite(TypeChangingGraphTransformerTestCase.class);
+		suite.addTestSuite(ChainedTransformerTestCase.class);
+		suite.addTestSuite(ExplicitChainedTransformerTestCase.class);
 
 		return suite;
 	}
