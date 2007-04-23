@@ -41,7 +41,6 @@ import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.converters.DefaultToBooleanConverter;
 import net.sf.morph.transform.converters.DefaultToTextConverter;
 import net.sf.morph.transform.converters.IdentityConverter;
-import net.sf.morph.transform.converters.NullConverter;
 import net.sf.morph.transform.converters.NumberConverter;
 import net.sf.morph.transform.converters.NumberToTimeConverter;
 import net.sf.morph.transform.converters.ObjectToClassConverter;
@@ -107,16 +106,9 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		}
 	}
 
-	private static Transformer createObjectToMapCopier() {
-		PropertyNameMatchingCopier result = new PropertyNameMatchingCopier();
-		result.setDestinationClasses(new Class[] { Map.class });
-		return result;
-	}
-
 	protected Transformer[] createDefaultComponents() {
 		return new Transformer[] {
 			new DefaultToBooleanConverter(),
-			new NullConverter(),
 			new IdentityConverter(),
 			new ObjectToClassConverter(),
 			new TextConverter(),
@@ -128,7 +120,9 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			new NumberConverter(),
 			new TimeConverter(),
 			new TextToContainerCopier(),
-			createObjectToMapCopier(),
+			new PropertyNameMatchingCopier() {
+				{ setDestinationClasses(new Class[] { Map.class }); }
+			},
 			new ContainerCopier(),
 			new PropertyNameMatchingCopier()
 		};
@@ -206,7 +200,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 */
 	protected boolean isTransformableImpl(Class destinationType,
 		Class sourceType) throws Exception {
-		for (int i=0; i<getTransformers().length; i++) {
+		for (int i = 0; i < getTransformers().length; i++) {
 			Transformer transformer = getTransformers()[i];
 			if (TransformerUtils.isTransformable(transformer,
 				destinationType, sourceType)) {
@@ -218,7 +212,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 
 	protected Class[] getSourceClassesImpl() throws Exception {
 		Set sourceClasses = new HashSet();
-		for (int i=0; i<getComponents().length; i++) {
+		for (int i = 0; i < getComponents().length; i++) {
 			sourceClasses.addAll(Arrays.asList(getTransformers()[i].getSourceClasses()));
 		}
 		return (Class[]) sourceClasses.toArray(new Class[sourceClasses.size()]);
@@ -226,7 +220,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		Set destinationClasses = new HashSet();
-		for (int i=0; i<components.length; i++) {
+		for (int i = 0; i < components.length; i++) {
 			Transformer transformer = (Transformer) components[i];
 			destinationClasses.addAll(Arrays.asList(transformer.getDestinationClasses()));
 		}
@@ -237,10 +231,9 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			throws Exception {
 		incrementStackDepth();
 		try {
-			Class destinationType = ClassUtils.getClass(destination);
-			Class sourceType = ClassUtils.getClass(source);
-			if (!hasVisited(source, destinationType)) {
-				Copier copier = getCopier(destinationType, sourceType);
+			if (!hasVisitedDestination(source, destination)) {
+				Class destinationType = ClassUtils.getClass(destination);
+				Copier copier = getCopier(destinationType, ClassUtils.getClass(source));
 				recordVisit(source, destinationType, destination);
 				copier.copy(destination, source, locale);
 			}
@@ -299,6 +292,12 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	protected boolean hasVisited(Object source, Class destinationType) {
 		Object key = new ObjectPair(source, destinationType);
 		return getVisitedSourceToDestinationMap().containsKey(key);
+	}
+
+	protected boolean hasVisitedDestination(Object source, Object destination) {
+		Class destinationType = ClassUtils.getClass(destination);
+		return hasVisited(source, destinationType)
+				&& getCachedResult(source, destinationType) == destination;
 	}
 
 	protected Object getCachedResult(Object source, Class destinationType) {
@@ -403,7 +402,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 *             if no suitable transformer could be found
 	 */
 	private Transformer getTransformer(Class transformerType, Class destinationClass, Class sourceClass) throws TransformationException {
-		for (int i=0; i<components.length; i++) {
+		for (int i = 0; i < components.length; i++) {
 			// if the transformer is the correct type
 			Transformer transformer = (Transformer) components[i];
 			if (transformerType.isAssignableFrom(transformer.getClass())) {
@@ -424,7 +423,6 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			}
 
 		}
-
 		throw new TransformationException(
 			"Could not find a transformer that can transform objects of "
 				+ ObjectUtils.getObjectDescription(sourceClass)
