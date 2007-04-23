@@ -36,11 +36,11 @@ tokens {
 	TYPE;
 }
 
-/* public */ parse returns [List result = new ArrayList()]
-	:	( classCopier[result] )+
+/* public */ parse[DSLDefinedCopier parent] returns [List result = new ArrayList()]
+	:	( classCopier[parent, result] )+
 	;
 
-protected classCopier[List list]
+protected classCopier[DSLDefinedCopier parent, List list]
 {
 	CopierDef copierDef = null;
 	Class leftClass = null;
@@ -48,7 +48,7 @@ protected classCopier[List list]
 	Class rightClass = null;
 }
 	:	leftClass=javaClass direction=direction rightClass=javaClass
-		{ copierDef = new CopierDef(leftClass, direction, rightClass); }
+		{ copierDef = new CopierDef(parent, leftClass, direction, rightClass); }
 		LCURLY copierChild[copierDef] ( COMMA copierChild[copierDef] )* RCURLY
 		{ list.add(copierDef); }
 	;
