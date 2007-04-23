@@ -79,14 +79,14 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 	/* (non-Javadoc)
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
 	 */
-	public Class[] getSourceClassesImpl() {
+	protected Class[] getSourceClassesImpl() {
 		return nestedCopier.getSourceClasses();
 	}
 
 	/* (non-Javadoc)
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
 	 */
-	public Class[] getDestinationClassesImpl() {
+	protected Class[] getDestinationClassesImpl() {
 		return nestedCopier.getDestinationClasses();
 	}
 
