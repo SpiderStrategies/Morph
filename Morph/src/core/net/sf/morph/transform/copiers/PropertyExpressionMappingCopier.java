@@ -214,8 +214,13 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		return super.getNestedTransformer();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#isWrappingRuntimeExceptions()
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
-	    return false;
+		//we throw LanguageExceptions which should be wrapped as TransformationExceptions:
+	    return true;
     }
 	
 }
