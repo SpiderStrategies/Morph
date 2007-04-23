@@ -65,11 +65,11 @@ public class ConverterDecorator extends BaseTransformer implements Converter, De
 		return getNestedConverter().convert(destinationClass, source, locale);
 	}
 
-	public Class[] getSourceClassesImpl() {
+	protected Class[] getSourceClassesImpl() {
 		return getNestedConverter().getSourceClasses();
 	}
 
-	public Class[] getDestinationClassesImpl() {
+	protected Class[] getDestinationClassesImpl() {
 		return getNestedConverter().getDestinationClasses();
 	}
 
@@ -78,5 +78,5 @@ public class ConverterDecorator extends BaseTransformer implements Converter, De
 		// transformers, so we don't want to eat their exceptions ;)
 	    return false;
     }
-	
+
 }
