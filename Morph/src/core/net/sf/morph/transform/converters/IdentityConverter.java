@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,38 +31,43 @@ import net.sf.morph.util.TransformerUtils;
  * @author Matt Sgarlata
  * @since Dec 31, 2004
  */
-public class IdentityConverter extends BaseTransformer implements Converter, DecoratedConverter, ExplicitTransformer {
-	
+public class IdentityConverter extends BaseTransformer implements Converter,
+		DecoratedConverter, ExplicitTransformer {
+
 	public static final Class[] DEFAULT_SOURCE_AND_DESTINATION_TYPES = {
-			Object.class, boolean.class, byte.class, char.class, short.class,
-			int.class, long.class, float.class, double.class, null };
-	
+			Object.class, boolean.class, byte.class, char.class, short.class, int.class,
+			long.class, float.class, double.class, null };
+
 	public IdentityConverter() {
 		super();
 	}
-	
+
 	public IdentityConverter(Class[] sourceAndDestinationClasses) {
 		super();
 		setSourceClasses(sourceAndDestinationClasses);
 		setDestinationClasses(sourceAndDestinationClasses);
 	}
 
-	protected boolean isTransformableImpl(Class destinationType,
-		Class sourceType) throws Exception {
-
-		if (destinationType == sourceType) {
-			return true;
+	protected boolean isTransformableImpl(Class destinationType, Class sourceType)
+			throws Exception {
+		if (TransformerUtils.isImplicitlyTransformable(this, destinationType, sourceType)) {
+			if (destinationType == sourceType) {
+				return true;
+			}
+			if (destinationType == null) {
+				return false;
+			}
+			if (sourceType == null) {
+				return !destinationType.isPrimitive();
+			}
+			return destinationType.isAssignableFrom(sourceType);
 		}
-		if (destinationType == null || sourceType == null) {
-			return false;
-		}
-		return TransformerUtils.isImplicitlyTransformable(this, destinationType, sourceType)
-				&& destinationType.isAssignableFrom(sourceType);
+		return false;
 	}
 
-	protected Object convertImpl(Class destinationClass, Object source,
-		Locale locale) throws Exception {
-		
+	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
+			throws Exception {
+
 		if (destinationClass.isAssignableFrom(source.getClass())) {
 			return source;
 		}
@@ -73,10 +78,10 @@ public class IdentityConverter extends BaseTransformer implements Converter, Dec
 		// this transformation is trivial; don't clutter the log with it
 		return false;
 	}
-	
+
 	protected boolean isWrappingRuntimeExceptions() {
-	    return true;
-    }
+		return true;
+	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return DEFAULT_SOURCE_AND_DESTINATION_TYPES;
