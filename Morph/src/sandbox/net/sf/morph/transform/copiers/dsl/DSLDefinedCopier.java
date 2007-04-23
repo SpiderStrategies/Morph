@@ -18,6 +18,7 @@ package net.sf.morph.transform.copiers.dsl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import antlr.ANTLRException;
@@ -50,6 +51,7 @@ import net.sf.morph.util.Assert;
  * @author Matt Benson
  */
 public class DSLDefinedCopier extends SimpleDelegatingTransformer implements NodeCopier {
+	private Class propertyMapClass;
 	private InputStream inputStream;
 
 	/**
@@ -75,7 +77,7 @@ public class DSLDefinedCopier extends SimpleDelegatingTransformer implements Nod
 		try {
 			MorphParser parser = new MorphParser(new TokenBuffer(new MorphLexer(
 					inputStream)));
-			copierDefs.addAll(parser.parse());
+			copierDefs.addAll(parser.parse(this));
 		} catch (ANTLRException e) {
 			throw new MorphException(e);
 		} finally {
@@ -120,4 +122,24 @@ public class DSLDefinedCopier extends SimpleDelegatingTransformer implements Nod
 	public synchronized Transformer getNestedTransformer() {
 		return super.getNestedTransformer();
 	}
+
+	/**
+	 * Get the Class propertyMapClass.
+	 * @return Class
+	 */
+	public synchronized Class getPropertyMapClass() {
+		if (propertyMapClass == null) {
+			setPropertyMapClass(HashMap.class);
+		}
+		return propertyMapClass;
+	}
+
+	/**
+	 * Set the Class propertyMapClass.
+	 * @param propertyMapClass Class
+	 */
+	public synchronized void setPropertyMapClass(Class propertyMapClass) {
+		this.propertyMapClass = propertyMapClass;
+	}
+
 }

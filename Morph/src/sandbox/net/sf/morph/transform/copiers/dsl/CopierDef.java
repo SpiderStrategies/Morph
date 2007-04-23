@@ -37,6 +37,7 @@ import net.sf.morph.util.ProxyUtils;
  * Helper class to hold a copier definition.
  */
 class CopierDef {
+	private DSLDefinedCopier parent;
 	private Class leftClass;
 	private Direction direction;
 	private Class rightClass;
@@ -52,7 +53,9 @@ class CopierDef {
 	 * @param direction
 	 * @param rightClass
 	 */
-	public CopierDef(Class leftClass, Direction direction, Class rightClass) {
+	public CopierDef(DSLDefinedCopier parent, Class leftClass, Direction direction, Class rightClass) {
+		Assert.notNull(parent, "parent");
+		this.parent = parent;
 		Assert.notNull(leftClass, "leftClass");
 		this.leftClass = leftClass;
 		Assert.notNull(direction, "direction");
@@ -78,7 +81,11 @@ class CopierDef {
 		direction = resolveDirection(direction);
 		Map result = (Map) propertyMaps.get(direction);
 		if (result == null) {
-			result = new HashMap();
+			try {
+				result = (Map) parent.getPropertyMapClass().newInstance();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 			propertyMaps.put(direction, result);
 		}
 		return result;
@@ -198,7 +205,12 @@ class CopierDef {
 	private PropertyExpressionMappingCopier createMapper(Direction d,
 			DSLDefinedCopier parent) {
 		boolean invert = d == Direction.LEFT;
-		HashMap m = new HashMap();
+		Map m;
+		try {
+			m = (Map) parent.getPropertyMapClass().newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		putAll((Map) propertyMaps.get(Direction.BIDI), m, invert);
 		putAll((Map) propertyMaps.get(d), m, invert);
 		if (m.isEmpty()) {
