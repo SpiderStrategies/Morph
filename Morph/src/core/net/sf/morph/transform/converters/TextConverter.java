@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -34,17 +34,22 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Jan 2, 2005
  */
-public class TextConverter extends BaseTransformer implements Converter, DecoratedConverter {
-	
+public class TextConverter extends BaseTransformer implements Converter,
+		DecoratedConverter {
+
 	private static final Class[] SOURCE_AND_DESTINATION_TYPES = {
-		StringBuffer.class, String.class, byte[].class, char[].class, Character.class, char.class, null
-	};
+			StringBuffer.class, String.class, byte[].class, char[].class,
+			Character.class, char.class, null };
 
-	protected Object convertImpl(Class destinationClass, Object source,
-		Locale locale) throws Exception {
+	private boolean emptyNull;
 
-		String string = source instanceof byte[] ? new String((byte[]) source)
-				: source instanceof char[] ? new String((char[]) source) : source.toString();
+	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
+			throws Exception {
+
+		//if source == null, not automatically handling nulls, therefore null -> "":
+		String string = source == null ? "" : source instanceof byte[] ? new String(
+				(byte[]) source) : source instanceof char[] ? new String((char[]) source)
+				: source.toString();
 
 		if (destinationClass == String.class) {
 			return string;
@@ -52,8 +57,16 @@ public class TextConverter extends BaseTransformer implements Converter, Decorat
 		if (destinationClass == StringBuffer.class) {
 			return new StringBuffer(string);
 		}
-		if (destinationClass == Character.class) {
-			return "".equals(string) ? null : new Character(string.charAt(0));
+		if ("".equals(string)) {
+			if (destinationClass == Character.class || destinationClass == null) {
+				return null;
+			}
+			if (destinationClass == char.class) {
+				throw new TransformationException(destinationClass, source);
+			}
+		}
+		if (destinationClass == Character.class || destinationClass == char.class) {
+			return new Character(string.charAt(0));
 		}
 		if (destinationClass == byte[].class) {
 			return string.getBytes();
@@ -64,16 +77,43 @@ public class TextConverter extends BaseTransformer implements Converter, Decorat
 		throw new TransformationException(destinationClass, source);
 	}
 
-	protected boolean isWrappingRuntimeExceptions() {
-	    return true;
-    }
+	/* (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#isAutomaticallyHandlingNulls()
+	 */
+	protected boolean isAutomaticallyHandlingNulls() {
+		return !isEmptyNull();
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_AND_DESTINATION_TYPES;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return SOURCE_AND_DESTINATION_TYPES;
+	}
+
+	/**
+	 * Get the boolean emptyNull.
+	 * @return boolean
+	 */
+	public boolean isEmptyNull() {
+		return emptyNull;
+	}
+
+	/**
+	 * Set the boolean emptyNull.
+	 * @param emptyNull boolean
+	 */
+	public void setEmptyNull(boolean emptyNull) {
+		this.emptyNull = emptyNull;
 	}
 
 }
