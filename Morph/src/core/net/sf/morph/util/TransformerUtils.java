@@ -1,12 +1,12 @@
 /*
- * Copyright 2004-2005 the original author or authors.
- * 
+ * Copyright 2004-2005, 2007 the original author or authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,6 +15,8 @@
  */
 package net.sf.morph.util;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -32,61 +34,63 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Utility functions for implementing and using Transformers.
- * 
+ *
  * @author Matt Sgarlata
  * @since Nov 26, 2004
  */
 public abstract class TransformerUtils {
-	
-	private static final Log log = LogFactory.getLog(TransformerUtils.class);
-	
-//	protected static boolean isAssignableFrom(Class[] candidates, Class type) {
-//		for (int i = 0; i < candidates.length; i++) {
-//			if (type == null) {
-//				if (candidates[i] == null) {
-//					return true;
-//				}
-//			}
-//			else if (candidates[i] != null &&
-//				candidates[i].isAssignableFrom(type)) {
-//				return true;
-//			}
-//		}
-//		
-//		return false;
-//	}
-//	
-	public static boolean isImplicitlyTransformable(Transformer transformer, Class destinationClass, Class sourceClass) {
-		return
-			ClassUtils.inheritanceContains(transformer.getDestinationClasses(), destinationClass) &&
-			ClassUtils.inheritanceContains(transformer.getSourceClasses(), sourceClass);
+
+	private static abstract class ClassStrategy {
+		abstract Class[] get(Transformer t);
 	}
-	
+
+	private static final ClassStrategy SOURCE = new ClassStrategy() {
+		Class[] get(Transformer t) {
+			return t.getSourceClasses();
+		}
+	};
+
+	private static final ClassStrategy DEST = new ClassStrategy() {
+		Class[] get(Transformer t) {
+			return t.getDestinationClasses();
+		}
+	};
+
+	private static final Log log = LogFactory.getLog(TransformerUtils.class);
+
+	/**
+	 * Learn whether <code>sourceClass</code> is transformable to <code>destinationClass</code>
+	 * by <code>transformer</code> considering only source and destination types.
+	 * @param transformer
+	 * @param destinationClass
+	 * @param sourceClass
+	 * @return boolean
+	 */
+	public static boolean isImplicitlyTransformable(Transformer transformer, Class destinationClass, Class sourceClass) {
+		return ClassUtils.inheritanceContains(transformer.getDestinationClasses(), destinationClass)
+			&& ClassUtils.inheritanceContains(transformer.getSourceClasses(), sourceClass);
+	}
+
+	/**
+	 * Learn whether <code>sourceClass</code> is transformable to <code>destinationClass</code>
+	 * by <code>transformer</code> by implicit or explicit rules.
+	 * @param transformer
+	 * @param destinationClass
+	 * @param sourceClass
+	 * @return boolean
+	 * @see #isImplicitlyTransformable(Transformer, Class, Class)
+	 * @see ExplicitTransformer
+	 */
 	public static boolean isTransformable(Transformer transformer, Class destinationClass, Class sourceClass) {
 		if (transformer instanceof ExplicitTransformer) {
 			return ((ExplicitTransformer) transformer).isTransformable(destinationClass, sourceClass);
 		}
 		return isImplicitlyTransformable(transformer, destinationClass, sourceClass);
 	}
-	
-//	public static boolean isTransformable(Transformer transformer, Class destinationClass, Class sourceClass,
-//		Class transformerType) throws CompositeException, ReflectionException {
-//		if (transformerType == null) {
-//			throw new ReflectionException("The transformerType must be specified");
-//		}
-//		
-//		if (CompositeUtils.isSpecializable(transformer, transformerType)) {
-//			Transformer transformerToUse = (Transformer) CompositeUtils.specialize(transformer, transformerType);
-//			return TransformerUtils.isTransformable(transformerToUse, destinationClass, sourceClass);
-//		}
-//		else {
-//			return false;
-//		}
-//	}
-	
+
 	/**
 	 * Performs a transformation of one object graph into another object graph.
-	 * 
+	 *
 	 * @param destinationType
 	 *            the type of the root node of the destination object graph
 	 * @param the
@@ -162,6 +166,12 @@ public abstract class TransformerUtils {
 				+ ObjectUtils.getObjectDescription(transformer));
 	}
 
+	/**
+	 * Get the mapped destination type from the specified typemap.
+	 * @param typeMapping Map
+	 * @param requestedType Class
+	 * @return Class
+	 */
 	public static Class getMappedDestinationType(Map typeMapping, Class requestedType) {
 		if (typeMapping == null) {
 			return null;
@@ -171,7 +181,7 @@ public abstract class TransformerUtils {
 		// see if the requested type has been indirectly mapped to some other type
 		if (mappedDestinationType == null) {
 			Set keys = typeMapping.keySet();
-			for (Iterator i=keys.iterator(); i.hasNext(); ) {
+			for (Iterator i = keys.iterator(); i.hasNext();) {
 				Class type = (Class) i.next();
 				if (type.isAssignableFrom(requestedType)) {
 					mappedDestinationType = (Class) typeMapping.get(type);
@@ -182,55 +192,64 @@ public abstract class TransformerUtils {
 		return mappedDestinationType;
 	}
 
-//	public Transformer getTransformer(Transformer[] transformers, Class destinationClass, Class sourceClass) {
-//		for (int i=0; i<transformers.length; i++) {
-//			if (TransformerUtils.isTransformable(transformers[i], destinationClass, sourceClass)) {
-//				return transformers[i];
-//			}
-//		}
-//		
-//		return null;
-//	}
-	
-//	public Object transform(Transformer transformer, Object destination, Object source, Locale locale) {
-//		Object transformed = destination;
-//		
-//		if (transformer instanceof Copier) {
-//			try {
-//				((Copier) transformer).copy(destination, source, locale);				
-//			}
-//		}
-//	}
-	
-//	public static Transformer getTransformerOfType(Transformer transformer,
-//		Class type) throws TransformationException {
-//		if (ObjectUtils.isEmpty(transformer)) {
-//			throw new TransformationException("You must specify a transformer that can be searched for a transformer implementing type " + ObjectUtils.getObjectDescription(type));
-//		}
-//		if (type == null) {
-//			throw new TransformationException("The type cannot be null");
-//		}
-//		Transformer[] transformers;
-//		if (transformer instanceof CompositeTransformer) {
-//			transformers = ((CompositeTransformer) transformer).getComponents();
-//		}
-//		else {
-//			transformers = new Transformer[] { transformer };
-//		}
-//		List transformersOfType = new ArrayList();
-//		for (int i=0; i<transformers.length; i++) {
-//			if (type.isAssignableFrom(transformers[i].getClass())) {
-//				transformersOfType.add(transformers[i]);
-//			}
-//		}
-//		if (ObjectUtils.isEmpty(transformersOfType)) {
-////			throw new TransformationException("No transformers of type " + ObjectUtils.getObjectDescription(type) + " could be found");
-//			return null;
-//		}
-//		SimpleDelegatingTransformer transformerOfType = new SimpleDelegatingTransformer();
-//		transformerOfType.setComponents((Transformer[]) transformersOfType.toArray(new Transformer[transformersOfType.size()]));
-//		return transformerOfType;
-//	}
+	/**
+	 * Get the set of source classes common to all specified Transformers.
+	 * @param transformers
+	 * @return Class[]
+	 */
+	public static Class[] getSourceClassIntersection(Transformer[] transformers) {
+		return getClassIntersection(transformers, SOURCE);
+	}
 
-	
+	/**
+	 * Get the set of destination classes common to all specified Transformers.
+	 * @param transformers
+	 * @return Class[]
+	 */
+	public static Class[] getDestinationClassIntersection(Transformer[] transformers) {
+		return getClassIntersection(transformers, DEST);
+		
+	}
+
+	private static Class[] getClassIntersection(Transformer[] transformers, ClassStrategy strategy) {
+		HashSet s = new HashSet(Arrays.asList(strategy.get(transformers[0])));
+
+		for (int i = 1; i < transformers.length; i++) {
+			HashSet survivors = new HashSet();
+			Class[] c = strategy.get(transformers[i]);
+			for (int j = 0; j < c.length; j++) {
+				if (s.contains(c[j])) {
+					survivors.add(c[j]);
+					break;
+				}
+				if (c[j] == null) {
+					break;
+				}
+				for (Iterator it = s.iterator(); it.hasNext();) {
+					Class next = (Class) it.next();
+					if (next != null && next.isAssignableFrom(c[j])) {
+						survivors.add(c[j]);
+						break;
+					}
+				}
+			}
+			if (!survivors.containsAll(s)) {
+				for (Iterator it = s.iterator(); it.hasNext();) {
+					Class next = (Class) it.next();
+					if (survivors.contains(next) || next == null) {
+						break;
+					}
+					for (int j = 0; j < c.length; j++) {
+						if (c[j] != null && c[j].isAssignableFrom(next)) {
+							survivors.add(next);
+							break;
+						}
+					}
+				}
+			}
+			s = survivors;
+		}
+		return (Class[]) s.toArray(new Class[s.size()]);
+	}
+
 }
