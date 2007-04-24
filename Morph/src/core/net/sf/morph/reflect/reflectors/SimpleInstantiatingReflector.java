@@ -43,9 +43,12 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 	public SimpleInstantiatingReflector() {
 		super();
 	}
-	
-	public SimpleInstantiatingReflector(Class requestedType,
-		Class instantiatedType) {
+
+	public SimpleInstantiatingReflector(Class instantiatedType) {
+		this(instantiatedType, instantiatedType);
+	}
+
+	public SimpleInstantiatingReflector(Class requestedType, Class instantiatedType) {
 		super();
 		setRequestedType(requestedType);
 		setInstantiatedType(instantiatedType);
@@ -65,11 +68,11 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 		Class typeToInstantiate = TransformerUtils.getMappedDestinationType(
 				getRequestedToInstantiatedTypeMap(), requestedType);
 		if (typeToInstantiate == null) {
-			return requestedType;
+			throw new Exception("Unable to instantiate " + requestedType);
 		}
 		return super.newInstanceImpl(typeToInstantiate, parameters);
 	}
-	
+
 	/**
 	 * Returns the instantiated type if only a single mapping of requested type
 	 * to instantiated type has been specified.
@@ -169,7 +172,7 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 	 * 
 	 * @return the mapping of requested types to instantiated types
 	 */
-	public Map getRequestedToInstantiatedTypeMap() {
+	public synchronized Map getRequestedToInstantiatedTypeMap() {
 		if (requestedToInstantiatedTypeMap == null) {
 			Map map = new TypeMap();
 			map.put(Calendar.class, GregorianCalendar.class);
@@ -195,7 +198,7 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 	 * @param interfaceToImplementationMap
 	 *            the mapping of requested types to instantiated types
 	 */
-	public void setRequestedToInstantiatedTypeMap(
+	public synchronized void setRequestedToInstantiatedTypeMap(
 		Map interfaceToImplementationMap) {
 		this.requestedToInstantiatedTypeMap = new TypeMap(interfaceToImplementationMap);
 	}
