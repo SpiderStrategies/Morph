@@ -106,6 +106,10 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		}
 	}
 
+	/**
+	 * Create the default set of Transformer components.
+	 * @return Transformer[]
+	 */
 	protected Transformer[] createDefaultComponents() {
 		return new Transformer[] {
 			new DefaultToBooleanConverter(),
@@ -173,6 +177,10 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		setComponents(components);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#initializeImpl()
+	 */
 	protected void initializeImpl() throws Exception {
 		super.initializeImpl();
 		if (getNestedTransformer() == null) {
@@ -210,6 +218,10 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		Set sourceClasses = new HashSet();
 		for (int i = 0; i < getComponents().length; i++) {
@@ -218,6 +230,10 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return (Class[]) sourceClasses.toArray(new Class[sourceClasses.size()]);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		Set destinationClasses = new HashSet();
 		for (int i = 0; i < components.length; i++) {
@@ -227,6 +243,10 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return (Class[]) destinationClasses.toArray(new Class[destinationClasses.size()]);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	 */
 	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType)
 			throws Exception {
 		incrementStackDepth();
@@ -243,6 +263,10 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#convertImpl(java.lang.Class, java.lang.Object, java.util.Locale)
+	 */
 	protected Object convertImpl(Class destinationType, Object source, Locale locale)
 			throws Exception {
 		incrementStackDepth();
@@ -270,36 +294,73 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		}
 	}
 
+	/**
+	 * Increment the depth of the nested copy stack.
+	 */
 	protected void incrementStackDepth() {
 		((MutableInteger) stackDepthThreadLocal.get()).value++;
 	}
 
+	/**
+	 * Decrement the depth of the nested copy stack.
+	 */
 	protected void decrementStackDepth() {
 		((MutableInteger) stackDepthThreadLocal.get()).value--;
 	}
 
+	/**
+	 * If we have popped everybody off the stack, clear the cache.
+	 */
 	protected void clearVisitedSourceToDestinationMapIfNecessary() {
 		if (((MutableInteger) stackDepthThreadLocal.get()).value == 0) {
 			getVisitedSourceToDestinationMap().clear();
 		}
 	}
 
+	/**
+	 * Cache destination object for this source/destination class combination.
+	 * @param source
+	 * @param destinationType
+	 * @param destination
+	 */
 	protected void recordVisit(Object source, Class destinationType, Object destination) {
 		Object key = new ObjectPair(source, destinationType);
 		getVisitedSourceToDestinationMap().put(key, destination);
 	}
 
+	/**
+	 * Avoid recursion by checking whether we have already begun a conversion
+	 * of the specified source object to the specified destination class.
+	 * @param source
+	 * @param destinationType
+	 * @return boolean
+	 */
 	protected boolean hasVisited(Object source, Class destinationType) {
 		Object key = new ObjectPair(source, destinationType);
 		return getVisitedSourceToDestinationMap().containsKey(key);
 	}
 
+	/**
+	 * Avoid recursion by checking whether we have already begun a copy
+	 * of the specified source object to the specified destination object.
+	 * @param source
+	 * @param destination
+	 * @return boolean
+	 */
 	protected boolean hasVisitedDestination(Object source, Object destination) {
+		//TODO extend HashSet->IdentitySet to handle e.g.:
+		// visit destination a, visit destination b, visit destination b (double b won't find recursion)
 		Class destinationType = ClassUtils.getClass(destination);
 		return hasVisited(source, destinationType)
 				&& getCachedResult(source, destinationType) == destination;
 	}
 
+	/**
+	 * Get the cached object in the process of being transformed 
+	 * @param source
+	 * @param destinationType
+	 * @return
+	 */
 	protected Object getCachedResult(Object source, Class destinationType) {
 		Object key = new ObjectPair(source, destinationType);
 		if (!getVisitedSourceToDestinationMap().containsKey(key)) {
@@ -313,10 +374,18 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return getVisitedSourceToDestinationMap().get(key);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.composite.SpecializableComposite#specialize(java.lang.Class)
+	 */
 	public Object specialize(Class compositeType) {
 		return getSpecializer().specialize(this, compositeType);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.composite.SpecializableComposite#isSpecializable(java.lang.Class)
+	 */
 	public boolean isSpecializable(Class type) throws CompositeException {
 		return getSpecializer().isSpecializable(this, type);
 	}
@@ -482,10 +551,18 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#isAutomaticallyHandlingNulls()
+	 */
 	protected boolean isAutomaticallyHandlingNulls() {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#clone()
+	 */
 	public Object clone() throws CloneNotSupportedException {
 		SimpleDelegatingTransformer result = (SimpleDelegatingTransformer) super.clone();
 		result.copierRegistry = Collections.synchronizedMap(new HashMap());
@@ -508,6 +585,10 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return (Map) visitedSourceToDestinationMapThreadLocal.get();
 	}
 
+	/**
+	 * Get the Specializer for this SDT.
+	 * @return Specializer
+	 */
 	public Specializer getSpecializer() {
 		if (specializer == null) {
 			specializer = new CachingSpecializerProxy(new CloningSpecializer());
@@ -515,10 +596,18 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return specializer;
 	}
 
+	/**
+	 * Set the Specializer for this SDT.
+	 * @param specializer
+	 */
 	public void setSpecializer(Specializer specializer) {
 		this.specializer = specializer;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#createReusableSource(java.lang.Class, java.lang.Object)
+	 */
 	protected Object createReusableSource(Class destinationClass, Object source) {
 		Transformer t = getTransformer(destinationClass, ClassUtils.getClass(source));
 		return t instanceof NodeCopier ? ((NodeCopier) t).createReusableSource(
