@@ -177,17 +177,12 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 		return null;
 	}
 
+	/**
+	 * Get the components array narrowed to a Transformer[].
+	 * @return Transformer[]
+	 */
 	protected synchronized Transformer[] getChain() {
-		Object[] components = getComponents();
-		Transformer[] chain;
-		if (components instanceof Transformer[]) {
-			chain = (Transformer[]) components;
-		} else {
-			chain = new Transformer[components.length];
-			System.arraycopy(components, 0, chain, 0, chain.length);
-			setComponents(chain);
-		}
-		return chain;
+		return (Transformer[]) getComponents();
 	}
 
 }
