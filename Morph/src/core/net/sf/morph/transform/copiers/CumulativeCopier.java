@@ -15,9 +15,6 @@
  */
 package net.sf.morph.transform.copiers;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 
 import net.sf.morph.transform.Copier;
@@ -25,6 +22,7 @@ import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.BaseCompositeTransformer;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * Composite Transformer whose children must be Copiers and which invokes
@@ -36,39 +34,13 @@ import net.sf.morph.transform.transformers.BaseCompositeTransformer;
 public class CumulativeCopier extends BaseCompositeTransformer implements
 		DecoratedCopier, DecoratedConverter {
 
-	private static abstract class ClassStrategy {
-		abstract Class[] get(Transformer t);
-	}
-
-	private static final ClassStrategy SOURCE = new ClassStrategy() {
-		Class[] get(Transformer t) {
-			return t.getSourceClasses();
-		}
-	};
-
-	private static final ClassStrategy DEST = new ClassStrategy() {
-		Class[] get(Transformer t) {
-			return t.getDestinationClasses();
-		}
-	};
-
-	protected void initializeImpl() throws Exception {
-		super.initializeImpl();
-		Object[] components = getComponents();
-		if (!(components instanceof Copier[])) {
-			Copier[] copiers = new Copier[components.length];
-			System.arraycopy(components, 0, copiers, 0, components.length);
-			setComponents(copiers);
-		}
-	}
-
 	/**
 	 * Returns the destination classes supported by <em>all</em> components.
 	 * 
 	 * @return Class[]
 	 */
 	protected synchronized Class[] getDestinationClassesImpl() throws Exception {
-		return getClasses(DEST);
+		return TransformerUtils.getDestinationClassIntersection((Transformer[]) getComponents());
 	}
 
 	/**
@@ -77,49 +49,7 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 	 * @return Class[]
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
-		return getClasses(SOURCE);
-	}
-
-	private Class[] getClasses(ClassStrategy strategy) {
-		Transformer[] t = (Transformer[]) getComponents();
-		HashSet s = new HashSet(Arrays.asList(strategy.get(t[0])));
-
-		for (int i = 1; i < t.length; i++) {
-			HashSet survivors = new HashSet();
-			Class[] c = strategy.get(t[i]);
-			for (int j = 0; j < c.length; j++) {
-				if (s.contains(c[j])) {
-					survivors.add(c[j]);
-					break;
-				}
-				if (c[j] == null) {
-					break;
-				}
-				for (Iterator it = s.iterator(); it.hasNext();) {
-					Class next = (Class) it.next();
-					if (next != null && next.isAssignableFrom(c[j])) {
-						survivors.add(c[j]);
-						break;
-					}
-				}
-			}
-			if (!survivors.containsAll(s)) {
-				for (Iterator it = s.iterator(); it.hasNext();) {
-					Class next = (Class) it.next();
-					if (survivors.contains(next) || next == null) {
-						break;
-					}
-					for (int j = 0; j < c.length; j++) {
-						if (c[j] != null && c[j].isAssignableFrom(next)) {
-							survivors.add(next);
-							break;
-						}
-					}
-				}
-			}
-			s = survivors;
-		}
-		return (Class[]) s.toArray(new Class[s.size()]);
+		return TransformerUtils.getSourceClassIntersection((Transformer[]) getComponents());
 	}
 
 	/*
@@ -130,6 +60,10 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 		return Copier.class;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
 			Integer preferredTransformationType) throws Exception {
 		Copier[] copiers = (Copier[]) getComponents();
@@ -138,6 +72,10 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#isWrappingRuntimeExceptions()
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return false;
     }
