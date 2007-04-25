@@ -15,6 +15,7 @@
  */
 package net.sf.morph.reflect.reflectors;
 
+import java.lang.reflect.Modifier;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.Set;
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.reflect.InstantiatingReflector;
 import net.sf.morph.reflect.ReflectionException;
+import net.sf.morph.util.Assert;
 import net.sf.morph.util.ClassUtils;
 import net.sf.morph.util.TransformerUtils;
 import net.sf.morph.util.TypeMap;
@@ -40,10 +42,17 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 
 	private Map requestedToInstantiatedTypeMap;
 
+	/**
+	 * Create a new SimpleInstantiatingReflector.
+	 */
 	public SimpleInstantiatingReflector() {
 		super();
 	}
 
+	/**
+	 * Create a new SimpleInstantiatingReflector for a single type.
+	 * @param instantiatedType
+	 */
 	public SimpleInstantiatingReflector(Class instantiatedType) {
 		this(instantiatedType, instantiatedType);
 	}
@@ -104,10 +113,9 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 	 *            the instantiated type
 	 */
 	public final void setInstantiatedType(Class instantiatedType) {
-		if (getRequestedToInstantiatedTypeMap() == null) {
-			setRequestedToInstantiatedTypeMap(new TypeMap());
+		if (instantiatedType == null || instantiatedType.isInterface() || Modifier.isAbstract(instantiatedType.getModifiers())) {
+			throw new IllegalArgumentException("instantiatedType " + instantiatedType);
 		}
-
 		Class requestedType;
 		try {
 			requestedType = getRequestedType();
@@ -115,7 +123,6 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 		catch (IllegalStateException e) {
 			requestedType = null;
 		}
-
 		getRequestedToInstantiatedTypeMap().clear();
 		getRequestedToInstantiatedTypeMap().put(requestedType, instantiatedType);
 	}
@@ -151,10 +158,7 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 	 *            the requested type
 	 */
 	public final void setRequestedType(Class requestedType) {
-		if (getRequestedToInstantiatedTypeMap() == null) {
-			setRequestedToInstantiatedTypeMap(new TypeMap());
-		}
-
+		Assert.notNull(requestedType, "requestedType");
 		Class instantiatedType;
 		try {
 			instantiatedType = getInstantiatedType();
@@ -162,7 +166,6 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 		catch (IllegalStateException e) {
 			instantiatedType = null;
 		}
-
 		getRequestedToInstantiatedTypeMap().clear();
 		getRequestedToInstantiatedTypeMap().put(requestedType, instantiatedType);
 	}
