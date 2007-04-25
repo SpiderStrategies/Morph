@@ -16,6 +16,7 @@
     <conf name="antlr" visibility="public" extends="default" />
     <conf name="beanutils" visibility="public" extends="default" />
     <conf name="chain" visibility="public" extends="default" />
+    <conf name="collections" visibility="public" extends="default" />
     <conf name="spring" visibility="public" extends="default" />
     <conf name="velocity" visibility="public" extends="default" />
     <conf name="web" visibility="public" extends="default" />
@@ -44,6 +45,8 @@
                 conf="core,beanutils" />
     <dependency org="apache" name="velocity" rev="1.4"
                 conf="core,velocity" />
+    <dependency org="apache" name="commons-collections" rev="3.2"
+                conf="core,collections" />
 
     <!-- etc -->
     <dependency org="commons-lang" name="commons-lang" rev="2.0" conf="test" />
