@@ -118,6 +118,12 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 		((Copier) copier).copy(destination, last, locale);
 	}
 
+	/**
+	 * Log one conversion in the chain.
+	 * @param conversionNumber
+	 * @param source
+	 * @param destination
+	 */
 	protected void logConversion(int conversionNumber, Object source, Object destination) {
 		if (log.isTraceEnabled()) {
 			log.trace("Conversion "
@@ -133,14 +139,28 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getChain()[getChain().length - 1].getDestinationClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getChain()[0].getSourceClasses();
 	}
 
+	/**
+	 * Get the List of destination classes on the conversion path.
+	 * @param destinationType
+	 * @param sourceType
+	 * @return List
+	 */
 	protected List getConversionPath(Class destinationType, Class sourceType) {
 		return getConversionPath(destinationType, sourceType, 0);
 	}
@@ -151,7 +171,7 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 	 * @param sourceType
 	 * @param chain
 	 * @param index
-	 * @return
+	 * @return List
 	 */
 	private List getConversionPath(Class destinationType, Class sourceType, int index) {
 		Transformer[] chain = getChain();
