@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -76,11 +76,27 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
+	 */
+	public synchronized void setSourceClasses(Class[] sourceClasses) {
+		super.setSourceClasses(sourceClasses);
+	}
+
 	/* (non-Javadoc)
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
 	 */
 	protected Class[] getSourceClassesImpl() {
 		return nestedCopier.getSourceClasses();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setDestinationClasses(java.lang.Class[])
+	 */
+	public synchronized void setDestinationClasses(Class[] destinationClasses) {
+		super.setDestinationClasses(destinationClasses);
 	}
 
 	/* (non-Javadoc)

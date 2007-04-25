@@ -82,10 +82,26 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 
 	/**
 	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
+	 */
+	public synchronized void setSourceClasses(Class[] sourceClasses) {
+		super.setSourceClasses(sourceClasses);
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getContainerReflector().getReflectableClasses();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setDestinationClasses(java.lang.Class[])
+	 */
+	public synchronized void setDestinationClasses(Class[] destinationClasses) {
+		super.setDestinationClasses(destinationClasses);
 	}
 
 	/**
@@ -100,7 +116,8 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 		if (components.length == 0) {
 			return new Class[0];
 		}
-		return TransformerUtils.getDestinationClassIntersection((Transformer[]) getComponents());
+		return TransformerUtils
+				.getDestinationClassIntersection((Transformer[]) getComponents());
 	}
 
 	/**

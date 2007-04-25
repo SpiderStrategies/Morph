@@ -33,7 +33,8 @@ import net.sf.morph.util.TransformerUtils;
  * @author Matt Sgarlata
  * @since Apr 18, 2005
  */
-public class MultipleDestinationConverter extends BaseCompositeTransformer implements DecoratedConverter {
+public class MultipleDestinationConverter extends BaseCompositeTransformer implements
+		DecoratedConverter {
 
 	private Converter containerConverter;
 	private Class[] destinationClassesForEachDestination;
@@ -64,10 +65,27 @@ public class MultipleDestinationConverter extends BaseCompositeTransformer imple
 
 	/**
 	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
+	 */
+	public synchronized void setSourceClasses(Class[] sourceClasses) {
+		super.setSourceClasses(sourceClasses);
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
-		return TransformerUtils.getSourceClassIntersection((Transformer[]) getComponents());
+		return TransformerUtils
+				.getSourceClassIntersection((Transformer[]) getComponents());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setDestinationClasses(java.lang.Class[])
+	 */
+	public synchronized void setDestinationClasses(Class[] destinationClasses) {
+		super.setDestinationClasses(destinationClasses);
 	}
 
 	/**
@@ -118,7 +136,7 @@ public class MultipleDestinationConverter extends BaseCompositeTransformer imple
 	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#isWrappingRuntimeExceptions()
 	 */
 	protected boolean isWrappingRuntimeExceptions() {
-	    return false;
-    }
+		return false;
+	}
 
 }

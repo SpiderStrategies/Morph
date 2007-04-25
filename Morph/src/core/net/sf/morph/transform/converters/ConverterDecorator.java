@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -36,14 +36,22 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Dec 5, 2004
  */
-public class ConverterDecorator extends BaseTransformer implements Converter, DecoratedConverter {
-	
+public class ConverterDecorator extends BaseTransformer implements Converter,
+		DecoratedConverter {
+
 	private Converter nestedConverter;
-	
+
+	/**
+	 * Create a new ConverterDecorator.
+	 */
 	public ConverterDecorator() {
 		super();
 	}
-	
+
+	/**
+	 * Create a new ConverterDecorator.
+	 * @param converter
+	 */
 	public ConverterDecorator(Converter converter) {
 		this.nestedConverter = converter;
 	}
@@ -54,6 +62,7 @@ public class ConverterDecorator extends BaseTransformer implements Converter, De
 	public Converter getNestedConverter() {
 		return nestedConverter;
 	}
+
 	/**
 	 * @param converter The converter to set.
 	 */
@@ -61,22 +70,55 @@ public class ConverterDecorator extends BaseTransformer implements Converter, De
 		this.nestedConverter = converter;
 	}
 
-	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#convertImpl(java.lang.Class, java.lang.Object, java.util.Locale)
+	 */
+	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
+			throws Exception {
 		return getNestedConverter().convert(destinationClass, source, locale);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
+	 */
+	public synchronized void setSourceClasses(Class[] sourceClasses) {
+		super.setSourceClasses(sourceClasses);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
+	 */
 	protected Class[] getSourceClassesImpl() {
 		return getNestedConverter().getSourceClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setDestinationClasses(java.lang.Class[])
+	 */
+	public synchronized void setDestinationClasses(Class[] destinationClasses) {
+		super.setDestinationClasses(destinationClasses);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
+	 */
 	protected Class[] getDestinationClassesImpl() {
 		return getNestedConverter().getDestinationClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#isWrappingRuntimeExceptions()
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
-	    // the whole point of this converter is for decorating user defined
+		// the whole point of this converter is for decorating user defined
 		// transformers, so we don't want to eat their exceptions ;)
-	    return false;
-    }
+		return false;
+	}
 
 }

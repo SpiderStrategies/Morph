@@ -35,12 +35,11 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 		DecoratedCopier, DecoratedConverter {
 
 	/**
-	 * Returns the destination classes supported by <em>all</em> components.
-	 * 
-	 * @return Class[]
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
 	 */
-	protected synchronized Class[] getDestinationClassesImpl() throws Exception {
-		return TransformerUtils.getDestinationClassIntersection((Transformer[]) getComponents());
+	public synchronized void setSourceClasses(Class[] sourceClasses) {
+		super.setSourceClasses(sourceClasses);
 	}
 
 	/**
@@ -49,7 +48,26 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 	 * @return Class[]
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
-		return TransformerUtils.getSourceClassIntersection((Transformer[]) getComponents());
+		return TransformerUtils
+				.getSourceClassIntersection((Transformer[]) getComponents());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setDestinationClasses(java.lang.Class[])
+	 */
+	public synchronized void setDestinationClasses(Class[] destinationClasses) {
+		super.setDestinationClasses(destinationClasses);
+	}
+
+	/**
+	 * Returns the destination classes supported by <em>all</em> components.
+	 * 
+	 * @return Class[]
+	 */
+	protected synchronized Class[] getDestinationClassesImpl() throws Exception {
+		return TransformerUtils
+				.getDestinationClassIntersection((Transformer[]) getComponents());
 	}
 
 	/*
@@ -77,7 +95,7 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#isWrappingRuntimeExceptions()
 	 */
 	protected boolean isWrappingRuntimeExceptions() {
-	    return false;
-    }
+		return false;
+	}
 
 }
