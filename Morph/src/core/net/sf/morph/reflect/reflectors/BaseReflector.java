@@ -100,6 +100,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				throw e;
 			}
 			catch (Exception e) {
+				if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+					throw (RuntimeException) e;
+				}
 				throw new ReflectionException("Could not initialize " + ObjectUtils.getObjectDescription(this), e);
 			}
 		}
@@ -142,6 +145,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Unable to create wrapper for "
 				+ ObjectUtils.getObjectDescription(object), e);
 		}
@@ -214,6 +220,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Unable to determine if class '"
 				+ reflectedType.getClass().getName() + "' is reflectable", e);
 		}
@@ -255,6 +264,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Unable to determine if reflectedType '"
 				+ reflectedType.getClass().getName() + "' is reflectable", e);
 		}
@@ -318,6 +330,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Unable to create new instance of "
 				+ ObjectUtils.getObjectDescription(clazz) + "(parameters " + ObjectUtils.getObjectDescription(parameters) + ")", e);
 		}
@@ -377,6 +392,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException(
 				"Unable to get property names for bean "
 					+ ObjectUtils.getObjectDescription(bean), e);
@@ -456,6 +474,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Unable determine if property '"
 				+ propertyName + "' is readable in bean "
 				+ ObjectUtils.getObjectDescription(bean), e);
@@ -536,6 +557,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Unable determine if property '"
 				+ propertyName + "' is writeable in bean "
 				+ ObjectUtils.getObjectDescription(bean), e);
@@ -636,6 +660,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Unable to set property '"
 				+ propertyName + "' of bean "
 				+ ObjectUtils.getObjectDescription(bean) + " to "
@@ -741,6 +768,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Unable to retrieve property '"
 				+ propertyName + "' from bean "
 				+ ObjectUtils.getObjectDescription(bean), e);
@@ -831,6 +861,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				throw e;
 			}
 			catch (Exception e) {
+				if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+					throw (RuntimeException) e;
+				}
 				throw new ReflectionException(
 					"Unable to determine type of property '" + propertyName
 						+ "' for bean " + ObjectUtils.getObjectDescription(bean),
@@ -899,6 +932,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException(
 				"Could not determine the type of objects contained in the container of "
 					+ ObjectUtils.getObjectDescription(clazz));
@@ -938,6 +974,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Could not retrieve iterator for "
 				+ ObjectUtils.getObjectDescription(container), e);
 		}
@@ -996,6 +1035,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Could not determine the size of "
 				+ ObjectUtils.getObjectDescription(container) + " object", e);
 		}
@@ -1045,6 +1087,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Could not retrieve element " + index
 				+ " from " + ObjectUtils.getObjectDescription(container), e);
 		}
@@ -1104,6 +1149,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException(
 				"Could not set element " + index + " of "
 					+ ObjectUtils.getObjectDescription(container) + " to value "
@@ -1148,6 +1196,9 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			throw e;
 		}
 		catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
 			throw new ReflectionException("Could not add item "
 				+ ObjectUtils.getObjectDescription(value) + " to container "
 				+ ObjectUtils.getObjectDescription(container), e);
@@ -1229,4 +1280,26 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	protected void setReflectableCallCache(Map reflectableCallCache) {
 		this.reflectableCallCache = reflectableCallCache;
 	}
+
+	/**
+	 * Indicates whether runtime exceptions should be wrapped as
+	 * {@link ReflectionException}s. By default, this method returns
+	 * <code>true</code>.
+	 * 
+	 * <p>
+	 * Simple Reflectors in Morph will usually set this value to <code>true</code>
+	 * so that they throw ReflectionExceptions if problems occur.  User-written
+	 * Reflectors are encouraged to return <code>false</code> so that runtime
+	 * exceptions are not wrapped.  This way, problems accessing data will be
+	 * expressed by the native API of a user's domain objects and avoid the need to
+	 * catch Morph-specific exceptions (assuming the use of runtime exceptions in said
+	 * domain objects).
+	 * 
+	 * @return <code>true</code>
+	 * @since Morph 1.0.2
+	 */
+	protected boolean isWrappingRuntimeExceptions() {
+		return true;
+	}
+
 }
