@@ -268,7 +268,11 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		}
 
 		try {
-			return newInstanceImpl(clazz, parameters);
+			Object result = newInstanceImpl(clazz, parameters);
+			if (!clazz.isInstance(result)) {
+				throw new ReflectionException(ObjectUtils.getObjectDescription(result) + " is not an instance of " + clazz);
+			}
+			return result;
 		}
 		catch (ReflectionException e) {
 			throw e;
