@@ -31,8 +31,10 @@ import net.sf.morph.reflect.Reflector;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.DecoratedTransformer;
 import net.sf.morph.transform.ExplicitTransformer;
+import net.sf.morph.transform.NodeCopier;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.util.ClassUtils;
@@ -67,17 +69,22 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class BaseTransformer implements Transformer, DecoratedTransformer {
 
-	protected transient Log log = LogFactory.getLog(getClass());
-
 	private static final String SPRING_LOCALE_CONTEXT_HOLDER_CLASS = "org.springframework.context.i18n.LocaleContextHolder";
 
 	private boolean initialized = false;
 	private boolean cachingIsTransformableCalls = true;
 	private transient Map transformableCallCache;
-	protected Class[] sourceClasses;
-	protected Class[] destinationClasses;
 	private Transformer nestedTransformer;
 	private Reflector reflector;
+
+	/** BaseTransformer log object */
+	protected transient Log log = LogFactory.getLog(getClass());
+
+	/** Source classes */
+	protected Class[] sourceClasses;
+
+	/** Destination classes */
+	protected Class[] destinationClasses;
 
 // isTransformable
 
@@ -102,6 +109,10 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 				sourceType);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.ExplicitTransformer#isTransformable(java.lang.Class, java.lang.Class)
+	 */
 	public final boolean isTransformable(Class destinationType,
 		Class sourceType) throws TransformationException {
 		initialize();
@@ -129,14 +140,6 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		catch (TransformationException e) {
 			throw e;
 		}
-		catch (RuntimeException e) {
-			if (isWrappingRuntimeExceptions()) {
-				throw wrapIsTransformableException(destinationType, sourceType, e);
-			}
-			else {
-				throw e;
-			}
-		}
 		catch (StackOverflowError e) {
 			throw new TransformationException(
 				"Stack overflow detected.  This usually occurs when a transformer implements "
@@ -145,27 +148,44 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 				e);
 		}
 		catch (Exception e) {
-			throw wrapIsTransformableException(destinationType, sourceType, e);
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
+			throw new TransformationException("Could not determine if "
+		    		+ sourceType + " is convertible to "
+		    		+ destinationType, e);
 		}
 	}
 
-	protected TransformationException wrapIsTransformableException(Class destinationType, Class sourceType, Exception e) {
-	    return new TransformationException("Could not determine if "
-	    		+ sourceType + " is convertible to "
-	    		+ destinationType, e);
-    }
-
 // source and destination classes
 
+	/**
+	 * {@link Transformer#getSourceClasses()} implementation template method.
+	 * @return Class[]
+	 * @throws Exception
+	 */
 	protected abstract Class[] getSourceClassesImpl() throws Exception;
 
+	/**
+	 * {@link Transformer#getDestinationClasses()} implementation template method.
+	 * @return Class[]
+	 * @throws Exception
+	 */
 	protected abstract Class[] getDestinationClassesImpl() throws Exception;
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.Transformer#getSourceClasses()
+	 */
 	public final Class[] getSourceClasses() throws TransformationException {
 		initialize();
 		return sourceClasses;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.Transformer#getDestinationClasses()
+	 */
 	public final Class[] getDestinationClasses() throws TransformationException {
 		initialize();
 		return destinationClasses;
@@ -204,12 +224,15 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 
 	/**
 	 * Gives subclasses a chance to perform any computations needed to
-	 * initialize the transformer
+	 * initialize the transformer.
 	 */
 	protected void initializeImpl() throws Exception {
-
 	}
 
+	/**
+	 * Initialize this Transformer
+	 * @throws TransformationException
+	 */
 	protected synchronized final void initialize() throws TransformationException {
 		if (!initialized) {
 			if (log.isInfoEnabled()) {
@@ -375,12 +398,25 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		return newInstance;
 	}
 
+	/**
+	 * {@link NodeCopier#createReusableSource(Class, Object)}
+	 * @param destinationClass
+	 * @param source
+	 * @return
+	 */
 	protected Object createReusableSource(Class destinationClass, Object source) {
 		return source;
 	}
 
 // equals
 
+	/**
+	 * Test objects for equality.
+	 * @param object1
+	 * @param object2
+	 * @param locale
+	 * @return <code>true</code> if <code>object1</code> is considered equal to <code>object2</code>.
+	 */
 	public boolean equals(Object object1, Object object2, Locale locale) {
 		if (locale == null) {
 			locale = getLocale();
@@ -390,21 +426,48 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 				|| (object2 != null && equalsUnidirectionalTest(object2, object1, locale));
 	}
 
+	/**
+	 * Locale-independent test between two objects for equality.
+	 * @param object1
+	 * @param object2
+	 * @return <code>true</code> if <code>object1</code> is considered equal to <code>object2</code>.
+	 * @throws TransformationException
+	 */
 	public final boolean equals(Object object1, Object object2)
 		throws TransformationException {
 		return equals(object1, object2, null);
 	}
 
+	/**
+	 * Helper method for equality testing.
+	 * @param cannotBeNull
+	 * @param canBeNull
+	 * @param locale
+	 * @return <code>true</code> if <code>object1</code> is considered equal to <code>object2</code>.
+	 */
 	protected boolean equalsUnidirectionalTest(Object cannotBeNull, Object canBeNull, Locale locale) {
 		return cannotBeNull.equals(convert(cannotBeNull.getClass(), canBeNull, locale));
 	}
 
 // copy
 
+	/**
+	 * {@link DecoratedCopier#copy(Object, Object)}
+	 * @param destination
+	 * @param source
+	 * @throws TransformationException
+	 */
 	public final void copy(Object destination, Object source) throws TransformationException {
 		copy(destination, source, null);
 	}
 
+	/**
+	 * {@link Copier#copy(Object, Object, Locale)}
+	 * @param destination
+	 * @param source
+	 * @param locale
+	 * @throws TransformationException
+	 */
 	public final void copy(Object destination, Object source, Locale locale) throws TransformationException {
 
 		initialize();
@@ -461,6 +524,13 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 
 // misc utility methods
 
+	/**
+	 * Implement {@link NodeCopier#createNewInstance(Class, Object)}
+	 * @param destinationClass
+	 * @param source
+	 * @return Object
+	 * @throws Exception
+	 */
 	protected Object createNewInstanceImpl(Class destinationClass, Object source) throws Exception {
 		if (CompositeUtils.isSpecializable(getReflector(), InstantiatingReflector.class)) {
 			try {
@@ -479,6 +549,12 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		return destinationClass.newInstance();
 	}
 
+	/**
+	 * {@link NodeCopier#createNewInstance(Class, Object)}
+	 * @param destinationClass
+	 * @param source
+	 * @return Object
+	 */
 	public Object createNewInstance(Class destinationClass, Object source) {
 		try {
 			return createNewInstanceImpl(destinationClass, source);
@@ -499,6 +575,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	/**
 	 * Indicates if calls to the main transformation methods (convert, copy)
 	 * will cause a log message to be recorded
+	 * @return boolean
 	 */
 	protected boolean isPerformingLogging() {
 		return true;
@@ -551,6 +628,10 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		return true;
 	}
 
+	/**
+	 * {@link NodeCopier#getNestedTransformer()}
+	 * @return Transformer
+	 */
 	protected Transformer getNestedTransformer() {
 // can't do this, otherwise GraphTransformers won't be able to detect when they
 // have already set the graph transformer
@@ -560,56 +641,123 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		return nestedTransformer;
 	}
 
+	/**
+	 * {@link NodeCopier#setNestedTransformer(Transformer)}
+	 * @param nestedTransformer
+	 */
 	protected void setNestedTransformer(Transformer nestedTransformer) {
 		this.nestedTransformer = nestedTransformer;
 	}
 
+	/**
+	 * Learn whether this Transformer has been initialized.
+	 * @return boolean
+	 */
 	protected boolean isInitialized() {
 		return initialized;
 	}
+
+	/**
+	 * Set whether this Transformer has been initialized.
+	 * @param initialized
+	 */
 	protected void setInitialized(boolean initialized) {
 		this.initialized = initialized;
 	}
 
+	/**
+	 * Learn whether this Transformer is caching calls to
+	 * {@link #isTransformable(Class, Class)}
+	 * @return boolean
+	 */
 	public boolean isCachingIsTransformableCalls() {
 		return cachingIsTransformableCalls;
 	}
+
+	/**
+	 * Set whether this Transformer is caching calls to
+	 * {@link #isTransformable(Class, Class)}
+	 * @param cachingIsTransformableCalls
+	 */
 	public void setCachingIsTransformableCalls(
 		boolean cachingIsTransformableCalls) {
 		this.cachingIsTransformableCalls = cachingIsTransformableCalls;
 	}
+
+	/**
+	 * Get the cache of calls to 
+	 * {@link #isTransformable(Class, Class)}
+	 * @return Map
+	 */
 	protected Map getTransformableCallCache() {
 		return transformableCallCache;
 	}
+
+	/**
+	 * Get the cache of calls to 
+	 * {@link #isTransformable(Class, Class)}
+	 * @param transformableCallCache Map
+	 */
 	protected void setTransformableCallCache(Map transformableCallCache) {
 		this.transformableCallCache = transformableCallCache;
 	}
 
+	/**
+	 * Get the commons-logging Log in use.
+	 * @return Log
+	 */
 	protected Log getLog() {
 		return log;
 	}
+
+	/**
+	 * Set the commons-logging Log for this Transformer.
+	 * @param log
+	 */
 	protected void setLog(Log log) {
 		this.log = log;
 	}
 
+	/**
+	 * Get the InstantiatingReflector employed by this Transformer.
+	 * @return InstantiatingReflector
+	 */
 	protected InstantiatingReflector getInstantiatingReflector() {
 		return (InstantiatingReflector) getReflector(InstantiatingReflector.class);
 	}
 
+	/**
+	 * Get the Reflector of the specified type employed by this Transformer.
+	 * @param reflectorType
+	 * @return Reflector of type <code>reflectorType</code>
+	 */
 	protected Reflector getReflector(Class reflectorType) {
 		return (Reflector) CompositeUtils.specialize(getReflector(), reflectorType);
 	}
 
+	/**
+	 * Get the Reflector employed by this Transformer.
+	 * @return Reflector
+	 */
 	public Reflector getReflector() {
 		if (reflector == null) {
 			setReflector(Defaults.createReflector());
 		}
 		return reflector;
 	}
+
+	/**
+	 * Set the Reflector to be used by this Transformer.
+	 * @param reflector
+	 */
 	public void setReflector(Reflector reflector) {
 		this.reflector = reflector;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see java.lang.Object#clone()
+	 */
 	protected Object clone() throws CloneNotSupportedException {
 		BaseTransformer result = (BaseTransformer) super.clone();
 		result.transformableCallCache = Collections.synchronizedMap(new HashMap());
