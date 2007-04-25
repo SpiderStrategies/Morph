@@ -15,6 +15,7 @@
  */
 package net.sf.morph.transform.copiers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
@@ -27,6 +28,17 @@ import net.sf.morph.lang.Language;
 import net.sf.morph.lang.languages.LanguageDecorator;
 import net.sf.morph.lang.languages.SimpleLanguage;
 import net.sf.morph.reflect.BeanReflector;
+import net.sf.morph.reflect.ContainerReflector;
+import net.sf.morph.reflect.Reflector;
+import net.sf.morph.reflect.reflectors.ArrayReflector;
+import net.sf.morph.reflect.reflectors.CollectionReflector;
+import net.sf.morph.reflect.reflectors.EnumerationReflector;
+import net.sf.morph.reflect.reflectors.IteratorReflector;
+import net.sf.morph.reflect.reflectors.ListReflector;
+import net.sf.morph.reflect.reflectors.ObjectReflector;
+import net.sf.morph.reflect.reflectors.SetReflector;
+import net.sf.morph.reflect.reflectors.SimpleDelegatingReflector;
+import net.sf.morph.reflect.reflectors.SortedSetReflector;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
@@ -38,11 +50,23 @@ import net.sf.morph.util.TransformerUtils;
 
 /**
  * Maps property expressions between objects using a Morph Language.
+ * The map you specify should have String keys, and in its simplest form,
+ * will have String values as well.  However, the values in the mapping
+ * may be containers of Strings as well, allowing you to map > 1 destination
+ * for a given source property.
  *
  * @author Matt Benson
  */
 public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		DecoratedConverter, DecoratedCopier, NodeCopier {
+
+	private static final ContainerReflector DEST_REFLECTOR = new SimpleDelegatingReflector(
+			new Reflector[] {
+					new ListReflector(), new SortedSetReflector(), new SetReflector(),
+					new EnumerationReflector(), new IteratorReflector(),
+					new ArrayReflector(), new CollectionReflector(),
+					new ObjectReflector() });
+
 	private static final Class[] SOURCE_AND_DEST_CLASSES = new Class[] { Object.class };
 
 	private Map mapping;
@@ -84,7 +108,7 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 							+ " to copy by setting the mapping property");
 		}
 		ensureOnlyStrings(mapping.keySet());
-		ensureOnlyStrings(mapping.values());
+		ensureOnlyStrings(expand(mapping.values()));
 	}
 
 	private void ensureOnlyStrings(Collection collection) {
@@ -99,6 +123,17 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		}
 	}
 
+	private Collection expand(Collection collection) {
+		ArrayList result = new ArrayList(collection.size());
+		for (Iterator outerIter = collection.iterator(); outerIter.hasNext();) {
+			for (Iterator innerIter = DEST_REFLECTOR.getIterator(outerIter.next()); innerIter
+					.hasNext();) {
+				result.add(innerIter.next());
+			}
+		}
+		return result;
+	}
+
 	/* (non-Javadoc)
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
 	 */
@@ -106,11 +141,23 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 			Integer preferredTransformationType) throws Exception {
 		for (Iterator it = getMapping().entrySet().iterator(); it.hasNext();) {
 			Map.Entry e = (Map.Entry) it.next();
-			copyProperty((String) e.getKey(), source, (String) e.getValue(), destination,
-					locale, preferredTransformationType);
+			String sourceProperty = (String) e.getKey();
+			for (Iterator v = DEST_REFLECTOR.getIterator(e.getValue()); v.hasNext();) {
+				copyProperty(sourceProperty, source, (String) v.next(), destination,
+						locale, preferredTransformationType);
+			}
 		}
 	}
 
+	/**
+	 * Copy <code>source.sourceProperty</code> to <code>dest.destProperty</code>.
+	 * @param sourceProperty
+	 * @param source
+	 * @param destinationProperty
+	 * @param destination
+	 * @param locale
+	 * @param preferredTransformationType
+	 */
 	protected void copyProperty(String sourceProperty, Object source,
 			String destinationProperty, Object destination, Locale locale,
 			Integer preferredTransformationType) {
@@ -177,6 +224,7 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 	 */
 	public synchronized void setMapping(Map mapping) {
 		this.mapping = mapping;
+		setInitialized(false);
 	}
 
 	/* (non-Javadoc)
