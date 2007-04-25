@@ -30,6 +30,7 @@ import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.reflect.Reflector;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.Copier;
+import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedTransformer;
 import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.TransformationException;
@@ -248,25 +249,15 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 			catch (TransformationException e) {
 				throw e;
 			}
-			catch (RuntimeException e) {
-				if (isWrappingRuntimeExceptions()) {
-					throw wrapInitializeException(e);
-				}
-				else {
-					throw e;
-				}
-			}
 			catch (Exception e) {
-				throw wrapInitializeException(e);
+				if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+					throw (RuntimeException) e;
+				}
+				throw new TransformationException("Could not initialize transformer "
+						+ ObjectUtils.getObjectDescription(this), e);
 			}
 		}
 	}
-
-	protected TransformationException wrapInitializeException(Exception e) {
-	    return new TransformationException(
-	    		"Could not initialize transformer "
-	    				+ ObjectUtils.getObjectDescription(this), e);
-    }
 
 	/**
 	 * Retrieves the current Locale if none is specified in the method arguments
@@ -300,6 +291,25 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 
 // convert
 
+	/**
+	 * {@link DecoratedConverter#convert(Class, Object)}
+	 * @param destinationClass
+	 * @param source
+	 * @return
+	 * @throws TransformationException
+	 */
+	public final Object convert(Class destinationClass, Object source)
+			throws TransformationException {
+		return convert(destinationClass, source, null);
+	}
+
+	/**
+	 * @{link {@link Converter#convert(Class, Object, Locale)}
+	 * @param destinationClass
+	 * @param source
+	 * @param locale
+	 * @return
+	 */
 	public final Object convert(Class destinationClass, Object source,
 		Locale locale) {
 		initialize();
@@ -328,33 +338,19 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		catch (TransformationException e) {
 			throw e;
 		}
-		catch (RuntimeException e) {
-			if (isWrappingRuntimeExceptions()) {
-				throw wrapConvertException(destinationClass, source, e);
-			}
-			else {
-				throw e;
-			}
-		}
 		catch (Exception e) {
-			throw wrapConvertException(destinationClass, source, e);
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
+			if (isTransformable(destinationClass, ClassUtils.getClass(source))) {
+				throw new TransformationException(destinationClass, source, e);
+			}
+			throw new TransformationException(
+					getClass().getName() + " cannot convert "
+						+ ObjectUtils.getObjectDescription(source)
+						+ " to an instance of "
+						+ ObjectUtils.getObjectDescription(destinationClass), e);
 		}
-	}
-
-	protected TransformationException wrapConvertException(Class destinationClass, Object source, Exception e) {
-		if (isTransformable(destinationClass, ClassUtils.getClass(source))) {
-			return new TransformationException(destinationClass, source, e);
-		}
-		return new TransformationException(
-				getClass().getName() + " cannot convert "
-					+ ObjectUtils.getObjectDescription(source)
-					+ " to an instance of "
-					+ ObjectUtils.getObjectDescription(destinationClass), e);
-	}
-
-	public final Object convert(Class destinationClass, Object source)
-		throws TransformationException {
-		return convert(destinationClass, source, null);
 	}
 
 	/**
@@ -405,6 +401,10 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 
 // copy
 
+	public final void copy(Object destination, Object source) throws TransformationException {
+		copy(destination, source, null);
+	}
+
 	public final void copy(Object destination, Object source, Locale locale) throws TransformationException {
 
 		initialize();
@@ -434,34 +434,21 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		catch (TransformationException e) {
 			throw e;
 		}
-		catch (RuntimeException e) {
-			if (isWrappingRuntimeExceptions()) {
-				throw wrapCopyException(destination, source, e);
-			}
-			else {
-				throw e;
-			}
-		}
 		catch (Exception e) {
-			throw wrapCopyException(destination, source, e);
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
+		    if (isTransformable(destination.getClass(), source.getClass())) {
+		    	throw new TransformationException("Error copying source "
+		    			+ ObjectUtils.getObjectDescription(source) + " to destination "
+		    			+ ObjectUtils.getObjectDescription(destination), e);
+		    }
+		    throw new TransformationException("The " + getClass().getName()
+		    		+ " cannot copy source '" + source + "' (class "
+		    		+ source.getClass().getName() + ") to destination '"
+		    		+ destination + "' (class " + destination.getClass().getName()
+		    		+ ")");
 		}
-	}
-
-	protected TransformationException wrapCopyException(Object destination, Object source, Exception e) {
-	    if (isTransformable(destination.getClass(), source.getClass())) {
-	    	return new TransformationException("Error copying source "
-	    			+ ObjectUtils.getObjectDescription(source) + " to destination "
-	    			+ ObjectUtils.getObjectDescription(destination), e);
-	    }
-	    return new TransformationException("The " + getClass().getName()
-	    		+ " cannot copy source '" + source + "' (class "
-	    		+ source.getClass().getName() + ") to destination '"
-	    		+ destination + "' (class " + destination.getClass().getName()
-	    		+ ")");
-    }
-
-	public final void copy(Object destination, Object source) throws TransformationException {
-		copy(destination, source, null);
 	}
 
 	/**
@@ -499,22 +486,13 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		catch (ReflectionException e) {
 			throw e;
 		}
-		catch (RuntimeException e) {
-			if (isWrappingRuntimeExceptions()) {
-				throw wrapCreateNewInstanceException(destinationClass, e);
-			}
-			else {
-				throw e;
-			}
-		}
 		catch (Exception e) {
-			throw wrapCreateNewInstanceException(destinationClass, e);
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
+			throw new ReflectionException("Unable to instantiate " + ObjectUtils.getObjectDescription(destinationClass), e);
 		}
 	}
-
-	protected ReflectionException wrapCreateNewInstanceException(Class destinationClass, Exception e) {
-	    return new ReflectionException("Unable to instantiate " + ObjectUtils.getObjectDescription(destinationClass), e);
-    }
 
 // property getters and setters
 
@@ -559,7 +537,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * Simple transformers in Morph that operate on JDK types like Numbers and
 	 * Strings will usually set this value to <code>true</code> so that they
 	 * throw TransformationExceptions if problems occur. More complex
-	 * transformers that operate on graphs of objects are encourged to set this
+	 * transformers that operate on graphs of objects are encouraged to set this
 	 * value to <code>false</code> so that runtime exceptions are not wrapped.
 	 * This way, problems accessing data will be expressed by the native API of
 	 * a user's domain objects and avoid the need to catch Morph-specific
