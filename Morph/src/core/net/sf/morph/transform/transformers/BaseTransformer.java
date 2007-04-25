@@ -484,7 +484,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		}
 
 		if (source == null && isAutomaticallyHandlingNulls()) {
-			throw new TransformationException("Cannot handle null copy source");
+			return;
 		}
 
 		if (locale == null) {
