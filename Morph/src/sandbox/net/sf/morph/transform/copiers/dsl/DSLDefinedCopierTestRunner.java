@@ -16,6 +16,7 @@ public class DSLDefinedCopierTestRunner extends TestRunner {
 		suite.addTestSuite(ProxyDSLDefinedCopierTest.class);
 		suite.addTestSuite(ShortLeftwardDSLDefinedCopierTest.class);
 		suite.addTestSuite(ShortRightwardDSLDefinedCopierTest.class);
+		suite.addTestSuite(MultiMappedTestCase.class);
 		return suite;
 	}
 }

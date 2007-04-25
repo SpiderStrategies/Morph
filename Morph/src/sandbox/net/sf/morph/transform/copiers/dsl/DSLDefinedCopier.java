@@ -89,7 +89,7 @@ public class DSLDefinedCopier extends SimpleDelegatingTransformer implements Nod
 		}
 		ArrayList copiers = new ArrayList();
 		for (Iterator iter = copierDefs.iterator(); iter.hasNext();) {
-			copiers.addAll(((CopierDef) iter.next()).getCopiers(this));
+			copiers.addAll(((CopierDef) iter.next()).getCopiers());
 		}
 		return (Copier[]) copiers.toArray(new Copier[copiers.size()]);
 	}

@@ -1,0 +1,8 @@
+net.sf.morph.transform.copiers.dsl.A : net.sf.morph.transform.copiers.dsl.B {
+	*,
+	stringA : stringB,
+	stringA => objectB,
+	objectA <= stringB,
+	intA : intB,
+	testClass : map
+}

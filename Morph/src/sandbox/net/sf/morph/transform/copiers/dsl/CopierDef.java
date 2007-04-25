@@ -15,11 +15,10 @@
  */
 package net.sf.morph.transform.copiers.dsl;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +36,50 @@ import net.sf.morph.util.ProxyUtils;
  * Helper class to hold a copier definition.
  */
 class CopierDef {
+	private class PropertyMaps {
+		Map rightward;
+		Map leftward;
+		Map exposeLeftward;
+		Map bidi;
+
+		PropertyMaps() {
+			try {
+				rightward = (Map) parent.getPropertyMapClass().newInstance();
+				leftward = (Map) parent.getPropertyMapClass().newInstance();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			exposeLeftward = new AbstractMap() {
+				public Set entrySet() {
+					return Collections.EMPTY_SET;
+				}
+				public Object put(Object right, Object left) {
+					return leftward.put(left, right);
+				}
+			};
+			bidi = new AbstractMap() {
+				public Set entrySet() {
+					return Collections.EMPTY_SET;
+				}
+
+				public Object put(Object left, Object right) {
+					rightward.put(left, right);
+					exposeLeftward.put(left, right);
+					return null;
+				}
+			};
+		}
+		Map getExposedMap(Direction d) {
+			return d == Direction.LEFT ? exposeLeftward : d == Direction.RIGHT ? rightward : bidi;
+		}
+		Map getAdjustedMap(Direction d) {
+			return d == Direction.LEFT ? leftward : d == Direction.RIGHT ? rightward : null;
+		}
+		boolean isEmpty() {
+			return rightward.isEmpty() && leftward.isEmpty();
+		}
+	}
+
 	private DSLDefinedCopier parent;
 	private Class leftClass;
 	private Direction direction;
@@ -45,7 +88,7 @@ class CopierDef {
 	private boolean matchProperties;
 	private Set includeProperties;
 	private Set ignoreProperties;
-	private Map propertyMaps = new HashMap();
+	private PropertyMaps propertyMapps;
 
 	/**
 	 * Construct a new CopierDef.
@@ -53,7 +96,8 @@ class CopierDef {
 	 * @param direction
 	 * @param rightClass
 	 */
-	public CopierDef(DSLDefinedCopier parent, Class leftClass, Direction direction, Class rightClass) {
+	public CopierDef(DSLDefinedCopier parent, Class leftClass, Direction direction,
+			Class rightClass) {
 		Assert.notNull(parent, "parent");
 		this.parent = parent;
 		Assert.notNull(leftClass, "leftClass");
@@ -62,6 +106,7 @@ class CopierDef {
 		this.direction = direction;
 		Assert.notNull(rightClass, "rightClass");
 		this.rightClass = rightClass;
+		this.propertyMapps = new PropertyMaps();
 	}
 
 	/**
@@ -78,17 +123,7 @@ class CopierDef {
 	 * @return
 	 */
 	public synchronized Map getPropertyMap(Direction direction) {
-		direction = resolveDirection(direction);
-		Map result = (Map) propertyMaps.get(direction);
-		if (result == null) {
-			try {
-				result = (Map) parent.getPropertyMapClass().newInstance();
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-			propertyMaps.put(direction, result);
-		}
-		return result;
+		return propertyMapps.getExposedMap(resolveDirection(direction));
 	}
 
 	/**
@@ -117,10 +152,10 @@ class CopierDef {
 	 * Get the defined Copiers.
 	 * @return Copier[]
 	 */
-	public synchronized List getCopiers(DSLDefinedCopier parent) {
-		PropertyNameMatchingCopier matcher = createMatcher(parent);
+	public synchronized List getCopiers() {
+		PropertyNameMatchingCopier matcher = createMatcher();
 		//if there are no properties, a single bidi matcher, or null (?), will suffice: 
-		if (propertyMaps.isEmpty()) {
+		if (propertyMapps.isEmpty()) {
 			if (matcher == null) {
 				return Collections.EMPTY_LIST;
 			}
@@ -139,7 +174,7 @@ class CopierDef {
 				matcher.setDestinationClasses(getDestClasses(Direction.LEFT));
 				leftCopiers.add(matcher);
 			}
-			addNotNull(leftCopiers, createMapper(Direction.LEFT, parent));
+			addNotNull(leftCopiers, createMapper(Direction.LEFT));
 			//null matcher ref so rightward will generate a new one if needed:
 			matcher = null;
 		}
@@ -147,14 +182,14 @@ class CopierDef {
 			rightCopiers = new ArrayList();
 			//catch matcher we might have nulled in !RIGHT block:
 			if (matcher == null) {
-				matcher = createMatcher(parent);
+				matcher = createMatcher();
 			}
 			if (matcher != null) {
 				matcher.setSourceClasses(getSourceClasses(Direction.RIGHT));
 				matcher.setDestinationClasses(getDestClasses(Direction.RIGHT));
 				rightCopiers.add(matcher);
 			}
-			addNotNull(rightCopiers, createMapper(Direction.RIGHT, parent));
+			addNotNull(rightCopiers, createMapper(Direction.RIGHT));
 		}
 		List result = addNotNull(new ArrayList(), accumulate(rightCopiers));
 		result = addNotNull(result, accumulate(leftCopiers));
@@ -173,7 +208,7 @@ class CopierDef {
 		return (NodeCopier) ProxyUtils.getProxy(result, NodeCopier.class);
 	}
 
-	private PropertyNameMatchingCopier createMatcher(DSLDefinedCopier parent) {
+	private PropertyNameMatchingCopier createMatcher() {
 		if (!matchProperties && ObjectUtils.isEmpty(includeProperties)) {
 			return null;
 		}
@@ -202,17 +237,8 @@ class CopierDef {
 		throw new IllegalArgumentException("property mapping direction: " + dir);
 	}
 
-	private PropertyExpressionMappingCopier createMapper(Direction d,
-			DSLDefinedCopier parent) {
-		boolean invert = d == Direction.LEFT;
-		Map m;
-		try {
-			m = (Map) parent.getPropertyMapClass().newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		putAll((Map) propertyMaps.get(Direction.BIDI), m, invert);
-		putAll((Map) propertyMaps.get(d), m, invert);
+	private PropertyExpressionMappingCopier createMapper(Direction d) {
+		Map m = propertyMapps.getAdjustedMap(d);
 		if (m.isEmpty()) {
 			return null;
 		}
@@ -235,27 +261,15 @@ class CopierDef {
 	private Class[] getSourceClasses(Direction dir) {
 		Direction d = resolveDirection(dir);
 		return d == Direction.BIDI && leftClass != rightClass ? new Class[] {
-				leftClass, rightClass }
-				: new Class[] { d == Direction.LEFT ? rightClass : leftClass };
+				leftClass, rightClass } : new Class[] { d == Direction.LEFT ? rightClass
+				: leftClass };
 	}
 
 	private Class[] getDestClasses(Direction dir) {
 		Direction d = resolveDirection(dir);
 		return d == Direction.BIDI && leftClass != rightClass ? new Class[] {
-				leftClass, rightClass }
-				: new Class[] { d == Direction.LEFT ? leftClass : rightClass };
-	}
-
-	private void putAll(Map m, Map target, boolean invert) {
-		if (ObjectUtils.isEmpty(m)) {
-			return;
-		}
-		for (Iterator iter = m.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry e = (Map.Entry) iter.next();
-			Object key = invert ? e.getValue() : e.getKey();
-			Object value = invert ? e.getKey() : e.getValue();
-			target.put(key, value);
-		}
+				leftClass, rightClass } : new Class[] { d == Direction.LEFT ? leftClass
+				: rightClass };
 	}
 
 	/**
