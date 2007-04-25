@@ -23,7 +23,9 @@ import java.util.Map;
 
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.reflect.BeanReflector;
+import net.sf.morph.reflect.ContainerReflector;
 import net.sf.morph.reflect.DecoratedReflector;
+import net.sf.morph.reflect.GrowableContainerReflector;
 import net.sf.morph.reflect.IndexedContainerReflector;
 import net.sf.morph.reflect.MutableIndexedContainerReflector;
 import net.sf.morph.reflect.ReflectionException;
@@ -62,16 +64,26 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	private boolean cachingIsReflectableCalls = true;
 	private transient Map reflectableCallCache;
 
-// initialization
-
+	/**
+	 * Create a new BaseReflector.
+	 */
 	public BaseReflector() {
 		setInitialized(false);
 	}
 
-	protected void initializeImpl() throws Exception {
+//	 initialization
 
+	/**
+	 * Implementation of {@link #initialize()}.
+	 * @throws Exception
+	 */
+	protected void initializeImpl() throws Exception {
 	}
 
+	/**
+	 * Initialize this Reflector.
+	 * @throws ReflectionException
+	 */
 	protected final void initialize() throws ReflectionException {
 		if (!initialized) {
 			if (isPerformingLogging() && log.isInfoEnabled()) {
@@ -95,6 +107,10 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 // basic reflector, decoratedreflector
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.reflect.Reflector#getReflectableClasses()
+	 */
 	public final Class[] getReflectableClasses() {
 		initialize();
 		return reflectableClasses;
@@ -105,6 +121,10 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 */
 	protected abstract Class[] getReflectableClassesImpl() throws Exception;
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.reflect.Reflector#getWrapper(java.lang.Object)
+	 */
 	public final Wrapper getWrapper(Object object) {
 		if (log.isTraceEnabled()) {
 			log.trace("Creating wrapper for " + ObjectUtils.getObjectDescription(object));
@@ -139,15 +159,23 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			invocationHandler);
 	}
 
+	/**
+	 * Create a WrapperInvocationHandler for the specified Object.
+	 * @param object
+	 * @return WrapperInvocationHandler
+	 */
 	protected WrapperInvocationHandler createWrapperInvocationHandler(Object object) {
 		return new DefaultWrapperInvocationHandler(object, this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.reflect.DecoratedReflector#isReflectable(java.lang.Class)
+	 */
 	public final boolean isReflectable(Class reflectedType) throws ReflectionException {
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Testing reflectability of " + ObjectUtils.getObjectDescription(reflectedType));
 		}
-
 		return isReflectableInternal(reflectedType);
 	}
 
@@ -191,6 +219,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		}
 	}
 
+	/**
+	 * {@link net.sf.morph.reflect.DecoratedReflector#isReflectable(Class)}
+	 * @param reflectedType
+	 * @param reflectorType
+	 * @return
+	 * @throws ReflectionException
+	 */
 	public final boolean isReflectable(Class reflectedType, Class reflectorType) throws ReflectionException {
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Testing if "
@@ -252,6 +287,11 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 // instantiating reflector
 
+	/**
+	 * {@link net.sf.morph.reflect.InstantiatingReflector#newInstance(Class, Object)}
+	 * @param clazz
+	 * @param parameters
+	 */
 	public final Object newInstance(Class clazz, Object parameters) {
 		if (clazz == null) {
 			throw new ReflectionException(
@@ -285,13 +325,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 	/**
 	 * This method will be removed in a subsequent release of Morph. Left in-place to flag subclasses that require modification.
-	 * 
+	 *
 	 * @deprecated Use {@link #newInstanceImpl(Class, Object)} instead. Calls to this method will fail with an {@link UnsupportedOperationException}
 	 */
-	protected final Object newInstanceImpl(Class clazz) throws Exception {	
+	protected final Object newInstanceImpl(Class clazz) throws Exception {
 		throw new UnsupportedOperationException("Deprecated method - use BaseReflector.newInstanceImpl(Class, Object) instead");
 	}
-	
+
 	/**
 	 * Implementation of
 	 * {@link net.sf.morph.reflect.InstantiatingReflector#newInstance(Class, Object)}.
@@ -308,6 +348,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 // bean reflectors
 
+	/**
+	 * {@link net.sf.morph.reflect.BeanReflector#getPropertyNames(Object)}
+	 * @param bean
+	 * @return
+	 * @throws ReflectionException
+	 */
 	public final String[] getPropertyNames(Object bean)
 		throws ReflectionException {
 
@@ -357,6 +403,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@link BeanReflector#isReadable(Object, String)}
+	 * @param bean
+	 * @param propertyName
+	 * @return boolean
+	 * @throws ReflectionException
+	 */
 	public final boolean isReadable(Object bean, String propertyName)
 		throws ReflectionException {
 
@@ -420,6 +473,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				: ContainerUtils.contains(getPropertyNames(bean), propertyName);
 	}
 
+	/**
+	 * {@link BeanReflector#isWriteable(Object, String)}
+	 * @param bean
+	 * @param propertyName
+	 * @return boolean
+	 */
 	public final boolean isWriteable(Object bean, String propertyName) {
 
 		if (bean == null && ObjectUtils.isEmpty(propertyName)) {
@@ -497,6 +556,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				&& isReadableImpl(bean, propertyName);
 	}
 
+	/**
+	 * Learn whether <code>propertyName</code> denotes a valid numeric property index for <code>bean</code>.
+	 * @param bean
+	 * @param propertyName
+	 * @return boolean
+	 * @throws ReflectionException
+	 */
 	protected boolean isValidIndex(Object bean, String propertyName) throws ReflectionException {
 		try {
 			int index = Integer.parseInt(propertyName);
@@ -507,6 +573,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		}
 	}
 
+	/**
+	 * {@link BeanReflector#set(Object, String, Object)}
+	 * @param bean
+	 * @param propertyName
+	 * @param propertyValue
+	 * @throws ReflectionException
+	 */
 	public final void set(Object bean, String propertyName, Object propertyValue)
 		throws ReflectionException {
 		if (isPerformingLogging() && log.isTraceEnabled()) {
@@ -536,7 +609,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			if (propertyValue == currentValue
 					|| (ClassUtils.isImmutable(getType(bean, propertyName)) && ObjectUtils
 							.equals(propertyValue, currentValue))) {
-				//ignore "this"; else if the property doesn't already exist, this is probably a MapReflector and we want to add anyway 
+				//ignore "this"; else if the property doesn't already exist, this is probably a MapReflector and we want to add anyway
 				if (BeanReflector.IMPLICIT_PROPERTY_THIS.equals(propertyName)
 						|| ContainerUtils.contains(getPropertyNames(bean), propertyName)) {
 					return;
@@ -584,6 +657,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		((MutableIndexedContainerReflector) this).set(bean, Integer.parseInt(propertyName), value);
 	}
 
+	/**
+	 * {@link BeanReflector#get(Object, String)}
+	 * @param bean
+	 * @param propertyName
+	 * @return
+	 * @throws ReflectionException
+	 */
 	public final Object get(Object bean, String propertyName)
 		throws ReflectionException {
 		if (bean == null && ObjectUtils.isEmpty(propertyName)) {
@@ -684,6 +764,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 				: get(bean, Integer.parseInt(propertyName));
 	}
 
+	/**
+	 * {@link BeanReflector#getType(Object, String)}
+	 * @param bean
+	 * @param propertyName
+	 * @return
+	 * @throws ReflectionException
+	 */
 	public final Class getType(Object bean, String propertyName)
 		throws ReflectionException {
 
@@ -785,6 +872,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 // container reflectors
 
+	/**
+	 * {@link ContainerReflector#getContainedType(Class)}
+	 * @param clazz
+	 * @return
+	 * @throws ReflectionException
+	 */
 	public final Class getContainedType(Class clazz) throws ReflectionException {
 
 		if (clazz == null) {
@@ -820,6 +913,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@link ContainerReflector#getIterator(Object)}
+	 * @param container
+	 * @return Iterator
+	 * @throws ReflectionException
+	 */
 	public final Iterator getIterator(Object container)
 		throws ReflectionException {
 		if (isPerformingLogging() && log.isTraceEnabled()) {
@@ -852,6 +951,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Validate <code>index</code> into <code>container</code>.
+	 * @param container
+	 * @param index
+	 * @throws ReflectionException
+	 */
 	protected void checkIndex(Object container, int index)
 		throws ReflectionException {
 		if (index < 0) {
@@ -866,6 +971,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 // sizable reflectors
 
+	/**
+	 * {@link SizableReflector#getSize(Object)}
+	 * @param container
+	 * @return
+	 * @throws ReflectionException
+	 */
 	public final int getSize(Object container) throws ReflectionException {
 		if (isPerformingLogging() && log.isTraceEnabled()) {
 			log.trace("Retrieving size of "
@@ -902,6 +1013,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 // indexed container reflectors
 
+	/**
+	 * {@link IndexedContainerReflector#get(Object, int)}
+	 * @param container
+	 * @param index
+	 * @return
+	 * @throws ReflectionException
+	 */
 	public final Object get(Object container, int index)
 		throws ReflectionException {
 
@@ -941,6 +1059,14 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 // mutable indexed container reflectors
 
+	/**
+	 * {@link MutableIndexedContainerReflector#set(Object, int, Object)}
+	 * @param container
+	 * @param index
+	 * @param propertyValue
+	 * @return
+	 * @throws ReflectionException
+	 */
 	public final Object set(Object container, int index, Object propertyValue)
 		throws ReflectionException {
 
@@ -995,6 +1121,13 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 // growable container reflectors
 
+	/**
+	 * {@link GrowableContainerReflector#add(Object, Object)}
+	 * @param container
+	 * @param value
+	 * @return
+	 * @throws ReflectionException
+	 */
 	public final boolean add(Object container, Object value)
 		throws ReflectionException {
 
@@ -1048,22 +1181,51 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		return false;
 	}
 
+	/**
+	 * Learn whether this Reflector is initialized.
+	 * @return boolean
+	 */
 	protected boolean isInitialized() {
 		return initialized;
 	}
+
+	/**
+	 * Set the initialization status of this Reflector.
+	 * @param initialized
+	 */
 	protected void setInitialized(boolean initialized) {
 		this.initialized = initialized;
 	}
 
+	/**
+	 * Learn whether this Reflector is caching {@link #isReflectable(Class)} calls.
+	 * Default <code>true</code>.
+	 * @return boolean
+	 */
 	public boolean isCachingIsReflectableCalls() {
 		return cachingIsReflectableCalls;
 	}
+
+	/**
+	 * Set whether this Reflector is caching {@link #isReflectable(Class)} calls.
+	 * @param cachingIsReflectableCalls
+	 */
 	public void setCachingIsReflectableCalls(boolean cachingIsReflectableCalls) {
 		this.cachingIsReflectableCalls = cachingIsReflectableCalls;
 	}
+
+	/**
+	 * Get the {@link #isReflectable(Class)} call cache.
+	 * @return Map
+	 */
 	protected Map getReflectableCallCache() {
 		return reflectableCallCache;
 	}
+
+	/**
+	 * Set the {@link #isReflectable(Class)} call cache.
+	 * @return Map
+	 */
 	protected void setReflectableCallCache(Map reflectableCallCache) {
 		this.reflectableCallCache = reflectableCallCache;
 	}
