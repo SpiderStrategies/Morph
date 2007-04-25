@@ -57,22 +57,39 @@ public class SimpleInstantiatingReflector extends BaseReflector implements Insta
 		this(instantiatedType, instantiatedType);
 	}
 
+	/**
+	 * Create a new SimpleInstantiatingReflector for a single type mapping.
+	 * @param requestedType
+	 * @param instantiatedType
+	 */
 	public SimpleInstantiatingReflector(Class requestedType, Class instantiatedType) {
 		super();
 		setRequestedType(requestedType);
 		setInstantiatedType(instantiatedType);
 	}
 
+	/**
+	 * Create a new SimpleInstantiatingReflector for the specified type map.
+	 * @param requestedToInstantiatedClassMap
+	 */
 	public SimpleInstantiatingReflector(Map requestedToInstantiatedClassMap) {
 		super();
 		this.requestedToInstantiatedTypeMap = requestedToInstantiatedClassMap;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.reflect.reflectors.BaseReflector#getReflectableClassesImpl()
+	 */
 	protected Class[] getReflectableClassesImpl() throws Exception {
 		Set reflectableClasses = getRequestedToInstantiatedTypeMap().keySet();
 		return (Class[]) reflectableClasses.toArray(new Class[reflectableClasses.size()]);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.reflect.reflectors.BaseReflector#newInstanceImpl(java.lang.Class, java.lang.Object)
+	 */
 	protected Object newInstanceImpl(Class requestedType, Object parameters) throws Exception {
 		Class typeToInstantiate = TransformerUtils.getMappedDestinationType(
 				getRequestedToInstantiatedTypeMap(), requestedType);
