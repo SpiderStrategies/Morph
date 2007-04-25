@@ -224,8 +224,9 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		Set sourceClasses = new HashSet();
-		for (int i = 0; i < getComponents().length; i++) {
-			sourceClasses.addAll(Arrays.asList(getTransformers()[i].getSourceClasses()));
+		Transformer[] t = getTransformers();
+		for (int i = 0; i < t.length; i++) {
+			sourceClasses.addAll(Arrays.asList(t[i].getSourceClasses()));
 		}
 		return (Class[]) sourceClasses.toArray(new Class[sourceClasses.size()]);
 	}
@@ -236,9 +237,9 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		Set destinationClasses = new HashSet();
-		for (int i = 0; i < components.length; i++) {
-			Transformer transformer = (Transformer) components[i];
-			destinationClasses.addAll(Arrays.asList(transformer.getDestinationClasses()));
+		Transformer[] t = getTransformers();
+		for (int i = 0; i < t.length; i++) {
+			destinationClasses.addAll(Arrays.asList(t[i].getDestinationClasses()));
 		}
 		return (Class[]) destinationClasses.toArray(new Class[destinationClasses.size()]);
 	}
@@ -504,16 +505,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 * @return Transformer[]
 	 */
 	public synchronized Transformer[] getTransformers() {
-		Object[] c = getComponents();
-		Transformer[] t;
-		if (c instanceof Transformer[]) {
-			t = (Transformer[]) c;
-		} else {
-			t = new Transformer[c.length];
-			System.arraycopy(c, 0, t, 0, c.length);
-			components = t;
-		}
-		return t;
+		return (Transformer[]) getComponents();
 	}
 
 	/*
