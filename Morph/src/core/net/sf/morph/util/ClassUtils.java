@@ -58,6 +58,7 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 		boolean[].class
 	};
 
+	private static final Set ALL_CLASSES;
 	private static final Set IMMUTABLE_TYPES;
 	private static final Map PRIMITIVE_TYPE_MAP;
 
@@ -86,6 +87,13 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 		immutable.add(null);
 		immutable.add(Class.class);
 		IMMUTABLE_TYPES = Collections.unmodifiableSet(immutable);
+
+		//add primitives, null, and Objects to ALL_CLASSES:
+		Set allClasses = new HashSet(10);
+		allClasses.addAll(Arrays.asList(primitives));
+		allClasses.add(null);
+		allClasses.add(Object.class);
+		ALL_CLASSES = Collections.unmodifiableSet(allClasses);
 	}
 
 	/**
@@ -292,6 +300,14 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	 */
 	public static Class[] getWrapperTypes() {
 		return (Class[]) PRIMITIVE_TYPE_MAP.values().toArray(new Class[PRIMITIVE_TYPE_MAP.size()]);
+	}
+
+	/**
+	 * Returns the set of classes for which any class will match.
+	 * @return Class[]
+	 */
+	public static Class[] getAllClasses() {
+		return (Class[]) ALL_CLASSES.toArray(new Class[ALL_CLASSES.size()]);
 	}
 
 //	public static Class inheritanceIntersection(Class[] types) {
