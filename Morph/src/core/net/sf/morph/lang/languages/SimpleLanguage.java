@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -29,13 +29,13 @@ import net.sf.morph.reflect.BeanReflector;
  * An example of a simple expression is <code>myBean.myProperty</code>. An
  * example of a "non-simple" expression is
  * </p>
- * 
+ *
  * <p>
  * <code>
- * myBean.myProperty + myOtherBean.myOtherProperty 
+ * myBean.myProperty + myOtherBean.myOtherProperty
  * </code>
  * </p>
- * 
+ *
  * <p>
  * To be more precise, this language treats numbers as indexes into array-like
  * objects and treats other alphanumeric identifiers as property names of
@@ -43,7 +43,7 @@ import net.sf.morph.reflect.BeanReflector;
  * with no particularly special meaning: <code>[]().&quot;'</code>. Thus, all
  * of the expressions in the table below have the same value in this language.
  * </p>
- * 
+ *
  * <table border="1">
  * <tr>
  * <th>Language</th>
@@ -83,8 +83,8 @@ import net.sf.morph.reflect.BeanReflector;
  * </td>
  * </tr>
  * </table>
- * 
- * 
+ *
+ *
  * <p>
  * A simple language that will work for most use cases, but has the limitation
  * that bean property names cannot be numbers. Numbers like 123 are always
@@ -92,34 +92,34 @@ import net.sf.morph.reflect.BeanReflector;
  * is an invalid bean property name in this language, but <code>12Monkies</code>
  * and <code>fridayThe13th</code> are valid property names.
  * </p>
- * 
+ *
  * @author Matt Sgarlata
  * @since Nov 28, 2004
  */
 public class SimpleLanguage extends BaseLanguage {
-	
+
 	private static final ExpressionParser DEFAULT_EXPRESSION_PARSER = new SimpleExpressionParser();
 
-	private ExpressionParser expressionParser = DEFAULT_EXPRESSION_PARSER;
+	private ExpressionParser expressionParser;
 	private BeanReflector reflector;
-	
+
 	protected boolean isPropertyImpl(String expression) throws Exception {
-		return expressionParser.parse(expression).length == 1;
+		return getExpressionParser().parse(expression).length == 1;
 	}
 
 	protected Class getTypeImpl(Object target, String expression) throws Exception {
 		if (ObjectUtils.isEmpty(expression)) {
 			return target.getClass();
-		}		
-		
+		}
+
 		Object value = target;
-		
-		String[] tokens = expressionParser.parse(expression);
-		for (int i=0; i<tokens.length - 1; i++) {
+
+		String[] tokens = getExpressionParser().parse(expression);
+		for (int i = 0; i < tokens.length - 1; i++) {
 			String token = tokens[i];
 			value = getReflector().get(value, token);
 		}
-		
+
 		String token = tokens[tokens.length - 1];
 		return getReflector().getType(value, token);
 	}
@@ -130,16 +130,12 @@ public class SimpleLanguage extends BaseLanguage {
 		}
 
 		Object value = target;
-		
-		String[] tokens = expressionParser.parse(expression);
-		for (int i=0; i<tokens.length; i++) {
+
+		String[] tokens = getExpressionParser().parse(expression);
+		for (int i = 0; value != null && i < tokens.length; i++) {
 			String token = tokens[i];
-			if (value == null) {
-				return null;
-			}
 			value = getReflector().get(value, token);
 		}
-		
 		return value;
 	}
 
@@ -147,42 +143,45 @@ public class SimpleLanguage extends BaseLanguage {
 		if (ObjectUtils.isEmpty(expression)) {
 			target = value;
 		}
-		
+
 		Object currentTarget = target;
-		
-		String[] tokens = expressionParser.parse(expression);
-		for (int i=0; i<tokens.length; i++) {
+
+		String[] tokens = getExpressionParser().parse(expression);
+		for (int i = 0; i < tokens.length; i++) {
 			String token = tokens[i];
 			if (i == tokens.length - 1) {
-				getReflector().set(currentTarget, token, value);	
+				getReflector().set(currentTarget, token, value);
 			}
 			else {
 				currentTarget = getReflector().get(currentTarget, token);
-			}			
+			}
 		}
-
 	}
 
 	/**
 	 * @return Returns the expressionParser.
 	 */
-	public ExpressionParser getExpressionParser() {
+	public synchronized ExpressionParser getExpressionParser() {
+		if (expressionParser == null) {
+			setExpressionParser(DEFAULT_EXPRESSION_PARSER);
+		}
 		return expressionParser;
 	}
 	/**
 	 * @param expressionParser The expressionParser to set.
 	 */
-	public void setExpressionParser(ExpressionParser expressionParser) {
+	public synchronized void setExpressionParser(ExpressionParser expressionParser) {
 		this.expressionParser = expressionParser;
 	}
 
-	public BeanReflector getReflector() {
+	public synchronized BeanReflector getReflector() {
 		if (reflector == null) {
 			setReflector(Defaults.createBeanReflector());
 		}
 		return reflector;
 	}
-	public void setReflector(BeanReflector reflector) {
+
+	public synchronized void setReflector(BeanReflector reflector) {
 		this.reflector = reflector;
 	}
 }
