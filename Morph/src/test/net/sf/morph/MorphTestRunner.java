@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import net.sf.morph.context.ContextTestRunner;
 import net.sf.morph.examples.ExamplesTestRunner;
+import net.sf.morph.integration.IntegrationTestRunner;
 import net.sf.morph.lang.LanguageTestRunner;
 import net.sf.morph.reflect.ReflectorsTestRunner;
 import net.sf.morph.transform.TransformersTestRunner;
@@ -44,6 +45,8 @@ public class MorphTestRunner extends TestRunner {
 		suite.addTest(LanguageTestRunner.suite());
 		suite.addTest(ContextTestRunner.suite());
 		suite.addTest(ExamplesTestRunner.suite());
+		suite.addTest(IntegrationTestRunner.suite());
+
 		suite.addTestSuite(BeanTestCase.class);
 		suite.addTestSuite(MorphTestCase.class);
 		
