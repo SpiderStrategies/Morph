@@ -22,6 +22,8 @@ import net.sf.morph.lang.languages.SimpleLanguage;
 import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.Assert;
+import net.sf.morph.util.ClassUtils;
 
 /**
  * A Converter that returns the result of evaluating a property against an object using a DecoratedLanguage.
@@ -35,18 +37,11 @@ public class EvaluateExpressionConverter extends BaseTransformer implements Deco
 
 	/**
 	 * Construct a new EvaluateExpressionConverter.
-	 */
-	public EvaluateExpressionConverter() {
-		super();
-	}
-
-	/**
-	 * Construct a new EvaluateExpressionConverter.
 	 * @param expression
 	 */
 	public EvaluateExpressionConverter(String expression) {
-		this();
-		setExpression(expression);
+		Assert.notEmpty(expression, "expression");
+		this.expression = expression;
 	}
 
 	/**
@@ -61,7 +56,7 @@ public class EvaluateExpressionConverter extends BaseTransformer implements Deco
 	 * @see net.sf.morph.transform.transformers.BaseReflectorTransformer#getDestinationClassesImpl()
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
-		return new Class[] { Object.class };
+		return ClassUtils.getAllClasses();
 	}
 
 	/**
@@ -94,14 +89,6 @@ public class EvaluateExpressionConverter extends BaseTransformer implements Deco
 	 */
 	public String getExpression() {
 		return expression;
-	}
-
-	/**
-	 * Set the expression of this EvaluateExpressionConverter.
-	 * @param expression the expression to set
-	 */
-	public void setExpression(String expression) {
-		this.expression = expression;
 	}
 
 	/**
