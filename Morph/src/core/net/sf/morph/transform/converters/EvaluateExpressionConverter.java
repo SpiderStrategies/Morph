@@ -29,22 +29,22 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Benson
  * @since Morph 1.0.2
  */
-public class GetPropertyConverter extends BaseTransformer implements DecoratedConverter {
+public class EvaluateExpressionConverter extends BaseTransformer implements DecoratedConverter {
 	private String expression;
 	private DecoratedLanguage language;
 
 	/**
-	 * Construct a new GetPropertyConverter.
+	 * Construct a new EvaluateExpressionConverter.
 	 */
-	public GetPropertyConverter() {
+	public EvaluateExpressionConverter() {
 		super();
 	}
 
 	/**
-	 * Construct a new GetPropertyConverter.
+	 * Construct a new EvaluateExpressionConverter.
 	 * @param expression
 	 */
-	public GetPropertyConverter(String expression) {
+	public EvaluateExpressionConverter(String expression) {
 		this();
 		setExpression(expression);
 	}
@@ -89,7 +89,7 @@ public class GetPropertyConverter extends BaseTransformer implements DecoratedCo
 	}
 
 	/**
-	 * Get the expression of this GetPropertyConverter.
+	 * Get the expression of this EvaluateExpressionConverter.
 	 * @return the expression
 	 */
 	public String getExpression() {
@@ -97,7 +97,7 @@ public class GetPropertyConverter extends BaseTransformer implements DecoratedCo
 	}
 
 	/**
-	 * Set the expression of this GetPropertyConverter.
+	 * Set the expression of this EvaluateExpressionConverter.
 	 * @param expression the expression to set
 	 */
 	public void setExpression(String expression) {

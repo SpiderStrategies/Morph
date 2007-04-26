@@ -18,7 +18,7 @@ package net.sf.morph.transform;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-import net.sf.morph.transform.converters.GetPropertyConverterTestCase;
+import net.sf.morph.transform.converters.EvaluateExpressionConverterTestCase;
 import net.sf.morph.transform.converters.IdentityConverterTestCase;
 import net.sf.morph.transform.converters.NumberConverterTestCase;
 import net.sf.morph.transform.converters.NumberToTimeConverterTestCase;
@@ -83,7 +83,7 @@ public class TransformersTestRunner extends TestRunner {
 		suite.addTestSuite(TextToNumberConverterTestCase.class);
 		suite.addTestSuite(TimeToNumberConverterTestCase.class);
 		suite.addTestSuite(PrimitiveWrapperConverterTestCase.class);
-		suite.addTestSuite(GetPropertyConverterTestCase.class);
+		suite.addTestSuite(EvaluateExpressionConverterTestCase.class);
 
 		// COMPOSITE CONVERTERS
 

@@ -24,14 +24,14 @@ import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.transform.Transformer;
 
 /**
- * Tests for the {@link net.sf.morph.transform.converters.GetPropertyConverter}.
+ * Tests for the {@link net.sf.morph.transform.converters.EvaluateExpressionConverter}.
  */
-public class GetPropertyConverterTestCase extends BaseConverterTestCase {
+public class EvaluateExpressionConverterTestCase extends BaseConverterTestCase {
 	public static class HasTraditionalSizeProperty {
 		private int size;
 
 		/**
-		 * Construct a new GetPropertyConverterTestCase.HasTraditionalSizeProperty.
+		 * Construct a new EvaluateExpressionConverterTestCase.HasTraditionalSizeProperty.
 		 */
 		public HasTraditionalSizeProperty(int size) {
 			this.size = size;
@@ -66,7 +66,7 @@ public class GetPropertyConverterTestCase extends BaseConverterTestCase {
 	}
 
 	protected Transformer createTransformer() {
-		return new GetPropertyConverter(BeanReflector.IMPLICIT_PROPERTY_SIZE);
+		return new EvaluateExpressionConverter(BeanReflector.IMPLICIT_PROPERTY_SIZE);
 	}
 
 }
