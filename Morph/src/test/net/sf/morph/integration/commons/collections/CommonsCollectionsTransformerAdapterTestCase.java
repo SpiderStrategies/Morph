@@ -1,4 +1,4 @@
-package net.sf.morph.integration.commons;
+package net.sf.morph.integration.commons.collections;
 
 import java.util.ArrayList;
 import java.util.HashMap;
