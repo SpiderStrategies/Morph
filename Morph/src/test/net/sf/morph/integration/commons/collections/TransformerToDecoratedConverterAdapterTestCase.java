@@ -12,7 +12,7 @@ import net.sf.morph.transform.converters.BaseConverterTestCase;
 /**
  *
  */
-public class CommonsCollectionsTransformerAdapterTestCase extends BaseConverterTestCase {
+public class TransformerToDecoratedConverterAdapterTestCase extends BaseConverterTestCase {
 	/**
 	 * {@inheritDoc}
 	 * @see net.sf.morph.transform.converters.BaseConverterTestCase#createDestinationClasses()
@@ -46,7 +46,7 @@ public class CommonsCollectionsTransformerAdapterTestCase extends BaseConverterT
 		testMap.put("foo", "FOO");
 		testMap.put("bar", "BAR");
 		testMap.put("baz", "BAZ");
-		return new CommonsCollectionsTransformerAdapter(TransformerUtils.mapTransformer(testMap));
+		return new TransformerToDecoratedConverterAdapter(TransformerUtils.mapTransformer(testMap));
 	}
 
 	/**

@@ -30,22 +30,22 @@ import net.sf.morph.util.ClassUtils;
  * @author mbenson
  * @since Morph 1.0.2
  */
-public class CommonsCollectionsTransformerAdapter extends BaseTransformer implements
+public class TransformerToDecoratedConverterAdapter extends BaseTransformer implements
 		DecoratedConverter {
 
 	private Transformer delegate;
 
 	/**
-	 * Create a new CommonsCollectionsTransformerConverter.
+	 * Create a new TransformerToDecoratedConverterAdapter.
 	 */
-	public CommonsCollectionsTransformerAdapter() {
+	public TransformerToDecoratedConverterAdapter() {
 	}
 
 	/**
-	 * Create a new CommonsCollectionsTransformerConverter.
+	 * Create a new TransformerToDecoratedConverterAdapter.
 	 * @param delegate
 	 */
-	public CommonsCollectionsTransformerAdapter(Transformer delegate) {
+	public TransformerToDecoratedConverterAdapter(Transformer delegate) {
 		setDelegate(delegate);
 	}
 
