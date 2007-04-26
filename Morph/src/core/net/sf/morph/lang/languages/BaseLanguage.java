@@ -107,7 +107,7 @@ public abstract class BaseLanguage implements DecoratedLanguage {
 	
 	public final Object get(Object target, String expression)
 		throws LanguageException {
-		if (ObjectUtils.isEmpty(target)) {
+		if (target == null) {
 			throw new LanguageException("The target object cannot be empty");
 		}
 		if (log.isTraceEnabled()) {
