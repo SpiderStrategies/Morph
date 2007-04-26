@@ -17,20 +17,21 @@ package net.sf.morph.transform.converters;
 
 import java.util.Locale;
 
-import net.sf.morph.Defaults;
-import net.sf.morph.transform.Converter;
+import net.sf.morph.lang.DecoratedLanguage;
+import net.sf.morph.lang.languages.SimpleLanguage;
+import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.transform.DecoratedConverter;
-import net.sf.morph.transform.transformers.BaseReflectorTransformer;
+import net.sf.morph.transform.transformers.BaseTransformer;
 
 /**
- * A Converter that converts an object to one of its own properties.
- * 
+ * A Converter that returns the result of evaluating a property against an object using a DecoratedLanguage.
+ *
  * @author Matt Benson
  * @since Morph 1.0.2
  */
-public class GetPropertyConverter extends BaseReflectorTransformer implements DecoratedConverter {
-	private String propertyName;
-	private Converter propertyConverter;
+public class GetPropertyConverter extends BaseTransformer implements DecoratedConverter {
+	private String expression;
+	private DecoratedLanguage language;
 
 	/**
 	 * Construct a new GetPropertyConverter.
@@ -41,18 +42,42 @@ public class GetPropertyConverter extends BaseReflectorTransformer implements De
 
 	/**
 	 * Construct a new GetPropertyConverter.
-	 * @param propertyName
+	 * @param expression
 	 */
-	public GetPropertyConverter(String propertyName) {
+	public GetPropertyConverter(String expression) {
 		this();
-		setPropertyName(propertyName);
+		setExpression(expression);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setDestinationClasses(java.lang.Class[])
+	 */
+	public synchronized void setDestinationClasses(Class[] destinationClasses) {
+		super.setDestinationClasses(destinationClasses);
 	}
 
 	/* (non-Javadoc)
 	 * @see net.sf.morph.transform.transformers.BaseReflectorTransformer#getDestinationClassesImpl()
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
-		return getPropertyConverter().getDestinationClasses();
+		return new Class[] { Object.class };
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
+	 */
+	public synchronized void setSourceClasses(Class[] sourceClasses) {
+		super.setSourceClasses(sourceClasses);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
+	 */
+	protected Class[] getSourceClassesImpl() throws Exception {
+		return new Class[] { Object.class };
 	}
 
 	/* (non-Javadoc)
@@ -60,42 +85,43 @@ public class GetPropertyConverter extends BaseReflectorTransformer implements De
 	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
 			throws Exception {
-		Object intermediate = getBeanReflector().get(source, getPropertyName());
-		return getPropertyConverter().convert(destinationClass, intermediate, locale);
+		return getLanguage().get(source, getExpression(), destinationClass, locale);
 	}
 
 	/**
-	 * Get the propertyName of this GetPropertyConverter.
-	 * @return the propertyName
+	 * Get the expression of this GetPropertyConverter.
+	 * @return the expression
 	 */
-	public String getPropertyName() {
-		return propertyName;
+	public String getExpression() {
+		return expression;
 	}
 
 	/**
-	 * Set the propertyName of this GetPropertyConverter.
-	 * @param propertyName the propertyName to set
+	 * Set the expression of this GetPropertyConverter.
+	 * @param expression the expression to set
 	 */
-	public void setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 
 	/**
-	 * Get the propertyConverter of this GetPropertyConverter.
-	 * @return the propertyConverter
+	 * Get the DecoratedLanguage language.
+	 * @return DecoratedLanguage
 	 */
-	public synchronized Converter getPropertyConverter() {
-		if (propertyConverter == null) {
-			setPropertyConverter(Defaults.createConverter());
+	public synchronized DecoratedLanguage getLanguage() {
+		if (language == null) {
+			SimpleLanguage lang = new SimpleLanguage();
+			lang.setReflector((BeanReflector) getReflector(BeanReflector.class));
+			setLanguage(lang);
 		}
-		return propertyConverter;
+		return language;
 	}
 
 	/**
-	 * Set the propertyConverter of this GetPropertyConverter.
-	 * @param propertyConverter the propertyConverter to set
+	 * Set the DecoratedLanguage language.
+	 * @param language DecoratedLanguage
 	 */
-	public synchronized void setPropertyConverter(Converter propertyConverter) {
-		this.propertyConverter = propertyConverter;
+	public synchronized void setLanguage(DecoratedLanguage language) {
+		this.language = language;
 	}
 }
