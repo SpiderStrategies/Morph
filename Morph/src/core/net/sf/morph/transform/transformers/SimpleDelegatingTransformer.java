@@ -94,6 +94,9 @@ import net.sf.morph.util.TransformerUtils;
 public class SimpleDelegatingTransformer extends BaseCompositeTransformer implements
 	SpecializableComposite, ExplicitTransformer, Transformer, DecoratedCopier, DecoratedConverter, Cloneable {
 
+	//TODO extract BaseDelegatingTransformer with pluggable delegate selection
+
+
 	private static class MapThreadLocal extends ThreadLocal {
 		protected Object initialValue() {
 			return new HashMap();
