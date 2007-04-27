@@ -739,9 +739,9 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * Get the Reflector employed by this Transformer.
 	 * @return Reflector
 	 */
-	public Reflector getReflector() {
+	public synchronized Reflector getReflector() {
 		if (reflector == null) {
-			setReflector(Defaults.createReflector());
+			setReflector(createDefaultReflector());
 		}
 		return reflector;
 	}
@@ -750,8 +750,16 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * Set the Reflector to be used by this Transformer.
 	 * @param reflector
 	 */
-	public void setReflector(Reflector reflector) {
+	public synchronized void setReflector(Reflector reflector) {
 		this.reflector = reflector;
+	}
+
+	/**
+	 * Create the default reflector instance to be used by this Transformer.
+	 * @return Reflector
+	 */
+	protected Reflector createDefaultReflector() {
+		return Defaults.createReflector();
 	}
 
 	/**
