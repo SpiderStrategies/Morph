@@ -113,6 +113,14 @@ public class ConverterDecorator extends BaseTransformer implements Converter,
 
 	/**
 	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#isAutomaticallyHandlingNulls()
+	 */
+	protected boolean isAutomaticallyHandlingNulls() {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#isWrappingRuntimeExceptions()
 	 */
 	protected boolean isWrappingRuntimeExceptions() {
