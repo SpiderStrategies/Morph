@@ -56,6 +56,7 @@ import net.sf.morph.util.TransformerUtils;
  * for a given source property.
  *
  * @author Matt Benson
+ * @since Morph 1.0.2
  */
 public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		DecoratedConverter, DecoratedCopier, NodeCopier {
@@ -70,7 +71,6 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 	private static final Class[] SOURCE_AND_DEST_CLASSES = new Class[] { Object.class };
 
 	private Map mapping;
-
 	private Language language;
 
 	/**
@@ -160,7 +160,7 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 	 */
 	protected void copyProperty(String sourceProperty, Object source,
 			String destinationProperty, Object destination, Locale locale,
-			Integer preferredTransformationType) {
+			Integer preferredTransformationType) throws Exception {
 		if (getLog().isTraceEnabled()) {
 			getLog().trace(
 					"Copying property '" + sourceProperty + "' of "
@@ -179,6 +179,9 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		// choose a transformer to use
 		Transformer transformer = getNestedTransformer();
 
+		if (!((BeanReflector) getReflector(BeanReflector.class)).isWriteable(destination, destinationProperty)) {
+			preferredTransformationType = Transformer.TRANSFORMATION_TYPE_COPY;
+		}
 		// determine the new value that will be set on the destination
 		Object newDestinationValue = TransformerUtils.transform(transformer,
 				destinationType, destinationValue, sourceValue, locale,
