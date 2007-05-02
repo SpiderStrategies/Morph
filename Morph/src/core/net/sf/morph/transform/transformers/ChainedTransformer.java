@@ -187,11 +187,11 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 		Class[] available = c.getDestinationClasses();
 		for (int i = 0; i < available.length; i++) {
 			if (TransformerUtils.isTransformable(c, available[i], sourceType)) {
-				List tail = getConversionPath(destinationType, available[i], ++index);
+				List tail = getConversionPath(destinationType, available[i], index + 1);
 				if (tail != null) {
 					tail.add(0, available[i]);
+					return tail;
 				}
-				return tail;
 			}
 		}
 		return null;
