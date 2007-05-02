@@ -31,17 +31,34 @@ import net.sf.morph.util.ClassUtils;
  * @author Matt Benson
  * @since Morph 1.0.2
  */
-public class EvaluateExpressionConverter extends BaseTransformer implements DecoratedConverter {
+public class EvaluateExpressionConverter extends BaseTransformer implements
+		DecoratedConverter {
 	private String expression;
 	private DecoratedLanguage language;
+
+	/**
+	 * Create a new EvaluateExpressionConverter.
+	 */
+	public EvaluateExpressionConverter() {
+		super();
+	}
 
 	/**
 	 * Construct a new EvaluateExpressionConverter.
 	 * @param expression
 	 */
 	public EvaluateExpressionConverter(String expression) {
-		Assert.notEmpty(expression, "expression");
-		this.expression = expression;
+		this();
+		setExpression(expression);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#initializeImpl()
+	 */
+	protected void initializeImpl() throws Exception {
+		super.initializeImpl();
+		Assert.notEmpty(getExpression(), "expression");
 	}
 
 	/**
@@ -89,6 +106,14 @@ public class EvaluateExpressionConverter extends BaseTransformer implements Deco
 	 */
 	public String getExpression() {
 		return expression;
+	}
+
+	/**
+	 * Set the String expression.
+	 * @param expression String
+	 */
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 
 	/**
