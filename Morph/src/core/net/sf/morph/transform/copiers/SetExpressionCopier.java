@@ -18,17 +18,33 @@ import net.sf.morph.util.ClassUtils;
  * @author mbenson
  * @since Morph 1.0.2
  */
-public class SetExpressionCopier extends BaseTransformer implements
-		DecoratedCopier, DecoratedConverter {
+public class SetExpressionCopier extends BaseTransformer implements DecoratedCopier,
+		DecoratedConverter {
 	private String expression;
 	private DecoratedLanguage language;
 
 	/**
 	 * Create a new SetExpressionCopier.
 	 */
+	public SetExpressionCopier() {
+		super();
+	}
+
+	/**
+	 * Create a new SetExpressionCopier.
+	 */
 	public SetExpressionCopier(String expression) {
-		Assert.notEmpty(expression, "expression");
-		this.expression = expression;
+		this();
+		setExpression(expression);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#initializeImpl()
+	 */
+	protected void initializeImpl() throws Exception {
+		super.initializeImpl();
+		Assert.notEmpty(getExpression(), "expression");
 	}
 
 	/**
@@ -42,10 +58,26 @@ public class SetExpressionCopier extends BaseTransformer implements
 
 	/**
 	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setDestinationClasses(java.lang.Class[])
+	 */
+	public synchronized void setDestinationClasses(Class[] destinationClasses) {
+		super.setDestinationClasses(destinationClasses);
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return new Class[] { Object.class };
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
+	 */
+	public synchronized void setSourceClasses(Class[] sourceClasses) {
+		super.setSourceClasses(sourceClasses);
 	}
 
 	/**
@@ -62,6 +94,14 @@ public class SetExpressionCopier extends BaseTransformer implements
 	 */
 	public String getExpression() {
 		return expression;
+	}
+
+	/**
+	 * Set the String expression.
+	 * @param expression String
+	 */
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 
 	/**
