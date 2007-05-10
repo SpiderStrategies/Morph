@@ -180,7 +180,7 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		Transformer transformer = getNestedTransformer();
 
 		if (!((BeanReflector) getReflector(BeanReflector.class)).isWriteable(destination, destinationProperty)) {
-			preferredTransformationType = Transformer.TRANSFORMATION_TYPE_COPY;
+			preferredTransformationType = TRANSFORMATION_TYPE_COPY;
 		}
 		// determine the new value that will be set on the destination
 		Object newDestinationValue = TransformerUtils.transform(transformer,
