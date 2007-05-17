@@ -19,7 +19,6 @@ import java.util.Locale;
 
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.reflect.BeanReflector;
-import net.sf.morph.transform.Converter;
 
 /**
  * <p>
@@ -50,54 +49,56 @@ public class BeanToPrettyTextConverter extends BaseToPrettyTextConverter {
 	public static final String DEFAULT_NAME_VALUE_SEPARATOR = "=";
 	
 	private String nameValueSeparator = DEFAULT_NAME_VALUE_SEPARATOR;
-	private boolean showPropertyNames = true;
+	private boolean showPropertyNames = true;	
+	
+	public BeanToPrettyTextConverter() {
+	    setPrefix(DEFAULT_PREFIX);
+	    setSuffix(DEFAULT_SUFFIX);
+	    setSeparator(DEFAULT_SEPARATOR);
+    }
 
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-		
-		StringBuffer buffer = new StringBuffer(getPrefix());
+
 		BeanReflector beanReflector = getBeanReflector();
+
+		StringBuffer buffer = new StringBuffer();
+		// can't pass prefix to constructor because if it's null we'll get a NPE
+		if (getPrefix() != null) {
+			buffer.append(getPrefix());
+		}
 		String[] propertyNames = beanReflector.getPropertyNames(source);
 		if (!ObjectUtils.isEmpty(propertyNames)) {
-			Converter toText = getToTextConverter();
-			append(source, propertyNames[0], buffer, beanReflector, toText, locale);
+			Object value = beanReflector.get(source, propertyNames[0]);
+			append(buffer, propertyNames[0], value, locale);
 			for (int i = 1; i < propertyNames.length; i++) {
-				buffer.append(getSeparator());
-				append(source, propertyNames[i], buffer, beanReflector, toText, locale);
+				value = beanReflector.get(source, propertyNames[i]);
+				if (value != null || isShowNullValues()) {
+					buffer.append(getSeparator());
+				}
+				append(buffer, propertyNames[i], value, locale);
 			}
+		}
+		if (getSuffix() != null) {
+			buffer.append(getSuffix());
 		}
 		return getTextConverter().convert(destinationClass, buffer, locale);
 	}
 
-	private void append(Object source, String propertyName, StringBuffer buffer,
-			BeanReflector reflector, Converter converter, Locale locale) {
-		Object p = reflector.get(source, propertyName);
-		if (p == null && !isShowNullValues()) {
+	private void append(StringBuffer buffer, String propertyName, Object value,
+			Locale locale) {		
+		if (value == null && !isShowNullValues()) {
 			return;
 		}
 		if (isShowPropertyNames()) {
 			buffer.append(propertyName).append(getNameValueSeparator());
 		}
-		buffer.append(converter.convert(String.class, p, locale));
+		buffer.append(getToTextConverter().convert(String.class, value, locale));
 	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getBeanReflector().getReflectableClasses();
 	}
-	
-	public String getSeparator() {
-		String separator = super.getSeparator();
-		return separator == null ? DEFAULT_SEPARATOR : separator;
-	}
-
-	public String getPrefix() {
-		String prefix = super.getPrefix();
-		return prefix == null ? DEFAULT_PREFIX : prefix;
-	}
-	public String getSuffix() {
-		String suffix = super.getSuffix();
-		return suffix == null ? DEFAULT_SUFFIX : suffix;
-	}	
 	
 	public String getNameValueSeparator() {
 		return nameValueSeparator;
