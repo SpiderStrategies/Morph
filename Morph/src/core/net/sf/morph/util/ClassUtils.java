@@ -82,8 +82,11 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 		immutable.addAll(Arrays.asList(primitives));
 		immutable.addAll(Arrays.asList(wrappers));
 		immutable.add(String.class);
+
+		//TBD: BigInteger and BigDecimal are not mutable but are also not FINAL:
 		immutable.add(BigInteger.class);
 		immutable.add(BigDecimal.class);
+
 		immutable.add(null);
 		immutable.add(Class.class);
 		IMMUTABLE_TYPES = Collections.unmodifiableSet(immutable);
