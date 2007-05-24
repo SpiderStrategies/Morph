@@ -34,7 +34,6 @@ import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.support.ResetableIteratorWrapper;
 import net.sf.morph.transform.transformers.BaseReflectorTransformer;
-import net.sf.morph.util.ClassUtils;
 import net.sf.morph.util.IteratorEnumeration;
 import net.sf.morph.util.ReflectorUtils;
 import net.sf.morph.util.TransformerUtils;
@@ -140,10 +139,6 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	protected void put(int index, Object destination, Object sourceValue, Class sourceValueClass, Locale locale, Integer preferredTransformationType) {
 		Class destinationContainedType =
 			determineDestinationContainedType(destination, sourceValueClass);
-		if (ClassUtils.isImmutable(destinationContainedType)) {
-			preferredTransformationType = Converter.TRANSFORMATION_TYPE_CONVERT;
-		}
-
 		// if we can just add items to the end of the existing container
 		if (ReflectorUtils.isReflectable(getReflector(),
 			destination.getClass(), GrowableContainerReflector.class)) {
