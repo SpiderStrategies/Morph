@@ -50,6 +50,7 @@ import net.sf.morph.transform.converters.TextToTimeConverter;
 import net.sf.morph.transform.converters.TimeConverter;
 import net.sf.morph.transform.converters.TimeToNumberConverter;
 import net.sf.morph.transform.copiers.ContainerCopier;
+import net.sf.morph.transform.copiers.ImmutableComponentArrayCopier;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopier;
 import net.sf.morph.transform.copiers.TextToContainerCopier;
 import net.sf.morph.util.ClassUtils;
@@ -130,6 +131,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			new PropertyNameMatchingCopier() {
 				{ setDestinationClasses(new Class[] { Map.class }); }
 			},
+			new ImmutableComponentArrayCopier(),
 			new ContainerCopier(),
 			new PropertyNameMatchingCopier()
 		};
