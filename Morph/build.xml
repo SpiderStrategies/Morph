@@ -1,4 +1,5 @@
-<project name="morph" default="build" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+<project name="morph" default="build-all"
+         xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
   <!-- requires Apache Ant >= 1.7.0 -->
 
   <property file="build.properties" />
