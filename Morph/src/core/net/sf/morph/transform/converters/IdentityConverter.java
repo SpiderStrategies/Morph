@@ -91,4 +91,20 @@ public class IdentityConverter extends BaseTransformer implements Converter,
 		return DEFAULT_SOURCE_AND_DESTINATION_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
+	 */
+	public synchronized void setDestinationClasses(Class[] destinationClasses) {
+	    super.setDestinationClasses(destinationClasses);
+    }
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
+	 */
+	public synchronized void setSourceClasses(Class[] sourceClasses) {
+	    super.setSourceClasses(sourceClasses);
+    }
+
 }
