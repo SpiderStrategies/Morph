@@ -116,9 +116,11 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 		PropertyNameMatchingCopier pnmc = getPropertyNameMatchingCopier();
 		pnmc.setReflector(reflector);
 
+		// setup the IdentityConverter so that it will transform null to null
+		// and other primitives to primitive types but not pick up
+		// transformations in the sourceToDestinationTypeMap 
 		IdentityConverter identityConverter = getIdentityConverter();
 		identityConverter.setSourceClasses(ClassUtils.getImmutableTypes());
-		identityConverter.setDestinationClasses(ClassUtils.getImmutableTypes());
 
 		this.setReflector(reflector);
 	}
