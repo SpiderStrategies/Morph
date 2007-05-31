@@ -69,14 +69,21 @@ public class BeanToPrettyTextConverter extends BaseToPrettyTextConverter {
 		}
 		String[] propertyNames = beanReflector.getPropertyNames(source);
 		if (!ObjectUtils.isEmpty(propertyNames)) {
-			Object value = beanReflector.get(source, propertyNames[0]);
-			append(buffer, propertyNames[0], value, locale);
+			String propertyName = propertyNames[0];
+			Object value;
+			if (beanReflector.isReadable(source, propertyName)) {
+				value = beanReflector.get(source, propertyName);			
+				append(buffer, propertyName, value, locale);
+			}
 			for (int i = 1; i < propertyNames.length; i++) {
-				value = beanReflector.get(source, propertyNames[i]);
-				if (value != null || isShowNullValues()) {
-					buffer.append(getSeparator());
+				propertyName = propertyNames[i];
+				if (beanReflector.isReadable(source, propertyName)) {
+					value = beanReflector.get(source, propertyName);
+					if (value != null || isShowNullValues()) {
+						buffer.append(getSeparator());
+					}
+					append(buffer, propertyNames[i], value, locale);
 				}
-				append(buffer, propertyNames[i], value, locale);
 			}
 		}
 		if (getSuffix() != null) {
