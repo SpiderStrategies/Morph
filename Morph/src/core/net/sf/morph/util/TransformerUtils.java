@@ -120,10 +120,23 @@ public abstract class TransformerUtils {
 				: transformer instanceof Copier ? Transformer.TRANSFORMATION_TYPE_COPY
 						: Transformer.TRANSFORMATION_TYPE_CONVERT;
 
-		//next, override impossible copy operations
-		if (Transformer.TRANSFORMATION_TYPE_COPY.equals(xform) && ClassUtils.isImmutableObject(destination)) {
-			xform = Transformer.TRANSFORMATION_TYPE_CONVERT;
+		boolean mutableDest = !ClassUtils.isImmutableObject(destination);
+
+		// next, override impossible operations with possible ones
+		// (this block is somewhat more verbose than necessary but
+		// should be proof against possible additional Transformer types):
+		if (Transformer.TRANSFORMATION_TYPE_COPY.equals(xform)) {
+			if (transformer instanceof Converter && !mutableDest) {
+				xform = Transformer.TRANSFORMATION_TYPE_CONVERT;
+			}
 		}
+		else if (Transformer.TRANSFORMATION_TYPE_CONVERT.equals(xform)) {
+			if (!(transformer instanceof Converter) && transformer instanceof Copier
+					&& mutableDest) {
+				xform = Transformer.TRANSFORMATION_TYPE_COPY;
+			}
+		}
+
 		if (Transformer.TRANSFORMATION_TYPE_CONVERT.equals(xform)) {
 			if (log.isTraceEnabled()) {
 				log.trace("Performing nested conversion of "
