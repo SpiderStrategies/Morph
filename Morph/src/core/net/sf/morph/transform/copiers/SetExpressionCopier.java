@@ -125,4 +125,10 @@ public class SetExpressionCopier extends BaseTransformer implements DecoratedCop
 		this.language = language;
 	}
 
+	/* (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#isAutomaticallyHandlingNulls()
+	 */
+	protected boolean isAutomaticallyHandlingNulls() {
+		return false;
+	}
 }
