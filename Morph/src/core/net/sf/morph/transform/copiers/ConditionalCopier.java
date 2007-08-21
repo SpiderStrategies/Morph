@@ -22,6 +22,7 @@ import java.util.Locale;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
+import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.converters.DefaultToBooleanConverter;
@@ -39,7 +40,7 @@ import net.sf.morph.util.TransformerUtils;
  * @since Morph 1.0.2
  */
 public class ConditionalCopier extends BaseTransformer implements DecoratedConverter,
-		DecoratedCopier {
+		DecoratedCopier, ExplicitTransformer {
 	private static final Converter DEFAULT_IF = new DefaultToBooleanConverter();
 
 	private Converter ifConverter;
@@ -74,6 +75,18 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 	 */
 	protected boolean isAutomaticallyHandlingNulls() {
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#isTransformableImpl(java.lang.Class, java.lang.Class)
+	 */
+	protected boolean isTransformableImpl(Class destinationType, Class sourceType)
+			throws Exception {
+		return TransformerUtils.isTransformable(getIfConverter(), Boolean.class,
+				sourceType)
+				&& (TransformerUtils.isTransformable(getThenTransformer(),
+						destinationType, sourceType) || TransformerUtils.isTransformable(
+						getElseTransformer(), destinationType, sourceType));
 	}
 
 	/**
