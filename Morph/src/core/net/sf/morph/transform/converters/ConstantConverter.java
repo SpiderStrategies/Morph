@@ -54,4 +54,20 @@ public class ConstantConverter extends BaseTransformer implements DecoratedConve
 	protected boolean isAutomaticallyHandlingNulls() {
 		return false;
 	}
+
+	/**
+	 * Get the result.
+	 * @return Object.
+	 */
+	public Object getResult() {
+		return result;
+	}
+
+	/**
+	 * Set the result.
+	 * @param result the Object result to set.
+	 */
+	public void setResult(Object result) {
+		this.result = result;
+	}
 }
