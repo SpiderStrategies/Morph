@@ -33,6 +33,7 @@ import net.sf.morph.transform.converters.TimeToNumberConverterTestCase;
 import net.sf.morph.transform.copiers.ArrayCopierTestCase;
 import net.sf.morph.transform.copiers.AssemblerCopierComponentsTestCase;
 import net.sf.morph.transform.copiers.AssemblerCopierTestCase;
+import net.sf.morph.transform.copiers.ConditionalCopierTestCase;
 import net.sf.morph.transform.copiers.ContainerCopierTestCase;
 import net.sf.morph.transform.copiers.CumulativeCopierTestCase;
 import net.sf.morph.transform.copiers.DelegatingCopierTestCase;
@@ -69,6 +70,7 @@ public class TransformersTestRunner extends TestRunner {
 		suite.addTestSuite(TextToContainerCopierTestCase.class);
 		suite.addTestSuite(NOPCopierTestCase.class);
 		suite.addTestSuite(SetExpressionCopierTestCase.class);
+		suite.addTestSuite(ConditionalCopierTestCase.class);
 
 		// CONVERTERS
 
