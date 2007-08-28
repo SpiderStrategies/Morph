@@ -18,7 +18,7 @@ public class MorphCommandlineTest {
 		Converter converter = new TextToTimeConverter();
 		Calendar converted = (Calendar) converter.convert(Calendar.class, source, null);
 		System.out.println(converted.getTime());
-		System.out.println(converted.getTimeInMillis());
+		System.out.println(converted.getTime().getTime());
 		
 		Calendar calendar = new GregorianCalendar();
 		calendar.set(Calendar.YEAR, 2005);
@@ -31,7 +31,7 @@ public class MorphCommandlineTest {
 		calendar.set(Calendar.ZONE_OFFSET, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		System.out.println(calendar.getTime());
-		System.out.println(calendar.getTimeInMillis());
+		System.out.println(calendar.getTime().getTime());
 		
 		System.out.println(calendar.equals(converted));
 		System.out.println(calendar.getTime().equals(converted.getTime()));

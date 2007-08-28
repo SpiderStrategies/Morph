@@ -53,7 +53,7 @@ public class ConstantConverterTestCase extends BaseConverterTestCase {
 		l.add(new ConvertedSourcePair("foo", null));
 		l.add(new ConvertedSourcePair("foo", new Object()));
 		l.add(new ConvertedSourcePair("foo", this));
-		l.add(new ConvertedSourcePair("foo", Integer.valueOf(100)));
+		l.add(new ConvertedSourcePair("foo", new Integer(100)));
 		return l;
 	}
 
@@ -67,7 +67,7 @@ public class ConstantConverterTestCase extends BaseConverterTestCase {
 		l.add(new ConvertedSourcePair("fool", null));
 		l.add(new ConvertedSourcePair("fool", new Object()));
 		l.add(new ConvertedSourcePair("fool", this));
-		l.add(new ConvertedSourcePair("fool", Integer.valueOf(100)));
+		l.add(new ConvertedSourcePair("fool", new Integer(100)));
 		return l;
 	}
 }

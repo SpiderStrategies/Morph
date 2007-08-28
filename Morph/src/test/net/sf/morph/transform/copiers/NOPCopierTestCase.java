@@ -55,13 +55,13 @@ public class NOPCopierTestCase extends BaseCopierTestCase {
 		l.add(new ConvertedSourcePair(null, null));
 		l.add(new ConvertedSourcePair("", this));
 		l.add(new ConvertedSourcePair("", "foo"));
-		l.add(new ConvertedSourcePair("", Integer.valueOf(100)));
+		l.add(new ConvertedSourcePair("", new Integer(100)));
 		l.add(new ConvertedSourcePair(new Object(), this));
 		l.add(new ConvertedSourcePair(new Object(), "foo"));
-		l.add(new ConvertedSourcePair(new Object(), Integer.valueOf(100)));
+		l.add(new ConvertedSourcePair(new Object(), new Integer(100)));
 		l.add(new ConvertedSourcePair(new ArrayList(), this));
 		l.add(new ConvertedSourcePair(new HashSet(), "foo"));
-		l.add(new ConvertedSourcePair(new HashMap(), Integer.valueOf(100)));
+		l.add(new ConvertedSourcePair(new HashMap(), new Integer(100)));
 		return l;
 	}
 
@@ -74,7 +74,7 @@ public class NOPCopierTestCase extends BaseCopierTestCase {
 		l.add(new ConvertedSourcePair("", null));
 		l.add(new ConvertedSourcePair(toString(), this));
 		l.add(new ConvertedSourcePair("foo", "foo"));
-		l.add(new ConvertedSourcePair("100", Integer.valueOf(100)));
+		l.add(new ConvertedSourcePair("100", new Integer(100)));
 		l.add(new ConvertedSourcePair(addThis(new ArrayList()), this));
 		l.add(new ConvertedSourcePair(addThis(new HashSet()), "foo"));
 		return l;

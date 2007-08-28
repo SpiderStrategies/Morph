@@ -109,7 +109,7 @@ public class NumberToTextConverterTestCase extends BaseConverterTestCase {
 	
 		// test in Dutch
 		
-		Locale dutch = new Locale("nl");
+		Locale dutch = new Locale("nl", "");
 		
 		convertedString = (String)
 			getConverter().convert(String.class, new Double(4444.44d), dutch);

@@ -27,7 +27,7 @@ import java.io.PrintWriter;
  * @author Matthew Sgarlata
  * @since November 6, 2004
  */
-public abstract class NestableRuntimeException extends RuntimeException {
+public class NestableRuntimeException extends RuntimeException {
 	private static final String NESTING_MESSAGE = "Nested Exception: ";
 
 	private Throwable cause;

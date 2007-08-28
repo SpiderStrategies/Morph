@@ -72,7 +72,7 @@ public class TestObjects {
 	
 	public TestObjects() {
 		emptyPrimitiveArray = new long[0];
-		multiElementEmptyPrimitiveArray = new long[3];
+		multiElementEmptyPrimitiveArray = new long[] { 1, 2, 3 };
 		singleElementPrimitiveArray = new long[] { 2 };
 		multiElementPrimitiveArray = new long[] { 13, 2, 4 };
 //		multidimensionalPrimitiveArray =
@@ -147,9 +147,11 @@ public class TestObjects {
 		request.addParameter("param1", "one");
 		request.addParameter("param2", "two");
 		request.addParameter("three", threeStringsArray);
+		request.addParameter("inBothParamsAndAttrs", "paramValue");
 		request.setAttribute("attribute1", "one");
 		request.setAttribute("attribute2", "two");
 		request.setAttribute("three", threeStringsArray);
+		request.setAttribute("inBothParamsAndAttrs", "attrValue");
 		request.setAttribute("multidimensionalPrimitiveArray", multidimensionalPrimitiveArray);
 		servletRequest = request;
 		

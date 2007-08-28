@@ -43,7 +43,7 @@ public class NumberToTimeConverterTestCase extends BaseConverterTestCase {
 		
 		Date date = new Date(2005, 0, 1);
 		Calendar newYearsDay2005 = new GregorianCalendar();
-		newYearsDay2005.setTimeInMillis(date.getTime());
+		newYearsDay2005.setTime(date);
 		
 		List list = new ArrayList();
 		list.add(new ConvertedSourcePair(now, new BigInteger(nowString)));

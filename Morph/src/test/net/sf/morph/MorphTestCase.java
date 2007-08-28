@@ -28,9 +28,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import javax.servlet.ServletRequest;
+
 import junit.framework.TestCase;
 import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.transform.TransformationException;
+import net.sf.morph.util.TestObjects;
 import net.sf.morph.util.TestUtils;
 
 /**
@@ -94,7 +97,7 @@ public class MorphTestCase extends TestCase {
 	public void testNumberAndCalendarConversion() {
 		Date date = new Date(2005, 0, 1);
 		Calendar newYearsDay2005 = new GregorianCalendar();
-		newYearsDay2005.setTimeInMillis(date.getTime());
+		newYearsDay2005.setTime(date);
 		TestUtils.assertEquals(newYearsDay2005, Morph.convertToCalendar(new Long(date.getTime())));		
 		TestUtils.assertEquals(new Long(date.getTime()), Morph.convertToLongObject(date));		
 	}
@@ -124,7 +127,7 @@ public class MorphTestCase extends TestCase {
 		
 		// test in Dutch
 		
-		Locale dutch = new Locale("nl");
+		Locale dutch = new Locale("nl", "");
 		
 		assertEquals(4444.44d, Morph.convertToDouble("\u20ac4.444,44", dutch), precision);
 		assertEquals(4444.44d, Morph.convertToDouble("\u20ac 4.444,44", dutch), precision);
@@ -247,6 +250,21 @@ public class MorphTestCase extends TestCase {
 		
 		assertEquals(new Integer(1), object.getArray()[0]);
 		assertEquals(new Integer(2), object.getArray()[1]);
+	}
+
+// this test currently fails	
+//	public void testGetRequestParameter() {
+//		TestObjects to = new TestObjects();
+//		ServletRequest request = to.servletRequest;
+//		assertEquals("paramValue", Morph.get(request, "inBothParamsAndAttrs"));
+//	}
+	
+	public void testGetInterfaceType() {
+		TestObjects to = new TestObjects();
+		// just don't want these calls don't blow up
+		assertEquals(new Long(1), Morph.get(to.multiElementEmptyPrimitiveArray, "0", Comparable.class));
+		assertEquals(new Long(1), Morph.get(to.oneTwoThreeNumberArray, "0", Comparable.class));
+		assertEquals(new Long(1), Morph.get(to.oneTwoThreeObjectArray, "0", Comparable.class));
 	}
 	
 }

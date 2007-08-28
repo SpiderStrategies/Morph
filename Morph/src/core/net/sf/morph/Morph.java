@@ -1061,7 +1061,7 @@ public abstract class Morph {
 	 *             expression
 	 */
     public static void set(Object target, String expression, boolean value) {
-    	set(target, expression, Boolean.valueOf(value));
+    	set(target, expression, new Boolean(value));
     }    
 
 	/**

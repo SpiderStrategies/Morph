@@ -219,7 +219,7 @@ public class TestUtils {
 			try {
 				return type.getConstructor(ONE_STRING).newInstance(new Object[] { Byte.toString(b) });
 			} catch (Exception e) {
-				throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
+				throw e instanceof RuntimeException ? (RuntimeException) e : new NestableRuntimeException(e);
 			}
 		}
 		if (type == Character.class) {

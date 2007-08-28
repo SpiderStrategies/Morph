@@ -212,7 +212,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 		try {
 			boolean isReflectable = isReflectableImpl(reflectedType);
 			if (isCachingIsReflectableCalls()) {
-				getReflectableCallCache().put(reflectedType, Boolean.valueOf(isReflectable));
+				getReflectableCallCache().put(reflectedType, new Boolean(isReflectable));
 			}
 			return isReflectable;
 		}
@@ -523,7 +523,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 			Exception exception = null;
 
 			try {
-				isWriteable = Boolean.valueOf(isWriteableImpl(bean, propertyName));
+				isWriteable = new Boolean(isWriteableImpl(bean, propertyName));
 			}
 			catch (Exception e) {
 				exception = e;

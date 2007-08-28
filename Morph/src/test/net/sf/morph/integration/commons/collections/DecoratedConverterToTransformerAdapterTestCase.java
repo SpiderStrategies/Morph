@@ -25,7 +25,7 @@ public class DecoratedConverterToTransformerAdapterTestCase extends TestCase {
 		DecoratedConverterToTransformerAdapter t = new DecoratedConverterToTransformerAdapter();
 		t.setDestinationClass(String.class);
 		assertEquals("foo", t.transform("foo"));
-		assertEquals("1", t.transform(Integer.valueOf(1)));
+		assertEquals("1", t.transform(new Integer(1)));
 		assertEquals("foo", t.transform(new char[] { 'f', 'o', 'o' }));
 	}
 }

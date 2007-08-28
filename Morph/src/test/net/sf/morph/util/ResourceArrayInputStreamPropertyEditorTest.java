@@ -32,7 +32,7 @@ public class ResourceArrayInputStreamPropertyEditorTest extends TestCase {
 				sw.write(b);
 			}
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new NestableRuntimeException(e);
 		}
 		return sw.toString();
 	}

@@ -133,7 +133,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		try {
 			boolean isTransformable = isTransformableImpl(destinationType, sourceType);
 			if (isCachingIsTransformableCalls()) {
-				getTransformableCallCache().put(pair, Boolean.valueOf(isTransformable));
+				getTransformableCallCache().put(pair, new Boolean(isTransformable));
 			}
 			return isTransformable;
 		}

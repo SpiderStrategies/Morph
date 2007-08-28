@@ -59,7 +59,7 @@ public class TransformerToDecoratedConverterAdapterTestCase extends BaseConverte
 		l.add(new ConvertedSourcePair("BAR", "bar"));
 		l.add(new ConvertedSourcePair("BAZ", "baz"));
 		l.add(new ConvertedSourcePair(null, "spazz"));
-		l.add(new ConvertedSourcePair(null, Integer.valueOf(6)));
+		l.add(new ConvertedSourcePair(null, new Integer(6)));
 		l.add(new ConvertedSourcePair(null, new Object()));
 		return l;
 	}
@@ -74,7 +74,7 @@ public class TransformerToDecoratedConverterAdapterTestCase extends BaseConverte
 		l.add(new ConvertedSourcePair("bar", "bar"));
 		l.add(new ConvertedSourcePair("baz", "baz"));
 		l.add(new ConvertedSourcePair("spazz", "spazz"));
-		l.add(new ConvertedSourcePair(Integer.valueOf(6), Integer.valueOf(6)));
+		l.add(new ConvertedSourcePair(new Integer(6), new Integer(6)));
 		Object o = new Object();
 		l.add(new ConvertedSourcePair(o, o));
 		return l;
