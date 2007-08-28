@@ -31,7 +31,7 @@ import net.sf.morph.transform.DecoratedConverter;
  */
 public class BeanToPrettyTextConverterTestCase extends TestCase {
 	
-	private DecoratedConverter converter;
+	private DecoratedConverter defaultConverter;
 	
 	public class TrickyObject {
 		private String readAndWrite;
@@ -57,7 +57,7 @@ public class BeanToPrettyTextConverterTestCase extends TestCase {
 	}
 	
 	protected void setUp() throws Exception {
-	    converter = new BeanToPrettyTextConverter();
+	    defaultConverter = new BeanToPrettyTextConverter();
     }
 
 	public void testSimpleObject() {
@@ -65,7 +65,7 @@ public class BeanToPrettyTextConverterTestCase extends TestCase {
 		source.put("one", new Integer(1));
 		source.put("two", new Integer(2));
 		source.put("three", new Integer(3));
-		String destination = (String) converter.convert(String.class, source);
+		String destination = (String) defaultConverter.convert(String.class, source);
 		assertEquals("[one=1,two=2,three=3]", destination);
 	}
 	
@@ -73,10 +73,41 @@ public class BeanToPrettyTextConverterTestCase extends TestCase {
 		TrickyObject source = new TrickyObject("r");
 		source.setReadAndWrite("rw");
 		source.setWriteOnly("w");
-		String destination = (String) converter.convert(String.class, source);
+		String destination = (String) defaultConverter.convert(String.class, source);
 		// not sure if this will work across JVMs because depends on the order
 		// the properties are returned in
 		assertEquals("[readAndWrite=rw,readOnly=r]", destination);
+	}
+	
+	public void testWithNulls() {
+		BeanToPrettyTextConverter converter = new BeanToPrettyTextConverter();
+		converter.setSeparator("&");
+		converter.setPrefix(null);
+		converter.setSuffix(null);
+		
+		Map source = new ListOrderedMap();
+		source.put("calendarId", null);
+		source.put("calendarPeriodId", new Integer(1));
+		source.put("organizationId", new int[] { 2, 3});
+		String destination = (String) converter.convert(String.class, source);
+		assertEquals("calendarPeriodId=1&organizationId={2,3}", destination);
+		
+		source = new ListOrderedMap();
+		source.put("calendarId", null);
+		source.put("calendarPeriodId", new Integer(1));
+		source.put("organizationId", null);
+		destination = (String) converter.convert(String.class, source);
+		assertEquals("calendarPeriodId=1", destination);		
+		
+		source = new ListOrderedMap();
+		source.put("calendarId1", null);
+		source.put("calendarId2", null);
+		source.put("calendarPeriodId", new Integer(1));
+		source.put("middleNull", null);
+		source.put("organizationId", "hi");
+		source.put("organizationId2", null);
+		destination = (String) converter.convert(String.class, source);
+		assertEquals("calendarPeriodId=1&organizationId=hi", destination);		
 	}
 	
 }
