@@ -46,6 +46,18 @@ public class DefaultToTextConverter extends SimpleDelegatingTransformer implemen
 	 */
 	private Converter textConverter;
 	
+	public DefaultToTextConverter() {
+	    super();
+    }
+
+	public DefaultToTextConverter(Transformer[] components, boolean appendDefaultComponents) {
+	    super(components, appendDefaultComponents);
+    }
+
+	public DefaultToTextConverter(Transformer[] components) {
+	    super(components);
+    }
+
 	/**
 	 * Returns <code>true</code> if the destination class is one of the
 	 * destination classes allowed by the

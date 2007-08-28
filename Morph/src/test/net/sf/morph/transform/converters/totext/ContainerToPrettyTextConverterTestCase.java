@@ -63,4 +63,13 @@ public class ContainerToPrettyTextConverterTestCase extends BaseToTextConverterT
 		list.add(Object.class);
 		return list;
 	}
+	
+	public void testNullPrefixAndSuffix() {
+		ContainerToPrettyTextConverter converter = new ContainerToPrettyTextConverter();
+		converter.setPrefix(null);
+		converter.setSuffix(null);
+		String converted = (String) converter.convert(String.class, new int[] { 1, 2});
+		assertEquals("1,2", converted);
+	}
+	
 }

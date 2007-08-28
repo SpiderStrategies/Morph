@@ -46,12 +46,21 @@ public class ContainerToPrettyTextConverter extends BaseToPrettyTextConverter {
 	public static final String DEFAULT_PREFIX = "{";
 	public static final String DEFAULT_SUFFIX = "}";	
 	public static final String DEFAULT_SEPARATOR = ",";
+	
+	public ContainerToPrettyTextConverter() {
+		setPrefix(DEFAULT_PREFIX);
+		setSuffix(DEFAULT_SUFFIX);
+		setSeparator(DEFAULT_SEPARATOR);
+	}
 
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 		
 		boolean endsInSeparator = false;
-		StringBuffer buffer = new StringBuffer(getPrefix());
+		StringBuffer buffer = new StringBuffer();
+		if (getPrefix() != null) {
+			buffer.append(getPrefix());
+		}
 		Iterator iterator = getContainerReflector().getIterator(source);
 		while (iterator != null && iterator.hasNext()) {
 			Object next = iterator.next();
@@ -66,7 +75,9 @@ public class ContainerToPrettyTextConverter extends BaseToPrettyTextConverter {
 		if (endsInSeparator) {
 			buffer.delete(buffer.length() - getSeparator().length(), buffer.length());	
 		}
-		buffer.append(getSuffix());
+		if (getSuffix() != null) {
+			buffer.append(getSuffix());
+		}
 		
 		return getTextConverter().convert(destinationClass, buffer, locale);
 	}
@@ -91,20 +102,6 @@ public class ContainerToPrettyTextConverter extends BaseToPrettyTextConverter {
 			}
 		}
 		return list == null ? reflectableClasses : (Class[]) list.toArray(new Class[list.size()]);
-	}
-
-	public String getSeparator() {
-		String separator = super.getSeparator();
-		return separator == null ? DEFAULT_SEPARATOR : separator;
-	}
-
-	public String getPrefix() {
-		String prefix = super.getPrefix();
-		return prefix == null ? DEFAULT_PREFIX : prefix;
-	}
-	public String getSuffix() {
-		String suffix = super.getSuffix();
-		return suffix == null ? DEFAULT_SUFFIX : suffix;
 	}
 
 }
