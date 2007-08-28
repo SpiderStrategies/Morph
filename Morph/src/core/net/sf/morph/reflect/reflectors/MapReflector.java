@@ -180,7 +180,7 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 //		keys.add(IMPLICIT_PROPERTY_VALUES);
 //		keys.add(IMPLICIT_PROPERTY_ENTRIES);
 //		return (String[]) keys.toArray(new String[keys.size()]);
-		Set keys = new HashSet(getMap(bean).keySet());
+		Set keys = getMap(bean).keySet();
 		return (String[]) keys.toArray(new String[keys.size()]);
 	}
 	protected Class getTypeImpl(Object bean, String propertyName) throws Exception {
