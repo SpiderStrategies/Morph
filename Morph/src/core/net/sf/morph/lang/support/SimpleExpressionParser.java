@@ -15,8 +15,6 @@
  */
 package net.sf.morph.lang.support;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import net.sf.morph.util.MorphStringTokenizer;
@@ -32,7 +30,7 @@ public class SimpleExpressionParser extends BaseExpressionParser implements Expr
 
 	private static final String DELIMITERS = "[]()\"'.";
 	
-	public List parseImpl(String expression) throws Exception {
+	public String[] parseImpl(String expression) throws Exception {
 		StringTokenizer tokenizer = new MorphStringTokenizer(
 			StringUtils.removeWhitespace(expression), DELIMITERS);
 		// Don't use a converter to do this conversion because that makes
@@ -43,11 +41,11 @@ public class SimpleExpressionParser extends BaseExpressionParser implements Expr
 		// depend on the parser). The speed issue is very important here,
 		// because the simple expression parser is used very heavily by other
 		// parts of the framework (e.g. contexts)
-		List list = new ArrayList(tokenizer.countTokens());
-		while (tokenizer.hasMoreElements()) {
-			list.add(tokenizer.nextToken());
+		String[] tokens = new String[tokenizer.countTokens()];
+		for (int i=0; i<tokens.length; i++) {
+			tokens[i] = tokenizer.nextToken();
 		}
-		return list;
+		return tokens;
 	}
 
 }

@@ -15,8 +15,6 @@
  */
 package net.sf.morph.lang.support;
 
-import java.util.List;
-
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.lang.InvalidExpressionException;
 
@@ -28,7 +26,7 @@ import net.sf.morph.lang.InvalidExpressionException;
  */
 public abstract class BaseExpressionParser implements ExpressionParser {
 
-	public abstract List parseImpl(String expression) throws Exception;
+	public abstract String[] parseImpl(String expression) throws Exception;
 	
 	public String[] parse(String expression) throws InvalidExpressionException {
 		if (ObjectUtils.isEmpty(expression)) {
@@ -36,8 +34,7 @@ public abstract class BaseExpressionParser implements ExpressionParser {
 		}
 		
 		try {
-			List list = parseImpl(expression);
-			return (String[]) list.toArray(new String[list.size()]);
+			return parseImpl(expression);
 		}
 		catch (InvalidExpressionException e) {
 			throw e;

@@ -21,6 +21,7 @@ import java.util.Locale;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.NumberUtils;
 
 /**
  * Converts numbers to boolean values. Numbers equal to zero are converted to
@@ -42,7 +43,7 @@ public class NumberToBooleanConverter extends BaseTransformer implements Convert
 		
 		BigDecimal bigDecimal = new BigDecimal(source.toString());
 		// BigDecimal.equals() takes scale into account, so use compareTo()
-		return bigDecimal.compareTo(new BigDecimal(0)) == 0 ? Boolean.FALSE : Boolean.TRUE;
+		return bigDecimal.compareTo(NumberUtils.ZERO) == 0 ? Boolean.FALSE : Boolean.TRUE;
 	}
 
 	protected Class[] getSourceClassesImpl() throws Exception {

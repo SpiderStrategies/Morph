@@ -87,6 +87,19 @@ public class StringUtils {
 		if (expression == null) {
 			return null;
 		}
+		
+		// first make sure there is whitespace.  Usually there won't be so we
+		// can save ourselves from creating a new StringBuffer and String
+		for (int i=0; i<expression.length(); i++) {
+			if (Character.isWhitespace(expression.charAt(i))) {
+				return constructStringWithoutWhitespace(expression);
+			}
+		}
+		
+		return expression;		
+	}
+	
+	private static String constructStringWithoutWhitespace(String expression) {
 		StringBuffer buffer = new StringBuffer(expression.length());
 		for (int i=0; i<expression.length(); i++) {
 			if (!Character.isWhitespace(expression.charAt(i))) {

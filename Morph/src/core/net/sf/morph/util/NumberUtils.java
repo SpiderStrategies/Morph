@@ -160,6 +160,10 @@ public abstract class NumberUtils {
 	 * @see Long#MIN_VALUE
 	 */
 	public static final BigDecimal MIN_FLOAT = new BigDecimal("-" + Float.MAX_VALUE);
+	/**
+	 * A BigDecimal containing the value zero (0).
+	 */
+	public static final BigDecimal ZERO = new BigDecimal("0");
 	
 	static {
 		// the .TYPE entries probably aren't needed, but they don't hurt
