@@ -15,6 +15,8 @@
  */
 package net.sf.morph.transform.converters;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
@@ -169,49 +171,16 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 //					locale);
 //			}
 
-		// strip out the characters that should be ignored
-		StringBuffer charactersToParse = new StringBuffer();
+		StringBuffer charactersToParse = 
+			// remove characters that should be ignored, such as currency symbols
+			// when currency handling is set to CURRENCY_IGNORE
+			removeIgnoredCharacters(string, locale);
 
-		for (int i = 0; i < string.length(); i++) {
-			char currentChar = string.charAt(i);
-			if (getWhitespaceHandling() == WHITESPACE_IGNORE
-				&& Character.isWhitespace(currentChar)) {
-				continue;
-			}
-			if (getCurrencyHandling() == CURRENCY_IGNORE
-				&& Character.getType(currentChar) == Character.CURRENCY_SYMBOL) {
-				continue;
-			}
-			if (getPercentageHandling() == PERCENTAGE_IGNORE) {
-				DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
-				if (currentChar == symbols.getPercent()) {
-					continue;
-				}
-			}
-			if (getParenthesesHandling() == PARENTHESES_IGNORE) {
-				if (currentChar == LEFT_PARENTHESES
-					|| currentChar == RIGHT_PARENTHESES) {
-					continue;
-				}
-			}
-			charactersToParse.append(currentChar);
-		}
-
-		int lastCharIndex = charactersToParse.length() - 1;
-		// if this is a number enclosed with parentheses and we should be
-		// negating values in parentheses
-		if (getParenthesesHandling() == PARENTHESES_NEGATE &&
-			charactersToParse.charAt(0) == LEFT_PARENTHESES &&
-			charactersToParse.charAt(lastCharIndex) == RIGHT_PARENTHESES) {
-			// delete the closing paran
-			charactersToParse.deleteCharAt(lastCharIndex);
-			// delete the opening paran
-			charactersToParse.deleteCharAt(0);
-			// add a minus symbol, to indicate the number is negative
-			DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
-			charactersToParse.insert(0, symbols.getMinusSign());
-		}
-
+		// keep track of whether the conversion result needs to be negated
+		// before it is returned
+		boolean negate = handleParenthesesNegation(charactersToParse, locale);	
+		negate = negate || handleNegativeSignNegation(charactersToParse, locale);
+		
 		NumberFormat format = null;
 		ParsePosition position = null;
 		Number number = null;
@@ -245,8 +214,10 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 			position = new ParsePosition(0);
 			number = format.parse(stringToParse, position);
 			if (isParseSuccessful(stringToParse, position)) {
+				// negate the number if needed
+				returnVal = negateIfNecessary(number, negate, locale);
 				// convert the number to the destination class requested
-				returnVal = getNumberConverter().convert(destinationClass, number,
+				returnVal = getNumberConverter().convert(destinationClass, returnVal,
 					locale);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Successfully parsed '" + source + "' as a percentage with value " + returnVal);
@@ -263,8 +234,10 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 		position = new ParsePosition(0);
 		number = format.parse(stringToParse, position);
 		if (isParseSuccessful(stringToParse, position)) {
+			// negate the number if needed
+			returnVal = negateIfNecessary(number, negate, locale);
 			// convert the number to the destination class requested
-			returnVal = getNumberConverter().convert(destinationClass, number,
+			returnVal = getNumberConverter().convert(destinationClass, returnVal,
 				locale);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Successfully parsed '" + source + "' as a number or currency value of " + returnVal);
@@ -293,6 +266,109 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 
 		throw new TransformationException(destinationClass, source);
 	}
+
+	private Object negateIfNecessary(Number returnVal, boolean negate, Locale locale) {
+		if (negate) {
+			BigDecimal bd = (BigDecimal) getNumberConverter().convert(BigDecimal.class, returnVal, locale);
+			return bd.negate();
+		}
+		return returnVal;
+    }
+
+	/**
+	 * Remove any characters that should be ignored when performing the
+	 * conversion.
+	 * 
+	 * @param string
+	 *            the input string
+	 * @param locale
+	 *            the locale
+	 * @return <code>string</code>, with all characters that should be
+	 *         ignored removed
+	 */
+	private StringBuffer removeIgnoredCharacters(String string, Locale locale) {
+		StringBuffer charactersToParse = new StringBuffer();
+	    for (int i = 0; i < string.length(); i++) {
+			char currentChar = string.charAt(i);
+			if (getWhitespaceHandling() == WHITESPACE_IGNORE
+				&& Character.isWhitespace(currentChar)) {
+				continue;
+			}
+			if (getCurrencyHandling() == CURRENCY_IGNORE
+				&& Character.getType(currentChar) == Character.CURRENCY_SYMBOL) {
+				continue;
+			}
+			if (getPercentageHandling() == PERCENTAGE_IGNORE) {
+				DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
+				if (currentChar == symbols.getPercent()) {
+					continue;
+				}
+			}
+			if (getParenthesesHandling() == PARENTHESES_IGNORE) {
+				if (currentChar == LEFT_PARENTHESES
+					|| currentChar == RIGHT_PARENTHESES) {
+					continue;
+				}
+			}
+			charactersToParse.append(currentChar);
+		}
+	    return charactersToParse;
+    }
+
+	/**
+	 * Determines whether negation of the conversion result is needed based on
+	 * the presence and handling method of parentheses.
+	 * 
+	 * @param charactersToParse
+	 *            the characters to parse
+	 * @param locale
+	 *            the locale
+	 * @return <code>true</code>, if the number is enclosed by parantheses
+	 *         and parantheses handling is set to PARENTHESES_NEGATE or<br>
+	 *         <code>false</code>, otherwise
+	 */
+	private boolean handleParenthesesNegation(StringBuffer charactersToParse, Locale locale) {
+	    int lastCharIndex = charactersToParse.length() - 1;
+		// if this is a number enclosed with parentheses and we should be
+		// negating values in parentheses
+		if (getParenthesesHandling() == PARENTHESES_NEGATE &&
+			charactersToParse.charAt(0) == LEFT_PARENTHESES &&
+			charactersToParse.charAt(lastCharIndex) == RIGHT_PARENTHESES) {
+			// delete the closing paran
+			charactersToParse.deleteCharAt(lastCharIndex);
+			// delete the opening paran
+			charactersToParse.deleteCharAt(0);
+			// return true to indicate negation should take place
+			return true;
+		}
+		
+		// return false to indicate negation should not happen
+		return false;
+    }
+
+	/**
+	 * Determines whether negation of the conversion result is needed based on
+	 * the presence of the minus sign character.
+	 * 
+	 * @param charactersToParse
+	 *            the characters to parse
+	 * @param locale
+	 *            the locale
+	 * @return <code>true</code>, if the number is enclosed by parantheses
+	 *         and parantheses handling is set to PARENTHESES_NEGATE or<br>
+	 *         <code>false</code>, otherwise
+	 */
+	private boolean handleNegativeSignNegation(StringBuffer charactersToParse, Locale locale) {
+		if (charactersToParse.charAt(0) == '-') {
+			charactersToParse.deleteCharAt(0);
+			return true;
+		}
+		if (charactersToParse.charAt(charactersToParse.length() - 1) == '-') {
+			charactersToParse.deleteCharAt(charactersToParse.length() - 1);
+			return true;
+		}
+		return false;
+    }
 
 	protected boolean isParseSuccessful(String stringWithoutIgnoredSymbolsStr, ParsePosition position) {
 		return position.getIndex() != 0 &&

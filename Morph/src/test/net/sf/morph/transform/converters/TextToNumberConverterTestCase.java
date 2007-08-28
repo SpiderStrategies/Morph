@@ -134,7 +134,7 @@ public class TextToNumberConverterTestCase extends BaseConverterTestCase {
 		
 		// test in Dutch
 		
-		Locale dutch = new Locale("nl");
+		Locale dutch = new Locale("nl", "");
 		
 		convertedDouble = (Double)
 			getConverter().convert(Double.class, "\u20ac4.444,44", dutch);
@@ -169,8 +169,16 @@ public class TextToNumberConverterTestCase extends BaseConverterTestCase {
 		convertedDouble = (Double)
 			getConverter().convert(Double.class, "4.444,44 \u20ac", belgium);
 		assertEquals(4444.44d, convertedDouble.doubleValue(), precision);
-
+	}
+	
+	public void testNegativeSignHandling() throws Exception {
+		Locale iraq = new Locale("ar", "iq");
 		
+		assertEquals(new Integer(-1), (Integer) getConverter().convert(Integer.class, "-1", iraq));
+		assertEquals(new Integer(-1), (Integer) getConverter().convert(Integer.class, "1-", iraq));
+		
+		assertEquals(new Double(-.01), (Double) getConverter().convert(Double.class, "-1%", Locale.US));
+		assertEquals(new Double(-.01), (Double) getConverter().convert(Double.class, "1%-", Locale.US));		
 	}
 
 }
