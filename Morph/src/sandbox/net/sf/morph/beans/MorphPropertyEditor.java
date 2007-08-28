@@ -76,8 +76,11 @@ public class MorphPropertyEditor extends PropertyEditorSupport {
 			setValue(value);
 		}
 		catch (MorphException e) {
-			if (log.isErrorEnabled()) {
-				log.error(e.getMessage(), e);
+			// exception thrown, so not appropriate to log an error (the calling
+			// class should decide how to handle the exception, and may or may
+			// not choose to log it)
+			if (log.isDebugEnabled()) {
+				log.debug(e.getMessage(), e);
 			}
 			// rethrow exception as IllegalArgumentException, as specified in
 			// the API
