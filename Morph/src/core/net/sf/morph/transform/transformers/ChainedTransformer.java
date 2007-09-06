@@ -27,11 +27,13 @@ import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
+import net.sf.morph.transform.copiers.CopierDecorator;
+import net.sf.morph.util.Assert;
 import net.sf.morph.util.ClassUtils;
 import net.sf.morph.util.TransformerUtils;
 
 /**
- * Runs one or more converters in a chain.
+ * Runs one or more transformers in a chain.
  *
  * @author Matt Sgarlata
  * @author Matt Benson
@@ -40,7 +42,21 @@ import net.sf.morph.util.TransformerUtils;
 public class ChainedTransformer extends BaseCompositeTransformer implements
 		DecoratedConverter, DecoratedCopier, ExplicitTransformer {
 
-	private ChainedTransformer copyConverter;
+	private Converter copyConverter;
+
+	/**
+	 * Create a new ChainedTransformer.
+	 */
+	public ChainedTransformer() {
+	}
+
+	/**
+	 * Create a new ChainedTransformer.
+	 * @param chain
+	 */
+	public ChainedTransformer(Transformer[] chain) {
+		setComponents(chain);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -54,15 +70,29 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 	 * Get the converter used when using a ChainedTransformer as a Copier.
 	 * @return
 	 */
-	protected synchronized ChainedTransformer getCopyConverter() {
+	protected synchronized Converter getCopyConverter() {
 		if (copyConverter == null) {
-			copyConverter = new ChainedTransformer();
 			Transformer[] chain = getChain();
-			Transformer[] newChain = new Transformer[chain.length - 1];
-			System.arraycopy(chain, 0, newChain, 0, newChain.length);
-			copyConverter.setComponents(newChain);
+			Assert.notNull(chain, "components");
+			if (chain.length == 2) {
+				copyConverter = getConverter(chain[0]);
+			} else {
+				Transformer[] newChain = new Transformer[chain.length - 1];
+				System.arraycopy(chain, 0, newChain, 0, newChain.length);
+				copyConverter = new ChainedTransformer(newChain);
+			}
 		}
 		return copyConverter;
+	}
+
+	private Converter getConverter(Transformer t) {
+		if (t instanceof Converter) {
+			return (Converter) t;
+		}
+		if (t instanceof Copier) {
+			return new CopierDecorator((Copier) t);
+		}
+		throw new IllegalArgumentException("Don't know how to use " + t + " as a Converter");
 	}
 
 	/**
@@ -85,7 +115,7 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 		}
 		Object o = source;
 		for (int i = 0; i < conversionPath.size(); i++) {
-			o = ((Converter) chain[i]).convert((Class) conversionPath.get(i), o, locale);
+			o = getConverter(chain[i]).convert((Class) conversionPath.get(i), o, locale);
 			logConversion(i + 1, source, o);
 		}
 		return o;
