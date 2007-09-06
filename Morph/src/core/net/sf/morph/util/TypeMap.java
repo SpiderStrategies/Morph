@@ -47,7 +47,8 @@ public class TypeMap extends HashMap {
 	}
 	
 	public Object put(Object key, Object value) {
-		return super.put(ClassUtils.convertToClass(key), ClassUtils.convertToClass(value));
+		return super.put(key == null ? null : ClassUtils.convertToClass(key),
+				value == null ? null : ClassUtils.convertToClass(value));
 	}
 	
 }
