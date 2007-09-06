@@ -16,7 +16,14 @@ public class ConstantConverter extends BaseTransformer implements DecoratedConve
 	private Object result;
 
 	/**
+	 * Create a new {@link ConstantConverter}.
+	 */
+	public ConstantConverter() {
+	}
+
+	/**
 	 * Create a new ConstantConverter.
+	 * @param result
 	 */
 	public ConstantConverter(Object result) {
 		this.result = result;
