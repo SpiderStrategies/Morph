@@ -35,6 +35,22 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 		DecoratedCopier, DecoratedConverter {
 
 	/**
+	 * Create a new CumulativeCopier.
+	 */
+	public CumulativeCopier() {
+		super();
+	}
+
+	/**
+	 * Create a new CumulativeCopier.
+	 * @param components
+	 */
+	public CumulativeCopier(Transformer[] components) {
+		this();
+		setComponents(components);
+	}
+
+	/**
 	 * {@inheritDoc}
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
 	 */
@@ -84,9 +100,9 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
 			Integer preferredTransformationType) throws Exception {
-		Copier[] copiers = (Copier[]) getComponents();
+		Object[] copiers = getComponents();
 		for (int i = 0; i < copiers.length; i++) {
-			copiers[i].copy(destination, source, locale);
+			((Copier) copiers[i]).copy(destination, source, locale);
 		}
 	}
 
