@@ -179,7 +179,17 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	public static boolean isServletApiPresent() {
 		return isClassPresent("javax.servlet.http.HttpServletRequest");
 	}
-	
+
+	/**
+	 * Indicates whether the JSP API is available.
+	 * 
+	 * @return <code>true</code> if the JSP API is available or <br>
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean isJspApiPresent() {
+		return isClassPresent("javax.servlet.jsp.PageContext");
+	}
+
 	/**
 	 * Indicates whether the BeanUtils API is available.
 	 * 

@@ -130,11 +130,13 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 
 		// bean reflectors
 		if (ClassUtils.isServletApiPresent()) {
-			componentList.add(new PageContextAttributeReflector());
 //				componentList.add(new ServletRequestParameterReflector());
 			componentList.add(new ServletRequestAttributeReflector());
 			componentList.add(new HttpSessionAttributeReflector());
 			componentList.add(new ServletContextAttributeReflector());
+		}
+		if (ClassUtils.isJspApiPresent()) {
+			componentList.add(new PageContextAttributeReflector());
 		}
 		if (ClassUtils.isBeanUtilsPresent()) {
 			componentList.add(new DynaBeanReflector());
