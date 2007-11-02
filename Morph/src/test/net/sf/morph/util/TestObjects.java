@@ -145,13 +145,13 @@ public class TestObjects {
 		threeStringsArray = new String[] { "one", "two", "three" };
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addParameter("param1", "one");
-		request.addParameter("param2", "two");
 		request.addParameter("three", threeStringsArray);
 		request.addParameter("inBothParamsAndAttrs", "paramValue");
 		request.setAttribute("attribute1", "one");
 		request.setAttribute("attribute2", "two");
 		request.setAttribute("three", threeStringsArray);
-		request.setAttribute("inBothParamsAndAttrs", "attrValue");
+		request.setAttribute("integer", new Integer(2));
+		request.setAttribute("inBothParamsAndAttrs", new Integer(3));
 		request.setAttribute("multidimensionalPrimitiveArray", multidimensionalPrimitiveArray);
 		servletRequest = request;
 		

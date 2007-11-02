@@ -67,4 +67,30 @@ public abstract class ReflectorUtils {
 						reflectedType);
 	}
 
+	/**
+	 * Indicates whether the given reflector can support the operations
+	 * specified in <code>reflectorType</code> when reflecting
+	 * <code>reflectedObject</code>.
+	 * 
+	 * @param reflector
+	 *            the reflector
+	 * @param reflectedObject
+	 *            the object for which we wish to determine reflectability
+	 * @param reflectorType
+	 *            the interface which defines the operations we would like to
+	 *            perform on instances of <code>reflectedType</code>
+	 * @return <code>true</code>, if the given reflector can support the
+	 *         operations specified in <code>reflectorType</code> when
+	 *         reflecting instances of <code>reflectedType</code>
+	 * @throws IllegalArgumentException
+	 *             if any of the arguments to this function are
+	 *             <code>null</code>
+	 * @throws net.sf.morph.reflect.ReflectionException
+	 *             if reflectability could not be determined
+	 * @since Morph 1.0.2
+	 */
+	public static boolean isReflectable(Reflector reflector, Object reflectedObject, Class reflectorType) {
+	    return isReflectable(reflector, ClassUtils.getClass(reflectedObject), reflectorType);
+    }
+
 }

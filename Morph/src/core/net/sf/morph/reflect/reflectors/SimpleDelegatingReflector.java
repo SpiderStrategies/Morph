@@ -21,16 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.composite.Defaults;
 import net.sf.composite.SpecializableComposite;
 import net.sf.composite.StrictlyTypedComposite;
-import net.sf.composite.specialize.SpecializationException;
-import net.sf.composite.specialize.Specializer;
-import net.sf.composite.specialize.specializers.CachingSpecializerProxy;
-import net.sf.composite.specialize.specializers.CloningSpecializer;
-import net.sf.composite.util.CompositeUtils;
 import net.sf.composite.util.ObjectUtils;
-import net.sf.composite.validate.ComponentValidator;
 import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.reflect.CompositeReflector;
 import net.sf.morph.reflect.ContainerReflector;
@@ -54,15 +47,11 @@ import net.sf.morph.util.ReflectorUtils;
  * @author Matt Sgarlata
  * @since Dec 13, 2004
  */
-public class SimpleDelegatingReflector extends BaseReflector implements
+public class SimpleDelegatingReflector extends BaseCompositeReflector implements
 		DecoratedReflector, StrictlyTypedComposite, SpecializableComposite,
 		BeanReflector, ContainerReflector, GrowableContainerReflector,
 		IndexedContainerReflector, InstantiatingReflector,
 		MutableIndexedContainerReflector, CompositeReflector, Cloneable {
-
-	private Object[] components;
-	private Specializer specializer;
-	private ComponentValidator componentValidator;
 
 	/**
 	 * Construct a new SimpleDelegatingReflector.
@@ -130,8 +119,7 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 
 		// bean reflectors
 		if (ClassUtils.isServletApiPresent()) {
-//				componentList.add(new ServletRequestParameterReflector());
-			componentList.add(new ServletRequestAttributeReflector());
+			componentList.add(new ServletRequestReflector());
 			componentList.add(new HttpSessionAttributeReflector());
 			componentList.add(new ServletContextAttributeReflector());
 		}
@@ -300,66 +288,12 @@ public class SimpleDelegatingReflector extends BaseReflector implements
 		return (InstantiatingReflector) getReflector(InstantiatingReflector.class, clazz);
 	}
 
-	public boolean isSpecializable(Class type) throws SpecializationException {
-		initialize();
-		return getSpecializer().isSpecializable(this, type);
-	}
-
-	public Object specialize(Class type) {
-		initialize();
-		return getSpecializer().specialize(this, type);
-	}
-
-	public Class getComponentType() {
-		return Reflector.class;
-	}
-
-	protected boolean isPerformingLogging() {
-		// let the delegate do the logging
-		return false;
-	}
-
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
-	public String toString() {
-		return CompositeUtils.toString(this);
-	}
-
 	// workaround for problem w/constructor using JDK 1.4.2_06 on WinXP SP2
 	public Object[] getComponents() {
-		if (components == null) {
+		if (super.getComponents() == null) {
 			setComponents(createDefaultComponents());
 		}
-		return components;
-	}
-
-	public void setComponents(Object[] components) {
-		setInitialized(false);
-		this.components = components;
-	}
-
-	public Specializer getSpecializer() {
-		if (specializer == null) {
-			specializer = new CachingSpecializerProxy(new CloningSpecializer());
-		}
-		return specializer;
-	}
-
-	public void setSpecializer(Specializer specializer) {
-		this.specializer = specializer;
-	}
-
-	public ComponentValidator getComponentValidator() {
-		if (componentValidator == null) {
-			componentValidator = Defaults.createComponentValidator();
-		}
-		return componentValidator;
-	}
-
-	public void setComponentValidator(ComponentValidator validator) {
-		this.componentValidator = validator;
+		return super.getComponents();
 	}
 
 }

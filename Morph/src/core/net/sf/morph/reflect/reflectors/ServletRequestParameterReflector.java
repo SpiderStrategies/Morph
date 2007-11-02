@@ -49,7 +49,11 @@ public class ServletRequestParameterReflector extends BaseServletReflector {
 
 	protected boolean isReadableImpl(Object bean, String propertyName)
 		throws Exception {
-		return ContainerUtils.contains(getPropertyNames(bean), propertyName);
+		// all possible property names are readable.  If the property was not
+		// part of the request, the Servlet API specifies that null will be
+		// returned if request.getParameter is called
+		// return ContainerUtils.contains(getPropertyNames(bean), propertyName);
+		return true;
 	}
 	
 	protected boolean isWriteableImpl(Object bean, String propertyName)

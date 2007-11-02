@@ -35,6 +35,7 @@ import net.sf.morph.reflect.reflectors.ServletContextAttributeReflectorTestCase;
 import net.sf.morph.reflect.reflectors.ServletContextInitParameterReflectorTestCase;
 import net.sf.morph.reflect.reflectors.ServletRequestAttributeReflectorTestCase;
 import net.sf.morph.reflect.reflectors.ServletRequestParameterReflectorTestCase;
+import net.sf.morph.reflect.reflectors.ServletRequestReflectorTestCase;
 import net.sf.morph.reflect.reflectors.SetReflectorTestCase;
 import net.sf.morph.reflect.reflectors.SimpleInstantiatingReflectorTestCase;
 import net.sf.morph.reflect.reflectors.SortedSetReflectorTestCase;
@@ -69,6 +70,7 @@ public class ReflectorsTestRunner extends TestRunner {
 		suite.addTestSuite(ServletContextInitParameterReflectorTestCase.class);
 		suite.addTestSuite(ServletRequestAttributeReflectorTestCase.class);
 		suite.addTestSuite(ServletRequestParameterReflectorTestCase.class);
+		suite.addTestSuite(ServletRequestReflectorTestCase.class);
 		suite.addTestSuite(SetReflectorTestCase.class);
 		suite.addTestSuite(SortedSetReflectorTestCase.class);
 		suite.addTestSuite(VelocityContextReflectorTestCase.class);

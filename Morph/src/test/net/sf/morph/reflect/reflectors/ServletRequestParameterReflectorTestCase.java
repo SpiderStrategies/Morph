@@ -15,7 +15,6 @@
  */
 package net.sf.morph.reflect.reflectors;
 
-import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.reflect.Reflector;
 import net.sf.morph.util.TestObjects;
 import net.sf.morph.util.TestUtils;
@@ -37,26 +36,20 @@ public class ServletRequestParameterReflectorTestCase extends
 		assertEquals(String.class, getBeanReflector().getType((new TestObjects()).servletRequest, "param2"));
 		assertEquals(String[].class,
 			getBeanReflector().getType((new TestObjects()).servletRequest, "three"));
-		TestUtils.assertEquals(getBeanReflector().get((new TestObjects()).servletRequest, "param1"), "one");
-		TestUtils.assertEquals(getBeanReflector().get((new TestObjects()).servletRequest, "param2"), "two");
-		TestUtils.assertEquals(getBeanReflector().get((new TestObjects()).servletRequest, "three"), (new TestObjects()).threeStringsArray);
 	}
 	
-	public void testGetHasNoError() {
-		try {
-			getBeanReflector().get((new TestObjects()).servletRequest, "four");
-			fail("'four' isn't one of the (new TestObjects()).servletRequest parameters, so an exception should be thrown");
-		}
-		catch (ReflectionException e) { }
+	public void testGet() {
+		assertNull(getBeanReflector().get((new TestObjects()).servletRequest, "four"));	
+		TestUtils.assertEquals(getBeanReflector().get((new TestObjects()).servletRequest, "param1"), "one");
+		TestUtils.assertEquals(getBeanReflector().get((new TestObjects()).servletRequest, "three"), (new TestObjects()).threeStringsArray);
 	}
 	
 	public void testIsReadable() {
 		for (int i=0; i<reflectableObjects.size(); i++) {
 			Object reflectableObject = reflectableObjects.get(i);
-			assertFalse(getBeanReflector().isReadable(reflectableObject, "randomProperty1942"));
-			assertFalse(getBeanReflector().isReadable(reflectableObject, "randomPropertyAbC"));
+			assertTrue(getBeanReflector().isReadable(reflectableObject, "randomProperty1942"));
+			assertTrue(getBeanReflector().isReadable(reflectableObject, "randomPropertyAbC"));
 			assertFalse(getBeanReflector().isWriteable(reflectableObject, "param1"));
-			assertFalse(getBeanReflector().isWriteable(reflectableObject, "param2"));
 		}
 	}
 	
@@ -66,7 +59,6 @@ public class ServletRequestParameterReflectorTestCase extends
 			assertFalse(getBeanReflector().isWriteable(reflectableObject, "randomProperty1432"));
 			assertFalse(getBeanReflector().isWriteable(reflectableObject, "randomPropertyAbC"));
 			assertFalse(getBeanReflector().isWriteable(reflectableObject, "param1"));
-			assertFalse(getBeanReflector().isWriteable(reflectableObject, "param2"));
 		}
 	}	
 
