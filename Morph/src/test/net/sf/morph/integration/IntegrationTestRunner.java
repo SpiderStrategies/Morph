@@ -17,6 +17,7 @@ package net.sf.morph.integration;
 
 import net.sf.morph.integration.commons.collections.DecoratedConverterToTransformerAdapterTestCase;
 import net.sf.morph.integration.commons.collections.TransformerToDecoratedConverterAdapterTestCase;
+import net.sf.morph.integration.commons.lang.LanguageStrLookupTestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -29,6 +30,7 @@ public class IntegrationTestRunner extends TestRunner {
 		TestSuite suite = new TestSuite();
 		suite.addTestSuite(TransformerToDecoratedConverterAdapterTestCase.class);
 		suite.addTestSuite(DecoratedConverterToTransformerAdapterTestCase.class);
+		suite.addTestSuite(LanguageStrLookupTestCase.class);
 		return suite;
 	}
 }
