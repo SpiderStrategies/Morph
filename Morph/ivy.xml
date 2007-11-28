@@ -18,6 +18,7 @@
     <conf name="beanutils" visibility="public" extends="default" />
     <conf name="chain" visibility="public" extends="default" />
     <conf name="collections" visibility="public" extends="default" />
+    <conf name="lang" visibility="public" extends="default" />
     <conf name="spring" visibility="public" extends="default" />
     <conf name="velocity" visibility="public" extends="default" />
     <conf name="web" visibility="public" extends="default" />
@@ -34,7 +35,7 @@
 
   <dependencies defaultconf="core->default" defaultconfmapping="*->default">
     <!-- required core -->
-    <dependency org="commons-logging" name="commons-logging" rev="1.1" />
+    <dependency org="commons-logging" name="commons-logging" rev="1.1" conf="default" />
     <dependency org="net.sf.composite" name="composite"
                 rev="latest.integration" />
 
@@ -55,7 +56,7 @@
 
     <!-- etc -->
     <dependency org="commons-lang" name="commons-lang" rev="2.3"
-                conf="test,site" />
+                conf="core,lang,site" />
     <dependency org="junit" name="junit" rev="3.8.1" conf="test" />
     <dependency org="log4j" name="log4j" rev="1.2.14" conf="test" />
     <dependency org="org.springframework" name="spring-mock" rev="1.2.6"
