@@ -15,10 +15,8 @@
  */
 package net.sf.morph.transform.converters;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.collections.OrderedMap;
 import org.apache.commons.collections.map.ListOrderedMap;
 
 import junit.framework.TestCase;

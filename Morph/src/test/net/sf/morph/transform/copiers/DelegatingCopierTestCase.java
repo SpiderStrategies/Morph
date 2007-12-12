@@ -7,7 +7,6 @@ import java.util.Map;
 
 import net.sf.morph.Defaults;
 import net.sf.morph.transform.Copier;
-import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.converters.NumberConverterTestCase;
 import net.sf.morph.transform.converters.NumberToTimeConverterTestCase;

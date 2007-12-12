@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.morph.transform.Copier;
-import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.util.TestClass;
 import net.sf.morph.util.TestUtils;
