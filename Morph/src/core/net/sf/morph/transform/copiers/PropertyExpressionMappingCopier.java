@@ -74,6 +74,22 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 	private Language language;
 
 	/**
+	 * Create a new PropertyExpressionMappingCopier.
+	 */
+	public PropertyExpressionMappingCopier() {
+		super();
+	}
+
+	/**
+	 * Create a new PropertyExpressionMappingCopier.
+	 * @param mapping property mapping
+	 */
+	public PropertyExpressionMappingCopier(Map mapping) {
+		this();
+		setMapping(mapping);
+	}
+
+	/**
 	 * Get the language of this PropertyExpressionMappingCopier.
 	 * @return the language
 	 */
