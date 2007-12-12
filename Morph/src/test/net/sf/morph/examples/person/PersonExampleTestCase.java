@@ -25,7 +25,6 @@ import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.converters.DefaultToBooleanConverter;
 import net.sf.morph.transform.converters.DefaultToTextConverter;
 import net.sf.morph.transform.converters.IdentityConverter;
-import net.sf.morph.transform.converters.NullConverter;
 import net.sf.morph.transform.converters.NumberConverter;
 import net.sf.morph.transform.converters.TextConverter;
 import net.sf.morph.transform.converters.TextToNumberConverter;
@@ -110,7 +109,6 @@ public class PersonExampleTestCase extends TestCase {
 		// SimpleDelegatingTransformer.  this makes sure all the normal conversions
 		// you would expect from Morph are available (e.g. Integer 1 -> Long 1)
 		transformers.add(new DefaultToBooleanConverter());
-		transformers.add(new NullConverter());
 		transformers.add(new IdentityConverter());
 		transformers.add(new DefaultToTextConverter());
 		transformers.add(new TextToNumberConverter());
