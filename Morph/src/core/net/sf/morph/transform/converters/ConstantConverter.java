@@ -23,10 +23,10 @@ public class ConstantConverter extends BaseTransformer implements DecoratedConve
 
 	/**
 	 * Create a new ConstantConverter.
-	 * @param result
+	 * @param result the Object result to set.
 	 */
 	public ConstantConverter(Object result) {
-		this.result = result;
+		setResult(result);
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class ConstantConverter extends BaseTransformer implements DecoratedConve
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
-		return new Class[] { ClassUtils.getClass(result) };
+		return new Class[] { ClassUtils.getClass(getResult()) };
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class ConstantConverter extends BaseTransformer implements DecoratedConve
 	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
 			throws Exception {
-		return result;
+		return getResult();
 	}
 
 	/**
