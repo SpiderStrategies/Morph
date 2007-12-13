@@ -82,11 +82,20 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	
 	// map of Class to Class
 	private Map containedSourceToDestinationTypeMap;
-	
+
+	/**
+	 * Create a new ContainerCopier.
+	 */
 	public ContainerCopier() {
 		super();
 	}
-	
+
+	/**
+	 * Determine the container element destination type
+	 * @param destination container
+	 * @param containedValueClass source type
+	 * @return destination element type
+	 */
 	protected Class determineDestinationContainedType(Object destination, Class containedValueClass) {
 		// determine the destinationType
 		Class destinationType = null;
@@ -184,6 +193,9 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
 		// The code here for Iterators and Enumerations is not quite 
 		// as rigorous as it could be.  Being as rigorous as possible, we would
@@ -205,13 +217,11 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 		return super.convertImpl(destinationClass, source, locale);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType)
 		throws TransformationException {
-		
-// sgarlatam 4/18/2005: this check is taken care of in BaseTransformer
-//		if (ReflectorUtils.isReflectable(getReflector(),
-//			source.getClass(), ContainerReflector.class)) {
-		
 		// if the destination is an Iterator or Enumeration, we actually already
 		// did all the required work in the createNewInstance method, so just
 		// return
@@ -235,18 +245,11 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 			put(i++, destination, sourceValue, sourceValueClass, locale,
 				preferredTransformationType);
 		}				
-		
-//		}
-//		else {
-//			throw new TransformationException(
-//				"Could not copy from "
-//					+ ObjectUtils.getObjectDescription(source)
-//					+ " to "
-//					+ ObjectUtils.getObjectDescription(destination)
-//					+ " because no container reflector could be found for the source object");
-//		}
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object createReusableSource(Class destinationClass, Object source) {
 		// if to array, get a resetable iterator over the source object:
 		return destinationClass.isArray() ? new ResetableIteratorWrapper(
@@ -254,6 +257,9 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 				: super.createReusableSource(destinationClass, source);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		Set set = new HashSet();
 		set.addAll(Arrays.asList(getGrowableContainerReflector().getReflectableClasses()));
@@ -263,26 +269,50 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 		return (Class[]) set.toArray(new Class[set.size()]);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getContainerReflector().getReflectableClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 		// this transformer can recursively call other transformers, so we don't
 		// want to eat user defined exceptions
 	    return false;
-    }
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Transformer getNestedTransformer() {
 		return super.getNestedTransformer();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setNestedTransformer(Transformer transformer) {
 		super.setNestedTransformer(transformer);
 	}
 
+	/**
+	 * Get the mapping of source to destination container element types.
+	 * @return Map
+	 * @see {@link net.sf.morph.util.TypeMap}
+	 */
 	public Map getContainedSourceToDestinationTypeMap() {
 		return containedSourceToDestinationTypeMap;
 	}
+
+	/**
+	 * Set the mapping of source to destination container element types.
+	 * @param containedSourceToDestinationMapping Map
+	 * @see {@link net.sf.morph.util.TypeMap}
+	 */
 	public void setContainedSourceToDestinationTypeMap(
 		Map containedSourceToDestinationMapping) {
 		this.containedSourceToDestinationTypeMap = new TypeMap(containedSourceToDestinationMapping);
