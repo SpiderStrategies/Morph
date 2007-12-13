@@ -124,7 +124,7 @@ public abstract class BaseCompositeTransformer extends BaseTransformer implement
 			return;
 		}
 		NodeCopier[] nodeCopiers = (NodeCopier[]) ContainerUtils.getElementsOfType(getComponents(), NodeCopier.class);
-		for (int i = 0; i < nodeCopiers.length; i++) {
+		for (int i = 0; nodeCopiers != null && i < nodeCopiers.length; i++) {
 			if (nodeCopiers[i].getNestedTransformer() == outgoing) {
 				nodeCopiers[i].setNestedTransformer(incoming);
 			}
