@@ -84,7 +84,7 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#getComponentType()
 	 */
 	public Class getComponentType() {
-		return Transformer.class;
+		return Copier.class;
 	}
 
 	/**
