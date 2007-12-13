@@ -41,7 +41,6 @@ import net.sf.morph.util.TransformerUtils;
  */
 public class AssemblerCopier extends BaseCompositeTransformer implements DecoratedCopier,
 		DecoratedConverter {
-	private static final Copier DEFAULT_COPIER = Defaults.createCopier();
 
 	//allow null components; means we have a different strategy
 	private static final ComponentValidator DEFAULT_VALIDATOR = new SimpleComponentValidator() {
@@ -53,10 +52,18 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 		}
 	};
 
-	private Copier copier;
-
 	{
 		setComponentValidator(DEFAULT_VALIDATOR);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void initializeImpl() throws Exception {
+		if (getNestedTransformer() == null) {
+			setNestedTransformer(Defaults.createCopier());
+		}
+		super.initializeImpl();
 	}
 
 	/**
@@ -111,7 +118,7 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 	protected synchronized Class[] getDestinationClassesImpl() throws Exception {
 		Object[] components = getComponents();
 		if (components == null) {
-			return getCopier().getDestinationClasses();
+			return getNestedTransformer().getDestinationClasses();
 		}
 		if (components.length == 0) {
 			return new Class[0];
@@ -121,7 +128,7 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 	}
 
 	/**
-	 * Get the ContainerReflector with which the source object will be dissected.
+	 * Get the ContainerReflector used by this Transformer.
 	 * @return ContainerReflector
 	 */
 	protected ContainerReflector getContainerReflector() {
@@ -129,7 +136,28 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 	}
 
 	/**
-	 * Get the Copier to copy the item at index <code>index</code> to the destination object.
+	 * Set the transformer (Copier) which, in the absence of a components list, will be
+	 * used to perform nested transformations.
+	 * 
+	 * @param nestedTransformer
+	 *            the transformer used to perform nested transformations
+	 */
+	public void setNestedTransformer(Transformer nestedTransformer) {
+		super.setNestedTransformer(nestedTransformer);
+	}
+
+	/**
+	 * Get the transformer (Copier) which, in the absence of a components list, will be
+	 * used to perform nested transformations.
+	 * 
+	 * @return nested Transformer
+	 */
+	public Transformer getNestedTransformer() {
+		return super.getNestedTransformer();
+	}
+
+	/**
+	 * Get the Copier that will perform the copy for index <code>index</code>.
 	 * @param index
 	 * @return Copier
 	 */
@@ -142,7 +170,7 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 			}
 			return (Copier) components[index];
 		}
-		return getCopier();
+		return (Copier) getNestedTransformer();
 	}
 
 	/**
@@ -151,24 +179,6 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 	 */
 	public synchronized void setComponents(Object[] components) {
 		super.setComponents(components);
-	}
-
-	/**
-	 * Get the Copier which, in the absence of a components list, will be used
-	 * for all copies.
-	 * @return a Copier instance
-	 */
-	public synchronized Copier getCopier() {
-		return copier == null ? DEFAULT_COPIER : copier;
-	}
-
-	/**
-	 * Set the Copier which, in the absence of a components list, will be used
-	 * for all copies.
-	 * @param copier the Copier to use
-	 */
-	public synchronized void setCopier(Copier copier) {
-		this.copier = copier;
 	}
 
 	/**
