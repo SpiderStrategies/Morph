@@ -26,10 +26,13 @@ package net.sf.morph.reflect;
  */
 public interface BeanReflector extends Reflector, SizableReflector {
 
+	/** implicit "class" property */
 	public static final String IMPLICIT_PROPERTY_CLASS = "class";
 
+	/** implicit "propertyNames" property */
 	public static final String IMPLICIT_PROPERTY_PROPERTY_NAMES = "propertyNames";
 
+	/** implicit "this" property */
 	public static final String IMPLICIT_PROPERTY_THIS = "this";
 
 	/**
