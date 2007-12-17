@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -32,20 +32,42 @@ import java.util.Map;
  */
 public class TypeMap extends HashMap {
 
+	/**
+	 * Create a new TypeMap.
+	 */
 	public TypeMap() {
 		super();
 	}
+
+	/**
+	 * Create a new TypeMap.
+	 * @param initialCapacity
+	 */
 	public TypeMap(int initialCapacity) {
 		super(initialCapacity);
 	}
+
+	/**
+	 * Create a new TypeMap.
+	 * @param initialCapacity
+	 * @param loadFactor
+	 */
 	public TypeMap(int initialCapacity, float loadFactor) {
 		super(initialCapacity, loadFactor);
 	}
+
+	/**
+	 * Create a new TypeMap.
+	 * @param map
+	 */
 	public TypeMap(Map map) {
 		this(map.size());
 		putAll(map);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object put(Object key, Object value) {
 		return super.put(key == null ? null : ClassUtils.convertToClass(key),
 				value == null ? null : ClassUtils.convertToClass(value));
