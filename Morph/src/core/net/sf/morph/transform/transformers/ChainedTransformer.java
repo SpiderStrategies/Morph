@@ -192,18 +192,25 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 	 * @return List
 	 */
 	protected List getConversionPath(Class destinationType, Class sourceType) {
-		return getConversionPath(destinationType, sourceType, 0);
+		if (sourceType != null) {
+			List withoutNull = getConversionPath(destinationType, sourceType, 0, false);
+			if (withoutNull != null) {
+				return withoutNull;
+			}
+		}
+		return getConversionPath(destinationType, sourceType, 0, true);
 	}
 
 	/**
 	 * Get a conversion path by investigating possibilities recursively.
 	 * @param destinationType
-	 * @param sourceType
+	 * @param sourceType should be non-null if !allowNull
 	 * @param chain
 	 * @param index
+	 * @param allowNull
 	 * @return List
 	 */
-	private List getConversionPath(Class destinationType, Class sourceType, int index) {
+	private List getConversionPath(Class destinationType, Class sourceType, int index, boolean allowNull) {
 		Transformer[] chain = getChain();
 		Transformer c = chain[index];
 		if (index + 1 == chain.length) {
@@ -216,8 +223,11 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 		}
 		Class[] available = c.getDestinationClasses();
 		for (int i = 0; i < available.length; i++) {
+			if (available[i] == null && !allowNull) {
+				continue;
+			}
 			if (TransformerUtils.isTransformable(c, available[i], sourceType)) {
-				List tail = getConversionPath(destinationType, available[i], index + 1);
+				List tail = getConversionPath(destinationType, available[i], index + 1, allowNull);
 				if (tail != null) {
 					tail.add(0, available[i]);
 					return tail;
