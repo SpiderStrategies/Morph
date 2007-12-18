@@ -16,19 +16,11 @@
 package net.sf.morph.transform.copiers;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
-import net.sf.composite.validate.ComponentValidator;
-import net.sf.composite.validate.validators.SimpleComponentValidator;
-import net.sf.morph.Defaults;
-import net.sf.morph.reflect.ContainerReflector;
-import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
-import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
-import net.sf.morph.transform.transformers.BaseCompositeTransformer;
 import net.sf.morph.util.TransformerUtils;
 
 /**
@@ -39,31 +31,22 @@ import net.sf.morph.util.TransformerUtils;
  * @author Matt Benson
  * @since Morph 1.0.2
  */
-public class AssemblerCopier extends BaseCompositeTransformer implements DecoratedCopier,
+public class AssemblerCopier extends AssemblyCopierSupport implements DecoratedCopier,
 		DecoratedConverter {
 
-	//allow null components; means we have a different strategy
-	private static final ComponentValidator DEFAULT_VALIDATOR = new SimpleComponentValidator() {
-		protected void validateImpl(Object composite) throws Exception {
-			List components = getComponentAccessor().getComponents(composite);
-			if (components != null) {
-				super.validateImpl(composite);
-			}
-		}
-	};
-
-	{
-		setComponentValidator(DEFAULT_VALIDATOR);
+	/**
+	 * Create a new AssemblerCopier.
+	 */
+	public AssemblerCopier() {
+		super();
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Create a new AssemblerCopier.
+	 * @param components
 	 */
-	protected void initializeImpl() throws Exception {
-		if (getNestedTransformer() == null) {
-			setNestedTransformer(Defaults.createCopier());
-		}
-		super.initializeImpl();
+	public AssemblerCopier(Object[] components) {
+		super(components);
 	}
 
 	/**
@@ -81,34 +64,10 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 
 	/**
 	 * {@inheritDoc}
-	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#getComponentType()
-	 */
-	public Class getComponentType() {
-		return Copier.class;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
-	 */
-	public synchronized void setSourceClasses(Class[] sourceClasses) {
-		super.setSourceClasses(sourceClasses);
-	}
-
-	/**
-	 * {@inheritDoc}
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getContainerReflector().getReflectableClasses();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#setDestinationClasses(java.lang.Class[])
-	 */
-	public synchronized void setDestinationClasses(Class[] destinationClasses) {
-		super.setDestinationClasses(destinationClasses);
 	}
 
 	/**
@@ -125,68 +84,5 @@ public class AssemblerCopier extends BaseCompositeTransformer implements Decorat
 		}
 		return TransformerUtils
 				.getDestinationClassIntersection((Transformer[]) getComponents());
-	}
-
-	/**
-	 * Get the ContainerReflector used by this Transformer.
-	 * @return ContainerReflector
-	 */
-	protected ContainerReflector getContainerReflector() {
-		return (ContainerReflector) getReflector(ContainerReflector.class);
-	}
-
-	/**
-	 * Set the transformer (Copier) which, in the absence of a components list, will be
-	 * used to perform nested transformations.
-	 * 
-	 * @param nestedTransformer
-	 *            the transformer used to perform nested transformations
-	 */
-	public void setNestedTransformer(Transformer nestedTransformer) {
-		super.setNestedTransformer(nestedTransformer);
-	}
-
-	/**
-	 * Get the transformer (Copier) which, in the absence of a components list, will be
-	 * used to perform nested transformations.
-	 * 
-	 * @return nested Transformer
-	 */
-	public Transformer getNestedTransformer() {
-		return super.getNestedTransformer();
-	}
-
-	/**
-	 * Get the Copier that will perform the copy for index <code>index</code>.
-	 * @param index
-	 * @return Copier
-	 */
-	protected Copier getCopier(int index) {
-		Object[] components = getComponents();
-		if (components != null) {
-			if (components.length > index + 1) {
-				throw new TransformationException("Invalid copier requested: " + index
-						+ " of " + components.length);
-			}
-			return (Copier) components[index];
-		}
-		return (Copier) getNestedTransformer();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#setComponents(java.lang.Object[])
-	 */
-	public synchronized void setComponents(Object[] components) {
-		super.setComponents(components);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#setComponentValidator(net.sf.composite.validate.ComponentValidator)
-	 */
-	public void setComponentValidator(ComponentValidator componentValidator) {
-		super.setComponentValidator(componentValidator == null ? DEFAULT_VALIDATOR
-				: componentValidator);
 	}
 }
