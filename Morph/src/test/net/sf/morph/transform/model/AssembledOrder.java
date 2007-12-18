@@ -2,7 +2,7 @@ package net.sf.morph.transform.model;
 
 import net.sf.composite.util.ObjectUtils;
 
-public class AssembledOrder implements Address, Order {
+public class AssembledOrder {
 	private Person person;
 	private String text;
 	private LineItem[] lineItems;
