@@ -26,7 +26,6 @@ import java.util.Set;
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.reflect.GrowableContainerReflector;
 import net.sf.morph.reflect.MutableIndexedContainerReflector;
-import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.NodeCopier;
@@ -82,6 +81,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	
 	// map of Class to Class
 	private Map containedSourceToDestinationTypeMap;
+	private boolean preferGrow = true;
 
 	/**
 	 * Create a new ContainerCopier.
@@ -91,24 +91,38 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	}
 
 	/**
-	 * Determine the container element destination type
+	 * Determine the container element destination type.  By default delegates to {@link #determineDestinationContainedType(Object, Class)}.
 	 * @param destination container
-	 * @param containedValueClass source type
+	 * @param sourceValue source value
+	 * @param sourceValueClass source type, or type source value would be if not null
 	 * @return destination element type
 	 */
-	protected Class determineDestinationContainedType(Object destination, Class containedValueClass) {
+	protected Class determineDestinationContainedType(Object destination,
+			Object sourceValue, Class sourceValueClass, Locale locale) {
+		return determineDestinationContainedType(destination, sourceValueClass);
+	}
+
+	/**
+	 * Determine the container element destination type.
+	 * @param destination container
+	 * @param sourceValueClass source type
+	 * @return destination element type
+	 * @deprecated in favor of fully-specified method
+	 */
+	protected Class determineDestinationContainedType(Object destination,
+			Class sourceValueClass) {
 		// determine the destinationType
 		Class destinationType = null;
-		
+
 		// first, see if there is an explicitly registered mapping of contained
 		// value classes to destination classes, and if so, use that.
 		destinationType = TransformerUtils.getMappedDestinationType(
-				containedSourceToDestinationTypeMap, containedValueClass);
+				containedSourceToDestinationTypeMap, sourceValueClass);
 
 		// if no such mapping is found
 		if (destinationType == null) {
-			Class candidateDestinationType =
-				getContainerReflector().getContainedType(destination.getClass());
+			Class candidateDestinationType = getContainerReflector().getContainedType(
+					destination.getClass());
 			// if the destination has a defined contained type than simply
 			// Object.class (which basically just means untyped)
 			if (!candidateDestinationType.equals(Object.class)) {
@@ -116,11 +130,11 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 				destinationType = candidateDestinationType;
 			}
 		}
-		
+
 		// if no mapping was found and the destination is untyped
 		if (destinationType == null) {
 			// choose the class of the source as the destination class			
-			destinationType = containedValueClass;
+			destinationType = sourceValueClass;
 		}
 		return destinationType;
 	}
@@ -147,34 +161,44 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 */
 	protected void put(int index, Object destination, Object sourceValue, Class sourceValueClass, Locale locale, Integer preferredTransformationType) {
 		Class destinationContainedType =
-			determineDestinationContainedType(destination, sourceValueClass);
+			determineDestinationContainedType(destination, sourceValue, sourceValueClass, locale);
+
+		boolean canGrow = ReflectorUtils.isReflectable(getReflector(),
+				destination.getClass(), GrowableContainerReflector.class);
+		boolean canMutate = ReflectorUtils.isReflectable(getReflector(),
+				destination.getClass(), MutableIndexedContainerReflector.class)
+				&& getMutableIndexedContainerReflector().getSize(destination) > index;
+		Integer xform = null;
+
+		if (isPreferGrow() || TRANSFORMATION_TYPE_CONVERT.equals(preferredTransformationType)) {
+			xform = canGrow ? TRANSFORMATION_TYPE_CONVERT
+					: canMutate ? TRANSFORMATION_TYPE_COPY : null;
+		}
+		else if (TRANSFORMATION_TYPE_COPY.equals(preferredTransformationType)) {
+			xform = canMutate ? TRANSFORMATION_TYPE_COPY
+					: canGrow ? TRANSFORMATION_TYPE_CONVERT : null;
+		}
 		// if we can just add items to the end of the existing container
-		if (ReflectorUtils.isReflectable(getReflector(),
-			destination.getClass(), GrowableContainerReflector.class)) {
-			
+		if (TRANSFORMATION_TYPE_CONVERT.equals(xform)) {
+
 			// do a nested conversion so that we have a new instance called
 			// convertedValue that we can ...
-			Object convertedValue = TransformerUtils.transform(
-				getNestedTransformer(), destinationContainedType, null,
-				sourceValue, locale, Converter.TRANSFORMATION_TYPE_CONVERT);
+			Object convertedValue = nestedTransform(destinationContainedType, null,
+					sourceValue, locale, TRANSFORMATION_TYPE_CONVERT);
 			// ... add to the end of the existing container
 			getGrowableContainerReflector().add(destination, convertedValue);
 		}
 		// else we are overwriting a value at a given index of the destination
 		// container
-		else if (ReflectorUtils.isReflectable(getReflector(),
-			destination.getClass(), MutableIndexedContainerReflector.class)) {
-
+		else if (TRANSFORMATION_TYPE_COPY.equals(xform)) {
 			// we may want to do a copy or a convert, depending on the
 			// capabilities of our graph transformer and whether a copy
 			// operation is preferred. this logic is implemented in the
 			// TransformerUtils.transform method method
 			Object destinationValue = getMutableIndexedContainerReflector().get(
 				destination, index);
-			Object transformedValue = TransformerUtils.transform(
-				getNestedTransformer(), destinationContainedType,
-				destinationValue, sourceValue, locale,
-				preferredTransformationType);
+			Object transformedValue = nestedTransform(destinationContainedType,
+					destinationValue, sourceValue, locale, preferredTransformationType);
 			getMutableIndexedContainerReflector().set(destination, index,
 				transformedValue);
 		}
@@ -191,6 +215,23 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 				+ GrowableContainerReflector.class.getName() + " or "
 				+ MutableIndexedContainerReflector.class.getName());
 		}
+	}
+
+	/**
+	 * Do a nested transformation.
+	 * @param destinationContainedType
+	 * @param destinationValue
+	 * @param sourceValue
+	 * @param locale
+	 * @param preferredTransformationType
+	 * @return result
+	 */
+	protected Object nestedTransform(Class destinationContainedType,
+			Object destinationValue, Object sourceValue, Locale locale,
+			Integer preferredTransformationType) {
+		return TransformerUtils.transform(getNestedTransformer(),
+				destinationContainedType, destinationValue, sourceValue, locale,
+				preferredTransformationType);
 	}
 
 	/**
@@ -244,7 +285,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 			}
 			put(i++, destination, sourceValue, sourceValueClass, locale,
 				preferredTransformationType);
-		}				
+		}
 	}
 
 	/**
@@ -316,5 +357,27 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	public void setContainedSourceToDestinationTypeMap(
 		Map containedSourceToDestinationMapping) {
 		this.containedSourceToDestinationTypeMap = new TypeMap(containedSourceToDestinationMapping);
+	}
+
+	/**
+	 * Learn whether this ContainerCopier prefers to grow the destination when possible.
+	 * @return boolean
+	 */
+	public boolean isPreferGrow() {
+		return preferGrow;
+	}
+
+	/**
+	 * Set whether this ContainerCopier prefers to grow the destination when possible.
+	 * Backward-compatible default setting is <code>true</code>; when <code>false</code>
+	 * grow vs. mutate will be determined at runtime by the capabilities of the configured
+	 * reflector with regard to the copy destination; preferredTransformationType will also
+	 * be observed.
+	 * @see #copyImpl(Object, Object, Locale, Integer)
+	 * @since Morph 1.0.2
+	 * @param preferGrow the boolean to set
+	 */
+	public void setPreferGrow(boolean preferGrow) {
+		this.preferGrow = preferGrow;
 	}
 }
