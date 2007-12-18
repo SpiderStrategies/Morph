@@ -57,6 +57,7 @@ public abstract class TransformerUtils {
 	};
 
 	private static final Log log = LogFactory.getLog(TransformerUtils.class);
+	private static final Class[] CLASS_NONE = new Class[0];
 
 	/**
 	 * Learn whether <code>sourceClass</code> is transformable to <code>destinationClass</code>
@@ -206,6 +207,53 @@ public abstract class TransformerUtils {
 	}
 
 	/**
+	 * Get the set of source classes available from the specified Transformer for the specified destination type.
+	 * @param transformer
+	 * @param destinationType
+	 * @return Class[]
+	 */
+	public static Class[] getSourceClasses(Transformer transformer, Class destinationType) {
+		if (!ClassUtils.inheritanceContains(transformer.getDestinationClasses(), destinationType)) {
+			return CLASS_NONE;
+		}
+		Class[] sourceTypes = transformer.getSourceClasses();
+		if (transformer instanceof ExplicitTransformer) {
+			HashSet result = new HashSet();
+			for (int i = 0; i < sourceTypes.length; i++) {
+				if (((ExplicitTransformer) transformer).isTransformable(destinationType, sourceTypes[i])) {
+					result.add(sourceTypes[i]);
+				}
+			}
+			return result.isEmpty() ? CLASS_NONE : (Class[]) result.toArray(new Class[result.size()]);
+		}
+		return sourceTypes;
+	}
+
+	/**
+	 * Get the set of destination classes available from the specified Transformer for the specified source type.
+	 * @param transformer
+	 * @param sourceType
+	 * @return Class[]
+	 * @since Morph 1.0.2
+	 */
+	public static Class[] getDestinationClasses(Transformer transformer, Class sourceType) {
+		if (!ClassUtils.inheritanceContains(transformer.getSourceClasses(), sourceType)) {
+			return CLASS_NONE;
+		}
+		Class[] destinationTypes = transformer.getDestinationClasses();
+		if (transformer instanceof ExplicitTransformer) {
+			HashSet result = new HashSet();
+			for (int i = 0; i < destinationTypes.length; i++) {
+				if (((ExplicitTransformer) transformer).isTransformable(destinationTypes[i], sourceType)) {
+					result.add(destinationTypes[i]);
+				}
+			}
+			return result.isEmpty() ? CLASS_NONE : (Class[]) result.toArray(new Class[result.size()]);
+		}
+		return destinationTypes;
+	}
+
+	/**
 	 * Get the set of source classes common to all specified Transformers.
 	 * @param transformers
 	 * @return Class[]
@@ -262,7 +310,7 @@ public abstract class TransformerUtils {
 			}
 			s = survivors;
 		}
-		return (Class[]) s.toArray(new Class[s.size()]);
+		return s.isEmpty() ? CLASS_NONE : (Class[]) s.toArray(new Class[s.size()]);
 	}
 
 }
