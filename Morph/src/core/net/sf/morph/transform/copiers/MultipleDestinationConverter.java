@@ -28,10 +28,10 @@ import net.sf.morph.util.TransformerUtils;
 
 /**
  * A converter which takes a single object and converts it into multiple objects.
- * TODO rework to a copier and rename DisassemblerCopier to complement AssemblerCopier.
  *
  * @author Matt Sgarlata
  * @since Apr 18, 2005
+ * @deprecated since v1.0.2 in favor of {@link DisassemblerCopier}
  */
 public class MultipleDestinationConverter extends BaseCompositeTransformer implements
 		DecoratedConverter {
