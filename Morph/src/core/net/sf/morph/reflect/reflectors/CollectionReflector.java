@@ -45,7 +45,7 @@ public class CollectionReflector extends BaseContainerReflector implements Conta
 	}
 
 	/**
-	 * TODO JDK 1.5 compatability
+	 * TODO JDK 1.5 (generics) compatibility
 	 */
 	protected Class getContainedTypeImpl(Class clazz) throws Exception {
 		return Object.class;
