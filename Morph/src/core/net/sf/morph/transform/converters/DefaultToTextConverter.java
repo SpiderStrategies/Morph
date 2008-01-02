@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,7 +20,6 @@ import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.SimpleDelegatingTransformer;
-import net.sf.morph.util.ContainerUtils;
 
 /**
  * Converts an object to a textual representation by delegating to
@@ -35,8 +34,6 @@ import net.sf.morph.util.ContainerUtils;
  */
 public class DefaultToTextConverter extends SimpleDelegatingTransformer implements Converter, DecoratedConverter {
 	
-	private static final Class[] SOURCE_TYPES = { Object.class };
-
 	/**
 	 * Used to specify the destination classes of this converter, and to
 	 * determine if a transformation is possible.
@@ -45,48 +42,33 @@ public class DefaultToTextConverter extends SimpleDelegatingTransformer implemen
 	 * @see {@link DefaultToTextConverter#getDestinationClassesImpl()}
 	 */
 	private Converter textConverter;
-	
+
+	/**
+	 * Create a new DefaultToTextConverter.
+	 */
 	public DefaultToTextConverter() {
 	    super();
     }
 
+	/**
+	 * Create a new DefaultToTextConverter.
+	 * @param components
+	 * @param appendDefaultComponents
+	 */
 	public DefaultToTextConverter(Transformer[] components, boolean appendDefaultComponents) {
 	    super(components, appendDefaultComponents);
     }
 
+	/**
+	 * Create a new DefaultToTextConverter.
+	 * @param components
+	 */
 	public DefaultToTextConverter(Transformer[] components) {
 	    super(components);
     }
 
 	/**
-	 * Returns <code>true</code> if the destination class is one of the
-	 * destination classes allowed by the
-	 * {@link DefaultToTextConverter#textConverter}.
-	 */
-	protected boolean isTransformableImpl(Class destinationType,
-		Class sourceType) throws Exception {
-		return ContainerUtils.contains(
-			getTextConverter().getDestinationClasses(), destinationType);
-	}
-	
-	/**
-	 * Returns an array containing the Object class, since all sources can be
-	 * converted by this converter.
-	 */
-	protected Class[] getSourceClassesImpl() throws Exception {
-		return SOURCE_TYPES;
-	}
-	
-	/**
-	 * Returns the destination classes allowed by the
-	 * {@link DefaultToTextConverter#textConverter}.
-	 */
-	protected Class[] getDestinationClassesImpl() throws Exception {
-		return getTextConverter().getDestinationClasses();
-	}
-
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.SimpleDelegatingTransformer#createDefaultComponents()
+	 * {@inheritDoc}
 	 */
 	protected Transformer[] createDefaultComponents() {
 		return new Transformer[] { new ContainerToPrettyTextConverter(),
@@ -94,6 +76,11 @@ public class DefaultToTextConverter extends SimpleDelegatingTransformer implemen
 		        new NumberToTextConverter(), new ObjectToTextConverter() };
 	}
 
+	/**
+	 * Unused
+	 * @return
+	 * @deprecated since Morph 1.0.2
+	 */
 	public Converter getTextConverter() {
 		if (textConverter == null) {
 			setTextConverter(Defaults.createTextConverter());
@@ -101,6 +88,11 @@ public class DefaultToTextConverter extends SimpleDelegatingTransformer implemen
 		return textConverter;
 	}
 
+	/**
+	 * Unused
+	 * @param textConverter
+	 * @deprecated since Morph 1.0.2
+	 */
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;
 	}
