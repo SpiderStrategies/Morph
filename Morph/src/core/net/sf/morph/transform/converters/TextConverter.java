@@ -25,6 +25,7 @@ import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * Converts text types ({@link java.lang.String},
@@ -130,7 +131,7 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 	 */
 	protected boolean isTransformableImpl(Class destinationType, Class sourceType)
 			throws Exception {
-		if (!ClassUtils.inheritanceContains(getSourceClasses(), sourceType)) {
+		if (!TransformerUtils.isImplicitlyTransformable(this, destinationType, sourceType)) {
 			return false;
 		}
 		if (destinationType == null) {
