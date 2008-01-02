@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,12 +15,16 @@
  */
 package net.sf.morph.transform.converters;
 
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 
-import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.ClassUtils;
 
 /**
  * Converts text types ({@link java.lang.String},
@@ -29,44 +33,80 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * Empty Strings, StringBuffers with lengths of zero and empty character and
  * byte arrays are converted to <code>null</code> Characters, and non-empty
  * Strings and StringBuffers are converted to Characters by returning the first
- * character in the String or StringBuffer.
- * 
+ * character in the String or StringBuffer. CharSequence is handled in this way:
+ * an explicit request for CharSequence yields a String. Other CharSequence
+ * implementations are handled if they have a public constructor that accepts
+ * a String argument.
+ *
  * @author Matt Sgarlata
  * @since Jan 2, 2005
  */
-public class TextConverter extends BaseTransformer implements Converter,
-		DecoratedConverter {
+public class TextConverter extends BaseTransformer implements DecoratedConverter,
+		ExplicitTransformer {
 
-	private static final Class[] SOURCE_AND_DESTINATION_TYPES = {
-			StringBuffer.class, String.class, byte[].class, char[].class,
-			Character.class, char.class, null };
+	private static final Class CHAR_SEQUENCE = ClassUtils.isJdk14OrHigherPresent() ? ClassUtils
+			.convertToClass("java.lang.CharSequence")
+			: null;
 
+	private static final HashMap CONSTRUCTOR_CACHE = new HashMap();
+	private static final Class[] SOURCE_AND_DESTINATION_TYPES;
+
+	static {
+		HashSet s = new HashSet();
+		if (CHAR_SEQUENCE == null) {
+			s.add(StringBuffer.class);
+			s.add(String.class);
+		} else {
+			s.add(CHAR_SEQUENCE);
+			try {
+				CONSTRUCTOR_CACHE.put(CHAR_SEQUENCE, StringBuffer.class.getConstructor(new Class[] { String.class }));
+			} catch (Exception e) {
+				//nope
+			}
+		}
+		s.add(byte[].class);
+		s.add(char[].class);
+		s.add(Character.class);
+		s.add(char.class);
+		s.add(null);
+		SOURCE_AND_DESTINATION_TYPES = (Class[]) s.toArray(new Class[s.size()]);
+	}
+
+	private boolean allowStringAsChar = true;
 	private boolean emptyNull;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
 			throws Exception {
-
+		Class sourceClass = ClassUtils.getClass(source);
+		if (destinationClass == null
+				&& ClassUtils.inheritanceContains(getSourceClasses(), sourceClass)) {
+			return null;
+		}
+		if (isChar(destinationClass) && isChar(sourceClass)) {
+			return source;
+		}
 		//if source == null, not automatically handling nulls, therefore null -> "":
 		String string = source == null ? "" : source instanceof byte[] ? new String(
 				(byte[]) source) : source instanceof char[] ? new String((char[]) source)
 				: source.toString();
 
-		if (destinationClass == String.class) {
-			return string;
-		}
-		if (destinationClass == StringBuffer.class) {
-			return new StringBuffer(string);
-		}
-		if ("".equals(string)) {
-			if (destinationClass == Character.class || destinationClass == null) {
-				return null;
-			}
-			if (destinationClass == char.class) {
+		if (isChar(destinationClass)) {
+			if (!isAllowStringAsChar()) {
 				throw new TransformationException(destinationClass, source);
 			}
-		}
-		if (destinationClass == Character.class || destinationClass == char.class) {
+			if ("".equals(string)) {
+				if (destinationClass == char.class) {
+					throw new TransformationException(destinationClass, source);
+				}
+				return null;
+			}
 			return new Character(string.charAt(0));
+		}
+		if (destinationClass == String.class) {
+			return string;
 		}
 		if (destinationClass == byte[].class) {
 			return string.getBytes();
@@ -74,34 +114,63 @@ public class TextConverter extends BaseTransformer implements Converter,
 		if (destinationClass == char[].class) {
 			return string.toCharArray();
 		}
+		if (ClassUtils.inheritanceContains(getDestinationClasses(), destinationClass)
+				&& canCreate(destinationClass)) {
+			try {
+				return getConstructor(destinationClass).newInstance(new Object[] { string });
+			} catch (Exception e) {
+				throw new TransformationException(destinationClass, source, e);
+			}
+		}
 		throw new TransformationException(destinationClass, source);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#isAutomaticallyHandlingNulls()
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isTransformableImpl(Class destinationType, Class sourceType)
+			throws Exception {
+		if (!ClassUtils.inheritanceContains(getSourceClasses(), sourceType)) {
+			return false;
+		}
+		if (destinationType == null) {
+			return true;
+		}
+		if (sourceType == null) {
+			return !destinationType.isPrimitive();
+		}
+		if (isChar(destinationType)) {
+			return isChar(sourceType) || isAllowStringAsChar();
+		}
+		if (isCharSequence(destinationType)) {
+			return canCreate(destinationType);
+		}
+		return ClassUtils.inheritanceContains(getDestinationClasses(), destinationType);
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	protected boolean isAutomaticallyHandlingNulls() {
 		return !isEmptyNull();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_AND_DESTINATION_TYPES;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return SOURCE_AND_DESTINATION_TYPES;
 	}
 
 	/**
-	 * Get the boolean emptyNull.
+	 * Learn whether <code>null</code> values return as empty strings.
 	 * @return boolean
 	 */
 	public boolean isEmptyNull() {
@@ -109,11 +178,56 @@ public class TextConverter extends BaseTransformer implements Converter,
 	}
 
 	/**
-	 * Set the boolean emptyNull.
+	 * Set whether <code>null</code> values return as empty strings.
 	 * @param emptyNull boolean
 	 */
 	public void setEmptyNull(boolean emptyNull) {
 		this.emptyNull = emptyNull;
+	}
+
+	/**
+	 * Learn whether string-to-char type conversions are allowed.
+	 * @return boolean
+	 */
+	public boolean isAllowStringAsChar() {
+		return allowStringAsChar;
+	}
+
+	/**
+	 * Set whether string-to-char type conversions are allowed. This might be
+	 * undesirable for e.g. chained transformations or any operation where
+	 * a loss of "precision" might be detrimental. Default <code>true</code>.
+	 * @param allowStringAsChar the boolean to set
+	 */
+	public void setAllowStringAsChar(boolean allowStringAsChar) {
+		this.allowStringAsChar = allowStringAsChar;
+	}
+
+	private static boolean isChar(Class c) {
+		return c == char.class || c == Character.class;
+	}
+
+	private static boolean isCharSequence(Class c) {
+		return CHAR_SEQUENCE != null && CHAR_SEQUENCE.isAssignableFrom(c);
+	}
+
+	private static synchronized boolean canCreate(Class c) {
+		if (CONSTRUCTOR_CACHE.containsKey(c)) {
+			return true;
+		}
+		Constructor[] cs = c.getConstructors();
+		for (int i = 0; i < cs.length; i++) {
+			Class[] p = cs[i].getParameterTypes();
+			if (p.length == 1 && p[0].isAssignableFrom(String.class)) {
+				CONSTRUCTOR_CACHE.put(c, cs[i]);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static Constructor getConstructor(Class c) {
+		return (Constructor) CONSTRUCTOR_CACHE.get(c);
 	}
 
 }
