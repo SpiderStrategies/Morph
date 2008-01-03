@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,10 +20,12 @@ import java.util.Locale;
 import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
+import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.NodeCopier;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * Decorates any Copier so that it implements DecoratedCopier.
@@ -32,7 +34,7 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @since Dec 5, 2004
  */
 public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
-		DecoratedConverter {
+		DecoratedConverter, ExplicitTransformer {
 
 	private Copier nestedCopier;
 
@@ -51,8 +53,8 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 		setNestedCopier(copier);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	/**
+	 * {@inheritDoc}
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
 			Integer preferredTransformationType) throws TransformationException {
@@ -84,8 +86,8 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 		super.setSourceClasses(sourceClasses);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Class[] getSourceClassesImpl() {
 		return nestedCopier.getSourceClasses();
@@ -99,8 +101,8 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 		super.setDestinationClasses(destinationClasses);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Class[] getDestinationClassesImpl() {
 		return nestedCopier.getDestinationClasses();
@@ -114,8 +116,8 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#isWrappingRuntimeExceptions()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected boolean isWrappingRuntimeExceptions() {
 		// the whole point of this copier is for decorating user defined
@@ -123,13 +125,24 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#setNestedTransformer(net.sf.morph.transform.Transformer)
+	/**
+	 * {@inheritDoc}
 	 */
 	protected void setNestedTransformer(Transformer nestedTransformer) {
 		super.setNestedTransformer(nestedTransformer);
 		if (nestedCopier instanceof NodeCopier) {
 			((NodeCopier) nestedCopier).setNestedTransformer(nestedTransformer);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isTransformableImpl(Class destinationType, Class sourceType)
+			throws Exception {
+		return TransformerUtils.isImplicitlyTransformable(this, destinationType,
+				sourceType)
+				&& TransformerUtils.isTransformable(getNestedTransformer(),
+						destinationType, sourceType);
 	}
 }

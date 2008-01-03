@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,7 +19,9 @@ import java.util.Locale;
 
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * Decorates any Converter so that it implements 
@@ -36,8 +38,8 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Dec 5, 2004
  */
-public class ConverterDecorator extends BaseTransformer implements Converter,
-		DecoratedConverter {
+public class ConverterDecorator extends BaseTransformer implements DecoratedConverter,
+		ExplicitTransformer {
 
 	private Converter nestedConverter;
 
@@ -129,4 +131,14 @@ public class ConverterDecorator extends BaseTransformer implements Converter,
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isTransformableImpl(Class destinationType, Class sourceType)
+			throws Exception {
+		return TransformerUtils.isImplicitlyTransformable(this, destinationType,
+				sourceType)
+				&& TransformerUtils.isTransformable(getNestedTransformer(),
+						destinationType, sourceType);
+	}
 }
