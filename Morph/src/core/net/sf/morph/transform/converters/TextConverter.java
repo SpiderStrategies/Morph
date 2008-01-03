@@ -54,10 +54,15 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 
 	static {
 		HashSet s = new HashSet();
-		if (CHAR_SEQUENCE == null) {
-			s.add(StringBuffer.class);
-			s.add(String.class);
-		} else {
+		
+		s.add(StringBuffer.class);
+		s.add(String.class);
+		s.add(byte[].class);
+		s.add(char[].class);
+		s.add(Character.class);
+		s.add(char.class);
+		s.add(null);
+		if (CHAR_SEQUENCE != null) {
 			s.add(CHAR_SEQUENCE);
 			try {
 				CONSTRUCTOR_CACHE.put(CHAR_SEQUENCE, StringBuffer.class.getConstructor(new Class[] { String.class }));
@@ -65,11 +70,6 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 				//nope
 			}
 		}
-		s.add(byte[].class);
-		s.add(char[].class);
-		s.add(Character.class);
-		s.add(char.class);
-		s.add(null);
 		SOURCE_AND_DESTINATION_TYPES = (Class[]) s.toArray(new Class[s.size()]);
 	}
 
