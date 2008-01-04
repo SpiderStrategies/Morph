@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -32,7 +32,7 @@ import net.sf.morph.util.ContainerUtils;
  * @author Matt Sgarlata
  * @since Dec 31, 2004
  */
-public class TextToBooleanConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class TextToBooleanConverter extends BaseTransformer implements DecoratedConverter {
 	private Converter textConverter;
 
 	private static final Class[] DESTINATION_TYPES = { Boolean.class,
@@ -42,6 +42,7 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 	 * Default values for the <code>trueText</code> attribute.
 	 */
 	public static final String[] DEFAULT_TRUE_TEXT = { "true", "t", "yes", "y" };
+
 	/**
 	 * Default values for the <code>falseText</code> attribute.
 	 */
@@ -57,7 +58,10 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 	 * converted to <code>false</code>. The strings are not case-sensitive.
 	 */
 	private String[] falseText;
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 
@@ -77,10 +81,16 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 		throw new TransformationException(destinationClass, source);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getTextConverter().getSourceClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return DESTINATION_TYPES;
 	}
@@ -141,19 +151,30 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 		this.trueText = trueStrings;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isAutomaticallyHandlingNulls() {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * Get an array of Strings obtained by converting contents of <code>array</code> to lowercase.
+	 * @param array
+	 * @return String[]
+	 */
 	private String[] changeToLowerCase(String[] array) {
 		if (array == null) {
 			return null;
 		}
-		
+
 		String[] lowerCase = new String[array.length];
 		for (int i = 0; i < array.length; i++) {
 			lowerCase[i] = array[i].toLowerCase();
@@ -162,8 +183,8 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 	}
 
 	/**
-	 * Get the textConverter of this TextToBooleanConverter.
-	 * @return the textConverter
+	 * Get the text converter of this TextToBooleanConverter.
+	 * @return Converter
 	 */
 	public Converter getTextConverter() {
 		if (textConverter == null) {
@@ -173,8 +194,8 @@ public class TextToBooleanConverter extends BaseTransformer implements Converter
 	}
 
 	/**
-	 * Set the textConverter of this TextToBooleanConverter.
-	 * @param textConverter the textConverter to set
+	 * Set the text converter of this TextToBooleanConverter.
+	 * @param textConverter the Converter to set
 	 */
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;

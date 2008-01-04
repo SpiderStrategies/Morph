@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -37,6 +37,7 @@ import net.sf.morph.util.StringUtils;
  * @since Jan 2, 2005
  */
 public class TextToClassConverter extends BaseTransformer implements Converter, DecoratedConverter {
+	/** Array indicator */
 	public static final String ARRAY_INDICATOR = "[]";
 
 	private static final HashMap CACHE_MAP = new HashMap();
@@ -48,6 +49,9 @@ public class TextToClassConverter extends BaseTransformer implements Converter, 
 	private Converter textConverter;
 	private boolean useCache = true;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 		String string = StringUtils.removeWhitespace((String) getTextConverter().convert(
@@ -71,14 +75,24 @@ public class TextToClassConverter extends BaseTransformer implements Converter, 
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return DESTINATION_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getTextConverter().getSourceClasses();
 	}
 
+	/**
+	 * Get the text converter used by this TextToClassConverter.
+	 * @return Converter
+	 */
 	public Converter getTextConverter() {
 		if (textConverter == null) {
 			setTextConverter(DEFAULT_TEXT_CONVERTER);
@@ -86,6 +100,10 @@ public class TextToClassConverter extends BaseTransformer implements Converter, 
 		return textConverter;
 	}
 
+	/**
+	 * Set the text converter used by this TextToClassConverter.
+	 * @param textConverter
+	 */
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;
 	}
@@ -106,6 +124,10 @@ public class TextToClassConverter extends BaseTransformer implements Converter, 
 		this.useCache = useCache;
 	}
 
+	/**
+	 * Get the cache map associated with the operative text converter.
+	 * @return Map
+	 */
 	private Map getCache() {
 		Map result;
 		synchronized (CACHE_MAP) {
@@ -119,8 +141,11 @@ public class TextToClassConverter extends BaseTransformer implements Converter, 
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
-	
+
 }

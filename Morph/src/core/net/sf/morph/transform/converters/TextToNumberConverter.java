@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,6 @@
 package net.sf.morph.transform.converters;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
@@ -39,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Matt Sgarlata
  * @since Jan 4, 2005
  */
-public class TextToNumberConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class TextToNumberConverter extends BaseTransformer implements DecoratedConverter {
 
 	private static final char RIGHT_PARENTHESES = ')';
 
@@ -53,6 +52,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * characters by this converter.
 	 */
 	public static final int WHITESPACE_IGNORE = 0;
+
 	/**
 	 * Constant indicating the presence of whitespace characters in text should
 	 * prevent conversion of the text into a number (i.e. a
@@ -66,6 +66,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * this converter.
 	 */
 	public static final int CURRENCY_IGNORE = 0;
+
 	/**
 	 * Constant indicating the presence of currency symbols in text should
 	 * prevent conversion of the text into a number (i.e. a
@@ -79,6 +80,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * text to numbers.
 	 */
 	public static final int PERCENTAGE_IGNORE = 0;
+
 	/**
 	 * Constant indicating the presence of percentage symbols in text should
 	 * prevent conversion of the text into a number (i.e. a
@@ -86,6 +88,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * in the text).
 	 */
 	public static final int PERCENTAGE_REJECT = 1;
+
 	/**
 	 * Constant indicating a percentage symbol at the end of text should cause
 	 * the text to be treated as a percentage and converted into a corresponding
@@ -101,6 +104,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * text to numbers.
 	 */
 	public static final int PARENTHESES_IGNORE = 0;
+
 	/**
 	 * Constant indicating the presence of parentheses in text should
 	 * prevent conversion of the text into a number (i.e. a
@@ -108,6 +112,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 * in the text).
 	 */
 	public static final int PARENTHESES_REJECT = 1;
+
 	/**
 	 * Constant indicating parentheses enclosing a number should cause the text
 	 * to be treated as a negative number. For example, 10 would be converted to
@@ -148,6 +153,9 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	 */
 	private int parenthesesHandling = PARENTHESES_NEGATE;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 
@@ -180,7 +188,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 		// before it is returned
 		boolean negate = handleParenthesesNegation(charactersToParse, locale);	
 		negate = negate || handleNegativeSignNegation(charactersToParse, locale);
-		
+
 		NumberFormat format = null;
 		ParsePosition position = null;
 		Number number = null;
@@ -267,6 +275,13 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 		throw new TransformationException(destinationClass, source);
 	}
 
+	/**
+	 * Negate if necessary
+	 * @param returnVal
+	 * @param negate
+	 * @param locale
+	 * @return negated value if negate, else returnValue
+	 */
 	private Object negateIfNecessary(Number returnVal, boolean negate, Locale locale) {
 		if (negate) {
 			BigDecimal bd = (BigDecimal) getNumberConverter().convert(BigDecimal.class, returnVal, locale);
@@ -341,7 +356,6 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 			// return true to indicate negation should take place
 			return true;
 		}
-		
 		// return false to indicate negation should not happen
 		return false;
     }
@@ -370,19 +384,34 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 		return false;
     }
 
+	/**
+	 * Learn whether the entire string was consumed.
+	 * @param stringWithoutIgnoredSymbolsStr
+	 * @param position
+	 * @return boolean
+	 */
 	protected boolean isParseSuccessful(String stringWithoutIgnoredSymbolsStr, ParsePosition position) {
 		return position.getIndex() != 0 &&
 			position.getIndex() == stringWithoutIgnoredSymbolsStr.length();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getTextConverter().getSourceClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getNumberConverter().getDestinationClasses();
 	}
@@ -398,6 +427,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 		}
 		return numberConverter;
 	}
+
 	/**
 	 * Sets the converter used to convert text types from one type to another.
 	 *
@@ -408,6 +438,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 	public void setNumberConverter(Converter numberConverter) {
 		this.numberConverter = numberConverter;
 	}
+
 	/**
 	 * Gets the converter used to convert text types from one type to another.
 	 *
@@ -419,6 +450,7 @@ public class TextToNumberConverter extends BaseTransformer implements Converter,
 		}
 		return textConverter;
 	}
+
 	/**
 	 * Sets the converter used to convert text types from one type to another.
 	 *

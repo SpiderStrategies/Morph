@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -42,20 +42,28 @@ import java.util.Locale;
  * @since Dec 25, 2004
  */
 public class ContainerToPrettyTextConverter extends BaseToPrettyTextConverter {
-	
+	/** Default prefix */
 	public static final String DEFAULT_PREFIX = "{";
-	public static final String DEFAULT_SUFFIX = "}";	
+	/** Default suffix */
+	public static final String DEFAULT_SUFFIX = "}";
+	/** Default separator */
 	public static final String DEFAULT_SEPARATOR = ",";
-	
+
+	/**
+	 * Create a new ContainerToPrettyTextConverter.
+	 */
 	public ContainerToPrettyTextConverter() {
 		setPrefix(DEFAULT_PREFIX);
 		setSuffix(DEFAULT_SUFFIX);
 		setSeparator(DEFAULT_SEPARATOR);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-		
+
 		boolean endsInSeparator = false;
 		StringBuffer buffer = new StringBuffer();
 		if (getPrefix() != null) {
@@ -78,10 +86,12 @@ public class ContainerToPrettyTextConverter extends BaseToPrettyTextConverter {
 		if (getSuffix() != null) {
 			buffer.append(getSuffix());
 		}
-		
 		return getTextConverter().convert(destinationClass, buffer, locale);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		// the container reflector can treat an object like a container,
 		// but for this converter we don't want objects to be valid sources

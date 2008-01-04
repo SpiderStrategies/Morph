@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,6 @@
 package net.sf.morph.transform.converters;
 
 import net.sf.morph.transform.Converter;
-import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.SimpleDelegatingTransformer;
 import net.sf.morph.util.ClassUtils;
@@ -35,12 +34,12 @@ import net.sf.morph.util.ClassUtils;
  * @see net.sf.morph.transform.converters.NumberToBooleanConverter 
  * @see net.sf.morph.transform.converters.ObjectToBooleanConverter 
  */
-public class DefaultToBooleanConverter extends SimpleDelegatingTransformer implements Converter, DecoratedConverter {
+public class DefaultToBooleanConverter extends SimpleDelegatingTransformer {
 	
 	private static final Class[] DESTINATION_TYPES = { Boolean.class, boolean.class };
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.SimpleDelegatingTransformer#createDefaultComponents()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Transformer[] createDefaultComponents() {
 		return new Converter[] {
@@ -49,10 +48,16 @@ public class DefaultToBooleanConverter extends SimpleDelegatingTransformer imple
 				new ObjectToBooleanConverter() };
 	}
 
-	public Class[] getDestinationClassesImpl() throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Class[] getDestinationClassesImpl() throws Exception {
 		return DESTINATION_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isTransformableImpl(Class destinationType,
 		Class sourceType) throws Exception {
 		return ClassUtils.inheritanceContains(DESTINATION_TYPES, destinationType);

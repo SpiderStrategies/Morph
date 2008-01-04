@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,7 +25,7 @@ import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.transformers.BaseTransformer;
 
-public class TextToTimeConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class TextToTimeConverter extends BaseTransformer implements DecoratedConverter {
 
 	private static final DateFormat DEFAULT_DATE_FORMAT = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
 
@@ -33,6 +33,9 @@ public class TextToTimeConverter extends BaseTransformer implements Converter, D
 	private Converter timeConverter;
 	private Converter textConverter;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 			Locale locale) throws Exception {
 
@@ -45,42 +48,80 @@ public class TextToTimeConverter extends BaseTransformer implements Converter, D
 		return getTimeConverter().convert(destinationClass, date, locale);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getTextConverter().getDestinationClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getTimeConverter().getSourceClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * Get the DateFormat used by this TextToTimeConverter.
+	 * @return DateFormat
+	 */
 	public DateFormat getDateFormat() {
 		if (dateFormat == null) {
 			setDateFormat(DEFAULT_DATE_FORMAT);
 		}
 		return dateFormat;
 	}
+
+	/**
+	 * Set the DateFormat to be used by this TextToTimeConverter.
+	 * @param dateFormat
+	 */
 	public void setDateFormat(DateFormat dateFormat) {
 		this.dateFormat = dateFormat;
 	}
+
+	/**
+	 * Get the text converter used by this TextToTimeConverter.
+	 * @return Converter
+	 */
 	public Converter getTextConverter() {
 		if (textConverter == null) {
 			setTextConverter(Defaults.createTextConverter());
 		}
 		return textConverter;
 	}
+
+	/**
+	 * Set the text converter used by this TextToTimeConverter.
+	 * @param textConverter
+	 */
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;
 	}
+
+	/**
+	 * Get the time converter used by this TextToTimeConverter.
+	 * @return Converter
+	 */
 	public Converter getTimeConverter() {
 		if (timeConverter == null) {
 			setTimeConverter(Defaults.createTimeConverter());
 		}
 		return timeConverter;
 	}
+
+	/**
+	 * Set the time converter used by this TextToTimeConverter.
+	 * @param timeConverter
+	 */
 	public void setTimeConverter(Converter timeConverter) {
 		this.timeConverter = timeConverter;
 	}
