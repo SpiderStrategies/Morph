@@ -17,7 +17,6 @@ package net.sf.morph.transform.converters;
 
 import net.sf.morph.Defaults;
 import net.sf.morph.transform.Converter;
-import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.SimpleDelegatingTransformer;
 
@@ -32,8 +31,8 @@ import net.sf.morph.transform.transformers.SimpleDelegatingTransformer;
  * @author Matt Sgarlata
  * @since Jan 1, 2005
  */
-public class DefaultToTextConverter extends SimpleDelegatingTransformer implements Converter, DecoratedConverter {
-	
+public class DefaultToTextConverter extends SimpleDelegatingTransformer {
+
 	/**
 	 * Used to specify the destination classes of this converter, and to
 	 * determine if a transformation is possible.

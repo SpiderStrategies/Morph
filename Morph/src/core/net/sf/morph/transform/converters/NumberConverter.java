@@ -37,9 +37,10 @@ public class NumberConverter extends BaseTransformer implements DecoratedConvert
 		Number.class, byte.class, short.class, int.class, long.class,
 		float.class, double.class, null
 	};
-	
+
+	/** Default rounding method */
 	public static final String DEFAULT_ROUNDING_METHOD = NumberRounder.ROUND_HALF_UP;
-	
+
 //	/**
 //	 * The source classes for number converters.
 //	 */
@@ -67,7 +68,7 @@ public class NumberConverter extends BaseTransformer implements DecoratedConvert
 //	private boolean ensureDataConsistency;
 
 	private String roundingMethod;
-	
+
 	/**
 	 * Creates a number converter that is ensuring data consistency.
 	 */
@@ -76,15 +77,27 @@ public class NumberConverter extends BaseTransformer implements DecoratedConvert
 //		setEnsureDataConsistency(true);
 		setRoundingMethod(DEFAULT_ROUNDING_METHOD);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_AND_DESTINATION_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return SOURCE_AND_DESTINATION_TYPES;
 	}
-	
+
+	/**
+	 * Verify <code>number</code> is within the bounds of <code>destinationClass</code>.  
+	 * @param destinationClass
+	 * @param number
+	 * @throws Exception if validation fails
+	 */
 	protected void checkNotOutOfBounds(Class destinationClass, Number number) throws Exception {
 //		if (isEnsureDataConsistency() &&
 			if (NumberUtils.isTooBigForType(number, destinationClass)) {
@@ -99,21 +112,24 @@ public class NumberConverter extends BaseTransformer implements DecoratedConvert
 			}
 //		}
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-		
+
 		if (destinationClass.isPrimitive() && source == null) {
 			throw new TransformationException(destinationClass, source);
 		}
-		
+
 		// basically this check is to allow conversions of specific types like
 		// java.util.BigDecimal to the more general java.lang.Number
 		if (destinationClass.isAssignableFrom(ClassUtils.getClass(source))) {
 			return source;
 		}
 		checkNotOutOfBounds(destinationClass, (Number) source);
-		
+
 		String numberStr;
 		if (isDecimal(destinationClass)) {
 			numberStr = source.toString();
@@ -126,7 +142,12 @@ public class NumberConverter extends BaseTransformer implements DecoratedConvert
 		}
 		return NumberUtils.getNumber(destinationClass, numberStr);
 	}
-	
+
+	/**
+	 * Learn whether <code>numberType</code> is a decimal type
+	 * @param numberType
+	 * @return boolean
+	 */
 	protected boolean isDecimal(Class numberType) {
 		return numberType == double.class || numberType == Double.class
 				|| numberType == float.class || numberType == Float.class
@@ -173,7 +194,11 @@ public class NumberConverter extends BaseTransformer implements DecoratedConvert
 //	public void setEnsureDataConsistency(boolean ensureDataConsistency) {
 //		this.ensureDataConsistency = ensureDataConsistency;
 //	}
-	
+
+	/**
+	 * Get the rounding method used by this NumberConverter.
+	 * @return String
+	 */
 	public String getRoundingMethod() {
 		if (roundingMethod == null) {
 			setRoundingMethod(DEFAULT_ROUNDING_METHOD);
@@ -181,13 +206,20 @@ public class NumberConverter extends BaseTransformer implements DecoratedConvert
 		return roundingMethod;
 	}
 
+	/**
+	 * Set the rounding method used by this NumberConverter.
+	 * @param roundingMethod
+	 */
 	public void setRoundingMethod(
 		String roundingMethod) {
 		this.roundingMethod = roundingMethod;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
-	
+
 }

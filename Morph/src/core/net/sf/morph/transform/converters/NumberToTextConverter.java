@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -35,25 +35,39 @@ public class NumberToTextConverter extends BaseTransformer implements DecoratedC
 	private Converter textConverter;
 	private Converter numberConverter;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
 		String formatted = getNumberFormat(locale).format(source);
 		return getTextConverter().convert(destinationClass, formatted, locale);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getNumberConverter().getDestinationClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getTextConverter().getSourceClasses();
 	}
 
+	/**
+	 * Get the number converter used by this NumberToTextConverter.
+	 * @return Converter
+	 */
 	public Converter getNumberConverter() {
 		if (numberConverter == null) {
 			setNumberConverter(Defaults.createNumberConverter());
 		}
 		return numberConverter;
 	}
+
 	/**
 	 * Sets the <code>numberConverter</code> to be used. Note that this method
 	 * should be called before the transformer is used. Otherwise, if another
@@ -67,13 +81,18 @@ public class NumberToTextConverter extends BaseTransformer implements DecoratedC
 	public synchronized void setNumberConverter(Converter numberConverter) {
 		this.numberConverter = numberConverter;
 	}
-	
+
+	/**
+	 * Get the text converter used by this NumberToTextConverter.
+	 * @return Converter
+	 */
 	public Converter getTextConverter() {
 		if (textConverter == null) {
 			setTextConverter(Defaults.createTextConverter());
 		}
 		return textConverter;
 	}
+
 	/**
 	 * Sets the <code>textConverter</code> to be used. Note that this method
 	 * should be called before the transformer is used. Otherwise, if another
@@ -105,6 +124,9 @@ public class NumberToTextConverter extends BaseTransformer implements DecoratedC
 		return numberFormat;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
