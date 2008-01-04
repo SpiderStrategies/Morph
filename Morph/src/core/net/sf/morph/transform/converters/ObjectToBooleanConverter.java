@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,7 +18,6 @@ package net.sf.morph.transform.converters;
 import java.util.Locale;
 
 import net.sf.composite.util.ObjectUtils;
-import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.transformers.BaseTransformer;
 
@@ -31,27 +30,39 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @since Dec 31, 2004
  * @see net.sf.morph.util.MorphUtils#isEmpty(Object)
  */
-public class ObjectToBooleanConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class ObjectToBooleanConverter extends BaseTransformer implements DecoratedConverter {
 
 	private static final Class[] DESTINATION_TYPES = { Boolean.class,
 		boolean.class };
-	
+
 	private static final Class[] SOURCE_TYPES = { Object.class, null };
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 
 		return ObjectUtils.isEmpty(source) ? Boolean.FALSE : Boolean.TRUE;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return DESTINATION_TYPES;
 	}

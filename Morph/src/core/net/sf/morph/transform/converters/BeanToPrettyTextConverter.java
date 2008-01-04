@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -42,21 +42,30 @@ import net.sf.morph.reflect.BeanReflector;
  * @since Feb 15, 2005
  */
 public class BeanToPrettyTextConverter extends BaseToPrettyTextConverter {
-	
+	/** Default prefix */
 	public static final String DEFAULT_PREFIX = "[";
-	public static final String DEFAULT_SUFFIX = "]";	
+	/** Default suffix */
+	public static final String DEFAULT_SUFFIX = "]";
+	/** Default separator */
 	public static final String DEFAULT_SEPARATOR = ",";
+	/** Default name/value separator */
 	public static final String DEFAULT_NAME_VALUE_SEPARATOR = "=";
-	
+
 	private String nameValueSeparator = DEFAULT_NAME_VALUE_SEPARATOR;
 	private boolean showPropertyNames = true;	
-	
+
+	/**
+	 * Create a new BeanToPrettyTextConverter.
+	 */
 	public BeanToPrettyTextConverter() {
 	    setPrefix(DEFAULT_PREFIX);
 	    setSuffix(DEFAULT_SUFFIX);
 	    setSeparator(DEFAULT_SEPARATOR);
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 
@@ -110,19 +119,41 @@ public class BeanToPrettyTextConverter extends BaseToPrettyTextConverter {
 		buffer.append(getToTextConverter().convert(String.class, value, locale));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getBeanReflector().getReflectableClasses();
 	}
-	
+
+	/**
+	 * Get the name/value separator.
+	 * @return String
+	 */
 	public String getNameValueSeparator() {
 		return nameValueSeparator;
 	}
+
+	/**
+	 * Set the name/value separator.
+	 * @param nameValueSeparator
+	 */
 	public void setNameValueSeparator(String nameValueSeparator) {
 		this.nameValueSeparator = nameValueSeparator;
 	}
+
+	/**
+	 * Learn whether this BeanToPrettyTextConverter is configured to show property names.
+	 * @return boolean
+	 */
 	public boolean isShowPropertyNames() {
 		return showPropertyNames;
 	}
+
+	/**
+	 * Set whether this BeanToPrettyTextConverter should show property names. Default <code>true</code>.
+	 * @param showPropertyNames
+	 */
 	public void setShowPropertyNames(boolean showPropertyNames) {
 		this.showPropertyNames = showPropertyNames;
 	}

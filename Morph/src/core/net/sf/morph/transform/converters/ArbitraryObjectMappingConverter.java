@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.composite.util.ObjectUtils;
-import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
@@ -43,11 +42,14 @@ import net.sf.morph.util.ClassUtils;
  * @author Matt Sgarlata
  * @since Apr 11, 2005
  */
-public class ArbitraryObjectMappingConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class ArbitraryObjectMappingConverter extends BaseTransformer implements DecoratedConverter {
 	
 	private boolean bidirectional = true;
 	private Map mapping;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 		if (getMapping().containsKey(source)) {
@@ -59,12 +61,18 @@ public class ArbitraryObjectMappingConverter extends BaseTransformer implements 
 				return bidirectionalMap.getKey(source);
 			}
 		}
-		
 		throw new TransformationException(
 			"No mapping was specified for source object "
 				+ ObjectUtils.getObjectDescription(source));
 	}
 
+	/**
+	 * Get the forward classes, plus backward classes if this converter is bidi. 
+	 * @param forwardMappingKeys
+	 * @param backwardMappingKeys
+	 * @return Class[]
+	 * @throws Exception not likely
+	 */
 	protected Class[] getClasses(Collection forwardMappingKeys, Collection backwardMappingKeys) throws Exception {
 		// pre-calculate the maximum size of the result for efficiency
 		// this may lead to extra memory costs but will ensure space allocation
@@ -73,15 +81,22 @@ public class ArbitraryObjectMappingConverter extends BaseTransformer implements 
 		if (isBidirectional()) {
 			maxNumClasses += backwardMappingKeys.size();
 		}
-		
+
 		Set classes = new HashSet(maxNumClasses);
+		addContainedClasses(classes, forwardMappingKeys);
+
 		if (isBidirectional()) {
 			addContainedClasses(classes, backwardMappingKeys);
 		}
-			
+
 		return (Class[]) classes.toArray(new Class[classes.size()]); 
 	}
-	
+
+	/**
+	 * Add the classes of the contents of <code>objects</code> to <code>classes</code>.
+	 * @param classes
+	 * @param objects
+	 */
 	protected void addContainedClasses(Set classes, Collection objects) {
 		if (objects != null) {
 			for (Iterator i = objects.iterator(); i.hasNext(); ) {
@@ -90,6 +105,9 @@ public class ArbitraryObjectMappingConverter extends BaseTransformer implements 
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		if (ObjectUtils.isEmpty(mapping)) {
 			throw new IllegalStateException("The mapping property of this converter must be set");
@@ -97,6 +115,9 @@ public class ArbitraryObjectMappingConverter extends BaseTransformer implements 
 		return getClasses(mapping.keySet(), mapping.values());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		if (ObjectUtils.isEmpty(mapping)) {
 			throw new IllegalStateException("The mapping property of this converter must be set");
@@ -104,21 +125,38 @@ public class ArbitraryObjectMappingConverter extends BaseTransformer implements 
 		return getClasses(mapping.values(), mapping.keySet());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * Learn whether this ArbitraryObjectMappingConverter is bidirectional.
+	 * @return boolean
+	 */
 	public boolean isBidirectional() {
 		return bidirectional;
 	}
+
+	/**
+	 * Set whether this ArbitraryObjectMappingConverter is bidirectional.
+	 * @param bidirectional
+	 */
 	public void setBidirectional(boolean bidirectional) {
 		setInitialized(false);
 		this.bidirectional = bidirectional;
 	}
 
+	/**
+	 * Get the object mapping.
+	 * @return Map
+	 */
 	public Map getMapping() {
 		return mapping;
 	}
+
 	/**
 	 * Set the mapping.
 	 * 
@@ -132,7 +170,7 @@ public class ArbitraryObjectMappingConverter extends BaseTransformer implements 
 	 */
 	public void setMapping(Map mapping) {
 		setInitialized(false);
-		if (isBidirectional()) {
+		if (isBidirectional() && !(mapping instanceof BidirectionalMap)) {
 			this.mapping = new BidirectionalMap(mapping);
 		}
 		else {
@@ -140,10 +178,18 @@ public class ArbitraryObjectMappingConverter extends BaseTransformer implements 
 		}
 	}
 
+	/**
+	 * @return Map
+	 * @deprecated
+	 */
 	public Map getVisitedSourceToDestinationMap() {
 		return getMapping();
 	}
 
+	/**
+	 * @param visitedSourceToDestinationMap
+	 * @deprecated
+	 */
 	public void setVisitedSourceToDestinationMap(Map visitedSourceToDestinationMap) {
 		throw new UnsupportedOperationException();
 	}

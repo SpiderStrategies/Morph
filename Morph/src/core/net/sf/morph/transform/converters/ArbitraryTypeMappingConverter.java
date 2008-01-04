@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,7 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.sf.composite.util.ObjectUtils;
-import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
@@ -34,12 +33,15 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matthew Sgarlata
  * @since June 15, 2005
  */
-public class ArbitraryTypeMappingConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class ArbitraryTypeMappingConverter extends BaseTransformer implements DecoratedConverter {
 
 	private static final Class[] DESTINATION_CLASSES = new Class[] { Object.class };
-	
+
 	private Map mapping;
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 			Locale locale) throws Exception {
 		Iterator iterator = getMapping().keySet().iterator();
@@ -56,10 +58,13 @@ public class ArbitraryTypeMappingConverter extends BaseTransformer implements Co
 				}
 			}
 		}
-		
+
 		throw new TransformationException(destinationClass, source);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		if (ObjectUtils.isEmpty(mapping)) {
 			throw new IllegalStateException("The mapping property of this converter must be set");
@@ -67,10 +72,16 @@ public class ArbitraryTypeMappingConverter extends BaseTransformer implements Co
 		return (Class[]) getMapping().keySet().toArray(new Class[getMapping().keySet().size()]);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return DESTINATION_CLASSES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
@@ -82,11 +93,12 @@ public class ArbitraryTypeMappingConverter extends BaseTransformer implements Co
 	public Map getMapping() {
 		return mapping;
 	}
+
 	/**
 	 * @param mapping The mapping to set.
 	 */
 	public void setMapping(Map mapping) {
 		this.mapping = mapping;
 	}
-	
+
 }

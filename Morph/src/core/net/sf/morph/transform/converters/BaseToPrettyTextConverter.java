@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -27,7 +27,7 @@ import net.sf.morph.transform.transformers.BaseReflectorTransformer;
  * @author Matt Sgarlata
  * @since Feb 15, 2005
  */
-public abstract class BaseToPrettyTextConverter extends BaseReflectorTransformer implements Converter, DecoratedConverter {
+public abstract class BaseToPrettyTextConverter extends BaseReflectorTransformer implements DecoratedConverter {
 
 	private String prefix;
 	private String suffix;
@@ -35,62 +35,129 @@ public abstract class BaseToPrettyTextConverter extends BaseReflectorTransformer
 	private Converter textConverter;
 	private Converter toTextConverter;
 	private boolean showNullValues = false;
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getTextConverter().getDestinationClasses();
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	// don't do any logging, because it will cause an infinite loop.  you can't
 	// log an object's string representation as one of the steps of constructing
 	// that representation
 	protected boolean isPerformingLogging() {
 		return false;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * Get the separator.
+	 * @return String
+	 */
 	public String getSeparator() {
 		return separator;
 	}
+
+	/**
+	 * Set the separator.
+	 * @param separator
+	 */
 	public void setSeparator(String separator) {
 		this.separator = separator;
 	}
+
+	/**
+	 * Get the prefix.
+	 * @return String
+	 */
 	public String getPrefix() {
 		return prefix;
 	}
+
+	/**
+	 * Set the prefix.
+	 * @param prefix
+	 */
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
+
+	/**
+	 * Get the suffix.
+	 * @return String
+	 */
 	public String getSuffix() {
 		return suffix;
 	}
+
+	/**
+	 * Set the suffix.
+	 * @param suffix
+	 */
 	public void setSuffix(String suffix) {
 		this.suffix = suffix;
 	}
+
+	/**
+	 * Get the text converter used by this BaseToPrettyTextConverter.
+	 * @return Converter
+	 */
 	public Converter getTextConverter() {
 		if (textConverter == null) {
 			setTextConverter(Defaults.createTextConverter());
 		}
 		return textConverter;
 	}
+
+	/**
+	 * Set the text converter used by this BaseToPrettyTextConverter.
+	 * @param textConverter
+	 */
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;
 	}
+
+	/**
+	 * Get the "to text" converter used by this BaseToPrettyTextConverter.
+	 * @return Converter
+	 */
 	public Converter getToTextConverter() {
 		if (toTextConverter == null) {
 			setToTextConverter(Defaults.createToTextConverter());
 		}
 		return toTextConverter;
 	}
+
+	/**
+	 * Set the "to text" converter used by this BaseToPrettyTextConverter.
+	 * @param objectToTextConverter
+	 */
 	public void setToTextConverter(Converter objectToTextConverter) {
 		this.toTextConverter = objectToTextConverter;
 	}
-	
+
+	/**
+	 * Learn whether this BaseToPrettyTextConverter is configured to show null values.
+	 * @return boolean
+	 */
 	public boolean isShowNullValues() {
 		return showNullValues;
 	}
+
+	/**
+	 * Set whether this BaseToPrettyTextConverter should show null values. Default <code>false</code>.
+	 * @param showNullValues
+	 */
 	public void setShowNullValues(boolean showNullValues) {
 		this.showNullValues = showNullValues;
 	}

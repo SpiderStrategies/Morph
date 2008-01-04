@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 the original author or authors.
+ * Copyright 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -69,8 +69,8 @@ public class EvaluateExpressionConverter extends BaseTransformer implements
 		super.setDestinationClasses(destinationClasses);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseReflectorTransformer#getDestinationClassesImpl()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return ClassUtils.getAllClasses();
@@ -92,8 +92,8 @@ public class EvaluateExpressionConverter extends BaseTransformer implements
 		return new Class[] { Object.class };
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#convertImpl(java.lang.Class, java.lang.Object, java.util.Locale)
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
 			throws Exception {

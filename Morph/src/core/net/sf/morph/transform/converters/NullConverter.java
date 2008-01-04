@@ -17,7 +17,6 @@ package net.sf.morph.transform.converters;
 
 import java.util.Locale;
 
-import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
@@ -28,36 +27,49 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Dec 31, 2004
  */
-public class NullConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class NullConverter extends BaseTransformer implements DecoratedConverter {
 
 	private static final Class[] SOURCE_TYPES = { null };
 	
 	private static final Class[] DESTINATION_TYPES = { null, Object.class };
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-		
+
 		if (source == null) {
 			return null;
 		}
-		
 		throw new TransformationException(destinationClass, source);
-
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isPerformingLogging() {
 		// this transformation is trivial; don't clutter the log with it
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return DESTINATION_TYPES;
 	}

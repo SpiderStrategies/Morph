@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -32,38 +32,59 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Dec 24, 2004
  */
-public class ObjectToTextConverter extends BaseTransformer implements Converter, DecoratedConverter {
-	
+public class ObjectToTextConverter extends BaseTransformer implements DecoratedConverter {
+
 	private Converter textConverter;
-	
+
 	private static final Class[] SOURCE_TYPES = new Class[] {
 		Object.class
 	};
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
 		return getTextConverter().convert(destinationClass, source.toString(),
 			locale);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getTextConverter().getDestinationClasses();
 	}
 
+	/**
+	 * Get the text converter used by this ObjectToTextConverter.
+	 * @return Converter
+	 */
 	public Converter getTextConverter() {
 		if (textConverter == null) {
 			setTextConverter(Defaults.createTextConverter());
 		}
 		return textConverter;
 	}
+
+	/**
+	 * Set the text converter used by this ObjectToTextConverter.
+	 * @param textConverter
+	 */
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;
 	}

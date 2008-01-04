@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -32,15 +32,18 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Jan 9, 2005
  */
-public class BooleanToTextConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class BooleanToTextConverter extends BaseTransformer implements DecoratedConverter {
 	
 	private static final Class[] SOURCE_TYPES = { Boolean.class, boolean.class };
 	
 	private Converter textConverter;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-		
+
 		String string;
 		if (source.equals(Boolean.TRUE)) {
 			string = getTrueString(locale);
@@ -51,36 +54,64 @@ public class BooleanToTextConverter extends BaseTransformer implements Converter
 		else {
 			throw new TransformationException(destinationClass, source);
 		}
-		
+
 		return getTextConverter().convert(destinationClass, string, locale);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getTextConverter().getDestinationClasses();
 	}
-	
+
+	/**
+	 * Get the string representation of <code>true</code>.
+	 * @param locale
+	 * @return String
+	 */
 	public String getTrueString(Locale locale) {
 		return Boolean.TRUE.toString();
 	}
-	
+
+	/**
+	 * Get the string representation of <code>false</code>.
+	 * @param locale
+	 * @return String
+	 */
 	public String getFalseString(Locale locale) {
 		return Boolean.FALSE.toString();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * Get the text converter used by this BaseToPrettyTextConverter.
+	 * @return Converter
+	 */
 	public Converter getTextConverter() {
 		if (textConverter == null) {
 			setTextConverter(Defaults.createTextConverter());
 		}
 		return textConverter;
 	}
+
+	/**
+	 * Set the text converter used by this BaseToPrettyTextConverter.
+	 * @param textConverter
+	 */
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;
 	}
