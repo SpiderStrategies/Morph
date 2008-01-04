@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -48,6 +48,7 @@ public abstract class NumberUtils {
 		}
 		protected abstract Object iget(String s) throws Exception;
 	}
+
 	private static class MethodNumberFactory extends NumberFactory {
 		private Method m;
 		MethodNumberFactory(Class c) throws Exception {
@@ -57,6 +58,7 @@ public abstract class NumberUtils {
 			return m.invoke(null, new Object[] { s });
 		}
 	}
+
 	private static class ConstructorNumberFactory extends NumberFactory {
 		private Constructor cs;
 		ConstructorNumberFactory(Class c) throws Exception {
@@ -72,6 +74,7 @@ public abstract class NumberUtils {
 	 * the given (Number) Class may taken on.
 	 */
 	public static final Map MAXIMUMS_FOR_TYPES;
+
 	/**
 	 * A Map of BigDecimals keyed by Class that indicate the minimum value that
 	 * the given (Number) Class may taken on.
@@ -93,30 +96,35 @@ public abstract class NumberUtils {
 	 * @see Long#MAX_VALUE
 	 */
 	public static final BigDecimal MAX_LONG = new BigDecimal("" + Long.MAX_VALUE);
+
 	/**
 	 * The maximum value an integer can have.
 	 * 
 	 * @see Integer#MAX_VALUE
 	 */
 	public static final BigDecimal MAX_INTEGER = new BigDecimal("" + Integer.MAX_VALUE);
+
 	/**
 	 * The maximum value a short can have.
 	 * 
 	 * @see Short#MAX_VALUE
 	 */
 	public static final BigDecimal MAX_SHORT = new BigDecimal("" + Short.MAX_VALUE);
+
 	/**
 	 * The maximum value a byte can have.
 	 * 
 	 * @see Byte#MAX_VALUE
 	 */
 	public static final BigDecimal MAX_BYTE = new BigDecimal("" + Byte.MAX_VALUE);
+
 	/**
 	 * The maximum value a double can have.
 	 * 
 	 * @see Double#MAX_VALUE
 	 */
 	public static final BigDecimal MAX_DOUBLE = new BigDecimal("" + Double.MAX_VALUE);
+
 	/**
 	 * The maximum value a float can have.
 	 * 
@@ -130,41 +138,47 @@ public abstract class NumberUtils {
 	 * @see Long#MIN_VALUE
 	 */
 	public static final BigDecimal MIN_LONG = new BigDecimal("" + Long.MIN_VALUE);
+
 	/**
 	 * The minimum value an integer can have.
 	 * 
 	 * @see Long#MIN_VALUE
 	 */
 	public static final BigDecimal MIN_INTEGER = new BigDecimal("" + Integer.MIN_VALUE);
+
 	/**
 	 * The minimum value a short can have.
 	 * 
 	 * @see Long#MIN_VALUE
 	 */
 	public static final BigDecimal MIN_SHORT = new BigDecimal("" + Short.MIN_VALUE);
+
 	/**
 	 * The minimum value a byte can have.
 	 * 
 	 * @see Long#MIN_VALUE
 	 */
 	public static final BigDecimal MIN_BYTE = new BigDecimal("" + Byte.MIN_VALUE);
+
 	/**
 	 * The minimum value a double can have.
 	 * 
 	 * @see Long#MIN_VALUE
 	 */
 	public static final BigDecimal MIN_DOUBLE = new BigDecimal("-" + Double.MAX_VALUE);
+
 	/**
 	 * The minimum value a float can have.
 	 * 
 	 * @see Long#MIN_VALUE
 	 */
 	public static final BigDecimal MIN_FLOAT = new BigDecimal("-" + Float.MAX_VALUE);
+
 	/**
 	 * A BigDecimal containing the value zero (0).
 	 */
 	public static final BigDecimal ZERO = new BigDecimal("0");
-	
+
 	static {
 		// the .TYPE entries probably aren't needed, but they don't hurt
 		// anything :)
@@ -181,7 +195,7 @@ public abstract class NumberUtils {
 		MAXIMUMS_FOR_TYPES.put(Double.TYPE, MAX_DOUBLE);
 		MAXIMUMS_FOR_TYPES.put(Float.class, MAX_FLOAT);
 		MAXIMUMS_FOR_TYPES.put(Float.TYPE, MAX_FLOAT);
-		
+
 		// the .TYPE entries probably aren't needed, but they don't hurt
 		// anything :)
 		MINIMUMS_FOR_TYPES = new HashMap();
@@ -197,7 +211,7 @@ public abstract class NumberUtils {
 		MINIMUMS_FOR_TYPES.put(Double.TYPE, MIN_DOUBLE);
 		MINIMUMS_FOR_TYPES.put(Float.class, MIN_FLOAT);
 		MINIMUMS_FOR_TYPES.put(Float.TYPE, MIN_FLOAT);
-		
+
 		WRAPPERS_FOR_PRIMITIVE_TYPES = new HashMap();
 		WRAPPERS_FOR_PRIMITIVE_TYPES.put(Long.TYPE, Long.class);
 		WRAPPERS_FOR_PRIMITIVE_TYPES.put(Integer.TYPE, Integer.class);
@@ -230,7 +244,6 @@ public abstract class NumberUtils {
 		Set baseNumberTypes = new HashSet(MAXIMUMS_FOR_TYPES.keySet());
 		baseNumberTypes.add(Number.class);
 		BASE_NUMBER_TYPES = (Class[]) baseNumberTypes.toArray(new Class[baseNumberTypes.size()]);
-
 	}
 
 	/**
@@ -246,7 +259,7 @@ public abstract class NumberUtils {
 	public static BigDecimal getMaximumForType(Class type) {
 		return (BigDecimal) MAXIMUMS_FOR_TYPES.get(type);
 	}
-	
+
 	/**
 	 * Returns the minimum allowed value for the given type, which must be a
 	 * number.
@@ -260,7 +273,7 @@ public abstract class NumberUtils {
 	public static BigDecimal getMinimumForType(Class type) {
 		return (BigDecimal) MINIMUMS_FOR_TYPES.get(type);
 	}
-	
+
 	/**
 	 * Converts the given number to a BigDecimal.
 	 * 
@@ -272,7 +285,7 @@ public abstract class NumberUtils {
 	public static BigDecimal numberToBigDecimal(Number number) {
 		return number == null ? null : new BigDecimal(number.toString());
 	}
-	
+
 	/**
 	 * Determines if the given type is a number type. A number type is any type
 	 * that is a subclass of <code>java.lang.Number</code> or is a primitive
@@ -286,7 +299,7 @@ public abstract class NumberUtils {
 	public static boolean isNumber(Class type) {
 		return ClassUtils.inheritanceContains(BASE_NUMBER_TYPES, type);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if <code>number</code> is capable of
 	 * containing a decimal (fractional) component. This method returns
@@ -340,7 +353,7 @@ public abstract class NumberUtils {
 	public static boolean isTooBigForType(Number number, Class type) {
 		return isOutOfBoundsForType(MAXIMUMS_FOR_TYPES, number, type, 1);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if <code>number</code> represents a value
 	 * too small (i.e. - with too large a negative absolute value) to be stored
@@ -360,7 +373,7 @@ public abstract class NumberUtils {
 	public static boolean isTooSmallForType(Number number, Class type) {
 		return isOutOfBoundsForType(MINIMUMS_FOR_TYPES, number, type, -1);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if <code>number</code> has too large an
 	 * absolute value to be stored in an instance of the given <code>type</code>.
@@ -380,11 +393,23 @@ public abstract class NumberUtils {
 			(isTooBigForType(number, type) ||
 			isTooSmallForType(number, type));
 	}
-	
+
+	/**
+	 * @deprecated for {@link ClassUtils#getPrimitiveWrapper(Class)}
+	 * @param type
+	 * @return Class
+	 */
 	public static Class getWrapperForPrimitiveType(Class type) {
 		return (Class) WRAPPERS_FOR_PRIMITIVE_TYPES.get(type);
 	}
 
+	/**
+	 * Get a number from a String.
+	 * @param type
+	 * @param s
+	 * @return Number
+	 * @throws Exception
+	 */
 	public static Number getNumber(Class type, String s) throws Exception {
 		return ((NumberFactory) NUMBER_FACTORIES.get(type)).get(s);
 	}
