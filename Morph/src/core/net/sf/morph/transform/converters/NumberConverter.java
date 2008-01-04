@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,7 +18,6 @@ package net.sf.morph.transform.converters;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.support.NumberRounder;
@@ -32,7 +31,7 @@ import net.sf.morph.util.NumberUtils;
  * @author Matt Sgarlata
  * @since Dec 14, 2004
  */
-public class NumberConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class NumberConverter extends BaseTransformer implements DecoratedConverter {
 	
 	private static final Class[] SOURCE_AND_DESTINATION_TYPES = {
 		Number.class, byte.class, short.class, int.class, long.class,
