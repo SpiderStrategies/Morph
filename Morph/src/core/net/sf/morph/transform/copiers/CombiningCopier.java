@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,8 +17,6 @@ package net.sf.morph.transform.copiers;
 
 import java.util.Locale;
 
-import net.sf.morph.transform.Converter;
-import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.TransformationException;
@@ -36,25 +34,38 @@ import net.sf.morph.transform.transformers.BaseReflectorTransformer;
  * strings) into [14, "hello", "this", "is", "another", "array", "the", "end]
  * (this list has 8 elements, a number and 7 strings)</li>
  * </ul>
- * 
+ * UNFINISHED 
  * @author Matt Sgarlata
  * @since Dec 5, 2004
  */
-public class CombiningCopier extends BaseReflectorTransformer implements Copier, DecoratedCopier, Converter, DecoratedConverter {
-	
+public class CombiningCopier extends BaseReflectorTransformer implements DecoratedCopier,
+		DecoratedConverter {
+
+	/**
+	 * Create a new CombiningCopier.
+	 */
 	public CombiningCopier() {
 		super();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType) throws TransformationException {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("not implemented");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getContainerReflector().getReflectableClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		// TODO Auto-generated method stub
 		return null;

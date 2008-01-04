@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 the original author or authors.
+ * Copyright 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -55,16 +55,21 @@ import net.sf.morph.util.MorphStringTokenizer;
  * @since Apr 9, 2007
  */
 public class TextToContainerCopier extends BaseTransformer implements DecoratedConverter, DecoratedCopier {
-	
+	/** Default delimiters */
 	public static final String DEFAULT_DELIMITERS = " ,|";
+
+	/** Default ignored characters */
 	public static final String DEFAULT_IGNORED_CHARACTERS  = "()[]{}";
-	
+
 	private String delimiters = DEFAULT_DELIMITERS;
 	private String ignoredCharacters = DEFAULT_IGNORED_CHARACTERS;
-	
+
 	private Converter textConverter = Defaults.createTextConverter();
 	private Copier containerCopier = Defaults.createContainerCopier();
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
 		Enumeration tokenizer = getTokenizer(source, locale);
 		// this call is the key reason we can't just fall back on the behavior
@@ -75,6 +80,9 @@ public class TextToContainerCopier extends BaseTransformer implements DecoratedC
 		return destination;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType) throws Exception {
 		Enumeration tokenizer = getTokenizer(source, locale);	    
 	    getContainerCopier().copy(destination, tokenizer, locale);
@@ -117,7 +125,7 @@ public class TextToContainerCopier extends BaseTransformer implements DecoratedC
 		if (ignoredCharacters == null || "".equals(ignoredCharacters)) {
 			return source;
 		}
-		
+
 		StringBuffer buffer = new StringBuffer(source.length());
 		for (int i=0; i<source.length(); i++) {
 			for (int j=0; j<ignoredCharacters.length(); j++	) {
@@ -131,18 +139,26 @@ public class TextToContainerCopier extends BaseTransformer implements DecoratedC
 				}
 			}			
 		}
-		
 		return buffer.toString();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getContainerCopier().getDestinationClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getTextConverter().getSourceClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return false;
     }
@@ -189,18 +205,34 @@ public class TextToContainerCopier extends BaseTransformer implements DecoratedC
     	this.ignoredCharacters = ignoredCharacters;
     }
 
+	/**
+	 * Get the text converter used by this TextToContainerCopier.
+	 * @return Converter
+	 */
 	public Converter getTextConverter() {
     	return textConverter;
     }
 
+	/**
+	 * Set the text converter used by this TextToContainerCopier.
+	 * @param textConverter
+	 */
 	public void setTextConverter(Converter textConverter) {
     	this.textConverter = textConverter;
     }
 
+	/**
+	 * Get the container copier used by this TextToContainerCopier.
+	 * @return Copier
+	 */
 	public Copier getContainerCopier() {
     	return containerCopier;
     }
 
+	/**
+	 * Set the container copier used by this TextToContainerCopier.
+	 * @param containerCopier
+	 */
 	public void setContainerCopier(Copier containerCopier) {
     	this.containerCopier = containerCopier;
     }

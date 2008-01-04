@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,8 +19,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.sf.composite.util.ObjectUtils;
-import net.sf.morph.transform.Converter;
-import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.NodeCopier;
@@ -36,26 +34,37 @@ import net.sf.morph.util.TransformerUtils;
  * @author Alexander Volanis
  * @since Feb 5, 2005
  */
-public abstract class BasePropertyNameCopier extends BaseReflectorTransformer implements Copier, DecoratedCopier, Converter, DecoratedConverter, NodeCopier {
-	
+public abstract class BasePropertyNameCopier extends BaseReflectorTransformer implements
+		DecoratedCopier, DecoratedConverter, NodeCopier {
+
 	private static final Class[] SOURCE_AND_DESTINATION_TYPES = { Object.class };
 
 	private boolean errorOnMissingProperty = false;
 	private Map propertyTransformers;
 
+	/**
+	 * Create a new BasePropertyNameCopier.
+	 */
 	public BasePropertyNameCopier() {
 		super();
 	}
 
+	/**
+	 * Create a new BasePropertyNameCopier.
+	 * @param errorOnMissingProperty
+	 */
 	public BasePropertyNameCopier(boolean errorOnMissingProperty) {
 		super();
 		this.errorOnMissingProperty = errorOnMissingProperty;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object createReusableSource(Class destinationClass, Object source) {
 		return super.createReusableSource(destinationClass, source);
 	}
-	
+
     /**
 	 * Return <code>true</code> if errors should should be thrown when a
 	 * property is missing.
@@ -77,8 +86,20 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 	public void setErrorOnMissingProperty(boolean isStrict) {
 		this.errorOnMissingProperty = isStrict;
 	}
-	
-	protected Transformer chooseTransformer(String sourceProperty, Object source, String destinationProperty, Object destination, Locale locale, Integer preferredTransformationType) {
+
+	/**
+	 * Choose the appropriate property transformer.
+	 * @param sourceProperty
+	 * @param source
+	 * @param destinationProperty
+	 * @param destination
+	 * @param locale
+	 * @param preferredTransformationType
+	 * @return
+	 */
+	protected Transformer chooseTransformer(String sourceProperty, Object source,
+			String destinationProperty, Object destination, Locale locale,
+			Integer preferredTransformationType) {
 		Map m = getPropertyTransformers();
 		if (m != null) {
 			Transformer t = (Transformer) m.get(sourceProperty);
@@ -94,8 +115,19 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 		}
 		return getNestedTransformer();	
 	}
-	
-	protected void copyProperty(String sourceProperty, Object source, String destinationProperty, Object destination, Locale locale, Integer preferredTransformationType) {
+
+	/**
+	 * Perform the specified property copy.
+	 * @param sourceProperty
+	 * @param source
+	 * @param destinationProperty
+	 * @param destination
+	 * @param locale
+	 * @param preferredTransformationType
+	 */
+	protected void copyProperty(String sourceProperty, Object source,
+			String destinationProperty, Object destination, Locale locale,
+			Integer preferredTransformationType) {
 		if (getLog().isTraceEnabled()) {
 			getLog().trace(
 				"Copying property '" + sourceProperty + "' of "
@@ -103,7 +135,7 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 					+ " to property '" + destinationProperty + "' of "
 					+ ObjectUtils.getObjectDescription(destination));
 		}
-		
+
 		// determine the destination type
 		Class destinationType = getBeanReflector().getType(
 			destination, destinationProperty);
@@ -139,42 +171,71 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 		// this transformer can recursively call other transformers, so we don't
 		// want to eat user defined exceptions
 	    return false;
     }
 
-	// overriden to make this public
+	/**
+	 * {@inheritDoc}
+	 */
+	// overridden to make this public
 	public Transformer getNestedTransformer() {
 		return super.getNestedTransformer();
 	}
 
-	// overriden to make this public
+	/**
+	 * {@inheritDoc}
+	 */
+	// overridden to make this public
 	public void setNestedTransformer(Transformer transformer) {
 		super.setNestedTransformer(transformer);
 	}
-	
+
+	/**
+	 * Get the Map of Transformers to use instead of <code>nestedTransformer</code>.
+	 * @return Map
+	 */
 	public Map getPropertyTransformers() {
 		return propertyTransformers;
 	}
 
+	/**
+	 * Set the Map of Transformers to use instead of <code>nestedTransformer</code>.
+	 * @param propertyTransformers
+	 */
 	public void setPropertyTransformers(Map propertyTransformers) {
 		this.propertyTransformers = propertyTransformers;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
-		return sourceClasses == null ? SOURCE_AND_DESTINATION_TYPES : sourceClasses;
+		return SOURCE_AND_DESTINATION_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setSourceClasses(Class[] sourceClasses) {
 		super.setSourceClasses(sourceClasses);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
-		return destinationClasses == null ? SOURCE_AND_DESTINATION_TYPES : destinationClasses;
+		return SOURCE_AND_DESTINATION_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setDestinationClasses(Class[] destinationClasses) {
 		super.setDestinationClasses(destinationClasses);
 	}

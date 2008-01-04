@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,6 +15,7 @@
  */
 package net.sf.morph.transform.copiers;
 
+import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.util.ClassUtils;
 
@@ -24,12 +25,18 @@ import net.sf.morph.util.ClassUtils;
  * @author Matt Sgarlata
  * @since Dec 11, 2004
  */
-public class ArrayCopier extends ContainerCopier {
-	
+public class ArrayCopier extends ContainerCopier implements ExplicitTransformer {
+
+	/**
+	 * Create a new ArrayCopier.
+	 */
 	public ArrayCopier() {
 		super();
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isTransformableImpl(Class destinationType,
 		Class sourceType) throws Exception {
 		return
@@ -39,10 +46,12 @@ public class ArrayCopier extends ContainerCopier {
 				destinationType.getComponentType().isAssignableFrom(sourceType)
 			);
 	}
-	
-	public Class[] getDestinationClassesImpl() throws TransformationException {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Class[] getDestinationClassesImpl() throws TransformationException {
 		return ClassUtils.ARRAY_TYPES;
 	}
-
 
 }

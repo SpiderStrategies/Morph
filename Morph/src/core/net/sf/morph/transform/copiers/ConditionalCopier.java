@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 the original author or authors.
+ * Copyright 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -47,9 +47,8 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 	private Transformer thenTransformer;
 	private Transformer elseTransformer;
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		Transformer tt = getThenTransformer();
@@ -59,9 +58,8 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 				.getDestinationClasses());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		Transformer tt = getThenTransformer();
@@ -70,15 +68,15 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 				: merge(tt.getSourceClasses(), et.getSourceClasses());
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#isAutomaticallyHandlingNulls()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected boolean isAutomaticallyHandlingNulls() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#isTransformableImpl(java.lang.Class, java.lang.Class)
+	/**
+	 * {@inheritDoc}
 	 */
 	protected boolean isTransformableImpl(Class destinationType, Class sourceType)
 			throws Exception {
@@ -96,13 +94,6 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 		super.setDestinationClasses(destinationClasses);
 	}
 
-	private Class[] merge(Class[] a, Class[] b) {
-		HashSet s = new HashSet();
-		s.addAll(Arrays.asList(a));
-		s.addAll(Arrays.asList(b));
-		return (Class[]) s.toArray(new Class[s.size()]);
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -110,9 +101,8 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 		super.setSourceClasses(sourceClasses);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#convertImpl(java.lang.Class, java.lang.Object, java.util.Locale)
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
 			throws Exception {
@@ -120,9 +110,8 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 				TRANSFORMATION_TYPE_CONVERT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	/**
+	 * {@inheritDoc}
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
 			Integer preferredTransformationType) throws Exception {
@@ -156,6 +145,12 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 				destination, source, locale, preferredTransformationType);
 	}
 
+	/**
+	 * Evaluate the source object against the ifConverter.
+	 * @param source
+	 * @param locale
+	 * @return boolean result
+	 */
 	private boolean evaluateIf(Object source, Locale locale) {
 		Boolean b = (Boolean) getIfConverter().convert(Boolean.class, source, locale);
 		return Boolean.TRUE.equals(b);
@@ -211,4 +206,18 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 		setInitialized(false);
 	}
 
+	/**
+	 * Merge two Class[]s.
+	 * @param a
+	 * @param b
+	 * @return Class[]
+	 */
+	private static Class[] merge(Class[] a, Class[] b) {
+		HashSet s = new HashSet();
+		s.addAll(Arrays.asList(a));
+		s.addAll(Arrays.asList(b));
+		return (Class[]) s.toArray(new Class[s.size()]);
+	}
+
 }
+

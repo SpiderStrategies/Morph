@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -48,15 +48,25 @@ public class PropertyNameMatchingCopier extends BasePropertyNameCopier {
 	private Set propertiesToCopy = new HashSet();
 	private Set propertiesToIgnore = new HashSet();
 
+	/**
+	 * Create a new PropertyNameMatchingCopier.
+	 */
 	public PropertyNameMatchingCopier() {
 		super();
 		setErrorOnMissingProperty(false);
 	}
 
+	/**
+	 * Create a new PropertyNameMatchingCopier.
+	 * @param errorOnMissingProperty
+	 */
 	public PropertyNameMatchingCopier(boolean errorOnMissingProperty) {
 		super(errorOnMissingProperty);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void copyImpl(Object destination, Object source, Locale locale,
 			Integer preferredTransformationType) throws Exception {
 		String[] properties = evaluateIncludedProperties(source);
@@ -177,6 +187,11 @@ public class PropertyNameMatchingCopier extends BasePropertyNameCopier {
 		propertiesToIgnore.add(propertyName);
 	}
 
+	/**
+	 * Get the included properties for the given object.
+	 * @param source
+	 * @return String[]
+	 */
 	private String[] evaluateIncludedProperties(Object source) {
 		Set result = new HashSet(propertiesToCopy);
 		result.retainAll(propertiesToIgnore);

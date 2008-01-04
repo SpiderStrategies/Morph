@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 the original author or authors.
+ * Copyright 2007-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -112,8 +112,8 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 				: new LanguageDecorator(language);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#initializeImpl()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected void initializeImpl() throws Exception {
 		super.initializeImpl();
@@ -127,6 +127,10 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		ensureOnlyStrings(expand(mapping.values()));
 	}
 
+	/**
+	 * Ensure all collection entries are Strings.
+	 * @param collection
+	 */
 	private void ensureOnlyStrings(Collection collection) {
 		for (Iterator i = collection.iterator(); i.hasNext();) {
 			Object value = i.next();
@@ -139,6 +143,11 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		}
 	}
 
+	/**
+	 * Unwrap collections nested 1 level if present.
+	 * @param collection
+	 * @return Collection
+	 */
 	private Collection expand(Collection collection) {
 		ArrayList result = new ArrayList(collection.size());
 		for (Iterator outerIter = collection.iterator(); outerIter.hasNext();) {
@@ -150,8 +159,8 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	/**
+	 * {@inheritDoc}
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
 			Integer preferredTransformationType) throws Exception {
@@ -215,15 +224,15 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return SOURCE_AND_DEST_CLASSES;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_AND_DEST_CLASSES;
@@ -246,36 +255,36 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		setInitialized(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#setSourceClasses(java.lang.Class[])
+	/**
+	 * {@inheritDoc}
 	 */
 	public synchronized void setSourceClasses(Class[] sourceClasses) {
 		super.setSourceClasses(sourceClasses);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#setDestinationClasses(java.lang.Class[])
+	/**
+	 * {@inheritDoc}
 	 */
 	public synchronized void setDestinationClasses(Class[] destinationClasses) {
 		super.setDestinationClasses(destinationClasses);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#createReusableSource(java.lang.Class, java.lang.Object)
+	/**
+	 * {@inheritDoc}
 	 */
 	public Object createReusableSource(Class destinationClass, Object source) {
 		return super.createReusableSource(destinationClass, source);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#setNestedTransformer(net.sf.morph.transform.Transformer)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setNestedTransformer(Transformer nestedTransformer) {
 		super.setNestedTransformer(nestedTransformer);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#getNestedTransformer()
+	/**
+	 * {@inheritDoc}
 	 */
 	public Transformer getNestedTransformer() {
 		return super.getNestedTransformer();
@@ -289,5 +298,5 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		//we throw LanguageExceptions which should be wrapped as TransformationExceptions:
 	    return true;
     }
-	
+
 }

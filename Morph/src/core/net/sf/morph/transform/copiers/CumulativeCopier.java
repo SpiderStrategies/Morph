@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 the original author or authors.
+ * Copyright 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -86,9 +86,8 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 				.getDestinationClassIntersection((Transformer[]) getComponents());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#getComponentType()
+	/**
+	 * {@inheritDoc}
 	 */
 	public Class getComponentType() {
 		return Copier.class;
