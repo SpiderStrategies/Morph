@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -29,59 +29,91 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Alexander Volanis
  * @since Jan 8, 2005
  */
-public class TimeToNumberConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class TimeToNumberConverter extends BaseTransformer implements DecoratedConverter {
 
 	private Converter numberConverter;
 	private Converter timeConverter;
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-		
+
 		if (destinationClass.isPrimitive() && source == null) {
 			throw new TransformationException(destinationClass, source);
 		}
-		
+
 		Date date = (Date) getTimeConverter().convert(Date.class, source,
 			locale);
 		return getNumberConverter().convert(destinationClass,
 			new Long(date.getTime()), locale);
-		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isAutomaticallyHandlingNulls() {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getTimeConverter().getSourceClasses();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getNumberConverter().getDestinationClasses();
 	}
 
+	/**
+	 * Get the number converter used by this TimeToNumberConverter.
+	 * @return Converter
+	 */
 	public Converter getNumberConverter() {
 		if (numberConverter == null) {
 			setNumberConverter(Defaults.createNumberConverter());
 		}
 		return numberConverter;
 	}
+
+	/**
+	 * Set the number converter used by this TimeToNumberConverter.
+	 * @param numberConverter
+	 */
 	public void setNumberConverter(Converter numberConverter) {
 		this.numberConverter = numberConverter;
 	}
+
+	/**
+	 * Get the time converter used by this TimeToNumberConverter.
+	 * @return Converter
+	 */
 	public Converter getTimeConverter() {
 		if (timeConverter == null) {
 			setTimeConverter(Defaults.createTimeConverter());
 		}
 		return timeConverter;
 	}
+
+	/**
+	 * Set the time converter used by this TimeToNumberConverter.
+	 * @param timeConverter
+	 */
 	public void setTimeConverter(Converter timeConverter) {
 		this.timeConverter = timeConverter;
 	}
-
 
 }

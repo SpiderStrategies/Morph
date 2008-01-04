@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,7 +19,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
@@ -31,10 +30,13 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Jan 4, 2005
  */
-public class TimeConverter extends BaseTransformer implements Converter, DecoratedConverter {
+public class TimeConverter extends BaseTransformer implements DecoratedConverter {
 
 	private static final Class[] SOURCE_AND_DESTINATION_TYPES = { Date.class, Calendar.class };
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
 		if (destinationClass.isInstance(source)) {
 			return source instanceof Date ? ((Date) source).clone() : ((Calendar) source).clone();
@@ -49,15 +51,24 @@ public class TimeConverter extends BaseTransformer implements Converter, Decorat
 		}
 		throw new TransformationException(destinationClass, source);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_AND_DESTINATION_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return SOURCE_AND_DESTINATION_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }

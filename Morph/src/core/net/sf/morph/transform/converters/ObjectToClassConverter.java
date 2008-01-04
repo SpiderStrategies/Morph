@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,6 +18,7 @@ package net.sf.morph.transform.converters;
 import java.util.Locale;
 
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
 import net.sf.morph.util.ClassUtils;
 
@@ -27,29 +28,43 @@ import net.sf.morph.util.ClassUtils;
  * @author Matt Sgarlata
  * @since Feb 10, 2006
  */
-public class ObjectToClassConverter extends BaseTransformer implements
-		DecoratedConverter {
+public class ObjectToClassConverter extends BaseTransformer implements DecoratedConverter, ExplicitTransformer {
 	private static final Class[] DEST = new Class[] { Class.class };
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
 		return ClassUtils.getClass(source);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	// this isn't technically needed but will be faster than the default
 	// implementation in BaseTransformer
 	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
 		return destinationType == Class.class;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return new Class[] { Object.class, float.class, double.class,
 				byte.class, short.class, int.class, long.class, boolean.class, char.class };
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return DEST;
 	}

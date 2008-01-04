@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import net.sf.morph.Defaults;
-import net.sf.morph.reflect.ContainerReflector;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.transformers.BaseReflectorTransformer;
@@ -31,41 +30,53 @@ import net.sf.morph.transform.transformers.BaseReflectorTransformer;
  * @author Matt Sgarlata
  * @since Dec 18, 2004
  */
-public class ContainerToTraverserConverter extends BaseReflectorTransformer implements Converter, DecoratedConverter {
-	
+public class ContainerToTraverserConverter extends BaseReflectorTransformer implements DecoratedConverter {
+
 	private static final Class[] SOURCE_TYPES = new Class[] {
 		Object.class
 	};
-	
+
 	private Converter traverserConverter;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-		
+
 		Iterator iterator = getContainerReflector().getIterator(source);
 		return getTraverserConverter().convert(destinationClass, iterator, locale);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return SOURCE_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getTraverserConverter().getDestinationClasses();
 	}
-	
-	protected ContainerReflector getContainerReflector() {
-//		return (ContainerReflector) CompositeUtils.specialize(getReflector(),
-//			ContainerReflector.class);
-		return (ContainerReflector) getReflector();
-	}
 
+	/**
+	 * Get the traverser converter used by this ContainerToTraverserConverter.
+	 * @return Converter
+	 */
 	public Converter getTraverserConverter() {
 		if (traverserConverter == null) {
 			setTraverserConverter(Defaults.createConverter());
 		}
 		return traverserConverter;
 	}
+
+	/**
+	 * Set the traverser converter used by this ContainerToTraverserConverter.
+	 * @param traverserConverter
+	 */
 	public void setTraverserConverter(Converter traverserConverter) {
 		this.traverserConverter = traverserConverter;
 	}

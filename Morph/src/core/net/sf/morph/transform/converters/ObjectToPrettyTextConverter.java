@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -36,31 +36,41 @@ import net.sf.morph.util.TransformerUtils;
  * @since Feb 15, 2005
  */
 public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
-	
+	/** Default types using <code>toString()</code> */
 	public static final Class[] DEFAULT_TYPES_USING_TO_STRING = new Class[] {
 		String.class, Long.class, Integer.class, Short.class, Character.class,
 		Byte.class, Double.class, Float.class, Boolean.class, Long.TYPE,
 		Integer.TYPE, Short.TYPE, Character.TYPE, Byte.TYPE, Double.TYPE,
 		Float.TYPE, Boolean.TYPE, StringBuffer.class
 	};
-	
+
+	/** Default levels */
 	public static final int DEFAULT_LEVELS = 1;
-	
+
 	private int levels = DEFAULT_LEVELS;
 	private Converter containerToPrettyTextConverter;
 	private Converter beanToPrettyTextConverter;
 	private static ThreadLocal currentLevelThreadLocal = new ThreadLocal() {
+		/**
+		 * {@inheritDoc}
+		 */
 		protected Object initialValue() {
 			return new MutableInteger(-1);
 		}
 	};
 	private Set typesUsingToString;
-	
+
+	/**
+	 * Create a new ObjectToPrettyTextConverter.
+	 */
 	public ObjectToPrettyTextConverter() {
 		super();
 		setTypesUsingToString(DEFAULT_TYPES_USING_TO_STRING);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
 		MutableInteger currentLevel = (MutableInteger) currentLevelThreadLocal.get();
 		currentLevel.value++;
@@ -95,6 +105,9 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 		return getToTextConverter().convert(destinationClass, source, locale);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		Set candidates = new HashSet();
 		candidates.addAll(Arrays.asList(getContainerToPrettyTextConverter().getSourceClasses()));
@@ -102,14 +115,27 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 		candidates.addAll(Arrays.asList(getToTextConverter().getSourceClasses()));
 		return (Class[]) candidates.toArray(new Class[candidates.size()]);
 	}
-	
+
+	/**
+	 * Get the levels
+	 * @return int
+	 */
 	public int getLevels() {
 		return levels;
 	}
+
+	/**
+	 * Set the levels.
+	 * @param levels
+	 */
 	public void setLevels(int levels) {
 		this.levels = levels;
 	}
-	
+
+	/**
+	 * Get the converter used to convert beans to pretty text.
+	 * @return Converter
+	 */
 	public Converter getBeanToPrettyTextConverter() {
 		if (beanToPrettyTextConverter == null) {
 			BeanToPrettyTextConverter converter = new BeanToPrettyTextConverter();
@@ -118,9 +144,19 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 		}
 		return beanToPrettyTextConverter;
 	}
+
+	/**
+	 * Set the converter used to convert beans to pretty text.
+	 * @param beanToTextConverter
+	 */
 	public void setBeanToPrettyTextConverter(Converter beanToTextConverter) {
 		this.beanToPrettyTextConverter = beanToTextConverter;
 	}
+
+	/**
+	 * Get the converter used to convert containers to pretty text.
+	 * @return Converter
+	 */
 	public Converter getContainerToPrettyTextConverter() {
 		if (containerToPrettyTextConverter == null) {
 			ContainerToPrettyTextConverter converter = new ContainerToPrettyTextConverter();
@@ -129,21 +165,40 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 		}
 		return containerToPrettyTextConverter;
 	}
+
+	/**
+	 * Set the converter used to convert containers to pretty text.
+	 * @param containerToTextConverter
+	 */
 	public void setContainerToPrettyTextConverter(Converter containerToTextConverter) {
 		this.containerToPrettyTextConverter = containerToTextConverter;
 	}
-	
+
+	/**
+	 * Get the types using <code>toString()</code>.
+	 * @return Set<Class>
+	 */
 	protected Set getTypesUsingToStringInternal() {
 		// make sure the set is initialized
 		if (typesUsingToString == null) getTypesUsingToString();
 		return typesUsingToString;
 	}
+
+	/**
+	 * Get the types using <code>toString()</code>.
+	 * @return Class[]
+	 */
 	public Class[] getTypesUsingToString() {
 		if (typesUsingToString == null) {
 			setTypesUsingToString(DEFAULT_TYPES_USING_TO_STRING);
 		}
 		return (Class[]) typesUsingToString.toArray(new Class[typesUsingToString.size()]);
 	}
+
+	/**
+	 * Set the types using <code>toString()</code>.
+	 * @param typesUsingToString
+	 */
 	public void setTypesUsingToString(Class[] typesUsingToString) {
 		this.typesUsingToString = new HashSet(Arrays.asList(typesUsingToString));
 	}
