@@ -633,11 +633,8 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * @return Transformer
 	 */
 	protected Transformer getNestedTransformer() {
-// can't do this, otherwise GraphTransformers won't be able to detect when they
+// can't use default-if-null pattern here; otherwise GraphTransformers won't be able to detect when they
 // have already set the graph transformer
-//		if (nestedTransformer == null) {
-//			nestedTransformer = (GraphTransformer) Defaults.getTransformer;
-//		}
 		return nestedTransformer;
 	}
 
