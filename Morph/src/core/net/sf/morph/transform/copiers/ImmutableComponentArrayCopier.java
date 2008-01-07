@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 the original author or authors.
+ * Copyright 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,14 +16,15 @@
 package net.sf.morph.transform.copiers;
 
 import java.lang.reflect.Array;
-import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.TransformerUtils;
 
 /**
@@ -37,7 +38,7 @@ public class ImmutableComponentArrayCopier extends BaseTransformer implements
 
 	static {
 		Class[] componentTypes = ClassUtils.getImmutableTypes();
-		HashSet arrayTypes = new HashSet();
+		Set arrayTypes = ContainerUtils.createOrderedSet();
 		for (int i = 0; i < componentTypes.length; i++) {
 			if (componentTypes[i] != null) {
 				arrayTypes.add(ClassUtils.getArrayClass(componentTypes[i]));

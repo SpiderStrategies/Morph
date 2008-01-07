@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,13 +16,13 @@
 package net.sf.morph.context.contexts;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.context.Context;
 import net.sf.morph.context.ContextException;
 import net.sf.morph.context.HierarchicalContext;
+import net.sf.morph.util.ContainerUtils;
 
 /**
  * <p>
@@ -104,7 +104,7 @@ public abstract class BaseHierarchicalContext extends BaseContext implements
 	protected final String[] getPropertyNamesImpl() throws Exception {
 		String[] currentPropertyNames = this.getPropertyNamesHierarchicalImpl();
 		int size = currentPropertyNames == null ? 0 : currentPropertyNames.length;
-		Set propertyNames = new HashSet(size);
+		Set propertyNames = ContainerUtils.createOrderedSet();
 		if (!ObjectUtils.isEmpty(currentPropertyNames)) {
 			propertyNames.addAll(Arrays.asList(currentPropertyNames));
 		}

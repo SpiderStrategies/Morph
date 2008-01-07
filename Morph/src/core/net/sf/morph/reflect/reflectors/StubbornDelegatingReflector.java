@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,20 +16,12 @@
 package net.sf.morph.reflect.reflectors;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.composite.Defaults;
 import net.sf.composite.SpecializableComposite;
 import net.sf.composite.StrictlyTypedComposite;
-import net.sf.composite.specialize.SpecializationException;
-import net.sf.composite.specialize.Specializer;
-import net.sf.composite.specialize.specializers.CachingSpecializerProxy;
-import net.sf.composite.specialize.specializers.CloningSpecializer;
-import net.sf.composite.util.CompositeUtils;
-import net.sf.composite.validate.ComponentValidator;
 import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.reflect.CompositeReflector;
 import net.sf.morph.reflect.ContainerReflector;
@@ -43,6 +35,7 @@ import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.reflect.Reflector;
 import net.sf.morph.reflect.SizableReflector;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.ReflectorUtils;
 
 /**
@@ -80,7 +73,7 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 	}
 
 	protected Class[] getReflectableClassesImpl() {
-		Set set = new HashSet();
+		Set set = ContainerUtils.createOrderedSet();
 		Object[] reflectors = getComponents();
 		for (int i = 0; i < reflectors.length; i++) {
 			Class[] reflectableClasses = ((Reflector) reflectors[i]).getReflectableClasses();
@@ -119,7 +112,7 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 	}
 	
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
-		Set propertyNames = new HashSet();
+		Set propertyNames = ContainerUtils.createOrderedSet();
 		Object[] reflectors = getComponents();
 		boolean reflectorFound = false;
 		for (int i=0; i<reflectors.length; i++) {

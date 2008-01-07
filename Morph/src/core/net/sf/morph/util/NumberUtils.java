@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -241,7 +240,8 @@ public abstract class NumberUtils {
 			throw new ReflectionException(e);
 		}
 
-		Set baseNumberTypes = new HashSet(MAXIMUMS_FOR_TYPES.keySet());
+		Set baseNumberTypes = ContainerUtils.createOrderedSet();
+		baseNumberTypes.addAll(MAXIMUMS_FOR_TYPES.keySet());
 		baseNumberTypes.add(Number.class);
 		BASE_NUMBER_TYPES = (Class[]) baseNumberTypes.toArray(new Class[baseNumberTypes.size()]);
 	}

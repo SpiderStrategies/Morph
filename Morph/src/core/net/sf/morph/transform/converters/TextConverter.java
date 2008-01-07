@@ -17,14 +17,15 @@ package net.sf.morph.transform.converters;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.TransformerUtils;
 
 /**
@@ -53,15 +54,10 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 	private static final Class[] SOURCE_AND_DESTINATION_TYPES;
 
 	static {
-		HashSet s = new HashSet();
+		Set s = ContainerUtils.createOrderedSet();
 		
 		s.add(StringBuffer.class);
 		s.add(String.class);
-		s.add(byte[].class);
-		s.add(char[].class);
-		s.add(Character.class);
-		s.add(char.class);
-		s.add(null);
 		if (CHAR_SEQUENCE != null) {
 			s.add(CHAR_SEQUENCE);
 			try {
@@ -70,6 +66,11 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 				//nope
 			}
 		}
+		s.add(byte[].class);
+		s.add(char[].class);
+		s.add(Character.class);
+		s.add(char.class);
+		s.add(null);
 		SOURCE_AND_DESTINATION_TYPES = (Class[]) s.toArray(new Class[s.size()]);
 	}
 

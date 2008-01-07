@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,7 +17,6 @@ package net.sf.morph.context.contexts;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -82,13 +81,13 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 		try {
 			// retrieve the property names
 			String[] cachedPropertyNames = getPropertyNamesImpl();
-			Set propertyNames = new HashSet(cachedPropertyNames.length);
+			Set propertyNames = ContainerUtils.createOrderedSet();
 			if (!ObjectUtils.isEmpty(cachedPropertyNames)) {
 				propertyNames.addAll(Arrays.asList(cachedPropertyNames));
 			}
 //			// include the propertyNames property
 //			int size = cachedPropertyNames == null ? 0 : cachedPropertyNames.length;
-//			Set propertyNames = new HashSet(size+1);
+//			Set propertyNames = new ContainerUtils.createOrderedSet(size+1);
 //			propertyNames.add(PROPERTY_NAMES_PROPERTY);
 //			if (!ObjectUtils.isEmpty(cachedPropertyNames)) {
 //				propertyNames.addAll(Arrays.asList(cachedPropertyNames));

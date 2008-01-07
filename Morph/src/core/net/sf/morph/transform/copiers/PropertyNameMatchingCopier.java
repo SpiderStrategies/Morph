@@ -17,13 +17,13 @@ package net.sf.morph.transform.copiers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.transform.TransformationException;
+import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.StringUtils;
 
 /**
@@ -45,8 +45,8 @@ import net.sf.morph.util.StringUtils;
  */
 public class PropertyNameMatchingCopier extends BasePropertyNameCopier {
 
-	private Set propertiesToCopy = new HashSet();
-	private Set propertiesToIgnore = new HashSet();
+	private Set propertiesToCopy = ContainerUtils.createOrderedSet();
+	private Set propertiesToIgnore = ContainerUtils.createOrderedSet();
 
 	/**
 	 * Create a new PropertyNameMatchingCopier.
@@ -193,7 +193,8 @@ public class PropertyNameMatchingCopier extends BasePropertyNameCopier {
 	 * @return String[]
 	 */
 	private String[] evaluateIncludedProperties(Object source) {
-		Set result = new HashSet(propertiesToCopy);
+		Set result = ContainerUtils.createOrderedSet();
+		result.addAll(propertiesToCopy);
 		result.retainAll(propertiesToIgnore);
 		if (!result.isEmpty()) {
 			throw new IllegalStateException("Overlapping included/ignored properties: "

@@ -16,12 +16,12 @@
 package net.sf.morph.transform.converters;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
 import net.sf.morph.transform.Converter;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.MutableInteger;
 import net.sf.morph.util.TransformerUtils;
 
@@ -109,7 +109,7 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 	 * {@inheritDoc}
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
-		Set candidates = new HashSet();
+		Set candidates = ContainerUtils.createOrderedSet();
 		candidates.addAll(Arrays.asList(getContainerToPrettyTextConverter().getSourceClasses()));
 		candidates.addAll(Arrays.asList(getBeanToPrettyTextConverter().getSourceClasses()));
 		candidates.addAll(Arrays.asList(getToTextConverter().getSourceClasses()));
@@ -200,6 +200,8 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 	 * @param typesUsingToString
 	 */
 	public void setTypesUsingToString(Class[] typesUsingToString) {
-		this.typesUsingToString = new HashSet(Arrays.asList(typesUsingToString));
+		Set s = ContainerUtils.createOrderedSet();
+		s.addAll(Arrays.asList(typesUsingToString));
+		this.typesUsingToString = s;
 	}
 }

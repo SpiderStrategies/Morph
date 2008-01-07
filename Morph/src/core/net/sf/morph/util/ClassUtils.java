@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,7 +20,6 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -78,7 +77,7 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 
 		//we couldn't use all Numbers for immutables even if we wanted to:
 		//Java 1.6 adds AtomicInteger and AtomicLong, which ARE mutable!
-		Set immutable = new HashSet(19);
+		Set immutable = ContainerUtils.createOrderedSet();
 		immutable.addAll(Arrays.asList(primitives));
 		immutable.addAll(Arrays.asList(wrappers));
 		immutable.add(String.class);
@@ -92,10 +91,10 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 		IMMUTABLE_TYPES = Collections.unmodifiableSet(immutable);
 
 		//add primitives, null, and Objects to ALL_CLASSES:
-		Set allClasses = new HashSet(10);
+		Set allClasses = ContainerUtils.createOrderedSet();
+		allClasses.add(Object.class);
 		allClasses.addAll(Arrays.asList(primitives));
 		allClasses.add(null);
-		allClasses.add(Object.class);
 		ALL_CLASSES = Collections.unmodifiableSet(allClasses);
 	}
 

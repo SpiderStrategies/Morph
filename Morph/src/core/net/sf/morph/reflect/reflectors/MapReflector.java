@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -174,7 +174,8 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 //		 the getPropertyNames method used to return implicit properties, but it
 //		 doesn't anymore			
-//		Set keys = new HashSet(getMap(bean).keySet());
+//		Set keys = new ContainerUtils.createOrderedSet();
+//		keys.addAll(getMap(bean).keySet());
 //		keys.add(IMPLICIT_PROPERTY_KEYS);
 //		keys.add(IMPLICIT_PROPERTY_VALUES);
 //		keys.add(IMPLICIT_PROPERTY_ENTRIES);

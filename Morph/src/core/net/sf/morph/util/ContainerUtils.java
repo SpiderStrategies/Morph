@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -151,6 +151,24 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 	 */
 	public static Object[] intersection(List arrays) {
 		return intersection(arrays, Object[].class);
+	}
+	
+	public static Set createOrderedSet() {
+		if (ClassUtils.isJdk14OrHigherPresent()) {
+			try {
+				return (Set) Class.forName("java.util.LinkedHashSet").newInstance();	
+			}
+			catch (Exception e) { }
+		}
+		
+		if (ClassUtils.isCommonsCollectionsPresent()) {
+			try {
+				return (Set) Class.forName("org.apache.commons.collections.set.ListOrderedSet").newInstance();			
+			}
+			catch (Exception e) { }
+		}
+		
+		return new ListOrderedSet();
 	}
 
 }

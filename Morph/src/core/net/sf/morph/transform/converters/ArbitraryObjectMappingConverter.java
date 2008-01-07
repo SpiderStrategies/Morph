@@ -16,7 +16,6 @@
 package net.sf.morph.transform.converters;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -28,6 +27,7 @@ import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
 import net.sf.morph.util.BidirectionalMap;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.ContainerUtils;
 
 /**
  * A transformer which transforms defined arbitrary objects to other defined
@@ -82,7 +82,7 @@ public class ArbitraryObjectMappingConverter extends BaseTransformer implements 
 			maxNumClasses += backwardMappingKeys.size();
 		}
 
-		Set classes = new HashSet(maxNumClasses);
+		Set classes = ContainerUtils.createOrderedSet();
 		addContainedClasses(classes, forwardMappingKeys);
 
 		if (isBidirectional()) {

@@ -17,7 +17,6 @@ package net.sf.morph.transform.copiers;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -26,6 +25,7 @@ import java.util.Map.Entry;
 
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.transform.TransformationException;
+import net.sf.morph.util.ContainerUtils;
 
 /**
  * Copies properties from the source to the destination based on a mapping of
@@ -85,7 +85,7 @@ public class PropertyNameMappingCopier extends BasePropertyNameCopier {
 		ensureOnlyStrings(mapping.values());
 		if (bidirectional) {
 			// make sure there are no duplicate mappings
-			Set propertiesWithMappings = new HashSet();
+			Set propertiesWithMappings = ContainerUtils.createOrderedSet();
 			Iterator iterator = mapping.values().iterator();
 			while (iterator.hasNext()) {
 				String propertyName = (String) iterator.next();

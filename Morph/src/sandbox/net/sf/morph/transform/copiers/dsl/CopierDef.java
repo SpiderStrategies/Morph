@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 the original author or authors.
+ * Copyright 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,7 +18,6 @@ package net.sf.morph.transform.copiers.dsl;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +29,7 @@ import net.sf.morph.transform.copiers.CumulativeCopier;
 import net.sf.morph.transform.copiers.PropertyExpressionMappingCopier;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopier;
 import net.sf.morph.util.Assert;
+import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.ProxyUtils;
 
 /**
@@ -132,7 +132,7 @@ class CopierDef {
 	 */
 	public synchronized Set getIgnoreProperties() {
 		if (ignoreProperties == null) {
-			ignoreProperties = new HashSet();
+			ignoreProperties = ContainerUtils.createOrderedSet();
 		}
 		return ignoreProperties;
 	}
@@ -143,7 +143,7 @@ class CopierDef {
 	 */
 	public synchronized Set getIncludeProperties() {
 		if (includeProperties == null) {
-			includeProperties = new HashSet();
+			includeProperties = ContainerUtils.createOrderedSet();
 		}
 		return includeProperties;
 	}

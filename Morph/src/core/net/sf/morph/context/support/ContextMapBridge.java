@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +104,7 @@ public class ContextMapBridge {
 		if (ObjectUtils.isEmpty(propertyNames)) {
 			return Collections.EMPTY_SET;
 		}
-		Set set = new HashSet(propertyNames.length);
+		Set set = ContainerUtils.createOrderedSet();
 		for (int i=0; i<propertyNames.length; i++) {
 			set.add(new MapEntry(propertyNames[i],
 					context.get(propertyNames[i]), false));
@@ -115,8 +114,14 @@ public class ContextMapBridge {
 
 	public Set keySet(Context context) {
 		String[] propertyNames = getPropertyNames(context);
-		return ObjectUtils.isEmpty(propertyNames) ? Collections.EMPTY_SET
-				: new HashSet(Arrays.asList(propertyNames));
+		if (ObjectUtils.isEmpty(propertyNames)) {
+			return Collections.EMPTY_SET;
+		}
+		else {
+			Set s = ContainerUtils.createOrderedSet();
+			s.addAll(Arrays.asList(propertyNames));
+			return s;
+		}
 	}
 
 	public Object get(Context context, Object key) {

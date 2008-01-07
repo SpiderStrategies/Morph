@@ -16,8 +16,8 @@
 package net.sf.morph.transform.copiers;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
@@ -29,6 +29,7 @@ import net.sf.morph.transform.converters.DefaultToBooleanConverter;
 import net.sf.morph.transform.transformers.BaseTransformer;
 import net.sf.morph.util.Assert;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.TransformerUtils;
 
 /**
@@ -213,7 +214,7 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 	 * @return Class[]
 	 */
 	private static Class[] merge(Class[] a, Class[] b) {
-		HashSet s = new HashSet();
+		Set s = ContainerUtils.createOrderedSet();
 		s.addAll(Arrays.asList(a));
 		s.addAll(Arrays.asList(b));
 		return (Class[]) s.toArray(new Class[s.size()]);

@@ -17,7 +17,6 @@ package net.sf.morph.transform.copiers;
 
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -33,6 +32,7 @@ import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.support.ResetableIteratorWrapper;
 import net.sf.morph.transform.transformers.BaseReflectorTransformer;
+import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.IteratorEnumeration;
 import net.sf.morph.util.ReflectorUtils;
 import net.sf.morph.util.TransformerUtils;
@@ -302,7 +302,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 * {@inheritDoc}
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
-		Set set = new HashSet();
+		Set set = ContainerUtils.createOrderedSet();
 		set.addAll(Arrays.asList(getGrowableContainerReflector().getReflectableClasses()));
 		set.addAll(Arrays.asList(getIndexedContainerReflector().getReflectableClasses()));
 		set.add(Iterator.class);

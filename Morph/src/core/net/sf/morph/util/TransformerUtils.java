@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,6 @@
 package net.sf.morph.util;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -218,7 +217,7 @@ public abstract class TransformerUtils {
 		}
 		Class[] sourceTypes = transformer.getSourceClasses();
 		if (transformer instanceof ExplicitTransformer) {
-			HashSet result = new HashSet();
+			Set result = ContainerUtils.createOrderedSet();
 			for (int i = 0; i < sourceTypes.length; i++) {
 				if (((ExplicitTransformer) transformer).isTransformable(destinationType, sourceTypes[i])) {
 					result.add(sourceTypes[i]);
@@ -242,7 +241,7 @@ public abstract class TransformerUtils {
 		}
 		Class[] destinationTypes = transformer.getDestinationClasses();
 		if (transformer instanceof ExplicitTransformer) {
-			HashSet result = new HashSet();
+			Set result = ContainerUtils.createOrderedSet();
 			for (int i = 0; i < destinationTypes.length; i++) {
 				if (((ExplicitTransformer) transformer).isTransformable(destinationTypes[i], sourceType)) {
 					result.add(destinationTypes[i]);
@@ -273,10 +272,11 @@ public abstract class TransformerUtils {
 	}
 
 	private static Class[] getClassIntersection(Transformer[] transformers, ClassStrategy strategy) {
-		HashSet s = new HashSet(Arrays.asList(strategy.get(transformers[0])));
+		Set s = ContainerUtils.createOrderedSet();
+		s.addAll(Arrays.asList(strategy.get(transformers[0])));
 
 		for (int i = 1; i < transformers.length; i++) {
-			HashSet survivors = new HashSet();
+			Set survivors = ContainerUtils.createOrderedSet();
 			Class[] c = strategy.get(transformers[i]);
 			for (int j = 0; j < c.length; j++) {
 				if (s.contains(c[j])) {

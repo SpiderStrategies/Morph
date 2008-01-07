@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,7 +18,6 @@ package net.sf.morph.transform.transformers;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -54,6 +53,7 @@ import net.sf.morph.transform.copiers.ImmutableComponentArrayCopier;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopier;
 import net.sf.morph.transform.copiers.TextToContainerCopier;
 import net.sf.morph.util.ClassUtils;
+import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.MutableInteger;
 import net.sf.morph.util.TransformerUtils;
 
@@ -228,7 +228,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#getSourceClassesImpl()
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
-		Set sourceClasses = new HashSet();
+		Set sourceClasses = ContainerUtils.createOrderedSet();
 		Transformer[] t = getTransformers();
 		for (int i = 0; i < t.length; i++) {
 			sourceClasses.addAll(Arrays.asList(t[i].getSourceClasses()));
@@ -241,7 +241,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#getDestinationClassesImpl()
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
-		Set destinationClasses = new HashSet();
+		Set destinationClasses = ContainerUtils.createOrderedSet();
 		Transformer[] t = getTransformers();
 		for (int i = 0; i < t.length; i++) {
 			destinationClasses.addAll(Arrays.asList(t[i].getDestinationClasses()));
