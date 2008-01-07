@@ -27,12 +27,12 @@
 	<body>
 		<section name="Production Releases">
 
-			<subsection name="Morph 1.0.2 (May ??, 2006)">
+			<subsection name="Morph 1.1 (November 29, 2007)">
 				<ul>
 					<li>Fixed transformation caching issue that was causing conversions done using the SimpleDelegatingTransformer to return results of previous transformations rather than performing the transformation again as it should have been.</li>
-					<li>TODO: Improved handling of nulls by all converters.</li>
-					<li>TODO: Property Editor support</li>
-					<li>TODO: Auto-detect Spring's presence and use the built in locale thread local</li>
+					<li>Improved handling of nulls by all converters.</li>
+					<li>Property Editor support</li>
+					<li>Auto-detect Spring's presence and use the built in locale thread local</li>
 				</ul>
 			</subsection>
 
