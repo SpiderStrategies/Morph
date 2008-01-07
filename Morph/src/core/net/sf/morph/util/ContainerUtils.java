@@ -161,7 +161,7 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 			catch (Exception e) { }
 		}
 		
-		if (ClassUtils.isCommonsCollectionsPresent()) {
+		if (ClassUtils.isCommonsCollections3Present()) {
 			try {
 				return (Set) Class.forName("org.apache.commons.collections.set.ListOrderedSet").newInstance();			
 			}
