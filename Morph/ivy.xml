@@ -22,6 +22,7 @@
     <conf name="spring" visibility="public" extends="default" />
     <conf name="velocity" visibility="public" extends="default" />
     <conf name="web" visibility="public" extends="default" />
+    <conf name="jdom" visibility="public" extends="default" />
 
     <conf name="all" visibility="public" extends="*(public)" />
 
@@ -50,7 +51,7 @@
                 conf="core,beanutils" />
     <dependency org="apache" name="velocity" rev="1.5"
                 conf="core,velocity,site" />
-    <dependency org="jdom" name="jdom" rev="1.0" conf="site" />
+    <dependency org="jdom" name="jdom" rev="1.0" conf="jdom,sandbox,site" />
     <dependency org="apache" name="commons-collections" rev="3.2"
                 conf="core,collections,site" />
 
