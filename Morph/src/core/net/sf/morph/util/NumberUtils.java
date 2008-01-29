@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -68,6 +69,31 @@ public abstract class NumberUtils {
 		}
 	}
 
+	private static class NarrownessComparator implements Comparator {
+		/**
+		 * {@inheritDoc}
+		 */
+		public int compare(Object arg0, Object arg1) {
+			if (arg0 == arg1) {
+				return 0;
+			}
+			Class c0 = getType(arg0);
+			Class c1 = getType(arg1);
+			if (c0 == c1 || c0 == null || c1 == null) {
+				return 0;
+			}
+			return getMaximumForType(c0).compareTo(getMaximumForType(c1));
+		}
+
+		private Class getType(Object o) {
+			if (MAXIMUMS_FOR_TYPES.containsKey(o)) {
+				return (Class) o;
+			}
+			Class test = ClassUtils.getClass(o);
+			return MAXIMUMS_FOR_TYPES.containsKey(test) ? test : null;
+		}
+	}
+
 	/**
 	 * A Map of BigDecimals keyed by Class that indicate the maximum value that
 	 * the given (Number) Class may taken on.
@@ -79,10 +105,15 @@ public abstract class NumberUtils {
 	 * the given (Number) Class may taken on.
 	 */
 	public static final Map MINIMUMS_FOR_TYPES;
-	
-	public static final Map WRAPPERS_FOR_PRIMITIVE_TYPES;
 
-	public static final Map NUMBER_FACTORIES;
+	/**
+	 * Comparator of class/object type narrowness.
+	 */
+	public static final Comparator NARROWNESS_COMPARATOR = new NarrownessComparator();
+
+	private static final Map WRAPPERS_FOR_PRIMITIVE_TYPES;
+
+	private static final Map NUMBER_FACTORIES;
 
 	/**
 	 * Used by {@link NumberUtils#isNumber(Class)}.
