@@ -190,7 +190,7 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	}
 
 	/**
-	 * Indicates whether the BeanUtils API is available.
+	 * Indicates whether the Apache Commons BeanUtils API is available.
 	 * 
 	 * @return <code>true</code> if the BeanUtils API is available or <br>
 	 *         <code>false</code> otherwise
@@ -202,7 +202,7 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	/**
 	 * Indicates whether Velocity is available.
 	 * 
-	 * @return <code>true</code> if the Velocity is available or <br>
+	 * @return <code>true</code> if Velocity is available or <br>
 	 *         <code>false</code> otherwise
 	 */
 	public static boolean isVelocityPresent() {
