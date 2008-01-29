@@ -16,6 +16,7 @@
 package net.sf.morph.transform.transformers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +26,7 @@ import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.ExplicitTransformer;
+import net.sf.morph.transform.ImpreciseTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.copiers.CopierDecorator;
@@ -40,7 +42,7 @@ import net.sf.morph.util.TransformerUtils;
  * @since Nov 24, 2004
  */
 public class ChainedTransformer extends BaseCompositeTransformer implements
-		DecoratedConverter, DecoratedCopier, ExplicitTransformer {
+		DecoratedConverter, DecoratedCopier, ExplicitTransformer, ImpreciseTransformer {
 
 	private Converter copyConverter;
 
@@ -64,6 +66,14 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 	 */
 	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
 		return getConversionPath(destinationType, sourceType) != null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass, Class sourceClass) {
+		List conversionPath = getConversionPath(destinationClass, sourceClass);
+		return !isPrecise(conversionPath, sourceClass, 0);
 	}
 
 	/**
@@ -113,6 +123,7 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 			throw new TransformationException(destinationClass, sourceType, null,
 					"Chained conversion path could not be determined");
 		}
+		log.debug("Using chained conversion path " + conversionPath);
 		Object o = source;
 		for (int i = 0; i < conversionPath.size(); i++) {
 			o = getConverter(chain[i]).convert((Class) conversionPath.get(i), o, locale);
@@ -144,6 +155,7 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 			throw new TransformationException(destinationClass, source, null,
 					"Chained conversion path could not be determined");
 		}
+		log.debug("Using chained conversion path " + conversionPath);
 		Object last = getCopyConverter().convert((Class) conversionPath.get(chain.length - 2), source, locale);
 		((Copier) copier).copy(destination, last, locale);
 	}
@@ -192,13 +204,7 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 	 * @return List
 	 */
 	protected List getConversionPath(Class destinationType, Class sourceType) {
-		if (sourceType != null) {
-			List withoutNull = getConversionPath(destinationType, sourceType, 0, false);
-			if (withoutNull != null) {
-				return withoutNull;
-			}
-		}
-		return getConversionPath(destinationType, sourceType, 0, true);
+		return getConversionPath(destinationType, sourceType, 0);
 	}
 
 	/**
@@ -210,7 +216,7 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 	 * @param allowNull
 	 * @return List
 	 */
-	private List getConversionPath(Class destinationType, Class sourceType, int index, boolean allowNull) {
+	private List getConversionPath(Class destinationType, Class sourceType, int index) {
 		Transformer[] chain = getChain();
 		Transformer c = chain[index];
 		if (index + 1 == chain.length) {
@@ -221,20 +227,36 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 			}
 			return null;
 		}
+		List possibleResult = null;
 		Class[] available = c.getDestinationClasses();
 		for (int i = 0; i < available.length; i++) {
-			if (available[i] == null && !allowNull) {
-				continue;
-			}
 			if (TransformerUtils.isTransformable(c, available[i], sourceType)) {
-				List tail = getConversionPath(destinationType, available[i], index + 1, allowNull);
+				List tail = getConversionPath(destinationType, available[i], index + 1);
 				if (tail != null) {
 					tail.add(0, available[i]);
-					return tail;
+					if (isPrecise(tail, sourceType, index)) {
+						return tail;
+					}
+					possibleResult = tail;
 				}
 			}
 		}
-		return null;
+		return possibleResult;
+	}
+
+	private boolean isPrecise(List conversionPath, Class sourceType, int index) {
+		Transformer[] chain = getChain();
+		Class currentSource = sourceType;
+		int i = 0;
+		for (Iterator iter = conversionPath.iterator(); iter.hasNext(); i++) {
+			Class currentDest = (Class) iter.next();
+			if (TransformerUtils.isImpreciseTransformation(chain[index + i], currentDest,
+					currentSource)) {
+				return false;
+			}
+			currentSource = currentDest;
+		}
+		return true;
 	}
 
 	/**

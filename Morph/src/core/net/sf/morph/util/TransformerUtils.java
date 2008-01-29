@@ -25,6 +25,7 @@ import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.ExplicitTransformer;
+import net.sf.morph.transform.ImpreciseTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 
@@ -86,6 +87,24 @@ public abstract class TransformerUtils {
 			return ((ExplicitTransformer) transformer).isTransformable(destinationClass, sourceClass);
 		}
 		return isImplicitlyTransformable(transformer, destinationClass, sourceClass);
+	}
+
+	/**
+	 * Learn whether <code>transformer</code>'s transformation
+	 * of <code>sourceClass</code> to <code>destinationClass</code> might yield an imprecise result. 
+	 * @param transformer
+	 * @param destinationClass
+	 * @param sourceClass
+	 * @return boolean
+	 * @see ImpreciseTransformer
+	 */
+	public static boolean isImpreciseTransformation(Transformer transformer,
+			Class destinationClass, Class sourceClass) {
+		if (transformer instanceof ImpreciseTransformer) {
+			return ((ImpreciseTransformer) transformer).isImpreciseTransformation(
+					destinationClass, sourceClass);
+		}
+		return destinationClass == null && sourceClass != null;
 	}
 
 	/**

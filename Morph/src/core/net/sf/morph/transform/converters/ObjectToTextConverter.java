@@ -20,7 +20,9 @@ import java.util.Locale;
 import net.sf.morph.Defaults;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.ImpreciseTransformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * Converts an object to a textual representation by calling the object's
@@ -32,7 +34,7 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Dec 24, 2004
  */
-public class ObjectToTextConverter extends BaseTransformer implements DecoratedConverter {
+public class ObjectToTextConverter extends BaseTransformer implements DecoratedConverter, ImpreciseTransformer {
 
 	private Converter textConverter;
 
@@ -47,6 +49,13 @@ public class ObjectToTextConverter extends BaseTransformer implements DecoratedC
 		Locale locale) throws Exception {
 		return getTextConverter().convert(destinationClass, source.toString(),
 			locale);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass, Class sourceClass) {
+		return TransformerUtils.isImpreciseTransformation(getTextConverter(), destinationClass, String.class);
 	}
 
 	/**

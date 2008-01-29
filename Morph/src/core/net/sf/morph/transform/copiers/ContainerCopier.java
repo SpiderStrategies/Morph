@@ -125,12 +125,19 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 					destination.getClass());
 			// if the destination has a defined contained type than simply
 			// Object.class (which basically just means untyped)
-			if (!candidateDestinationType.equals(Object.class)) {
+			if (candidateDestinationType != Object.class) {
 				// use that contained type as the destination type
 				destinationType = candidateDestinationType;
 			}
 		}
 
+		if (destinationType == null) {
+			//check whether nestedTransformer has only one possible destination for the given source:
+			Class[] availableDestinationTypes = TransformerUtils.getDestinationClasses(getNestedTransformer(), sourceValueClass);
+			if (availableDestinationTypes.length == 1 && availableDestinationTypes[0] != Object.class) {
+				destinationType = availableDestinationTypes[0];
+			}
+		}
 		// if no mapping was found and the destination is untyped
 		if (destinationType == null) {
 			// choose the class of the source as the destination class			

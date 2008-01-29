@@ -18,7 +18,9 @@ package net.sf.morph.transform.converters;
 import net.sf.morph.Defaults;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.ImpreciseTransformer;
 import net.sf.morph.transform.transformers.BaseReflectorTransformer;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * Base class for converts that convert objects to a pretty programmer-friendly
@@ -27,7 +29,8 @@ import net.sf.morph.transform.transformers.BaseReflectorTransformer;
  * @author Matt Sgarlata
  * @since Feb 15, 2005
  */
-public abstract class BaseToPrettyTextConverter extends BaseReflectorTransformer implements DecoratedConverter {
+public abstract class BaseToPrettyTextConverter extends BaseReflectorTransformer
+		implements DecoratedConverter, ImpreciseTransformer {
 
 	private String prefix;
 	private String suffix;
@@ -160,5 +163,20 @@ public abstract class BaseToPrettyTextConverter extends BaseReflectorTransformer
 	 */
 	public void setShowNullValues(boolean showNullValues) {
 		this.showNullValues = showNullValues;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass, Class sourceClass) {
+		return TransformerUtils.isImpreciseTransformation(getTextConverter(), destinationClass, sourceClass);
+	}
+
+	/**
+	 * Get the intermediate class passed to the text converter.
+	 * @return
+	 */
+	protected Class getIntermediateClass() {
+		return StringBuffer.class;
 	}
 }

@@ -21,7 +21,9 @@ import java.util.Locale;
 import net.sf.morph.Defaults;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.ImpreciseTransformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * Converts {@link java.lang.Number}s into basic text types ({@link java.lang.String},
@@ -30,7 +32,8 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Jan 26, 2006
  */
-public class NumberToTextConverter extends BaseTransformer implements DecoratedConverter {
+public class NumberToTextConverter extends BaseTransformer implements DecoratedConverter,
+		ImpreciseTransformer {
 
 	private Converter textConverter;
 	private Converter numberConverter;
@@ -55,6 +58,13 @@ public class NumberToTextConverter extends BaseTransformer implements DecoratedC
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getTextConverter().getSourceClasses();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass, Class sourceClass) {
+		return TransformerUtils.isImpreciseTransformation(getTextConverter(), destinationClass, String.class);
 	}
 
 	/**

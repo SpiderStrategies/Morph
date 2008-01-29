@@ -570,6 +570,35 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		}
 	}
 
+	/**
+	 * Implementation of isImpreciseTransformation
+	 * @param destinationClass
+	 * @param sourceClass
+	 * @return boolean
+	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass, Class sourceClass) {
+		return destinationClass == null && sourceClass != null;
+	}
+
+	/**
+	 * Learn whether the specified transformation yields an imprecise result.
+	 * @param destinationClass
+	 * @param sourceClass
+	 * @return boolean
+	 */
+	public final boolean isImpreciseTransformation(Class destinationClass, Class sourceClass) {
+		try {
+			return isImpreciseTransformationImpl(destinationClass, sourceClass);
+		} catch (Exception e) {
+			if (e instanceof RuntimeException && !isWrappingRuntimeExceptions()) {
+				throw (RuntimeException) e;
+			}
+			throw new TransformationException("Could not determine if transformation of "
+					+ sourceClass + " to " + destinationClass
+					+ " results in a loss of precision", e);
+		}
+	}
+
 // property getters and setters
 
 	/**

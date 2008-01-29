@@ -22,7 +22,9 @@ import java.util.Locale;
 import net.sf.morph.Defaults;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.ImpreciseTransformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * Converts the basic time types ({@link java.util.Date} and
@@ -33,7 +35,8 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Dec 31, 2004
  */
-public class TimeToTextConverter extends BaseTransformer implements DecoratedConverter {
+public class TimeToTextConverter extends BaseTransformer implements DecoratedConverter,
+		ImpreciseTransformer {
 
 	private DateFormat dateFormat;
 	private Converter timeConverter;
@@ -50,6 +53,13 @@ public class TimeToTextConverter extends BaseTransformer implements DecoratedCon
 		String string = getDateFormat(calendar).format(calendar.getTime());
 
 		return getTextConverter().convert(destinationClass, string, locale);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass, Class sourceClass) {
+		return TransformerUtils.isImpreciseTransformation(getTextConverter(), destinationClass, String.class);
 	}
 
 	/**

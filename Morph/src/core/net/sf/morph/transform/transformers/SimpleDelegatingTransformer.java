@@ -34,6 +34,7 @@ import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.ExplicitTransformer;
+import net.sf.morph.transform.ImpreciseTransformer;
 import net.sf.morph.transform.NodeCopier;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
@@ -93,10 +94,10 @@ import net.sf.morph.util.TransformerUtils;
  * @since Dec 12, 2004
  */
 public class SimpleDelegatingTransformer extends BaseCompositeTransformer implements
-	SpecializableComposite, ExplicitTransformer, Transformer, DecoratedCopier, DecoratedConverter, Cloneable {
+		SpecializableComposite, ExplicitTransformer, Transformer, DecoratedCopier,
+		DecoratedConverter, Cloneable, ImpreciseTransformer {
 
 	//TODO extract BaseDelegatingTransformer with pluggable delegate selection
-
 
 	private static class MapThreadLocal extends ThreadLocal {
 		protected Object initialValue() {
@@ -138,6 +139,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	}
 
 	private Specializer specializer;
+	private boolean preferPreciseTransformers;
 
 	private transient ThreadLocal visitedSourceToDestinationMapThreadLocal = new MapThreadLocal();
 	private transient ThreadLocal stackDepthThreadLocal = new StackDepthThreadLocal();
@@ -221,6 +223,14 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass, Class sourceClass) {
+		return TransformerUtils.isImpreciseTransformation(getTransformer(destinationClass,
+				sourceClass), destinationClass, sourceClass);
 	}
 
 	/**
@@ -477,6 +487,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 *             if no suitable transformer could be found
 	 */
 	private Transformer getTransformer(Class transformerType, Class destinationClass, Class sourceClass) throws TransformationException {
+		Transformer candidate = null;
 		for (int i = 0; i < components.length; i++) {
 			// if the transformer is the correct type
 			Transformer transformer = (Transformer) components[i];
@@ -484,6 +495,13 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 				// if the transformer is capable of performing the transformation
 				if (TransformerUtils.isTransformable(
 						transformer, destinationClass, sourceClass)) {
+					if (isPreferPreciseTransformers()
+							&& candidate == null
+							&& TransformerUtils.isImpreciseTransformation(transformer,
+									destinationClass, sourceClass)) {
+						candidate = transformer;
+						continue;
+					}
 					if (getLog().isTraceEnabled()) {
 						getLog().trace("Using "
 							+ ClassUtils.getUnqualifiedClassName(transformerType)
@@ -496,7 +514,9 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 					return transformer;
 				}
 			}
-
+			if (candidate != null) {
+				return candidate;
+			}
 		}
 		throw new TransformationException(
 			"Could not find a transformer that can transform objects of "
@@ -610,6 +630,22 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return t instanceof NodeCopier ? ((NodeCopier) t).createReusableSource(
 				destinationClass, source) : super.createReusableSource(destinationClass,
 				source);
+	}
+
+	/**
+	 * Get the preferPreciseTransformers.
+	 * @return boolean
+	 */
+	public boolean isPreferPreciseTransformers() {
+		return preferPreciseTransformers;
+	}
+
+	/**
+	 * Set the preferPreciseTransformers. Default false.
+	 * @param preferPreciseTransformers the boolean to set
+	 */
+	public void setPreferPreciseTransformers(boolean preferPreciseTransformers) {
+		this.preferPreciseTransformers = preferPreciseTransformers;
 	}
 
 }

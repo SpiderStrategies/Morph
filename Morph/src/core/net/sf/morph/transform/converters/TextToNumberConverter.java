@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Converts basic text types into primtive numbers or {@link java.lang.Number}
+ * Converts basic text types into primitive numbers or {@link java.lang.Number}
  * objects.
  *
  * @author Matt Sgarlata

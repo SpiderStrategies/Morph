@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.Locale;
 
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.ImpreciseTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.support.NumberRounder;
 import net.sf.morph.transform.transformers.BaseTransformer;
@@ -31,8 +32,8 @@ import net.sf.morph.util.NumberUtils;
  * @author Matt Sgarlata
  * @since Dec 14, 2004
  */
-public class NumberConverter extends BaseTransformer implements DecoratedConverter {
-	
+public class NumberConverter extends BaseTransformer implements DecoratedConverter, ImpreciseTransformer {
+
 	private static final Class[] SOURCE_AND_DESTINATION_TYPES = {
 		Number.class, byte.class, short.class, int.class, long.class,
 		float.class, double.class, null
@@ -116,9 +117,20 @@ public class NumberConverter extends BaseTransformer implements DecoratedConvert
 	/**
 	 * {@inheritDoc}
 	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass, Class sourceClass) {
+		return super.isImpreciseTransformationImpl(destinationClass, sourceClass)
+				|| NumberUtils.NARROWNESS_COMPARATOR.compare(destinationClass,
+						sourceClass) < 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object convertImpl(Class destinationClass, Object source,
 		Locale locale) throws Exception {
-
+		if (destinationClass == null) {
+			return null;
+		}
 		if (destinationClass.isPrimitive() && source == null) {
 			throw new TransformationException(destinationClass, source);
 		}

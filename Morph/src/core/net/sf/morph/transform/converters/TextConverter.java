@@ -22,6 +22,7 @@ import java.util.Set;
 
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.ExplicitTransformer;
+import net.sf.morph.transform.ImpreciseTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
 import net.sf.morph.util.ClassUtils;
@@ -44,7 +45,7 @@ import net.sf.morph.util.TransformerUtils;
  * @since Jan 2, 2005
  */
 public class TextConverter extends BaseTransformer implements DecoratedConverter,
-		ExplicitTransformer {
+		ExplicitTransformer, ImpreciseTransformer {
 
 	private static final Class CHAR_SEQUENCE = ClassUtils.isJdk14OrHigherPresent() ? ClassUtils
 			.convertToClass("java.lang.CharSequence")
@@ -58,14 +59,7 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 		
 		s.add(StringBuffer.class);
 		s.add(String.class);
-		if (CHAR_SEQUENCE != null) {
-			s.add(CHAR_SEQUENCE);
-			try {
-				CONSTRUCTOR_CACHE.put(CHAR_SEQUENCE, StringBuffer.class.getConstructor(new Class[] { String.class }));
-			} catch (Exception e) {
-				//nope
-			}
-		}
+		s.add(CHAR_SEQUENCE);
 		s.add(byte[].class);
 		s.add(char[].class);
 		s.add(Character.class);
@@ -107,7 +101,8 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 			}
 			return new Character(string.charAt(0));
 		}
-		if (destinationClass == String.class) {
+		if (destinationClass == String.class
+				|| (destinationClass == CHAR_SEQUENCE && CHAR_SEQUENCE != null)) {
 			return string;
 		}
 		if (destinationClass == byte[].class) {
@@ -148,6 +143,16 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 			return canCreate(destinationType);
 		}
 		return ClassUtils.inheritanceContains(getDestinationClasses(), destinationType);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass, Class sourceClass) {
+		if (super.isImpreciseTransformationImpl(destinationClass, sourceClass)) {
+			return true;
+		}
+		return isChar(destinationClass) && !isChar(sourceClass);
 	}
 
 	/**

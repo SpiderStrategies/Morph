@@ -20,8 +20,10 @@ import java.util.Locale;
 import net.sf.morph.Defaults;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.ImpreciseTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * Converts boolean values to text values.  Subclasses can build in support for
@@ -32,10 +34,10 @@ import net.sf.morph.transform.transformers.BaseTransformer;
  * @author Matt Sgarlata
  * @since Jan 9, 2005
  */
-public class BooleanToTextConverter extends BaseTransformer implements DecoratedConverter {
-	
+public class BooleanToTextConverter extends BaseTransformer implements DecoratedConverter, ImpreciseTransformer {
+
 	private static final Class[] SOURCE_TYPES = { Boolean.class, boolean.class };
-	
+
 	private Converter textConverter;
 
 	/**
@@ -93,9 +95,16 @@ public class BooleanToTextConverter extends BaseTransformer implements Decorated
 	/**
 	 * {@inheritDoc}
 	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass, Class sourceClass) {
+		return TransformerUtils.isImpreciseTransformation(getTextConverter(), destinationClass, String.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWrappingRuntimeExceptions() {
 	    return true;
-    }
+	}
 
 	/**
 	 * Get the text converter used by this BaseToPrettyTextConverter.
