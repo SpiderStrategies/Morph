@@ -407,13 +407,12 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 * IndexedContainerReflectors.  For other reflectors, throws an
 	 * UnsupportedOperationException.
 	 */
-	protected String[] getPropertyNamesImpl(Object bean)
-		throws Exception {
+	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		if (this instanceof IndexedContainerReflector) {
 			// create an array of all the valid indexes for the container
 			int size = ((IndexedContainerReflector) this).getSize(bean);
 			String[] propertyNames = new String[size];
-			for (int i=0; i<size; i++) {
+			for (int i = 0; i < size; i++) {
 				propertyNames[i] = Integer.toString(i);
 			}
 			return propertyNames;
