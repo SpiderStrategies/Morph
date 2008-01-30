@@ -149,9 +149,9 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 					destinationProperty);	
 		}
 		//possibly override preferredTransformationType:
-		preferredTransformationType = getPreferredTransformationType(
-				sourceProperty, source, destinationProperty, destination, locale,
-				preferredTransformationType);
+		preferredTransformationType = getPreferredTransformationType(source,
+				sourceProperty, sourceValue, destination, destinationProperty,
+				destinationValue, locale, preferredTransformationType);
 		// choose a transformer to use
 		Transformer transformer = chooseTransformer(sourceProperty,
 			source, destinationProperty, destination, locale,
@@ -177,16 +177,20 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 
 	/**
 	 * Extension point for subclasses to override preferredTransformationType. 
-	 * @param sourceProperty
 	 * @param source
-	 * @param destinationProperty
+	 * @param sourceProperty
+	 * @param sourceValue
 	 * @param destination
+	 * @param destinationProperty
+	 * @param destinationValue
 	 * @param locale
 	 * @param preferredTransformationType
 	 * @return Integer
+	 * @see Transformer
 	 */
-	protected Integer getPreferredTransformationType(String sourceProperty,
-			Object source, String destinationProperty, Object destination, Locale locale,
+	protected Integer getPreferredTransformationType(Object source,
+			String sourceProperty, Object sourceValue, Object destination,
+			String destinationProperty, Object destinationValue, Locale locale,
 			Integer preferredTransformationType) {
 		return preferredTransformationType;
 	}
