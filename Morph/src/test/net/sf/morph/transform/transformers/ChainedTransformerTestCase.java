@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -21,6 +21,7 @@ import java.util.List;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.converters.DefaultToTextConverter;
+import net.sf.morph.transform.converters.TextConverter;
 import net.sf.morph.transform.converters.TextToNumberConverter;
 import net.sf.morph.transform.converters.TextToNumberConverterTestCase;
 import net.sf.morph.transform.transformers.ChainedTransformer;
@@ -34,10 +35,36 @@ public class ChainedTransformerTestCase extends TextToNumberConverterTestCase {
 	protected Transformer createTransformer() {
 		ChainedTransformer chainedConverter = new ChainedTransformer();
 		List chain = new ArrayList();
-		chain.add(new TextToNumberConverter());
-		chain.add(new DefaultToTextConverter());
-		chain.add(new TextToNumberConverter());
+		TextToNumberConverter textToNumberConverter = new TextToNumberConverter() {
+			protected Class[] getDestinationClassesImpl() throws Exception {
+				return rearrange(super.getDestinationClassesImpl());
+			}
+		};
+		chain.add(textToNumberConverter);
+		chain.add(new DefaultToTextConverter() {
+			protected Class[] getDestinationClassesImpl() throws Exception {
+				return rearrange(super.getDestinationClassesImpl());
+			}
+		});
+		chain.add(new TextConverter() {
+			protected Class[] getDestinationClassesImpl() throws Exception {
+				return rearrange(super.getDestinationClassesImpl());
+			}
+		});
+		chain.add(textToNumberConverter);
 		chainedConverter.setComponents(chain.toArray(new Converter[chain.size()]));
 		return chainedConverter;
+	}
+
+	private static Class[] rearrange(Class[] c) {
+		ArrayList l = new ArrayList();
+		for (int i = 0; i < c.length; i++) {
+			if (c[i] == char.class || c[i] == Character.class || c[i] == null) {
+				l.add(0, c[i]);
+			} else {
+				l.add(c[i]);
+			}
+		}
+		return (Class[]) l.toArray(c);
 	}
 }
