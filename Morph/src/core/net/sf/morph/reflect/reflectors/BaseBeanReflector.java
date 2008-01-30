@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,18 +25,34 @@ import net.sf.morph.reflect.BeanReflector;
  * @since Nov 14, 2004
  */
 public abstract class BaseBeanReflector extends BaseReflector implements BeanReflector {
-	
+
+	/**
+	 * Template method must be overridden.
+	 * {@inheritDoc}
+	 */
 	protected abstract String[] getPropertyNamesImpl(Object bean) throws Exception;
-	
+
+	/**
+	 * Template method must be overridden.
+	 * {@inheritDoc}
+	 */
 	protected abstract Class getTypeImpl(Object bean, String propertyName)
-		throws Exception;
-	
+			throws Exception;
+
+	/**
+	 * Template method must be overridden.
+	 * {@inheritDoc}
+	 */
 	protected abstract Object getImpl(Object bean, String propertyName) throws Exception;
-	
+
+	/**
+	 * Template method must be overridden.
+	 * {@inheritDoc}
+	 */
 	protected abstract void setImpl(Object bean, String propertyName, Object value)
-		throws Exception;
-	
+			throws Exception;
+
 	// isReadable and isWriteable are not marked abstract here because default
 	// implementations are provided in BaseReflector
-	
+
 }

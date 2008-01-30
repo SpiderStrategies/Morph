@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -69,10 +69,16 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 
 	private static final Map reflectionCache = new WeakHashMap();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		String[] propertyNames = getReflectionInfo(bean.getClass()).getPropertyNames();
 		List propertyNamesWithoutClass = new ArrayList();
@@ -125,13 +131,17 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 		return accessor.getReturnType();
 	}
 
-	protected boolean isReadableImpl(Object bean, String propertyName)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isReadableImpl(Object bean, String propertyName) throws Exception {
 		return getReflectionInfo(bean.getClass()).isReadable(propertyName);
 	}
 
-	protected boolean isWriteableImpl(Object bean, String propertyName)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isWriteableImpl(Object bean, String propertyName) throws Exception {
 		return getReflectionInfo(bean.getClass()).isWriteable(propertyName);
 	}
 
@@ -203,6 +213,9 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 						.getTargetException());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void setImpl(Object bean, String propertyName, Object value)
 		throws Exception {
 		if (isPrimitiveSetter(bean, propertyName) && value == null) {
@@ -236,18 +249,34 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
 		return clazz.newInstance();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getContainedTypeImpl(Class clazz) throws Exception {
 		return Object.class;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Iterator getIteratorImpl(Object container) throws Exception {
 		return new ObjectIterator(container);
 	}
 
+	/**
+	 * Learn whether the mutator/setter method for the given property is primitive.
+	 * @param bean
+	 * @param propertyName
+	 * @return boolean
+	 * @throws Exception
+	 */
 	protected boolean isPrimitiveSetter(Object bean, String propertyName) throws Exception {
 		Method mutator = getMutator(bean, propertyName);
 		// if we're dealing with an indexed mutator
@@ -266,6 +295,11 @@ public class ObjectReflector extends BaseBeanReflector implements InstantiatingR
 		return mutator.getParameterTypes()[0].isPrimitive();
 	}
 
+	/**
+	 * Get the ReflectionInfo for the given Class.
+	 * @param clazz
+	 * @return ReflectionInfo
+	 */
 	protected ReflectionInfo getReflectionInfo(Class clazz) {
 		synchronized (reflectionCache) {
 			ReflectionInfo reflectionInfo = (ReflectionInfo) reflectionCache.get(clazz);
