@@ -123,7 +123,9 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 			throw new TransformationException(destinationClass, sourceType, null,
 					"Chained conversion path could not be determined");
 		}
-		log.debug("Using chained conversion path " + conversionPath);
+		if (log.isDebugEnabled()) {
+			log.debug("Using chained conversion path " + conversionPath);
+		}
 		Object o = source;
 		for (int i = 0; i < conversionPath.size(); i++) {
 			o = getConverter(chain[i]).convert((Class) conversionPath.get(i), o, locale);
@@ -155,7 +157,9 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 			throw new TransformationException(destinationClass, source, null,
 					"Chained conversion path could not be determined");
 		}
-		log.debug("Using chained conversion path " + conversionPath);
+		if (log.isDebugEnabled()) {
+			log.debug("Using chained conversion path " + conversionPath);
+		}
 		Object last = getCopyConverter().convert((Class) conversionPath.get(chain.length - 2), source, locale);
 		((Copier) copier).copy(destination, last, locale);
 	}
