@@ -16,17 +16,24 @@
 package net.sf.morph.transform;
 
 /**
- * Defines a converter whose operation may result in a loss of data precision.
+ * Defines a transformer whose operation may result in a loss of data precision.
  *
  * @author mbenson
  * @since Morph 1.0.2
  */
 public interface ImpreciseTransformer extends Transformer {
+	
 	/**
 	 * Learn whether the specified conversion might yield an imprecise result.
+	 * 
 	 * @param destinationClass
+	 *            the destination type for the transformation
 	 * @param sourceClass
-	 * @return boolean
+	 *            the source type for the transformation
+	 * @return boolean <code>true</code> if the transformation might yield an
+	 *         imprecise result or<br>
+	 *         <code>false</code>, otherwise
 	 */
 	boolean isImpreciseTransformation(Class destinationClass, Class sourceClass);
+	
 }
