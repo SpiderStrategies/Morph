@@ -210,6 +210,17 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	}
 
 	/**
+	 * Indicates whether Commons Collections 3.x is available on the classpath.
+	 * 
+	 * @return <code>true</code> Commons Collections 3.x is available on the
+	 *         classpath<br>
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean isCommonsCollections3Present() {
+		return isClassPresent("org.apache.commons.collections.set.ListOrderedSet");
+	}
+
+	/**
 	 * Determines if <code>type</code> is equal to or a subtype of any of the
 	 * types in <code>typeArray</code>.
 	 * 
