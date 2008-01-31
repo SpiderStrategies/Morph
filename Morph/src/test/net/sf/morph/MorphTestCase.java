@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -264,6 +264,15 @@ public class MorphTestCase extends TestCase {
 		assertEquals(new Long(1), Morph.get(to.multiElementEmptyPrimitiveArray, "0", Comparable.class));
 		assertEquals(new Long(1), Morph.get(to.oneTwoThreeNumberArray, "0", Comparable.class));
 		assertEquals(new Long(1), Morph.get(to.oneTwoThreeObjectArray, "0", Comparable.class));
+	}
+	
+	public void testConvertObjectToInteger() {
+		try {
+			Morph.convertToIntegerObject(new Object());
+		}
+		// this is an invalid conversion, so a TransformationException should
+		// be thrown
+		catch (TransformationException e) { }
 	}
 	
 }
