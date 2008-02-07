@@ -22,7 +22,7 @@ package net.sf.morph.transform;
  * @since Morph 1.0.2
  */
 public interface ImpreciseTransformer extends Transformer {
-	
+
 	/**
 	 * Learn whether the specified conversion might yield an imprecise result.
 	 * 
@@ -35,5 +35,5 @@ public interface ImpreciseTransformer extends Transformer {
 	 *         <code>false</code>, otherwise
 	 */
 	boolean isImpreciseTransformation(Class destinationClass, Class sourceClass);
-	
+
 }
