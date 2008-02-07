@@ -95,6 +95,7 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 		return copyConverter;
 	}
 
+	//TODO is this overstepping our bounds?  Should we just throw an exception if we need a converter and don't have one?
 	private Converter getConverter(Transformer t) {
 		if (t instanceof Converter) {
 			return (Converter) t;

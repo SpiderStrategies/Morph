@@ -118,7 +118,8 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 
 		// setup the IdentityConverter so that it will transform null to null
 		// and other primitives to primitive types but not pick up
-		// transformations in the sourceToDestinationTypeMap 
+		// transformations in the sourceToDestinationTypeMap
+		// TODO think about this; maybe we can make this more explicit to exclude _only_ stuff from the s-to-d map
 		IdentityConverter identityConverter = getIdentityConverter();
 		identityConverter.setSourceClasses(ClassUtils.getImmutableTypes());
 
