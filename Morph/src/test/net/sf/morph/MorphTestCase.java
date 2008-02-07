@@ -272,7 +272,7 @@ public class MorphTestCase extends TestCase {
 		}
 		// this is an invalid conversion, so a TransformationException should
 		// be thrown
-		catch (TransformationException e) { }
+		catch (ReflectionException e) { }
 	}
 	
 }
