@@ -76,9 +76,10 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	private transient Map transformableCallCache;
 	private Transformer nestedTransformer;
 	private Reflector reflector;
+	private String transformerName;
 
 	/** BaseTransformer log object */
-	protected transient Log log = LogFactory.getLog(getClass());
+	protected transient Log log;
 
 	/** Source classes */
 	protected Class[] sourceClasses;
@@ -86,6 +87,13 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	/** Destination classes */
 	protected Class[] destinationClasses;
 
+	/**
+	 * Create a new BaseTransformer.
+	 */
+	protected BaseTransformer() {
+		setTransformerName(getClass().getName());
+	}
+	
 // isTransformable
 
 	/**
@@ -796,5 +804,25 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 		BaseTransformer result = (BaseTransformer) super.clone();
 		result.transformableCallCache = Collections.synchronizedMap(new HashMap());
 		return result;
+	}
+
+	/**
+	 * Get the transformerName.
+	 * @return String
+	 */
+	public String getTransformerName() {
+		return transformerName;
+	}
+
+	/**
+	 * Set the transformerName.
+	 * @param transformerName the String to set
+	 */
+	public void setTransformerName(String transformerName) {
+		if (ObjectUtils.equals(transformerName, this.transformerName)) {
+			return;
+		}
+		this.transformerName = transformerName;
+		log = LogFactory.getLog(transformerName);
 	}
 }
