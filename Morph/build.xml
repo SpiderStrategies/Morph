@@ -1,5 +1,5 @@
 <project name="morph" default="build-all"
-         xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+         xmlns:ivy="antlib:org.apache.ivy.ant">
   <!-- requires Apache Ant >= 1.7.0 -->
 
   <property file="build.properties" />
@@ -133,13 +133,13 @@
     </sequential>
   </macrodef>
 
-  <target name="ivy-configure">
+  <target name="ivy-settings">
     <property name="ivy.retrieve.pattern"
                 value="${lib.dir}/[conf]/[artifact]-[revision].[ext]" />
-    <ivy:configure />
+    <!--ivy:settings /-->
   </target>
 
-  <target name="resolve" depends="ivy-configure"
+  <target name="resolve" depends="ivy-settings"
           description="Retrieve dependencies with Ivy">
     <ivy:retrieve />
   </target>
@@ -149,7 +149,7 @@
     <ivy:report todir="${build.dir}" />
   </target>
 
-  <target name="codegen" depends="ivy-configure" description="Generate code">
+  <target name="codegen" depends="ivy-settings" description="Generate code">
     <ivy:retrieve conf="codegen" />
     <mkdir dir="${grammar.outdir}" />
     <antlr target="${grammar.file}" outputdirectory="${grammar.outdir}">
@@ -157,7 +157,7 @@
     </antlr>
   </target>
 
-  <target name="compile" depends="ivy-configure"
+  <target name="compile" depends="ivy-settings"
           description="Compile core classes">
     <compile conf="core" />
   </target>
