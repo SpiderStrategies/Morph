@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -55,20 +55,24 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
-	protected transient Log log = LogFactory.getLog(getClass());
-
 // fields
 
 	private boolean initialized;
-	private transient Class[] reflectableClasses;
 	private boolean cachingIsReflectableCalls = true;
+	private String reflectorName;
+
+	private transient Class[] reflectableClasses;
 	private transient Map reflectableCallCache;
+
+	/** Protected Log instance */
+	protected transient Log log;
 
 	/**
 	 * Create a new BaseReflector.
 	 */
 	public BaseReflector() {
 		setInitialized(false);
+		setReflectorName(getClass().getName());
 	}
 
 //	 initialization
@@ -1299,6 +1303,26 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 */
 	protected boolean isWrappingRuntimeExceptions() {
 		return true;
+	}
+
+	/**
+	 * Get the reflectorName.
+	 * @return String
+	 */
+	public String getReflectorName() {
+		return reflectorName;
+	}
+
+	/**
+	 * Set the reflectorName.
+	 * @param reflectorName the String to set
+	 */
+	public void setReflectorName(String reflectorName) {
+		if (ObjectUtils.equals(reflectorName, this.reflectorName)) {
+			return;
+		}
+		this.reflectorName = reflectorName;
+		log = LogFactory.getLog(reflectorName);
 	}
 
 }
