@@ -39,14 +39,16 @@ import org.apache.commons.logging.LogFactory;
 public abstract class BaseLanguage implements DecoratedLanguage {
 
 	private Converter converter;
-	
-	private transient Log log = LogFactory.getLog(getClass());
+	private String languageName;
+
+	private transient Log log;
 
 	/**
 	 * Create a new BaseLanguage.
 	 */
 	public BaseLanguage() {
 		super();
+		setLanguageName(getClass().getName());
 	}
 
 	/**
@@ -243,6 +245,26 @@ public abstract class BaseLanguage implements DecoratedLanguage {
 	 */
 	public void setConverter(Converter converter) {
 		this.converter = converter;
+	}
+
+	/**
+	 * Get the languageName.
+	 * @return String
+	 */
+	public String getLanguageName() {
+		return languageName;
+	}
+
+	/**
+	 * Set the languageName.
+	 * @param languageName the String to set
+	 */
+	public void setLanguageName(String languageName) {
+		if (ObjectUtils.equals(languageName, this.languageName)) {
+			return;
+		}
+		this.languageName = languageName;
+		log = LogFactory.getLog(languageName);
 	}
 
 }
