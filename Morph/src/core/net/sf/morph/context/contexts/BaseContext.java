@@ -52,31 +52,53 @@ import org.apache.commons.logging.LogFactory;
  * @since Nov 19, 2004
  */
 public abstract class BaseContext implements Context, Map, DecoratedContext {
-	
-	private static final ContextMapBridge DEFAULT_CONTEXT_MAP_BRIDGE
-		= new ContextMapBridge();
-	
+
+	private static final ContextMapBridge DEFAULT_CONTEXT_MAP_BRIDGE = new ContextMapBridge();
+
 	private transient Log log = LogFactory.getLog(getClass());
-	
+
 	private ContextMapBridge contextMapBridge;
 	private Converter converter;
 	private Language language;
-	
+
+	/**
+	 * Create a new BaseContext.
+	 */
 	public BaseContext() {
 		super();
 		setContextMapBridge(DEFAULT_CONTEXT_MAP_BRIDGE);
 		setConverter(Defaults.createConverter());
 		setLanguage(Defaults.createLanguage());
 	}
-	
+
+	/**
+	 * Implement getPropertyNames()
+	 * @return String[] of property names
+	 * @throws Exception if errors occur
+	 */
 	protected abstract String[] getPropertyNamesImpl() throws Exception;
-	
+
+	/**
+	 * Implement <code>get(propertyName)</code>.
+	 * @param propertyName to get
+	 * @return Object value
+	 * @throws Exception in case of errors
+	 */
 	protected abstract Object getImpl(String propertyName)
 		throws Exception;
-	
+
+	/**
+	 * Implement <code>set(propertyName, propertyValue)</code>.
+	 * @param propertyName to set
+	 * @param propertyValue to set
+	 * @throws Exception in case of errors
+	 */
 	protected abstract void setImpl(String propertyName, Object propertyValue)
 		throws Exception;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public final String[] getPropertyNames() throws ContextException {
 		try {
 			// retrieve the property names
@@ -101,7 +123,6 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 					iterator.remove();
 				}
 			}
-			
 			return (String[]) propertyNames.toArray(new String[propertyNames.size()]);
 		}
 		catch (ContextException e) {
@@ -112,19 +133,20 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public final Object get(String expression) throws ContextException {
 		if (getLanguage().isProperty(expression)) {
 			// make sure a property name is specified
 			if (ObjectUtils.isEmpty(expression)) {
 				throw new ContextException("You must specify a propertyName to retrieve");
 			}
-			
 			// make sure the propertyName is a valid property
 			String[] propertyNames = getPropertyNames();		
 			if (!(ContainerUtils.contains(propertyNames, expression))) {
 				return null;
 			}
-			
 			try {
 //				Object returnVal = getImpl(expression);
 //				// exposes propertyNames as a property of the Map, if desired
@@ -144,20 +166,20 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 		return getLanguage().get(this, expression);
 	}
 
-	public final void set(String expression, Object value)
-		throws ContextException {
+	/**
+	 * {@inheritDoc}
+	 */
+	public final void set(String expression, Object value) throws ContextException {
 		if (getLanguage().isProperty(expression)) {
 			// make sure a property name is specified
 			if (ObjectUtils.isEmpty(expression)) {
 				throw new ContextException("You must specify an expression to set");
 			}
-			
 //			// make sure the propertyName is a valid property
 //			String[] propertyNames = getPropertyNames();		
 //			if (!(MorphUtils.contains(propertyNames, expression))) {
 //				return null;
 //			}
-			
 			try {
 				setImpl(expression, value);
 			}
@@ -173,13 +195,19 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public final Object get(String expression, Class destinationClass)
-		throws ContextException {
+			throws ContextException {
 		return get(expression, destinationClass, Locale.getDefault());
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public final Object get(String expression, Class destinationClass, Locale locale)
-		throws ContextException {
+			throws ContextException {
 		try {
 			Object object = get(expression);
 			return getConverter().convert(destinationClass, object, locale);
@@ -188,14 +216,20 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 			throw new ContextException("Unable to retrieve value for expression '" + expression + "' as destination " + ObjectUtils.getObjectDescription(destinationClass), e);
 		}
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public final Object get(String expression, Locale locale, Class destinationClass)
-		throws ContextException {
+			throws ContextException {
 		return get(expression, destinationClass, locale);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public final void set(String expression, Object value, Locale locale)
-		throws ContextException {
+			throws ContextException {
 		if (ObjectUtils.isEmpty(expression)) {
 			throw new ContextException("You must specify a propertyName to set");
 		}
@@ -209,13 +243,15 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 		catch (Exception e) {
 			throw new ContextException("Could not set '" + expression + "' to " + ObjectUtils.getObjectDescription(value), e);
 		}
-		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void clear() {
 		getContextMapBridge().clear(this);
 	}
-	
+
 	/**
 	 * The implementation of this method has O(n) time complexity.
 	 * @see java.util.Map#containsKey(java.lang.Object)
@@ -223,48 +259,79 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 	public boolean containsKey(Object key) {
 		return getContextMapBridge().containsKey(this, key);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean containsValue(Object value) {
 		return getContextMapBridge().containsValue(this, value);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Set entrySet() {
 		return getContextMapBridge().entrySet(this);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object get(Object key) {
 		return getContextMapBridge().get(this, key);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isEmpty() {
 		return getContextMapBridge().isEmpty(this);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Set keySet() {
 		return getContextMapBridge().keySet(this);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object put(Object key, Object value) {
 		return getContextMapBridge().put(this, key, value);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void putAll(Map t) {
 		getContextMapBridge().putAll(this, t);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object remove(Object key) {
 		return getContextMapBridge().remove(this, key);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public int size() {
 		return getContextMapBridge().size(this);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Collection values() {
 		return getContextMapBridge().values(this);
 	}
-	
+
 	/**
+	 * Get the converter.
 	 * @return Returns the converter.
 	 */
 	public Converter getConverter() {
@@ -273,13 +340,17 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 		}
 		return converter;
 	}
+
 	/**
+	 * Set the converter.
 	 * @param converter The converter to set.
 	 */
 	public void setConverter(Converter converter) {
 		this.converter = converter;
 	}
+
 	/**
+	 * Get the Language.
 	 * @return Returns the language.
 	 */
 	public Language getLanguage() {
@@ -288,25 +359,43 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 		}
 		return language;
 	}
+
 	/**
+	 * Set the Language.
 	 * @param language The language to set.
 	 */
 	public void setLanguage(Language language) {
 		this.language = language;
 	}
 
+	/**
+	 * Set the ContextMapBridge.
+	 * @param contextMapBridge to set
+	 */
 	public void setContextMapBridge(ContextMapBridge contextMapBridge) {
 		this.contextMapBridge = contextMapBridge;
 	}
 
+	/**
+	 * Get the ContextMapBridge. 
+	 * @return ContextMapBridge
+	 */
 	public ContextMapBridge getContextMapBridge() {
 		return contextMapBridge == null ? DEFAULT_CONTEXT_MAP_BRIDGE : contextMapBridge;
 	}
 
+	/**
+	 * Get the log.
+ 	 * @return Log
+	 */
 	protected Log getLog() {
 		return log;
 	}
 
+	/**
+	 * Set the Log.
+	 * @param log to set
+	 */
 	protected void setLog(Log log) {
 		this.log = log;
 	}
@@ -315,5 +404,5 @@ public abstract class BaseContext implements Context, Map, DecoratedContext {
 //	public String toString() {
 //		return (new HashMap(this)).toString();
 //	}
-	
+
 }

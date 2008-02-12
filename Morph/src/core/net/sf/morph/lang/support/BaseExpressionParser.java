@@ -1,12 +1,12 @@
 /*
- * Copyright 2004-2005 the original author or authors.
- * 
+ * Copyright 2004-2005, 2008 the original author or authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -20,19 +20,28 @@ import net.sf.morph.lang.InvalidExpressionException;
 
 /**
  * A base class for expression parsers.
- * 
+ *
  * @author Matt Sgarlata
  * @since Nov 28, 2004
  */
 public abstract class BaseExpressionParser implements ExpressionParser {
 
+	/**
+	 * Implement <code>parse(expression)</code>.
+	 * @param expression to parse
+	 * @return String[] of path elements.
+	 * @throws Exception
+	 */
 	public abstract String[] parseImpl(String expression) throws Exception;
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public String[] parse(String expression) throws InvalidExpressionException {
 		if (ObjectUtils.isEmpty(expression)) {
 			return new String[] { };
 		}
-		
+
 		try {
 			return parseImpl(expression);
 		}

@@ -1,12 +1,12 @@
 /*
- * Copyright 2005 the original author or authors.
- * 
+ * Copyright 2005, 2008 the original author or authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -41,15 +41,13 @@ import net.sf.morph.wrap.MutableIndexedContainer;
 import net.sf.morph.wrap.Sizable;
 
 /**
+ * Default WrapperInvocationHandler implementation.
  * @author Matt Sgarlata
  * @since Jan 16, 2005
  */
 public class DefaultWrapperInvocationHandler implements WrapperInvocationHandler {
-	
+
 	private static final Map DEFAULT_REFLECTOR_WRAPPER_MAP;
-	private Map reflectorWrapperMap;
-	private Reflector reflector;
-	private Object wrapped;
 
 	static {
 		DEFAULT_REFLECTOR_WRAPPER_MAP = new BidirectionalMap(6);
@@ -58,23 +56,39 @@ public class DefaultWrapperInvocationHandler implements WrapperInvocationHandler
 		DEFAULT_REFLECTOR_WRAPPER_MAP.put(GrowableContainerReflector.class, GrowableContainer.class);
 		DEFAULT_REFLECTOR_WRAPPER_MAP.put(IndexedContainerReflector.class, IndexedContainer.class);
 		DEFAULT_REFLECTOR_WRAPPER_MAP.put(MutableIndexedContainer.class, MutableIndexedContainer.class);
-		DEFAULT_REFLECTOR_WRAPPER_MAP.put(SizableReflector.class, Sizable.class);		
+		DEFAULT_REFLECTOR_WRAPPER_MAP.put(SizableReflector.class, Sizable.class);
 	}
-	
+
+	private Map reflectorWrapperMap;
+	private Reflector reflector;
+	private Object wrapped;
+
+	/**
+	 * Create a new DefaultWrapperInvocationHandler.
+	 * @param wrapped object
+	 */
 	public DefaultWrapperInvocationHandler(Object wrapped) {
 		super();
 		this.wrapped = wrapped;
 	}
-	
+
+	/**
+	 * Create a new DefaultWrapperInvocationHandler.
+	 * @param wrapped object
+	 * @param reflector to use
+	 */
 	public DefaultWrapperInvocationHandler(Object wrapped, Reflector reflector) {
 		this(wrapped);
 		this.reflector = reflector;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		
+
 		try {
-			
+
 			Class declaringClass = method.getDeclaringClass();
 			if (declaringClass.equals(getWrapped().getClass())) {
 				return method.invoke(getWrapped(), args);
@@ -82,29 +96,35 @@ public class DefaultWrapperInvocationHandler implements WrapperInvocationHandler
 			Class wrapperClass = method.getDeclaringClass();
 			Class reflectorClass = (Class) getBiDirectionalReflectorWrapperMap().getKey(wrapperClass);
 			if (reflectorClass == null) {
-				throw new IllegalArgumentException("Cannot invoke method " + method + " because it is not declared in one of the recognized wrapper classes, which are: " + ObjectUtils.getObjectDescription(getReflectorWrapperMap().values()));
+				throw new IllegalArgumentException(
+						"Cannot invoke method "
+								+ method
+								+ " because it is not declared in one of the recognized wrapper classes, which are: "
+								+ ObjectUtils
+										.getObjectDescription(getReflectorWrapperMap()
+												.values()));
 			}
-			
+
 			Reflector reflector = (Reflector) CompositeUtils.specialize(getReflector(), reflectorClass);
-			
+
 			int wrapperNumArgs = method.getParameterTypes().length;
 			int reflectorNumArgs = wrapperNumArgs + 1;
-			
+
 			Class[] reflectorParameterTypes = new Class[reflectorNumArgs];
 			reflectorParameterTypes[0] = Object.class;
 			if (method.getParameterTypes() != null) {
 				System.arraycopy(method.getParameterTypes(), 0,
 					reflectorParameterTypes, 1, wrapperNumArgs);
 			}
-			
+
 			Object[] reflectorArgs = new Object[reflectorNumArgs];
 			reflectorArgs[0] = getWrapped();
 			if (args != null) {
 				System.arraycopy(args, 0, reflectorArgs, 1, wrapperNumArgs);
 			}
-			
+
 			Method reflectorMethod = reflector.getClass().getMethod(method.getName(), reflectorParameterTypes);
-			
+
 			return reflectorMethod.invoke(reflector, reflectorArgs);
 		}
 		// if an exception is thrown by the invoke method, just rethrow it
@@ -112,9 +132,12 @@ public class DefaultWrapperInvocationHandler implements WrapperInvocationHandler
 		catch (InvocationTargetException e) {
 			throw e.getTargetException();
 		}
-	
+
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getInterfaces(Object object) {
 		Class[] baseInterfaces = object.getClass().getInterfaces();
 		List interfaces;
@@ -129,40 +152,72 @@ public class DefaultWrapperInvocationHandler implements WrapperInvocationHandler
 		Iterator reflectorClasses =  reflectorWrapperMap.keySet().iterator();
 		while (reflectorClasses.hasNext()) {
 			Class reflectorClass = (Class) reflectorClasses.next();
-			Class wrapperClass = (Class) reflectorWrapperMap.get(reflectorClass); 
+			Class wrapperClass = (Class) reflectorWrapperMap.get(reflectorClass);
 			if (CompositeUtils.isSpecializable(getReflector(), reflectorClass)) {
 				interfaces.add(wrapperClass);
 			}
 		}
 		return (Class[]) interfaces.toArray(new Class[interfaces.size()]);
 	}
-	
+
+	/**
+	 * Get the bidirectional reflector map.
+	 * @return BidirectionalMap
+	 */
 	protected BidirectionalMap getBiDirectionalReflectorWrapperMap() {
 		return (BidirectionalMap) getReflectorWrapperMap();
 	}
-	
+
+	/**
+	 * Get the reflectorWrapperMap.
+	 * @return Map
+	 */
 	public Map getReflectorWrapperMap() {
 		if (reflectorWrapperMap == null) {
 			setReflectorWrapperMap(DEFAULT_REFLECTOR_WRAPPER_MAP);
 		}
 		return reflectorWrapperMap;
 	}
+
+	/**
+	 * Set the reflectorWrapperMap.
+	 * @param reflectorWrapperMap to set
+	 */
 	public void setReflectorWrapperMap(Map reflectorWrapperMap) {
 		this.reflectorWrapperMap = BidirectionalMap.getInstance(reflectorWrapperMap);
 	}
 
-	public Reflector getReflector() {
+	/**
+	 * Get the reflector.
+	 * @return Reflector
+	 */
+	public synchronized Reflector getReflector() {
 		if (reflector == null) {
 			setReflector(Defaults.createReflector());
 		}
 		return reflector;
 	}
-	public void setReflector(Reflector reflector) {
+
+	/**
+	 * Set the reflector.
+	 * @param reflector to set
+	 */
+	public synchronized void setReflector(Reflector reflector) {
 		this.reflector = reflector;
 	}
+
+	/**
+	 * Get the wrapped object.
+	 * @return Object
+	 */
 	public Object getWrapped() {
 		return wrapped;
 	}
+
+	/**
+	 * Set the wrapped object.
+	 * @param wrapped object to set
+	 */
 	public void setWrapped(Object wrapped) {
 		this.wrapped = wrapped;
 	}

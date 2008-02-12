@@ -1,6 +1,6 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
- * 
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
@@ -103,10 +103,16 @@ public class SimpleLanguage extends BaseLanguage {
 	private ExpressionParser expressionParser;
 	private BeanReflector reflector;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isPropertyImpl(String expression) throws Exception {
 		return getExpressionParser().parse(expression).length == 1;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getTypeImpl(Object target, String expression) throws Exception {
 		if (ObjectUtils.isEmpty(expression)) {
 			return target.getClass();
@@ -124,6 +130,9 @@ public class SimpleLanguage extends BaseLanguage {
 		return getReflector().getType(value, token);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object target, String expression) throws Exception {
 		if (ObjectUtils.isEmpty(expression)) {
 			return target;
@@ -139,6 +148,9 @@ public class SimpleLanguage extends BaseLanguage {
 		return value;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void setImpl(Object target, String expression, Object value) throws Exception {
 		if (ObjectUtils.isEmpty(expression)) {
 			target = value;
@@ -159,6 +171,7 @@ public class SimpleLanguage extends BaseLanguage {
 	}
 
 	/**
+	 * Get the expression parser.
 	 * @return Returns the expressionParser.
 	 */
 	public synchronized ExpressionParser getExpressionParser() {
@@ -167,13 +180,19 @@ public class SimpleLanguage extends BaseLanguage {
 		}
 		return expressionParser;
 	}
+
 	/**
+	 * Set the expression parser.
 	 * @param expressionParser The expressionParser to set.
 	 */
 	public synchronized void setExpressionParser(ExpressionParser expressionParser) {
 		this.expressionParser = expressionParser;
 	}
 
+	/**
+	 * Get the reflector.
+	 * @return BeanReflector
+	 */
 	public synchronized BeanReflector getReflector() {
 		if (reflector == null) {
 			setReflector(Defaults.createBeanReflector());
@@ -181,6 +200,10 @@ public class SimpleLanguage extends BaseLanguage {
 		return reflector;
 	}
 
+	/**
+	 * Set the reflector.
+	 * @param reflector BeanReflector to set
+	 */
 	public synchronized void setReflector(BeanReflector reflector) {
 		this.reflector = reflector;
 	}
