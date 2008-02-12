@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.composite.util.ObjectUtils;
+import net.sf.morph.MorphException;
 import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.NodeCopier;
 import net.sf.morph.transform.copiers.CumulativeCopier;
@@ -47,7 +48,7 @@ class CopierDef {
 				rightward = (Map) parent.getPropertyMapClass().newInstance();
 				leftward = (Map) parent.getPropertyMapClass().newInstance();
 			} catch (Exception e) {
-				throw new RuntimeException(e);
+				throw new MorphException(e);
 			}
 			exposeLeftward = new AbstractMap() {
 				public Set entrySet() {
