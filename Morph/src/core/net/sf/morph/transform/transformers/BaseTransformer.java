@@ -92,7 +92,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * Create a new BaseTransformer.
 	 */
 	protected BaseTransformer() {
-		setTransformerName(getClass().getName());
+		setTransformerName(null);
 	}
 	
 // isTransformable
@@ -820,10 +820,18 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * @param transformerName the String to set
 	 */
 	public void setTransformerName(String transformerName) {
-		if (ObjectUtils.equals(transformerName, this.transformerName)) {
+		if (initialized && ObjectUtils.equals(transformerName, this.transformerName)) {
 			return;
 		}
 		this.transformerName = transformerName;
-		log = LogFactory.getLog(transformerName);
+		log = transformerName == null ? LogFactory.getLog(getClass()) : LogFactory.getLog(transformerName);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String toString() {
+		String name = getTransformerName();
+		return name == null ? super.toString() : name;
 	}
 }

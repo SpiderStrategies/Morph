@@ -48,7 +48,7 @@ public abstract class BaseLanguage implements DecoratedLanguage {
 	 */
 	public BaseLanguage() {
 		super();
-		setLanguageName(getClass().getName());
+		establishLog(null);
 	}
 
 	/**
@@ -264,7 +264,18 @@ public abstract class BaseLanguage implements DecoratedLanguage {
 			return;
 		}
 		this.languageName = languageName;
-		log = LogFactory.getLog(languageName);
+		establishLog(languageName);
 	}
 
+	private void establishLog(String name) {
+		log = name == null ? LogFactory.getLog(getClass()) : LogFactory.getLog(name);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String toString() {
+		String name = getLanguageName();
+		return name == null ? super.toString() : name;
+	}
 }

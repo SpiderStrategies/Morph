@@ -72,7 +72,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 */
 	public BaseReflector() {
 		setInitialized(false);
-		setReflectorName(getClass().getName());
+		setReflectorName(null);
 	}
 
 //	 initialization
@@ -1318,11 +1318,18 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 * @param reflectorName the String to set
 	 */
 	public void setReflectorName(String reflectorName) {
-		if (ObjectUtils.equals(reflectorName, this.reflectorName)) {
+		if (initialized && ObjectUtils.equals(reflectorName, this.reflectorName)) {
 			return;
 		}
 		this.reflectorName = reflectorName;
-		log = LogFactory.getLog(reflectorName);
+		log = reflectorName == null ? LogFactory.getLog(getClass()) : LogFactory.getLog(reflectorName);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public String toString() {
+		String name = getReflectorName();
+		return name == null ? super.toString() : name;
+	}
 }
