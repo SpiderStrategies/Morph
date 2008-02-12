@@ -129,9 +129,9 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 
 		Set intersectionSet = new HashSet();
 		intersectionSet.addAll(Arrays.asList( ((Object[]) arrays.get(0)) ));
-		for (int i=1; i<arrays.size(); i++) {
+		for (int i = 1; i < arrays.size(); i++) {
 			Object[] array = (Object[]) arrays.get(i);
-			for (int j=0; j<array.length; j++) {
+			for (int j = 0; j < array.length; j++) {
 				if (!contains(intersectionSet, array[j])) {
 					intersectionSet.remove(array[j]);
 				}
@@ -152,7 +152,11 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 	public static Object[] intersection(List arrays) {
 		return intersection(arrays, Object[].class);
 	}
-	
+
+	/**
+	 * Create an ordered Set implementation based the classes available in the current environment.
+	 * @return Set
+	 */
 	public static Set createOrderedSet() {
 		if (ClassUtils.isJdk14OrHigherPresent()) {
 			try {
