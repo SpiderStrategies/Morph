@@ -17,11 +17,13 @@ package net.sf.morph.transform.copiers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import net.sf.composite.util.ObjectUtils;
+import net.sf.morph.reflect.ReflectionException;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.StringUtils;
@@ -185,6 +187,29 @@ public class PropertyNameMatchingCopier extends BasePropertyNameCopier {
 	 */
 	public synchronized void addPropertyToIgnore(String propertyName) {
 		propertiesToIgnore.add(propertyName);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isImpreciseTransformationImpl(Class destinationClass,
+			Class sourceClass) {
+		//imprecise only if default operation loses information, i.e. properties from source don't exist on dest:
+		if (!isErrorOnMissingProperty() && ObjectUtils.isEmpty(propertiesToCopy)
+				&& ObjectUtils.isEmpty(propertiesToIgnore)) {
+			Object sourceBean;
+			Object destinationBean;
+			try {
+				sourceBean = getInstantiatingReflector().newInstance(sourceClass, null);
+				destinationBean = getInstantiatingReflector().newInstance(destinationClass, null);
+			} catch (ReflectionException e) {
+				return true;
+			}
+			HashSet sourcePropertyNames = new HashSet(Arrays.asList(getBeanReflector().getPropertyNames(sourceBean)));
+			HashSet destinationPropertyNames = new HashSet(Arrays.asList(getBeanReflector().getPropertyNames(destinationBean)));
+			return !sourcePropertyNames.equals(destinationPropertyNames);
+		}
+		return super.isImpreciseTransformationImpl(destinationClass, sourceClass);
 	}
 
 	/**
