@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2005, 2007-2008 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -36,21 +36,24 @@ import net.sf.morph.util.StringUtils;
 /**
  * Reflector for Maps that allows a map to be treated both as a container and as
  * a bean.
- * 
+ *
  * @author Matt Sgarlata
  * @since Nov 27, 2004
  */
-public class MapReflector extends BaseReflector implements InstantiatingReflector, SizableReflector, GrowableContainerReflector,
-	BeanReflector {
-	
+public class MapReflector extends BaseReflector implements InstantiatingReflector,
+		SizableReflector, GrowableContainerReflector, BeanReflector {
+
+	/** Implicit <code>entries</code> property */
 	public static final String IMPLICIT_PROPERTY_ENTRIES = "entries";
+	/** Implicit <code>keys</code> property */
 	public static final String IMPLICIT_PROPERTY_KEYS = "keys";
+	/** Implicit <code>values</code> property */
 	public static final String IMPLICIT_PROPERTY_VALUES = "values";
-	
+
 	/**
 	 * Indicates that the <code>values</code> of the source map should be
 	 * copied to the destination container object.
-	 * 
+	 *
 	 * @see Map#values()
 	 */
 	public static final String EXTRACT_VALUES = "EXTRACT_VALUES";
@@ -60,7 +63,7 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 	 * copied to the destination container object. For example, if the
 	 * destination container object is a List, then each Map.Entry in the source
 	 * map will be copied to the destination List
-	 * 
+	 *
 	 * @see Map#entrySet()
 	 */
 	public static final String EXTRACT_ENTRIES = "EXTRACT_ENTRIES";
@@ -70,7 +73,7 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 	 * copied to the destination container object. For example, if the
 	 * destination container object is a List, then each key in the source map
 	 * will be copied to the destination List.
-	 * 
+	 *
 	 * @see Map#keySet()
 	 */
 	public static final String EXTRACT_KEYS = "EXTRACT_KEYS";
@@ -78,50 +81,78 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 	/**
 	 * The default treatment for Maps (which is to extract the values in the
 	 * Map).
-	 * 
+	 *
 	 * @see ContainerCopier#EXTRACT_VALUES
 	 */
 	public static final String DEFAULT_MAP_TREATMENT = EXTRACT_VALUES;
-	
+
 	private static final Class[] REFLECTABLE_TYPES = new Class[] {
 		Map.class
 	};
-	
+
 	/**
 	 * All of the allowed map treatments.
 	 */
 	protected static String[] MAP_TREATMENTS = new String[] {
 		EXTRACT_VALUES, EXTRACT_ENTRIES, EXTRACT_KEYS
 	};
-	
+
 	/**
 	 * The map treatment this copier is using.
 	 */
 	private String mapTreatment;
-	
+
+	/**
+	 * Create a new MapReflector using the default map treatment.
+	 */
 	public MapReflector() {
-		setMapTreatment(DEFAULT_MAP_TREATMENT);
+		this(DEFAULT_MAP_TREATMENT);
 	}
-	
+
+	/**
+	 * Create a new MapReflector.
+	 * @param mapTreatment to use
+	 */
+	public MapReflector(String mapTreatment) {
+		setMapTreatment(mapTreatment);
+	}
+
+	/**
+	 * Get the specified container as a Map.
+	 * @param container to get
+	 * @return Map
+	 */
 	protected Map getMap(Object container) {
 		return (Map) container;
 	}
-	
-// container 	
-	
+
+// container
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected int getSizeImpl(Object container) throws Exception {
 		return getMap(container).size();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getContainedTypeImpl(Class clazz) throws Exception {
 		// TODO JDK 1.5 support
 		return Object.class;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object newInstanceImpl(Class interfaceClass, Object parameters) throws Exception {
 		if (interfaceClass == Map.class) {
 			return new HashMap();
@@ -131,7 +162,10 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		}
 		return super.newInstanceImpl(interfaceClass, parameters);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean addImpl(Object container, Object value) throws Exception {
 		if (isExtractEntries()) {
 			if (!(value instanceof Map.Entry)) {
@@ -154,7 +188,10 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		}
 		throw new ReflectionException("Unknown map treatment '" + getMapTreatment() + "'");
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Iterator getIteratorImpl(Object container) throws Exception {
 		if (isExtractEntries()) {
 			return getMap(container).entrySet().iterator();
@@ -168,12 +205,15 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		// this shouldn't ever happen
 		throw new ReflectionException("Invalid mapTreatment: " + getMapTreatment());
 	}
-	
+
 // bean
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 //		 the getPropertyNames method used to return implicit properties, but it
-//		 doesn't anymore			
+//		 doesn't anymore
 //		Set keys = new ContainerUtils.createOrderedSet();
 //		keys.addAll(getMap(bean).keySet());
 //		keys.add(IMPLICIT_PROPERTY_KEYS);
@@ -183,9 +223,17 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		Set keys = getMap(bean).keySet();
 		return (String[]) keys.toArray(new String[keys.size()]);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getTypeImpl(Object bean, String propertyName) throws Exception {
 		return Object.class;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isReadableImpl(Object bean, String propertyName)
 		throws Exception {
 		return true;
@@ -195,10 +243,18 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 //			IMPLICIT_PROPERTY_ENTRIES.equals(propertyName) ||
 //			IMPLICIT_PROPERTY_VALUES.equals(propertyName);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean isWriteableImpl(Object bean, String propertyName)
 		throws Exception {
 		return true;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		Object value = getMap(bean).get(propertyName);
 		if (propertyName.equals(IMPLICIT_PROPERTY_VALUES) && value == null) {
@@ -212,16 +268,25 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		}
 		return value;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void setImpl(Object bean, String propertyName, Object value)
 		throws Exception {
 		getMap(bean).put(propertyName, value);
 	}
 
+	/**
+	 * Get the map treatment in use.
+	 * @return String
+	 */
 	public String getMapTreatment() {
 		return mapTreatment;
 	}
+
 	/**
-	 * Sets how maps are treated by this reflector
+	 * Sets how maps are treated by this reflector.
 	 * @param mapTreatment how maps are treated by this reflector
 	 * @throws ReflectionException if an invalid map treatment is specified
 	 */
@@ -232,15 +297,27 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		}
 		this.mapTreatment = mapTreatment;
 	}
-	
+
+	/**
+	 * Learn whether this reflector extracts map entries.
+	 * @return boolean
+	 */
 	public boolean isExtractEntries() {
-		return EXTRACT_KEYS.equals(getMapTreatment());
-	}
-	
-	public boolean isExtractKeys() {
 		return EXTRACT_ENTRIES.equals(getMapTreatment());
 	}
-	
+
+	/**
+	 * Learn whether this reflector extracts map keys.
+	 * @return boolean
+	 */
+	public boolean isExtractKeys() {
+		return EXTRACT_KEYS.equals(getMapTreatment());
+	}
+
+	/**
+	 * Learn whether this reflector extracts map values.
+	 * @return boolean
+	 */
 	public boolean isExtractValues() {
 		return EXTRACT_VALUES.equals(getMapTreatment());
 	}

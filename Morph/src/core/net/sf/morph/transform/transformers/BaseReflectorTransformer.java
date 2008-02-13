@@ -15,6 +15,7 @@
  */
 package net.sf.morph.transform.transformers;
 
+import net.sf.composite.util.CompositeUtils;
 import net.sf.morph.reflect.BeanReflector;
 import net.sf.morph.reflect.ContainerReflector;
 import net.sf.morph.reflect.GrowableContainerReflector;
@@ -60,4 +61,7 @@ public class BaseReflectorTransformer extends BaseTransformer {
 		return (GrowableContainerReflector) getReflector(GrowableContainerReflector.class);
 	}
 
+	protected boolean hasReflector(Class reflectorType) {
+		return CompositeUtils.isSpecializable(getReflector(), reflectorType);
+	}
 }

@@ -24,6 +24,7 @@ import java.util.Set;
 
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.reflect.GrowableContainerReflector;
+import net.sf.morph.reflect.IndexedContainerReflector;
 import net.sf.morph.reflect.MutableIndexedContainerReflector;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
@@ -77,8 +78,9 @@ import net.sf.morph.util.TypeMap;
  * @author Matt Sgarlata
  * @since Nov 27, 2004
  */
-public class ContainerCopier extends BaseReflectorTransformer implements DecoratedCopier, DecoratedConverter, NodeCopier {
-	
+public class ContainerCopier extends BaseReflectorTransformer implements DecoratedCopier,
+		DecoratedConverter, NodeCopier {
+
 	// map of Class to Class
 	private Map containedSourceToDestinationTypeMap;
 	private boolean preferGrow = true;
@@ -310,8 +312,12 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		Set set = ContainerUtils.createOrderedSet();
-		set.addAll(Arrays.asList(getGrowableContainerReflector().getReflectableClasses()));
-		set.addAll(Arrays.asList(getIndexedContainerReflector().getReflectableClasses()));
+		if (hasReflector(GrowableContainerReflector.class)) {
+			set.addAll(Arrays.asList(getGrowableContainerReflector().getReflectableClasses()));
+		}
+		if (hasReflector(IndexedContainerReflector.class)) {
+			set.addAll(Arrays.asList(getIndexedContainerReflector().getReflectableClasses()));
+		}
 		set.add(Iterator.class);
 		set.add(Enumeration.class);
 		return (Class[]) set.toArray(new Class[set.size()]);
