@@ -38,7 +38,7 @@ import net.sf.morph.util.TransformerUtils;
  * Transformer is invoked; otherwise the optional else Transformer is invoked if present. 
  *
  * @author Matt Benson
- * @since Morph 1.0.2
+ * @since Morph 1.1
  */
 public class ConditionalCopier extends BaseTransformer implements DecoratedConverter,
 		DecoratedCopier, ExplicitTransformer {

@@ -1299,7 +1299,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	 * domain objects).
 	 * 
 	 * @return <code>true</code>
-	 * @since Morph 1.0.2
+	 * @since Morph 1.1
 	 */
 	protected boolean isWrappingRuntimeExceptions() {
 		return true;
@@ -1308,6 +1308,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	/**
 	 * Get the reflectorName.
 	 * @return String
+	 * @since Morph 1.1
 	 */
 	public String getReflectorName() {
 		return reflectorName;
@@ -1316,6 +1317,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 	/**
 	 * Set the reflectorName.
 	 * @param reflectorName the String to set
+	 * @since Morph 1.1
 	 */
 	public void setReflectorName(String reflectorName) {
 		if (initialized && ObjectUtils.equals(reflectorName, this.reflectorName)) {
@@ -1327,6 +1329,7 @@ public abstract class BaseReflector implements Reflector, DecoratedReflector {
 
 	/**
 	 * {@inheritDoc}
+	 * @since Morph 1.1
 	 */
 	public String toString() {
 		String name = getReflectorName();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -375,6 +375,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	/**
 	 * Learn whether this ContainerCopier prefers to grow the destination when possible.
 	 * @return boolean
+	 * @since Morph 1.1
 	 */
 	public boolean isPreferGrow() {
 		return preferGrow;
@@ -387,7 +388,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 * reflector with regard to the copy destination; preferredTransformationType will also
 	 * be observed.
 	 * @see #copyImpl(Object, Object, Locale, Integer)
-	 * @since Morph 1.0.2
+	 * @since Morph 1.1
 	 * @param preferGrow the boolean to set
 	 */
 	public void setPreferGrow(boolean preferGrow) {

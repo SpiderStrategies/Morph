@@ -29,7 +29,7 @@ import net.sf.morph.util.TransformerUtils;
 
 /**
  * Copies arrays of matching immutable component types using System.arraycopy.
- * @since Morph 1.0.2
+ * @since Morph 1.1
  * @author mbenson
  */
 public class ImmutableComponentArrayCopier extends BaseTransformer implements

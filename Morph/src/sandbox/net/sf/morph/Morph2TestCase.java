@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -36,7 +36,7 @@ import net.sf.morph.util.TestUtils;
 
 /**
  * @author Matt Sgarlata
- * @since Morph 1.0.2 (Oct 31, 2007)
+ * @since Morph 1.1 (Oct 31, 2007)
  */
 public class Morph2TestCase extends MorphTestCase {
 

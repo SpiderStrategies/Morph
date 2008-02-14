@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 the original author or authors.
+ * Copyright 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,7 +19,7 @@ package net.sf.morph.util;
  * Holder for a mutable int. Good for ThreadLocal stacks, etc.
  * 
  * @author Matt Benson
- * @since Morph 1.0.2
+ * @since Morph 1.1
  */
 public class MutableInteger {
 	public int value;

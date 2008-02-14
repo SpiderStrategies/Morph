@@ -157,7 +157,7 @@ public class ContextMapBridge {
 	 * Convenience method
 	 * @param context non-null Context
 	 * @return propertyNames
-	 * @since Morph 1.0.2
+	 * @since Morph 1.1
 	 */
 	protected String[] getPropertyNames(Context context) {
 		return checkContextNotNull(context).getPropertyNames();

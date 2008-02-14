@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -87,7 +87,7 @@ public abstract class ReflectorUtils {
 	 *             <code>null</code>
 	 * @throws net.sf.morph.reflect.ReflectionException
 	 *             if reflectability could not be determined
-	 * @since Morph 1.0.2
+	 * @since Morph 1.1
 	 */
 	public static boolean isReflectable(Reflector reflector, Object reflectedObject, Class reflectorType) {
 	    return isReflectable(reflector, ClassUtils.getClass(reflectedObject), reflectorType);

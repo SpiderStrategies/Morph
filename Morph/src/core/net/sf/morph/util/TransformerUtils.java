@@ -97,6 +97,7 @@ public abstract class TransformerUtils {
 	 * @param sourceClass
 	 * @return boolean
 	 * @see ImpreciseTransformer
+	 * @since Morph 1.1
 	 */
 	public static boolean isImpreciseTransformation(Transformer transformer,
 			Class destinationClass, Class sourceClass) {
@@ -252,7 +253,7 @@ public abstract class TransformerUtils {
 	 * @param transformer
 	 * @param sourceType
 	 * @return Class[]
-	 * @since Morph 1.0.2
+	 * @since Morph 1.1
 	 */
 	public static Class[] getDestinationClasses(Transformer transformer, Class sourceType) {
 		if (!ClassUtils.inheritanceContains(transformer.getSourceClasses(), sourceType)) {

@@ -78,7 +78,7 @@ public class DefaultToTextConverter extends SimpleDelegatingTransformer {
 	/**
 	 * Unused
 	 * @return
-	 * @deprecated since Morph 1.0.2
+	 * @deprecated since Morph 1.1
 	 */
 	public Converter getTextConverter() {
 		if (textConverter == null) {
@@ -90,7 +90,7 @@ public class DefaultToTextConverter extends SimpleDelegatingTransformer {
 	/**
 	 * Unused
 	 * @param textConverter
-	 * @deprecated since Morph 1.0.2
+	 * @deprecated since Morph 1.1
 	 */
 	public void setTextConverter(Converter textConverter) {
 		this.textConverter = textConverter;

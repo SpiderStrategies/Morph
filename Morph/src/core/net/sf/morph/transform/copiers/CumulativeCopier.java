@@ -29,7 +29,7 @@ import net.sf.morph.util.TransformerUtils;
  * each child Copier in turn in the course of performing a copy operation.
  *
  * @author Matt Benson
- * @since Morph 1.0.2
+ * @since Morph 1.1
  */
 public class CumulativeCopier extends BaseCompositeTransformer implements
 		DecoratedCopier, DecoratedConverter {

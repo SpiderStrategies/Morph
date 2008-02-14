@@ -19,7 +19,7 @@ package net.sf.morph.transform;
  * Defines a transformer whose operation may result in a loss of data precision.
  *
  * @author mbenson
- * @since Morph 1.0.2
+ * @since Morph 1.1
  */
 public interface ImpreciseTransformer extends Transformer {
 

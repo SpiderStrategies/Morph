@@ -32,7 +32,7 @@ import net.sf.morph.transform.transformers.BaseCompositeTransformer;
  * @see http://www.martinfowler.com/eaaCatalog/dataTransferObject.html
  *
  * @author Matt Benson
- * @since Morph 1.0.2
+ * @since Morph 1.1
  */
 public abstract class AssemblyCopierSupport extends BaseCompositeTransformer {
 

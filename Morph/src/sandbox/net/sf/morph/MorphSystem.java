@@ -23,7 +23,7 @@ import net.sf.morph.wrap.WrapperException;
 /**
  * 
  * @author Matt Sgarlata
- * @since Morph 1.0.2 (Oct 31, 2007)
+ * @since Morph 1.1 (Oct 31, 2007)
  */
 public interface MorphSystem {
 	/**

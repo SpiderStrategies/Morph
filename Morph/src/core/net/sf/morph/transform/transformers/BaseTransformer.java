@@ -594,6 +594,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * @param destinationClass
 	 * @param sourceClass
 	 * @return boolean
+	 * @since Morph 1.1
 	 */
 	public final boolean isImpreciseTransformation(Class destinationClass, Class sourceClass) {
 		try {
@@ -637,7 +638,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 *         calling the subclass's
 	 *         {@link #convertImpl(Class, Object, Locale)} method
 	 *
-	 * @since Morph 1.0.2
+	 * @since Morph 1.1
 	 */
 	protected boolean isAutomaticallyHandlingNulls() {
 		return true;
@@ -660,7 +661,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * objects).
 	 * 
 	 * @return <code>true</code>
-	 * @since Morph 1.0.2
+	 * @since Morph 1.1
 	 */
 	protected boolean isWrappingRuntimeExceptions() {
 		return true;
@@ -810,6 +811,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	/**
 	 * Get the transformerName.
 	 * @return String
+	 * @since Morph 1.1
 	 */
 	public String getTransformerName() {
 		return transformerName;
@@ -818,6 +820,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	/**
 	 * Set the transformerName.
 	 * @param transformerName the String to set
+	 * @since Morph 1.1
 	 */
 	public void setTransformerName(String transformerName) {
 		if (initialized && ObjectUtils.equals(transformerName, this.transformerName)) {
@@ -829,6 +832,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 
 	/**
 	 * {@inheritDoc}
+	 * @since Morph 1.1
 	 */
 	public String toString() {
 		String name = getTransformerName();

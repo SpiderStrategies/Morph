@@ -29,7 +29,7 @@ import net.sf.morph.util.ClassUtils;
  * A Converter that returns the result of evaluating a property against an object using a DecoratedLanguage.
  *
  * @author Matt Benson
- * @since Morph 1.0.2
+ * @since Morph 1.1
  */
 public class EvaluateExpressionConverter extends BaseTransformer implements
 		DecoratedConverter {

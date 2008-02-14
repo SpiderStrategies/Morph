@@ -31,7 +31,7 @@ import net.sf.morph.util.ClassUtils;
  * on the destination object.
  *
  * @author mbenson
- * @since Morph 1.0.2
+ * @since Morph 1.1
  */
 public class SetExpressionCopier extends BaseTransformer implements DecoratedCopier,
 		DecoratedConverter {
