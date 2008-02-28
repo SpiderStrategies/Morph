@@ -107,7 +107,8 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
 			throws Exception {
-		return transform(destinationClass, null, source, locale,
+		//pass source as default result when "if" fails and no "else":
+		return transform(destinationClass, source, source, locale,
 				TRANSFORMATION_TYPE_CONVERT);
 	}
 
