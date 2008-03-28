@@ -150,11 +150,8 @@
   </target>
 
   <target name="codegen" depends="ivy-settings" description="Generate code">
-    <ivy:retrieve conf="codegen" />
     <mkdir dir="${grammar.outdir}" />
-    <antlr target="${grammar.file}" outputdirectory="${grammar.outdir}">
-      <classpath path="${lib.dir}/codegen" />
-    </antlr>
+    <antlr target="${grammar.file}" outputdirectory="${grammar.outdir}" />
   </target>
 
   <target name="compile" depends="ivy-settings"
@@ -325,6 +322,7 @@
 
   <target name="clean" description="Clean project">
     <delete dir="${build.dir}" />
+    <delete dir="${codegen.dir}" />
     <delete dir="${dist.dir}" />
     <delete dir="${maven.bin}" />
     <delete dir="${maven.target}" />
