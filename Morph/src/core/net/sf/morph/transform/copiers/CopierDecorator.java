@@ -37,6 +37,7 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 		DecoratedConverter, ExplicitTransformer {
 
 	private Copier nestedCopier;
+	private Locale defaultLocale;
 
 	/**
 	 * Create a new CopierDecorator.
@@ -50,7 +51,17 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 	 * @param copier
 	 */
 	public CopierDecorator(Copier copier) {
+		this(copier, null);
+	}
+
+	/**
+	 * Create a new CopierDecorator.
+	 * @param copier
+	 * @param defaultLocale
+	 */
+	public CopierDecorator(Copier copier, Locale defaultLocale) {
 		setNestedCopier(copier);
+		setDefaultLocale(defaultLocale);
 	}
 
 	/**
@@ -76,6 +87,22 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 		if (copier instanceof NodeCopier) {
 			((NodeCopier) copier).setNestedTransformer(getNestedTransformer());
 		}
+	}
+
+	/**
+	 * Get the defaultLocale.
+	 * @return Locale
+	 */
+	public Locale getDefaultLocale() {
+		return defaultLocale;
+	}
+
+	/**
+	 * Set the defaultLocale.
+	 * @param defaultLocale the Locale to set
+	 */
+	public void setDefaultLocale(Locale defaultLocale) {
+		this.defaultLocale = defaultLocale;
 	}
 
 	/**
@@ -144,5 +171,13 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 				sourceType)
 				&& TransformerUtils.isTransformable(getNestedTransformer(),
 						destinationType, sourceType);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Locale getLocale() {
+		Locale locale = getDefaultLocale();
+		return locale == null ? super.getLocale() : locale;
 	}
 }

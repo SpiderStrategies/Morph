@@ -42,6 +42,7 @@ public class ConverterDecorator extends BaseTransformer implements DecoratedConv
 		ExplicitTransformer {
 
 	private Converter nestedConverter;
+	private Locale defaultLocale;
 
 	/**
 	 * Create a new ConverterDecorator.
@@ -55,7 +56,17 @@ public class ConverterDecorator extends BaseTransformer implements DecoratedConv
 	 * @param converter
 	 */
 	public ConverterDecorator(Converter converter) {
-		this.nestedConverter = converter;
+		this(converter, null);
+	}
+
+	/**
+	 * Create a new ConverterDecorator.
+	 * @param converter
+	 * @param defaultLocale
+	 */
+	public ConverterDecorator(Converter converter, Locale defaultLocale) {
+		setNestedConverter(converter);
+		setDefaultLocale(defaultLocale);
 	}
 
 	/**
@@ -72,6 +83,22 @@ public class ConverterDecorator extends BaseTransformer implements DecoratedConv
 		this.nestedConverter = converter;
 	}
 
+	/**
+	 * Get the defaultLocale.
+	 * @return Locale
+	 */
+	public Locale getDefaultLocale() {
+		return defaultLocale;
+	}
+	
+	/**
+	 * Set the defaultLocale.
+	 * @param defaultLocale the Locale to set
+	 */
+	public void setDefaultLocale(Locale defaultLocale) {
+		this.defaultLocale = defaultLocale;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#convertImpl(java.lang.Class, java.lang.Object, java.util.Locale)
@@ -140,5 +167,13 @@ public class ConverterDecorator extends BaseTransformer implements DecoratedConv
 				sourceType)
 				&& TransformerUtils.isTransformable(getNestedTransformer(),
 						destinationType, sourceType);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Locale getLocale() {
+		Locale locale = getDefaultLocale();
+		return locale == null ? super.getLocale() : locale;
 	}
 }
