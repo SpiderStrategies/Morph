@@ -22,13 +22,13 @@ public class ServletContextReflectorHierarchicalContext extends
 		String four = "4";
 		String testing = "testing";
 		
-		assertTrue(ContainerUtils.contains(context.getPropertyNames(), BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
+		assertFalse(ContainerUtils.contains(context.getPropertyNames(), BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
 		
 		context.set(testing, one);
 		assertEquals(one, context.get(testing));
 		assertEquals(Morph.get(context, testing), one);		
 		assertTrue(ContainerUtils.contains(context.getPropertyNames(), testing));
-		assertTrue(ContainerUtils.contains(context.getPropertyNames(), BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
+		assertFalse(ContainerUtils.contains(context.getPropertyNames(), BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
 		
 //		runBaseTests();
 		
@@ -36,7 +36,7 @@ public class ServletContextReflectorHierarchicalContext extends
 		assertEquals(two, context.get(testing));
 		assertEquals(Morph.get(context, testing), two);
 		assertTrue(ContainerUtils.contains(context.getPropertyNames(), testing));
-		assertTrue(ContainerUtils.contains(context.getPropertyNames(), BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
+		assertFalse(ContainerUtils.contains(context.getPropertyNames(), BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
 		
 //		runBaseTests();
 		
@@ -44,7 +44,7 @@ public class ServletContextReflectorHierarchicalContext extends
 		assertEquals(three, context.get(testing));
 		assertEquals(Morph.get(context, testing), three);
 		assertTrue(ContainerUtils.contains(context.getPropertyNames(), testing));
-		assertTrue(ContainerUtils.contains(context.getPropertyNames(), BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
+		assertFalse(ContainerUtils.contains(context.getPropertyNames(), BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
 		
 //		runBaseTests();
 		
@@ -52,7 +52,7 @@ public class ServletContextReflectorHierarchicalContext extends
 		assertEquals(four, context.get(testing));
 		assertEquals(Morph.get(context, testing), four);
 		assertTrue(ContainerUtils.contains(context.getPropertyNames(), testing));
-		assertTrue(ContainerUtils.contains(context.getPropertyNames(), BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
+		assertFalse(ContainerUtils.contains(context.getPropertyNames(), BeanReflector.IMPLICIT_PROPERTY_PROPERTY_NAMES));
 		
 		runBaseTests();
 
