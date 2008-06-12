@@ -76,12 +76,12 @@ public abstract class ContextBaseTestCase extends TestCase {
     }
 
 
-    /**
-     * Return the tests included in this test suite.
-     */
-    public static Test suite() {
-        return (new TestSuite(ContextBaseTestCase.class));
-    }
+//    /**
+//     * Return the tests included in this test suite.
+//     */
+//    public static Test suite() {
+//        return (new TestSuite(ContextBaseTestCase.class));
+//    }
 
     /**
      * Tear down instance variables required by this test case.
