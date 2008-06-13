@@ -102,15 +102,18 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.0.4</version>
+      <version>1.1.1</version>
       <url>http://jakarta.apache.org/commons/logging</url>
     </dependency>
 
     <dependency>
       <groupId>commons-chain</groupId>
       <artifactId>commons-chain</artifactId>
-      <version>1.0</version>
+      <version>1.2</version>
       <url>http://jakarta.apache.org/commons/chain</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
     </dependency>
 
     <dependency>
@@ -118,20 +121,39 @@
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
       <url>http://www.junit.org/index.htm</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
     </dependency>
 
     <dependency>
       <groupId>velocity</groupId>
       <artifactId>velocity</artifactId>
-      <version>1.4</version>
+      <version>1.5</version>
       <url>http://jakarta.apache.org/velocity/</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
     </dependency>
 
     <dependency>
       <groupId>servletapi</groupId>
       <artifactId>servletapi</artifactId>
-      <version>2.3</version>
+      <version>2.4</version>
       <url>http://java.sun.com/products/servlet/2.3/javadoc/index.html</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>jspapi</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>2.0</version>
+      <url>http://java.sun.com/products/servlet/2.3/javadoc/index.html</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
     </dependency>
 
     <dependency>
@@ -139,47 +161,75 @@
       <artifactId>commons-beanutils-core</artifactId>
       <version>1.7.0</version>
       <url>http://jakarta.apache.org/commons/beanutils</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
     </dependency>
 
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>3.2</version>
+      <version>3.2.1</version>
       <url>http://jakarta.apache.org/commons/collections</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
     </dependency>
 
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.8</version>
+      <version>1.2.14</version>
       <url>http://logging.apache.org/log4j/docs/</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
-      <version>1.2.5</version>
+      <version>2.0</version>
       <url>http://www.springframework.org</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
-      <version>1.2.5</version>
+      <version>1.2.6</version>
       <url>http://www.springframework.org</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
     </dependency>
 
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.0</version>
+      <version>2.4</version>
       <url>http://jakarta.apache.org/commons/lang</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>antlr</groupId>
+      <artifactId>antlr</artifactId>
+      <version>2.7.7</version>
+      <url>http://www.antlr2.org</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
     </dependency>
 
     <dependency>
       <groupId>composite</groupId>
       <artifactId>composite</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
       <url>http://composite.sourceforge.net</url>
     </dependency>
 
@@ -204,6 +254,7 @@
       </includes>
       <excludes>
         <exclude>**/Base*TestCase.java</exclude>
+        <exclude>**/*BaseTestCase.java</exclude>
       </excludes>
     </unitTest>
               

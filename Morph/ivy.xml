@@ -36,7 +36,7 @@
 
   <dependencies defaultconf="core->default" defaultconfmapping="*->default">
     <!-- required core -->
-    <dependency org="commons-logging" name="commons-logging" rev="1.1" conf="default" />
+    <dependency org="commons-logging" name="commons-logging" rev="1.1.1" conf="default" />
     <dependency org="net.sf.composite" name="composite"
                 rev="latest.integration" />
 
@@ -50,18 +50,18 @@
     <dependency org="velocity" name="velocity" rev="1.5"
                 conf="core,velocity,site" />
     <dependency org="jdom" name="jdom" rev="1.0" conf="jdom,sandbox,site" />
-    <dependency org="commons-collections" name="commons-collections" rev="3.2"
+    <dependency org="commons-collections" name="commons-collections" rev="3.2.1"
                 conf="core,collections,site" />
 
     <!-- etc -->
-    <dependency org="commons-lang" name="commons-lang" rev="2.3"
+    <dependency org="commons-lang" name="commons-lang" rev="2.4"
                 conf="core,lang,site" />
     <dependency org="junit" name="junit" rev="3.8.1" conf="test" />
     <dependency org="log4j" name="log4j" rev="1.2.14" conf="test" />
-    <dependency org="org.springframework" name="spring-mock" rev="1.1.4"
+    <dependency org="org.springframework" name="spring-mock" rev="1.2.6"
                 conf="test" />
 
-    <dependency org="commons-chain" name="commons-chain" rev="1.0"
+    <dependency org="commons-chain" name="commons-chain" rev="1.2"
                 conf="test,sandbox,chain" />
 
     <dependency org="antlr" name="antlr" rev="2.7.7"
