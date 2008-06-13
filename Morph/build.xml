@@ -31,12 +31,16 @@
     <include name="src/**" />
     <include name="grammar/**" />
     <include name="log4j/**" />
-    <include name="docs/**" />
+    <include name="docs/reference/readme.txt" />
+    <include name="docs/reference/src/**" />
+    <include name="docs/reference/styles/**" />
     <include name="xdocs/**" />
     <include name="build.xml" />
     <include name="LICENSE.txt" />
     <include name="build-documentation.xml" />
     <include name="build.properties" />
+    <include name="project.xml" />
+    <include name="pom.xml" />
     <include name="project.properties" />
     <include name="ivy.xml" />
     <include name="ivyconf.xml" />
@@ -125,9 +129,9 @@
       <ant antfile="build-documentation.xml" />
       <copy todir="@{dest}" preservelastmodified="true">
         <fileset dir="${docs.dir}">
-          <include name="html" />
-          <include name="html_single" />
-          <include name="pdf" />
+          <include name="html/" />
+          <include name="html_single/" />
+          <include name="pdf/" />
         </fileset>
       </copy>
     </sequential>
@@ -251,12 +255,14 @@
     <exec taskname="maven" executable="cmd">
       <arg value="/c" />
       <arg value="${env.MAVEN_HOME}/bin/maven.bat" />
+      <arg line="-Dver.ext=${ver.ext}" />
       <arg value="site:generate" />
     </exec>
   </target>
 
   <target name="-site-other" depends="-check-maven" if="site-other">
     <exec taskname="maven" executable="${env.MAVEN_HOME}/bin/maven">
+      <arg line="-Dver.ext=${ver.ext}" />
       <arg value="site:generate" />
     </exec>
   </target>
@@ -279,7 +285,8 @@
     </checksum>
   </target>
 
-  <target name="-dist-bin" depends="build-all,site">
+  <!-- ASF style distros -->
+  <!--target name="-dist-bin" depends="build-all,site">
     <mkdir dir="${dist.dir}" />
     <zip destfile="${project.dist}.zip" duplicate="fail">
       <zipfileset dir="${build.dir}" includes="*-${version}.jar"
@@ -293,12 +300,12 @@
     <tar destfile="${project.dist}.tar.bz2" longfile="gnu" compression="bzip2">
       <zipfileset src="${project.dist}.zip" />
     </tar>
-  </target>
+  </target-->
 
-  <target name="-dist-src">
-    <mkdir dir="${dist.dir}" />
+  <!--target name="-dist-src" depends="build-all,site">
+    <mkdir dir="${dist.dir}" /-->
     <!-- create archives with src and buildfile(s) -->
-    <property name="project.srcname" value="${project.fullname}-src" />
+    <!--property name="project.srcname" value="${project.fullname}-src" />
     <property name="src.dist" value="${dist.dir}/${project.srcname}" />
     <basename file="${ant.file}" property="ant.file.basename" />
     <zip destfile="${src.dist}.zip" duplicate="fail">
@@ -312,7 +319,30 @@
     <tar destfile="${src.dist}.tar.bz2" longfile="gnu" compression="bzip2">
       <zipfileset src="${src.dist}.zip" />
     </tar>
+  </target-->
+
+  <!-- SF.net style distro -->
+  <target name="-dist-bin" depends="build-all,site">
+    <mkdir dir="${dist.dir}" />
+    <!-- create archives with src and binary content -->
+    <basename file="${ant.file}" property="ant.file.basename" />
+    <zip destfile="${project.dist}.zip" duplicate="fail">
+      <zipfileset dir="${build.dir}" includes="*-${version}.jar"
+                  prefix="${project.fullname}" />
+      <zipfileset dir="${sitegen.dir}" prefix="${project.fullname}/docs" />
+      <zipfileset dir="${basedir}" prefix="${project.fullname}">
+        <patternset refid="dist-src" />
+      </zipfileset>
+    </zip>
+    <tar destfile="${project.dist}.tar.gz" longfile="gnu" compression="gzip">
+      <zipfileset src="${project.dist}.zip" />
+    </tar>
+    <tar destfile="${project.dist}.tar.bz2" longfile="gnu" compression="bzip2">
+      <zipfileset src="${project.dist}.zip" />
+    </tar>
   </target>
+
+  <target name="-dist-src" />
 
   <target name="clean-lib" description="Clean project dependencies">
     <delete includeemptydirs="true" dir="${lib.dir}" />
