@@ -4,87 +4,130 @@
   <groupId>net.sf.morph</groupId>
   <artifactId>morph</artifactId>
   <packaging>jar</packaging>
-  <version>0.9.3</version>
+  <version>1.1</version>
+
+  <description>
+    Morph is a Java framework that eases the internal interoperability of an application.  As information flows through an application, it undergoes multiple transformations.  Morph provides a standard way to implement these transformations.
+  </description>
+
   <name>Maven Quick Start Archetype</name>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <url>http://maven.apache.org</url>
 
   <dependencies>
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.0.3</version>
-      <url>http://jakarta.apache.org/commons/logging</url>
+      <version>1.1.1</version>
     </dependency>
 
     <dependency>
       <groupId>commons-chain</groupId>
       <artifactId>commons-chain</artifactId>
-      <version>1.0</version>
-      <url>http://jakarta.apache.org/commons/chain</url>
+      <version>1.2</version>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
-      <url>http://www.junit.org/index.htm</url>
+      <optional>true</optional>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>velocity</groupId>
       <artifactId>velocity</artifactId>
-      <version>1.4</version>
-      <url>http://jakarta.apache.org/velocity/</url>
+      <version>1.5</version>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>servletapi</groupId>
       <artifactId>servletapi</artifactId>
+      <version>2.4</version>
+      <optional>true</optional>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>jspapi</groupId>
+      <artifactId>jsp-api</artifactId>
       <version>2.3</version>
-      <url>http://java.sun.com/products/servlet/2.3/javadoc/index.html</url>
+      <optional>true</optional>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils-core</artifactId>
       <version>1.7.0</version>
-      <url>http://jakarta.apache.org/commons/beanutils</url>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.8</version>
-      <url>http://logging.apache.org/log4j/docs/</url>
+      <version>1.2.14</version>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
-      <groupId>spring</groupId>
+      <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
-      <version>1.1.2</version>
-      <url>http://www.springframework.org</url>
+      <version>2.0</version>
+      <optional>true</optional>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>spring</groupId>
+      <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
-      <version>1.1.2</version>
-      <url>http://www.springframework.org</url>
+      <version>1.2.6</version>
+      <optional>true</optional>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.0</version>
-      <url>http://jakarta.apache.org/commons/lang</url>
+      <version>2.4</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.1</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>antlr</groupId>
+      <artifactId>antlr</artifactId>
+      <version>2.7.7</version>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>composite</groupId>
       <artifactId>composite</artifactId>
-      <version>0.1</version>
-      <url>http://composite.sourceforge.net</url>
+      <version>1.1</version>
     </dependency>
+
   </dependencies>
+
+  <scm>
+    <url>svn://development.spiderstrategies.com/morph/Morph</url>
+  </scm>
 
 </project>
