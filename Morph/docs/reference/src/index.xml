@@ -2,7 +2,7 @@
 
 <!--
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2001-2004, 2008 The original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@
         <subtitle>
           Reference Documentation
         </subtitle>
-        <releaseinfo>Version 0.9.3</releaseinfo>
-        <pubdate>February 2, 2006</pubdate>
+        <releaseinfo>Version 1.1</releaseinfo>
+        <pubdate>June 13, 2008</pubdate>
         
         <authorgroup>
             <author>
