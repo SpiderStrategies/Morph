@@ -27,12 +27,25 @@
 	<body>
 		<section name="Production Releases">
 
-			<subsection name="Morph 1.1 (November 29, 2007)">
+			<subsection name="Morph 1.1 (June 13, 2008)">
 				<ul>
+					<li>Added several new converters/copiers</li>
+					<li>Improved default SimpleDelegatingTransformer component members and ordering</li>
 					<li>Fixed transformation caching issue that was causing conversions done using the SimpleDelegatingTransformer to return results of previous transformations rather than performing the transformation again as it should have been.</li>
 					<li>Improved handling of nulls by all converters.</li>
 					<li>Property Editor support</li>
 					<li>Auto-detect Spring's presence and use the built in locale thread local</li>
+					<li>Renamed ChainedConverter to ChainedTransformer, fixed its implementation, and added Copier functionality</li>
+					<li>Added CharSequence support to TextConverter</li>
+					<li>Introduced the concept of imprecise transformers, over which other transformers are to be preferred</li>
+					<li>Improved the choice of copy/convert in TransformerUtils.transform()</li>
+					<li>ConverterDecorator/CopierDecorator can be set with a default Locale which they will use for Decorated* (implicit Locale) operations</li>
+					<li>Improved handling of nested exceptions</li>
+					<li>Added transformerName property to BaseTransformer for inexpensive improved logging</li>
+					<li>Added reflectorName property to BaseReflector for inexpensive improved logging</li>
+					<li>Added some classes to assist integration with other libraries in subpackages of net.sf.morph.integration</li>
+					<li>Reflectors attempt to avoid do-nothing property set operations</li>
+					<li>Other fixes and improvements</li>
 				</ul>
 			</subsection>
 
