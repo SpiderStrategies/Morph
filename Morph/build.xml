@@ -329,7 +329,6 @@
     <zip destfile="${project.dist}.zip" duplicate="fail">
       <zipfileset dir="${build.dir}" includes="*-${version}.jar"
                   prefix="${project.fullname}" />
-      <zipfileset dir="${sitegen.dir}" prefix="${project.fullname}/docs" />
       <zipfileset dir="${basedir}" prefix="${project.fullname}">
         <patternset refid="dist-src" />
       </zipfileset>
