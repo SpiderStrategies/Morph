@@ -332,6 +332,7 @@
       <zipfileset dir="${basedir}" prefix="${project.fullname}">
         <patternset refid="dist-src" />
       </zipfileset>
+      <zipfileset dir="${sitegen.dir}" prefix="${project.fullname}/site" />
     </zip>
     <tar destfile="${project.dist}.tar.gz" longfile="gnu" compression="gzip">
       <zipfileset src="${project.dist}.zip" />

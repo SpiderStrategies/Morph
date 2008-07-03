@@ -4,7 +4,7 @@
   <groupId>net.sf.morph</groupId>
   <artifactId>morph</artifactId>
   <packaging>jar</packaging>
-  <version>1.1</version>
+  <version>1.1.1</version>
 
   <description>
     Morph is a Java framework that eases the internal interoperability of an application.  As information flows through an application, it undergoes multiple transformations.  Morph provides a standard way to implement these transformations.
