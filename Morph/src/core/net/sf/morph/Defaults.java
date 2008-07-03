@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -45,79 +45,146 @@ import net.sf.morph.transform.transformers.SimpleDelegatingTransformer;
  */
 public abstract class Defaults {
 
-//	private static final BeanReflector BEAN_REFLECTOR = (BeanReflector) CompositeUtils.specialize(REFLECTOR, BeanReflector.class);
-//	private static final ContainerReflector CONTAINER_REFLECTOR = (ContainerReflector) CompositeUtils.specialize(REFLECTOR, ContainerReflector.class);
-//	private static final GrowableContainerReflector GROWABLE_CONTAINER_REFLECTOR = (GrowableContainerReflector) CompositeUtils.specialize(REFLECTOR, GrowableContainerReflector.class);
-//	private static final IndexedContainerReflector INDEXED_CONTAINER_REFLECTOR = (IndexedContainerReflector) CompositeUtils.specialize(REFLECTOR, IndexedContainerReflector.class);
-//	private static final InstantiatingReflector INSTANTIATING_REFLECTOR = (InstantiatingReflector) CompositeUtils.specialize(REFLECTOR, InstantiatingReflector.class);
-//	private static final MutableIndexedContainerReflector MUTABLE_INDEXED_CONTAINER_REFLECTOR = (MutableIndexedContainerReflector) CompositeUtils.specialize(REFLECTOR, MutableIndexedContainerReflector.class);
-//	private static final SizableReflector SIZABLE_REFLECTOR = (SizableReflector) CompositeUtils.specialize(REFLECTOR, SizableReflector.class);
-
-//	private static final TextConverter TEXT_CONVERTER = new TextConverter();
-//	private static final DefaultToTextConvert TO_TEXT_CONVERTER = new DefaultToTextConverter();
-//	private static final TimeConverter TIME_CONVERTER = new TimeConverter();
-//	private static final NumberConverter NUMBER_CONVERTER = new NumberConverter();
-//	private static final ContainerCopier CONTAINER_COPIER = new ContainerCopier();
-//	private static final DecoratedConverter PRETTY_TEXT_CONVERTER = new ObjectToPrettyTextConverter(); 
-//	private static final DecoratedTransformer TRANSFORMER = new SimpleDelegatingTransformer();
-//	private static final DecoratedConverter CONVERTER = (DecoratedConverter) CompositeUtils.specialize(TRANSFORMER, DecoratedConverter.class);	
-//	private static final DecoratedCopier COPIER = (DecoratedCopier) CompositeUtils.specialize(TRANSFORMER, DecoratedCopier.class);
-
-//	private static final SimpleLanguage LANGUAGE = new SimpleLanguage();	
-	
+	/**
+	 * Create a basic DecoratedReflector.
+	 * @return DecoratedReflector
+	 */
 	public static final DecoratedReflector createReflector() {
 		return new SimpleDelegatingReflector();
 	}
+
+	/**
+	 * Create a basic BeanReflector.
+	 * @return BeanReflector
+	 */
 	public static final BeanReflector createBeanReflector() {
 		return new SimpleDelegatingReflector();
 	}
+
+	/**
+	 * Create a basic ContainerReflector.
+	 * @return ContainerReflector
+	 */
 	public static final ContainerReflector createContainerReflector() {
 		return new SimpleDelegatingReflector();
 	}
+
+	/**
+	 * Create a basic GrowableContainerReflector.
+	 * @return GrowableContainerReflector
+	 */
 	public static final GrowableContainerReflector createGrowableContainerReflector() {
 		return new SimpleDelegatingReflector();
 	}
+
+	/**
+	 * Create a basic IndexedContainerReflector.
+	 * @return IndexedContainerReflector
+	 */
 	public static final IndexedContainerReflector createIndexedContainerReflector() {
 		return new SimpleDelegatingReflector();
 	}
+
+	/**
+	 * Create a basic InstantiatingReflector.
+	 * @return InstantiatingReflector
+	 */
 	public static final InstantiatingReflector createInstantiatingReflector() {
 		return new SimpleDelegatingReflector();
 	}
+
+	/**
+	 * Create a basic MutableIndexedContainerReflector.
+	 * @return MutableIndexedContainerReflector
+	 */
 	public static final MutableIndexedContainerReflector createMutableIndexedContainerReflector() {
 		return new SimpleDelegatingReflector();
 	}
+
+	/**
+	 * Create a basic SizableReflector.
+	 * @return SizableReflector
+	 */
 	public static final SizableReflector createSizableReflector() {
 		return new SimpleDelegatingReflector();
 	}
 
+	/**
+	 * Create a basic DecoratedTransformer.
+	 * @return DecoratedTransformer
+	 */
 	public static final DecoratedTransformer createTransformer() {
 		return new SimpleDelegatingTransformer();
 	}
+
+	/**
+	 * Create a basic DecoratedConverter.
+	 * @return DecoratedConverter
+	 */
 	public static final DecoratedConverter createConverter() {
 		return new SimpleDelegatingTransformer();
 	}
+
+	/**
+	 * Create a basic DecoratedCopier.
+	 * @return DecoratedCopier
+	 */
 	public static final DecoratedCopier createCopier() {
 		return new SimpleDelegatingTransformer();
 	}
+
+	/**
+	 * Create a basic TextConverter.
+	 * @return TextConverter
+	 */
 	public static final TextConverter createTextConverter() {
 		return new TextConverter();
 	}
+
+	/**
+	 * Create a basic DefaultToTextConverter.
+	 * @return DefaultToTextConverter
+	 */
 	public static final DefaultToTextConverter createToTextConverter() {
 		return new DefaultToTextConverter();
 	}
+
+	/**
+	 * Create a basic TimeConverter.
+	 * @return TimeConverter
+	 */
 	public static final TimeConverter createTimeConverter() {
 		return new TimeConverter();
 	}
+
+	/**
+	 * Create a basic NumberConverter.
+	 * @return NumberConverter
+	 */
 	public static final NumberConverter createNumberConverter() {
 		return new NumberConverter();
 	}
+
+	/**
+	 * Create a basic pretty text converter.
+	 * @return DecoratedConverter
+	 */
 	public static final DecoratedConverter createPrettyTextConverter() {
 		return new ObjectToPrettyTextConverter();
 	}
+
+	/**
+	 * Create a basic ContainerCopier.
+	 * @return ContainerCopier
+	 */
 	public static final ContainerCopier createContainerCopier() {
 		return new ContainerCopier();
 	}
 
+	/**
+	 * Create a basic Language.
+	 * @return SimpleLanguage
+	 */
 	public static final SimpleLanguage createLanguage() {
 		return new SimpleLanguage();
 	}
