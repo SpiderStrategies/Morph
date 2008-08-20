@@ -58,7 +58,7 @@
                 conf="core,lang,site" />
     <dependency org="junit" name="junit" rev="3.8.1" conf="test" />
     <dependency org="log4j" name="log4j" rev="1.2.14" conf="test" />
-    <dependency org="org.springframework" name="spring-mock" rev="1.2.6"
+    <dependency org="org.springframework" name="spring-mock" rev="1.1.4"
                 conf="test" />
 
     <dependency org="commons-chain" name="commons-chain" rev="1.2"
