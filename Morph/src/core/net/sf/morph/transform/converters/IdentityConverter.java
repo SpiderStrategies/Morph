@@ -21,6 +21,7 @@ import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
+import net.sf.morph.util.ClassUtils;
 import net.sf.morph.util.TransformerUtils;
 
 /**
@@ -34,9 +35,7 @@ public class IdentityConverter extends BaseTransformer implements DecoratedConve
 		ExplicitTransformer {
 
 	/** Default source/destination types */
-	public static final Class[] DEFAULT_SOURCE_AND_DESTINATION_TYPES = {
-			Object.class, boolean.class, byte.class, char.class, short.class, int.class,
-			long.class, float.class, double.class, null };
+	public static final Class[] DEFAULT_SOURCE_AND_DESTINATION_TYPES = ClassUtils.getAllClasses();
 
 	/**
 	 * Create a new IdentityConverter.
