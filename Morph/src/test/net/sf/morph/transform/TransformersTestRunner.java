@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,6 +18,7 @@ package net.sf.morph.transform;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
+import net.sf.morph.transform.converters.CloningConverterTestCase;
 import net.sf.morph.transform.converters.ConstantConverterTestCase;
 import net.sf.morph.transform.converters.EvaluateExpressionConverterTestCase;
 import net.sf.morph.transform.converters.IdentityConverterTestCase;
@@ -96,6 +97,7 @@ public class TransformersTestRunner extends TestRunner {
 		suite.addTestSuite(PrimitiveWrapperConverterTestCase.class);
 		suite.addTestSuite(EvaluateExpressionConverterTestCase.class);
 		suite.addTestSuite(ConstantConverterTestCase.class);
+		suite.addTestSuite(CloningConverterTestCase.class);
 
 		// COMPOSITE CONVERTERS
 
