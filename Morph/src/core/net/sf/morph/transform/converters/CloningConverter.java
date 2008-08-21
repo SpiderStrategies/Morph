@@ -18,16 +18,20 @@ package net.sf.morph.transform.converters;
 import java.util.Locale;
 
 import net.sf.morph.transform.DecoratedConverter;
+import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.transformers.BaseTransformer;
 import net.sf.morph.util.ClassUtils;
 
 /**
  * Converter that attempts to call a public <code>clone()</code> method
- * on <code>Cloneable</code> source objects.
+ * on <code>Cloneable</code> source objects. Presumes that the called method
+ * delegates to <code>Object.clone()</code>, returning a result such that
+ * <code>source instanceof destinationType</code>.
  * @since Morph 1.1.2
  */
-public class CloningConverter extends BaseTransformer implements DecoratedConverter {
+public class CloningConverter extends BaseTransformer implements DecoratedConverter,
+		ExplicitTransformer {
 
 	/**
 	 * {@inheritDoc}
@@ -41,6 +45,14 @@ public class CloningConverter extends BaseTransformer implements DecoratedConver
 	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return new Class[] { Cloneable.class };
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
+		return super.isTransformableImpl(destinationType, sourceType)
+				&& destinationType.isAssignableFrom(sourceType);
 	}
 
 	/**
