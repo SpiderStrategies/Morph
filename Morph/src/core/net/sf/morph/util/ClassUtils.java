@@ -26,6 +26,7 @@ import java.util.Set;
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.MorphException;
 import net.sf.morph.reflect.ReflectionException;
+import net.sf.morph.transform.Immutable;
 import net.sf.morph.transform.TransformationException;
 
 /**
@@ -271,16 +272,19 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	 * Determines whether the given <code>destinationType</code> is one of the
 	 * primitive immutable types provided by the JDK (i.e. a Number or a
 	 * String).  Note that JDK 1.6 adds AtomicLong and AtomicInteger, which
-	 * are <em>not</em> immutable.
+	 * <em>are</em> mutable. Since Morph 1.1.2 this method will also
+	 * return <code>true</code> if the specified class implements Morph's
+	 * {@link Immutable} marker interface.
 	 * 
 	 * @param destinationType
 	 *            the type to examine
 	 * @return <code>true</code> if the <code>destinationType</code> is an immutable
-	 *         number or a String or <br>
+	 *         {@link Number}, a {@link String}, or an instance of {@link Immutable};<br>
 	 *         <code>false</code>, otherwise
 	 */
 	public static boolean isImmutable(Class destinationType) {
-		return IMMUTABLE_TYPES.contains(destinationType);
+		return IMMUTABLE_TYPES.contains(destinationType)
+				|| Immutable.class.isAssignableFrom(destinationType);
 	}
 
 	/**
@@ -293,7 +297,9 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	}
 
 	/**
-	 * Get the known immutable types.
+	 * Get an array containing the basic JRE classes known to be intrinsically immutable.
+	 * This does <em>not</em> locate classes implementing the {@link Immutable} interface;
+	 * see {@link #isImmutable(Class)} for support in that regard.
 	 * @return Class[]
 	 */
 	public static Class[] getImmutableTypes() {
