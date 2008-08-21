@@ -89,6 +89,7 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 
 		immutable.add(null);
 		immutable.add(Class.class);
+		immutable.add(Immutable.class);
 		IMMUTABLE_TYPES = Collections.unmodifiableSet(immutable);
 
 		//add primitives, null, and Objects to ALL_CLASSES:

@@ -70,9 +70,8 @@ public class ImmutableComponentArrayCopier extends BaseTransformer implements
 	 */
 	protected boolean isTransformableImpl(Class destinationType, Class sourceType)
 			throws Exception {
-		return TransformerUtils.isImplicitlyTransformable(this, destinationType,
-				sourceType)
-				&& sourceType.getComponentType() == destinationType.getComponentType();
+		return TransformerUtils.isImplicitlyTransformable(this, destinationType, sourceType)
+				&& destinationType.isAssignableFrom(sourceType);
 	}
 
 	/**
