@@ -179,6 +179,7 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 	/**
 	 * Learn whether <code>null</code> values return as empty strings.
 	 * @return boolean
+	 * @since 1.1
 	 */
 	public boolean isEmptyNull() {
 		return emptyNull;
@@ -187,6 +188,7 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 	/**
 	 * Set whether <code>null</code> values return as empty strings.
 	 * @param emptyNull boolean
+	 * @since 1.1
 	 */
 	public void setEmptyNull(boolean emptyNull) {
 		this.emptyNull = emptyNull;
@@ -195,6 +197,7 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 	/**
 	 * Learn whether string-to-char type conversions are allowed.
 	 * @return boolean
+	 * @since 1.1
 	 */
 	public boolean isAllowStringAsChar() {
 		return allowStringAsChar;
@@ -205,6 +208,7 @@ public class TextConverter extends BaseTransformer implements DecoratedConverter
 	 * undesirable for e.g. chained transformations or any operation where
 	 * a loss of "precision" might be detrimental. Default <code>true</code>.
 	 * @param allowStringAsChar the boolean to set
+	 * @since 1.1
 	 */
 	public void setAllowStringAsChar(boolean allowStringAsChar) {
 		this.allowStringAsChar = allowStringAsChar;
