@@ -157,11 +157,13 @@ public class EvaluateExpressionConverter extends BaseTransformer implements Deco
 	 * @since Morph 1.1.2
 	 */
 	public synchronized void setNestedTransformer(Transformer nestedTransformer) {
-		DecoratedLanguage language = getLanguage();
-		if (nestedTransformer instanceof Converter && language instanceof SimpleLanguage) {
-			SimpleLanguage simpleLanguage = (SimpleLanguage) language;
-			if (ObjectUtils.equals(simpleLanguage.getConverter(), getNestedTransformer())) {
-				simpleLanguage.setConverter((Converter) nestedTransformer);
+		if (isInitialized()) {
+			DecoratedLanguage language = getLanguage();
+			if (nestedTransformer instanceof Converter && language instanceof SimpleLanguage) {
+				SimpleLanguage simpleLanguage = (SimpleLanguage) language;
+				if (ObjectUtils.equals(simpleLanguage.getConverter(), getNestedTransformer())) {
+					simpleLanguage.setConverter((Converter) nestedTransformer);
+				}
 			}
 		}
 		super.setNestedTransformer(nestedTransformer);
