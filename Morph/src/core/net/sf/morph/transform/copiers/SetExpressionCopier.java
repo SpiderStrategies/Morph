@@ -184,4 +184,14 @@ public class SetExpressionCopier extends BaseTransformer implements DecoratedCop
 	protected boolean isAutomaticallyHandlingNulls() {
 		return false;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#isWrappingRuntimeExceptions()
+	 */
+	protected boolean isWrappingRuntimeExceptions() {
+		//we throw LanguageExceptions which should be wrapped as TransformationExceptions:
+	    return true;
+    }
+
 }

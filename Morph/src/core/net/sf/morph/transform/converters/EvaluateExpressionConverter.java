@@ -167,4 +167,13 @@ public class EvaluateExpressionConverter extends BaseTransformer implements Deco
 		super.setNestedTransformer(nestedTransformer);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see net.sf.morph.transform.transformers.BaseTransformer#isWrappingRuntimeExceptions()
+	 */
+	protected boolean isWrappingRuntimeExceptions() {
+		//we throw LanguageExceptions which should be wrapped as TransformationExceptions:
+	    return true;
+    }
+
 }
