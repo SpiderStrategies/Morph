@@ -96,8 +96,10 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 	public synchronized Language getLanguage() {
 		if (language == null) {
 			SimpleLanguage lang = Defaults.createLanguage();
-			lang.setConverter((Converter) getNestedTransformer());
 			lang.setReflector((BeanReflector) getReflector(BeanReflector.class));
+			if (getNestedTransformer() instanceof Converter) {
+				lang.setConverter((Converter) getNestedTransformer());
+			}
 			setLanguage(lang);
 		}
 		return language;
@@ -279,7 +281,14 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setNestedTransformer(Transformer nestedTransformer) {
+	public synchronized void setNestedTransformer(Transformer nestedTransformer) {
+		Language language = getLanguage();
+		if (nestedTransformer instanceof Converter && language instanceof SimpleLanguage) {
+			SimpleLanguage simpleLanguage = (SimpleLanguage) language;
+			if (ObjectUtils.equals(simpleLanguage.getConverter(), getNestedTransformer())) {
+				simpleLanguage.setConverter((Converter) nestedTransformer);
+			}
+		}
 		super.setNestedTransformer(nestedTransformer);
 	}
 
