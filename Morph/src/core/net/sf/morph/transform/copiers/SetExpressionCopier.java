@@ -17,11 +17,15 @@ package net.sf.morph.transform.copiers;
 
 import java.util.Locale;
 
+import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.lang.DecoratedLanguage;
 import net.sf.morph.lang.languages.SimpleLanguage;
 import net.sf.morph.reflect.BeanReflector;
+import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
+import net.sf.morph.transform.NodeCopier;
+import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
 import net.sf.morph.util.Assert;
 import net.sf.morph.util.ClassUtils;
@@ -34,7 +38,7 @@ import net.sf.morph.util.ClassUtils;
  * @since Morph 1.1
  */
 public class SetExpressionCopier extends BaseTransformer implements DecoratedCopier,
-		DecoratedConverter {
+		DecoratedConverter, NodeCopier {
 	private String expression;
 	private DecoratedLanguage language;
 
@@ -125,9 +129,12 @@ public class SetExpressionCopier extends BaseTransformer implements DecoratedCop
 	 */
 	public synchronized DecoratedLanguage getLanguage() {
 		if (language == null) {
-			language = new SimpleLanguage();
-			((SimpleLanguage) language)
-					.setReflector((BeanReflector) getReflector(BeanReflector.class));
+			SimpleLanguage lang = new SimpleLanguage();
+			lang.setReflector((BeanReflector) getReflector(BeanReflector.class));
+			if (getNestedTransformer() instanceof Converter) {
+				lang.setConverter((Converter) getNestedTransformer());
+			}
+			setLanguage(lang);
 		}
 		return language;
 	}
@@ -138,6 +145,37 @@ public class SetExpressionCopier extends BaseTransformer implements DecoratedCop
 	 */
 	public synchronized void setLanguage(DecoratedLanguage language) {
 		this.language = language;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @since Morph 1.1.2
+	 */
+	public Object createReusableSource(Class destinationClass, Object source) {
+		return super.createReusableSource(destinationClass, source);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @since Morph 1.1.2
+	 */
+	public Transformer getNestedTransformer() {
+		return super.getNestedTransformer();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @since Morph 1.1.2
+	 */
+	public synchronized void setNestedTransformer(Transformer nestedTransformer) {
+		DecoratedLanguage language = getLanguage();
+		if (nestedTransformer instanceof Converter && language instanceof SimpleLanguage) {
+			SimpleLanguage simpleLanguage = (SimpleLanguage) language;
+			if (ObjectUtils.equals(simpleLanguage.getConverter(), getNestedTransformer())) {
+				simpleLanguage.setConverter((Converter) nestedTransformer);
+			}
+		}
+		super.setNestedTransformer(nestedTransformer);
 	}
 
 	/**
