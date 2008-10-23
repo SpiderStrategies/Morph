@@ -21,7 +21,6 @@ import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.ExplicitTransformer;
-import net.sf.morph.transform.NodeCopier;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.transform.transformers.BaseTransformer;
@@ -84,9 +83,7 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 	 */
 	public void setNestedCopier(Copier copier) {
 		this.nestedCopier = copier;
-		if (copier instanceof NodeCopier) {
-			((NodeCopier) copier).setNestedTransformer(getNestedTransformer());
-		}
+		TransformerUtils.setDefaultNestedTransformer(copier, getNestedTransformer());
 	}
 
 	/**
@@ -157,9 +154,7 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 	 */
 	protected void setNestedTransformer(Transformer nestedTransformer) {
 		super.setNestedTransformer(nestedTransformer);
-		if (nestedCopier instanceof NodeCopier) {
-			((NodeCopier) nestedCopier).setNestedTransformer(nestedTransformer);
-		}
+		TransformerUtils.setDefaultNestedTransformer(nestedCopier, nestedTransformer);
 	}
 
 	/**
@@ -167,10 +162,9 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 	 */
 	protected boolean isTransformableImpl(Class destinationType, Class sourceType)
 			throws Exception {
-		return TransformerUtils.isImplicitlyTransformable(this, destinationType,
-				sourceType)
-				&& TransformerUtils.isTransformable(getNestedTransformer(),
-						destinationType, sourceType);
+		return TransformerUtils.isImplicitlyTransformable(this, destinationType, sourceType)
+				&& TransformerUtils.isTransformable(getNestedTransformer(), destinationType,
+						sourceType);
 	}
 
 	/**

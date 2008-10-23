@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,10 +19,11 @@ import net.sf.composite.Defaults;
 import net.sf.composite.SimpleComposite;
 import net.sf.composite.StrictlyTypedComposite;
 import net.sf.composite.validate.ComponentValidator;
-import net.sf.morph.transform.NodeCopier;
+import net.sf.morph.transform.NestingAwareTransformer;
 import net.sf.morph.transform.Transformer;
 import net.sf.morph.util.ClassUtils;
 import net.sf.morph.util.ContainerUtils;
+import net.sf.morph.util.TransformerUtils;
 
 /**
  * @author Matt Sgarlata
@@ -123,11 +124,10 @@ public abstract class BaseCompositeTransformer extends BaseTransformer implement
 		if (incoming == outgoing) {
 			return;
 		}
-		NodeCopier[] nodeCopiers = (NodeCopier[]) ContainerUtils.getElementsOfType(getComponents(), NodeCopier.class);
-		for (int i = 0; nodeCopiers != null && i < nodeCopiers.length; i++) {
-			if (nodeCopiers[i].getNestedTransformer() == outgoing) {
-				nodeCopiers[i].setNestedTransformer(incoming);
-			}
+		NestingAwareTransformer[] nestingAwareTransformers = (NestingAwareTransformer[]) ContainerUtils
+				.getElementsOfType(getComponents(), NestingAwareTransformer.class);
+		for (int i = 0; nestingAwareTransformers != null && i < nestingAwareTransformers.length; i++) {
+			TransformerUtils.replaceNestedTransformer(nestingAwareTransformers[i], outgoing, incoming);
 		}
 	}
 

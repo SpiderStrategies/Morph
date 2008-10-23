@@ -61,34 +61,36 @@ import net.sf.morph.util.TransformerUtils;
 
 /**
  * <p>
- * Delegates transformations to a list of transformers. The transformers are
+ * Delegates transformations to a list of {@link Transformer}s. These are
  * tried in the order in which they appear in the <code>components</code>
- * property of this transformer.
+ * property of this {@link Transformer}.
  * </p>
  *
  * <p>
- * By default this transformer is initialized with a set of transformers that
- * will meet basic needs. This list of transformers is subject to change in
- * future versions of Morph, but we do not anticipate removing transformers,
- * only adding new ones or modifying existing ones. This means if a
- * transformation works in an older version of Morph it will also work in a
- * newer version. A transformation's behavior may in some cases change between
+ * By default this {@link Transformer} is initialized with a set of {@link Transformer}s
+ * that will meet basic needs. This list of {@link Transformer}s is subject to change in
+ * future versions of Morph, but we do not anticipate removing {@link Transformer}s,
+ * only adding new ones or modifying existing ones. This means if a transformation works
+ * in an older version of Morph it should also work in a newer version (failure to do so
+ * is a regression). A transformation's behavior may in some cases change between
  * releases, but we will avoid this whenever possible.
  * </p>
  *
  * <p>
- * The default set of transformers includes both converters and copiers. For
- * calls to copy methods, only the copiers will be used. For calls to convert
- * methods, the converters <em>and</em> the copiers will be used, since all
- * Copiers provided by the Morph framework are also Converters.
+ * The default set of {@link Transformer}s includes both {@link Converter}s and
+ * {@link Copier}s. For calls to <code>copy</code> methods, only the {@link Copier}s
+ * will be used. For calls to <code>convert</code> methods, the {@link Converter}s
+ * <em>and</em> the {@link Copier}s will be used, since all {@link Copier}s provided
+ * by the Morph framework are also {@link Converter}s.
  * </p>
  *
  * <p>
  * Any delegates which implement
- * {@link net.sf.morph.transform.NodeCopier} will automatically have this
- * transformer marked as the parent transformer.  This is important for
- * performing deep copies of object graphs.  Note that it is safe for a SimpleDelegatingTransformer
- * to implement the NodeCopier interface <em>only</em> if all its components do so.
+ * {@link net.sf.morph.transform.NestingAwareTransformer} will automatically have this
+ * {@link Transformer} marked as the nested {@link Transformer}.  This is important for
+ * performing deep copies of object graphs.  Note that it is safe for a
+ * {@link SimpleDelegatingTransformer} to implement the {@link NodeCopier} interface
+ * <em>only</em> if all its components do so.
  * </p>
  *
  * @author Matt Sgarlata

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,8 +25,8 @@ package net.sf.morph.transform;
  * @author Matt Sgarlata
  * @since Feb 22, 2005
  */
-public interface NodeCopier extends Copier {
-	
+public interface NodeCopier extends Copier, NestingAwareTransformer {
+
 	/**
 	 * Returns a version of the given source object that can be used multiple
 	 * times by this copier. In most cases, a source object is reusable without
@@ -45,7 +45,7 @@ public interface NodeCopier extends Copier {
 	 * @return a reusable version of fthe source object
 	 */
 	public Object createReusableSource(Class destinationClass, Object source);
-	
+
 	/**
 	 * Creates a new instance of the destination class that is capable of
 	 * holding the information contained in the given source.
@@ -57,20 +57,5 @@ public interface NodeCopier extends Copier {
 	 * @return the new instance
 	 */
 	public Object createNewInstance(Class destinationClass, Object source);
-	
-	/**
-	 * Retrieves the transformer used to perform nested transformations.
-	 * 
-	 * @return the transformer used to perform nested transformations
-	 */
-	public Transformer getNestedTransformer();
-	
-	/**
-	 * Sets the transformer used to perform nested transformations.
-	 * 
-	 * @param nestedTransformer
-	 *            the transformer used to perform nested transformations
-	 */
-	public void setNestedTransformer(Transformer nestedTransformer);
-	
+
 }

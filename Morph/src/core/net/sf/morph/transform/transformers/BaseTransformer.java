@@ -34,6 +34,7 @@ import net.sf.morph.transform.DecoratedConverter;
 import net.sf.morph.transform.DecoratedCopier;
 import net.sf.morph.transform.DecoratedTransformer;
 import net.sf.morph.transform.ExplicitTransformer;
+import net.sf.morph.transform.NestingAwareTransformer;
 import net.sf.morph.transform.NodeCopier;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
@@ -668,7 +669,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	}
 
 	/**
-	 * {@link NodeCopier#getNestedTransformer()}
+	 * {@link NestingAwareTransformer#getNestedTransformer()}
 	 * @return Transformer
 	 */
 	protected Transformer getNestedTransformer() {
@@ -678,7 +679,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	}
 
 	/**
-	 * {@link NodeCopier#setNestedTransformer(Transformer)}
+	 * {@link NestingAwareTransformer#setNestedTransformer(Transformer)}
 	 * @param nestedTransformer
 	 */
 	protected void setNestedTransformer(Transformer nestedTransformer) {

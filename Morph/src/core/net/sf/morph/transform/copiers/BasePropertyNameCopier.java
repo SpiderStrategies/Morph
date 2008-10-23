@@ -104,12 +104,7 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 		if (m != null) {
 			Transformer t = (Transformer) m.get(sourceProperty);
 			if (t != null) {
-				if (t instanceof NodeCopier) {
-					NodeCopier nc = (NodeCopier) t;
-					if (nc.getNestedTransformer() == null) {
-						nc.setNestedTransformer(getNestedTransformer());
-					}
-				}
+				TransformerUtils.setDefaultNestedTransformer(t, getNestedTransformer());
 				return t;
 			}
 		}

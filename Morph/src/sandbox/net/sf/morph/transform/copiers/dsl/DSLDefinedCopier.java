@@ -68,8 +68,8 @@ public class DSLDefinedCopier extends SimpleDelegatingTransformer implements Nod
 		setInputStream(inputStream);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.SimpleDelegatingTransformer#createDefaultComponents()
+	/**
+	 * {@inheritDoc}
 	 */
 	protected Transformer[] createDefaultComponents() {
 		Assert.notNull(inputStream, "inputStream");
@@ -102,22 +102,22 @@ public class DSLDefinedCopier extends SimpleDelegatingTransformer implements Nod
 		this.inputStream = inputStream;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.SimpleDelegatingTransformer#createReusableSource(java.lang.Class, java.lang.Object)
+	/**
+	 * {@inheritDoc}
 	 */
 	public Object createReusableSource(Class destinationClass, Object source) {
 		return super.createReusableSource(destinationClass, source);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#setNestedTransformer(net.sf.morph.transform.Transformer)
+	/**
+	 * {@inheritDoc}
 	 */
 	public synchronized void setNestedTransformer(Transformer nestedTransformer) {
 		super.setNestedTransformer(nestedTransformer);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseTransformer#getNestedTransformer()
+	/**
+	 * {@inheritDoc}
 	 */
 	public synchronized Transformer getNestedTransformer() {
 		return super.getNestedTransformer();

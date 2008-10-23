@@ -26,6 +26,7 @@ import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.Copier;
 import net.sf.morph.transform.ExplicitTransformer;
 import net.sf.morph.transform.ImpreciseTransformer;
+import net.sf.morph.transform.NestingAwareTransformer;
 import net.sf.morph.transform.TransformationException;
 import net.sf.morph.transform.Transformer;
 
@@ -289,6 +290,42 @@ public abstract class TransformerUtils {
 	public static Class[] getDestinationClassIntersection(Transformer[] transformers) {
 		return getClassIntersection(transformers, DEST);
 		
+	}
+
+	/**
+	 * If <code>nestingAware</code> implements {@link NestingAwareTransformer} and does not
+	 * currently have a nested {@link Transformer} set, set <code>nestedTransformer</code>
+	 * as its nested {@link Transformer}.
+	 * @param nestingAware
+	 * @param nestedTransformer
+	 * @return whether a change was made
+	 * @since Morph 1.1.2
+	 */
+	public static boolean setDefaultNestedTransformer(Transformer nestingAware,
+			Transformer nestedTransformer) {
+		return replaceNestedTransformer(nestingAware, null, nestedTransformer);
+	}
+
+	/**
+	 * Replace <code>oldNestedTransformer</code> with <code>newNestedTransformer</code> as nested
+	 * {@link Transformer} of <code>nestingAware</code> if <code>nestingAware</code> implements
+	 * {@link NestingAwareTransformer}.
+	 * @param nestingAware
+	 * @param oldNestedTransformer
+	 * @param newNestedTransformer
+	 * @return whether a change was made
+	 * @since Morph 1.1.2
+	 */
+	public static boolean replaceNestedTransformer(Transformer nestingAware,
+			Transformer oldNestedTransformer, Transformer newNestedTransformer) {
+		if (nestingAware instanceof NestingAwareTransformer) {
+			NestingAwareTransformer nat = (NestingAwareTransformer) nestingAware;
+			if (ObjectUtils.equals(nat.getNestedTransformer(), oldNestedTransformer)) {
+				nat.setNestedTransformer(newNestedTransformer);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static Class[] getClassIntersection(Transformer[] transformers, ClassStrategy strategy) {
