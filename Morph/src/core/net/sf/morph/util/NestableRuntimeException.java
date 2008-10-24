@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -116,10 +116,17 @@ public class NestableRuntimeException extends RuntimeException {
 		this.cause = cause;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Throwable getCause() {
 		return this.cause;
 	}
 
+	/**
+	 * Append our message to a {@link StringBuffer}.
+	 * @param sb to append
+	 */
 	public void getMessage(StringBuffer sb) {
 		sb.append(super.getMessage());
 		sb.append("\n");
@@ -128,25 +135,29 @@ public class NestableRuntimeException extends RuntimeException {
 			if (cause instanceof NestableRuntimeException) {
 				NestableRuntimeException chainedCause = (NestableRuntimeException) cause;
 				chainedCause.getMessage(sb);
-			} else {
+			}
+			else {
 				sb.append(cause.getMessage());
 			}
 		}
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void printStackTrace() {
 		printStackTrace(System.err);
 	}
-	
+
 	/**
-	 * @see java.lang.Throwable#printStackTrace(java.io.PrintStream)
+	 * {@inheritDoc}
 	 */
 	public void printStackTrace(PrintStream out) {
 		super.printStackTrace(out);
 
 		if (!ClassUtils.isJdk14OrHigherPresent()) {
 			Throwable t = getCause();
-			if (t!=null) {
+			if (t != null) {
 				out.println(NESTING_MESSAGE);
 				t.printStackTrace(out);
 			}
@@ -154,18 +165,18 @@ public class NestableRuntimeException extends RuntimeException {
 	}
 
 	/**
-	 * @see java.lang.Throwable#printStackTrace(java.io.PrintWriter)
+	 * {@inheritDoc}
 	 */
 	public void printStackTrace(PrintWriter out) {
 		super.printStackTrace(out);
 
 		if (!ClassUtils.isJdk14OrHigherPresent()) {
 			Throwable t = getCause();
-			if (t!=null) {
+			if (t != null) {
 				out.println(NESTING_MESSAGE);
 				t.printStackTrace(out);
 			}
 		}
-	}	
+	}
 
 }
