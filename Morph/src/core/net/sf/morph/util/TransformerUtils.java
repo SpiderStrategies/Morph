@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.composite.util.CompositeUtils;
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph.transform.Converter;
 import net.sf.morph.transform.Copier;
@@ -158,6 +159,42 @@ public abstract class TransformerUtils {
 			}
 		}
 
+		if (Transformer.TRANSFORMATION_TYPE_COPY.equals(xform)) {
+			if (log.isTraceEnabled()) {
+				log.trace("Performing nested copy of "
+						+ ObjectUtils.getObjectDescription(source)
+						+ " to destination "
+						+ ObjectUtils.getObjectDescription(destination));
+			}
+			try {
+				((Copier) transformer).copy(destination, source, locale);
+				return destination;
+			}
+			catch (Exception e) {
+				/* if copy fails, try to fall back to conversion. This can
+				 * only happen if the choice to copy was externally specified,
+				 * so we assume the failing transformation was nested,
+				 * further evidenced by the fact that this method should
+				 * usually be called by the framework itself. :)
+				 */
+				if (CompositeUtils.isSpecializable(transformer, Converter.class)) {
+					transformer = (Transformer) CompositeUtils.specialize(transformer, Converter.class);
+					//make sure the transformation we're looking for didn't fall out during specialization:
+					if (TransformerUtils.isTransformable(transformer, destinationType, ClassUtils.getClass(source))) {
+						if (log.isInfoEnabled()) {
+							log.info("Trying to fall back on conversion due to copy failure", e);
+						}
+						xform = Transformer.TRANSFORMATION_TYPE_CONVERT;
+						e = null;
+					}
+				}
+				if (e != null) {
+					throw e instanceof TransformationException ? (TransformationException) e
+							: new TransformationException("Unable to perform graph transformation",
+									e);
+				}
+			}
+		}
 		if (Transformer.TRANSFORMATION_TYPE_CONVERT.equals(xform)) {
 			if (log.isTraceEnabled()) {
 				log.trace("Performing nested conversion of "
@@ -174,24 +211,6 @@ public abstract class TransformerUtils {
 			catch (Exception e) {
 				throw new TransformationException("Unable to perform transformation", e);
 			}
-		}
-		if (Transformer.TRANSFORMATION_TYPE_COPY.equals(xform)) {
-			if (log.isTraceEnabled()) {
-				log.trace("Performing nested copy of "
-					+ ObjectUtils.getObjectDescription(source)
-					+ " to destination "
-					+ ObjectUtils.getObjectDescription(destination));
-			}
-			try {
-				((Copier) transformer).copy(destination, source, locale);
-			}
-			catch (TransformationException e) {
-				throw e;
-			}
-			catch (Exception e) {
-				throw new TransformationException("Unable to perform graph transformation", e);
-			}
-			return destination;
 		}
 		// shouldn't happen unless a new transformer type is introduced
 		// and this class has not yet been updated to handle it
