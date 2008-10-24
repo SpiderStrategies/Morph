@@ -170,8 +170,9 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 			Map.Entry e = (Map.Entry) it.next();
 			String sourceProperty = (String) e.getKey();
 			for (Iterator v = DEST_REFLECTOR.getIterator(e.getValue()); v.hasNext();) {
-				copyProperty(sourceProperty, source, (String) v.next(), destination,
-						locale, preferredTransformationType);
+				String destinationProperty = (String) v.next();
+				copyProperty(sourceProperty, source, destinationProperty, destination, locale,
+						preferredTransformationType);
 			}
 		}
 	}
@@ -206,7 +207,12 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		// choose a transformer to use
 		Transformer transformer = getNestedTransformer();
 
-		if (!((BeanReflector) getReflector(BeanReflector.class)).isWriteable(destination, destinationProperty)) {
+		/* ordinarily we should probably assume that if we're using the expression mapping copier
+		 * we have a settable destination property, so we'll only check for simple properties:
+		 */
+		if (getLanguage().isProperty(destinationProperty)
+				&& !((BeanReflector) getReflector(BeanReflector.class)).isWriteable(destination,
+						destinationProperty)) {
 			preferredTransformationType = TRANSFORMATION_TYPE_COPY;
 		}
 		// determine the new value that will be set on the destination
