@@ -58,6 +58,8 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 		boolean[].class
 	};
 
+	private static final String ENUM_CLASSNAME = "java.lang.Enum";
+
 	private static final Set ALL_CLASSES;
 	private static final Set IMMUTABLE_TYPES;
 	private static final Map PRIMITIVE_TYPE_MAP;
@@ -89,6 +91,11 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 
 		immutable.add(null);
 		immutable.add(Class.class);
+
+		try {
+			immutable.add(Class.forName(ENUM_CLASSNAME));
+		} catch (ClassNotFoundException e) {
+		}
 		immutable.add(Immutable.class);
 		IMMUTABLE_TYPES = Collections.unmodifiableSet(immutable);
 
