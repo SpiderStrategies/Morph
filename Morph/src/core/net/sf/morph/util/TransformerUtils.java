@@ -159,6 +159,7 @@ public abstract class TransformerUtils {
 			}
 		}
 
+		Exception copyException = null;
 		if (Transformer.TRANSFORMATION_TYPE_COPY.equals(xform)) {
 			if (log.isTraceEnabled()) {
 				log.trace("Performing nested copy of "
@@ -185,10 +186,10 @@ public abstract class TransformerUtils {
 							log.info("Trying to fall back on conversion due to copy failure", e);
 						}
 						xform = Transformer.TRANSFORMATION_TYPE_CONVERT;
-						e = null;
+						copyException = e;
 					}
 				}
-				if (e != null) {
+				if (copyException != null) {
 					throw e instanceof TransformationException ? (TransformationException) e
 							: new TransformationException("Unable to perform graph transformation",
 									e);
@@ -205,17 +206,18 @@ public abstract class TransformerUtils {
 			try {
 				return ((Converter) transformer).convert(destinationType, source, locale);
 			}
-			catch (TransformationException e) {
-				throw e;
-			}
 			catch (Exception e) {
-				throw new TransformationException("Unable to perform transformation", e);
+				//if this was originally an attempted copy, throw the original exception:
+				if (copyException != null) {
+					e = copyException;
+				}
+				throw e instanceof TransformationException ? (TransformationException) e
+						: new TransformationException("Unable to perform transformation", e);
 			}
 		}
 		// shouldn't happen unless a new transformer type is introduced
 		// and this class has not yet been updated to handle it
-		throw new TransformationException(
-			"Unable to perform transformation using transformer "
+		throw new TransformationException("Unable to perform transformation using transformer "
 				+ ObjectUtils.getObjectDescription(transformer));
 	}
 
