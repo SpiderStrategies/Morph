@@ -280,9 +280,10 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	 * Determines whether the given <code>destinationType</code> is one of the
 	 * primitive immutable types provided by the JDK (i.e. a Number or a
 	 * String).  Note that JDK 1.6 adds AtomicLong and AtomicInteger, which
-	 * <em>are</em> mutable. Since Morph 1.1.2 this method will also
-	 * return <code>true</code> if the specified class implements Morph's
-	 * {@link Immutable} marker interface.
+	 * are Number subclasses that <em>are</em> mutable.
+         * Since Morph 1.1.2 this method will also return <code>true</code>
+         * if <code>destinationType</code> implements <code>java.lang.Enum</code>
+         * or Morph's {@link Immutable} marker interface.
 	 * 
 	 * @param destinationType
 	 *            the type to examine
@@ -291,8 +292,7 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	 *         <code>false</code>, otherwise
 	 */
 	public static boolean isImmutable(Class destinationType) {
-		return IMMUTABLE_TYPES.contains(destinationType)
-				|| Immutable.class.isAssignableFrom(destinationType);
+		return inheritanceContains(getImmutableTypes(), destinationType);
 	}
 
 	/**
