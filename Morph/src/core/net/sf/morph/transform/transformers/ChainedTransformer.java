@@ -16,6 +16,8 @@
 package net.sf.morph.transform.transformers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -58,6 +60,18 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 	 */
 	public ChainedTransformer(Transformer[] chain) {
 		setComponents(chain);
+	}
+
+	/**
+	 * Get a ChainedTransformer with the same components as this ChainedTransformer, in reverse order.
+	 * If every member of the chain is capable of bidirectional transformations,
+	 * the reverse chain should be similarly capable.
+	 * @return ChainedTransformer
+	 */
+	public ChainedTransformer reverse() {
+		ArrayList chain = new ArrayList(Arrays.asList(getChain()));
+		Collections.reverse(chain);
+		return new ChainedTransformer((Transformer[]) chain.toArray(new Transformer[chain.size()]));
 	}
 
 	/**
