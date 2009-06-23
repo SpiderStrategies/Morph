@@ -26,7 +26,7 @@ import net.sf.morph.util.StringUtils;
  * @author Matt Sgarlata
  * @since Nov 28, 2004
  */
-public class SimpleExpressionParser extends BaseExpressionParser implements ExpressionParser {
+public class SimpleExpressionParser extends BaseExpressionParser {
 
 	private static final String DELIMITERS = "[]()\"'.";
 
@@ -45,7 +45,7 @@ public class SimpleExpressionParser extends BaseExpressionParser implements Expr
 		// because the simple expression parser is used very heavily by other
 		// parts of the framework (e.g. contexts)
 		String[] tokens = new String[tokenizer.countTokens()];
-		for (int i=0; i<tokens.length; i++) {
+		for (int i = 0; i < tokens.length; i++) {
 			tokens[i] = tokenizer.nextToken();
 		}
 		return tokens;
