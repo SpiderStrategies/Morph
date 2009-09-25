@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2005, 2008 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -24,8 +24,8 @@ import net.sf.morph.transform.transformers.BaseTransformer;
 /**
  * Converts any object to a Boolean.  Empty objects will be converted to
  * <code>false</code> and non-empty objects will be converted to
- * <code>true</code>. 
- * 
+ * <code>true</code>.
+ *
  * @author Matt Sgarlata
  * @since Dec 31, 2004
  * @see net.sf.morph.util.MorphUtils#isEmpty(Object)
@@ -67,4 +67,10 @@ public class ObjectToBooleanConverter extends BaseTransformer implements Decorat
 		return DESTINATION_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isAutomaticallyHandlingNulls() {
+		return false;
+	};
 }
