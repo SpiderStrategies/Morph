@@ -302,24 +302,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 * @return the current Locale
 	 */
 	protected Locale getLocale() {
-		Locale locale = null;
-		if (ClassUtils.isClassPresent(SPRING_LOCALE_CONTEXT_HOLDER_CLASS)) {
-			try {
-				Class contextHolderClass = Class.forName(SPRING_LOCALE_CONTEXT_HOLDER_CLASS);
-				Method getLocaleMethod =
-					contextHolderClass.getMethod("getLocale", (Class[]) null);
-				locale = (Locale) getLocaleMethod.invoke(null, (Object[]) null);
-			}
-			catch (Exception e) {
-				log.warn("Unable to retrieve locale from Spring", e);
-			}
-		}
-
-		if (locale == null) {
-			locale = Locale.getDefault();
-		}
-
-		return locale;
+		return Locale.getDefault();
 	}
 
 // convert
