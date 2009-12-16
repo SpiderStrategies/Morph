@@ -66,21 +66,6 @@
   <property name="test.classes" location="${classes.dir}/test" />
   <property name="sandbox.classes" location="${classes.dir}/sandbox" />
 
-  <path id="core.cp">
-    <fileset dir="${lib.dir}/core" />
-  </path>
-
-  <path id="test.cp">
-    <pathelement path="${core.classes}" />
-    <fileset dir="${lib.dir}/test" />
-  </path>
-
-  <path id="sandbox.cp">
-    <pathelement path="${core.classes}" />
-    <pathelement path="${test.classes}" />
-    <fileset dir="${lib.dir}/sandbox" />
-  </path>
-
   <property name="maven.bin" location="bin" />
   <property name="maven.target" location="target" />
   <property name="sitegen.dir" location="${maven.target}/docs" />
@@ -90,7 +75,6 @@
     <attribute name="conf" />
     <attribute name="destdir" default="${classes.dir}/@{conf}" />
     <sequential>
-      <ivy:retrieve conf="@{conf}" />
       <mkdir dir="@{destdir}" />
       <javac destdir="@{destdir}"
              source="${javac.source}" target="${javac.target}"
@@ -138,14 +122,12 @@
   </macrodef>
 
   <target name="ivy-settings">
-    <property name="ivy.retrieve.pattern"
-                value="${lib.dir}/[conf]/[artifact]-[revision].[ext]" />
-    <!--ivy:settings /-->
+    <ivy:configure />
   </target>
 
   <target name="resolve" depends="ivy-settings"
-          description="Retrieve dependencies with Ivy">
-    <ivy:retrieve />
+          description="Resolve dependencies with Ivy">
+    <ivy:resolve />
   </target>
 
   <target name="report" depends="resolve"
@@ -158,17 +140,41 @@
     <antlr target="${grammar.file}" outputdirectory="${grammar.outdir}" />
   </target>
 
-  <target name="compile" depends="ivy-settings"
+  <target name="core-classpath" depends="ivy-settings">
+    <ivy:resolve conf="core" />
+    <ivy:cachepath pathid="core.cp" conf="core" />
+  </target>
+
+  <target name="compile" depends="core-classpath"
           description="Compile core classes">
     <compile conf="core" />
   </target>
 
-  <target name="compile-test" depends="compile"
+  <target name="test-classpath" depends="ivy-settings">
+    <ivy:resolve conf="test" />
+    <ivy:cachepath pathid="test.ivycp" conf="test" />
+    <path id="test.cp">
+      <path refid="test.ivycp" />
+      <path location="${core.classes}" />
+    </path>
+  </target>
+
+  <target name="compile-test" depends="compile,test-classpath"
           description="Compile test classes">
     <compile conf="test" />
   </target>
 
-  <target name="compile-sandbox" depends="compile-test,codegen"
+  <target name="sandbox-classpath" depends="ivy-settings">
+    <ivy:resolve conf="sandbox" />
+    <ivy:cachepath pathid="sandbox.ivycp" conf="sandbox" />
+    <path id="sandbox.cp">
+      <path refid="sandbox.ivycp" />
+      <path location="${core.classes}" />
+      <path location="${test.classes}" />
+    </path>
+  </target>
+
+  <target name="compile-sandbox" depends="compile-test,codegen,sandbox-classpath"
           description="Compile sandbox classes">
     <compile conf="sandbox" />
   </target>
