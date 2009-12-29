@@ -93,7 +93,7 @@ public abstract class TransformerUtils {
 
 	/**
 	 * Learn whether <code>transformer</code>'s transformation
-	 * of <code>sourceClass</code> to <code>destinationClass</code> might yield an imprecise result. 
+	 * of <code>sourceClass</code> to <code>destinationClass</code> might yield an imprecise result.
 	 * @param transformer
 	 * @param destinationClass
 	 * @param sourceClass
@@ -148,7 +148,7 @@ public abstract class TransformerUtils {
 		// (this block is somewhat more verbose than necessary but
 		// should be proof against possible additional Transformer types):
 		if (Transformer.TRANSFORMATION_TYPE_COPY.equals(xform)) {
-			if (transformer instanceof Converter && !mutableDest) {
+			if (!(transformer instanceof Copier && mutableDest) && transformer instanceof Converter) {
 				xform = Transformer.TRANSFORMATION_TYPE_CONVERT;
 			}
 		}
@@ -310,7 +310,7 @@ public abstract class TransformerUtils {
 	 */
 	public static Class[] getDestinationClassIntersection(Transformer[] transformers) {
 		return getClassIntersection(transformers, DEST);
-		
+
 	}
 
 	/**
