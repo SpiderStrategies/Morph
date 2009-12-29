@@ -45,6 +45,7 @@ import net.sf.morph.transform.converters.NumberConverter;
 import net.sf.morph.transform.converters.NumberToTimeConverter;
 import net.sf.morph.transform.converters.ObjectToClassConverter;
 import net.sf.morph.transform.converters.TextConverter;
+import net.sf.morph.transform.converters.TextToEnumConverter;
 import net.sf.morph.transform.converters.TextToNumberConverter;
 import net.sf.morph.transform.converters.TextToTimeConverter;
 import net.sf.morph.transform.converters.TimeConverter;
@@ -138,6 +139,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			},
 			new ImmutableComponentArrayCopier(),
 			new ContainerCopier(),
+			new TextToEnumConverter(),
 			new PropertyNameMatchingCopier()
 		};
 	}
@@ -376,7 +378,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	}
 
 	/**
-	 * Get the cached object in the process of being transformed 
+	 * Get the cached object in the process of being transformed
 	 * @param source
 	 * @param destinationType
 	 * @return
