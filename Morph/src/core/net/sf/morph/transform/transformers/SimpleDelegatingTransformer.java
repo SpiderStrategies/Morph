@@ -109,12 +109,6 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		}
 	}
 
-	private static class StackDepthThreadLocal extends ThreadLocal {
-		protected Object initialValue() {
-			return new MutableInteger();
-		}
-	}
-
 	/**
 	 * Create the default set of Transformer components.
 	 * @return Transformer[]
@@ -148,7 +142,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	private boolean preferPreciseTransformers;
 
 	private transient ThreadLocal visitedSourceToDestinationMapThreadLocal = new MapThreadLocal();
-	private transient ThreadLocal stackDepthThreadLocal = new StackDepthThreadLocal();
+	private transient ThreadLocal stackDepthThreadLocal = new ThreadLocal();
 
 	private transient Map copierRegistry = Collections.synchronizedMap(new HashMap());
 	private transient Map transformerRegistry = Collections.synchronizedMap(new HashMap());
@@ -320,22 +314,35 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 * Increment the depth of the nested copy stack.
 	 */
 	protected void incrementStackDepth() {
-		((MutableInteger) stackDepthThreadLocal.get()).value++;
+		MutableInteger depth = ((MutableInteger) stackDepthThreadLocal.get());
+		if (depth == null) {
+			stackDepthThreadLocal.set(new MutableInteger(1));
+		} else {
+			depth.value++;
+		}
 	}
 
 	/**
 	 * Decrement the depth of the nested copy stack.
 	 */
 	protected void decrementStackDepth() {
-		((MutableInteger) stackDepthThreadLocal.get()).value--;
+		MutableInteger depth = ((MutableInteger) stackDepthThreadLocal.get());
+		if (depth == null) {
+			log.warn("recursion stack descended below zero");
+		} else {
+			depth.value--;
+			if (depth.value < 1) {
+				stackDepthThreadLocal.remove();
+			}
+		}
 	}
 
 	/**
-	 * If we have popped everybody off the stack, clear the cache.
+	 * If we have popped everybody off the stack, remove the cache.
 	 */
 	protected void clearVisitedSourceToDestinationMapIfNecessary() {
-		if (((MutableInteger) stackDepthThreadLocal.get()).value == 0) {
-			getVisitedSourceToDestinationMap().clear();
+		if (stackDepthThreadLocal.get() == null) {
+			visitedSourceToDestinationMapThreadLocal.remove();
 		}
 	}
 
@@ -591,7 +598,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		result.copierRegistry = Collections.synchronizedMap(new HashMap());
 		result.transformerRegistry = Collections.synchronizedMap(new HashMap());
 		result.visitedSourceToDestinationMapThreadLocal = new MapThreadLocal();
-		result.stackDepthThreadLocal = new StackDepthThreadLocal();
+		result.stackDepthThreadLocal = new ThreadLocal();
 		return result;
 	}
 
