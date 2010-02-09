@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2008 the original author or authors.
+ * Copyright 2007-2008, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,14 +25,13 @@ public class MutableInteger {
 	public int value;
 
 	/**
-	 * Construct a new Int with the default value (0).
+	 * Create a new MutableInteger instance.
 	 */
 	public MutableInteger() {
 	}
 
 	/**
-	 * Construct a new Int with the specified value.
-	 * 
+	 * Create a new MutableInteger instance.
 	 * @param value
 	 */
 	public MutableInteger(int value) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,21 +25,38 @@ import net.sf.morph.reflect.Reflector;
  * @since Dec 29, 2004
  */
 public class ReflectorDecorator extends BaseReflector {//TODO finish this class!
-	
+
 	private Reflector reflector;
-	
+
+	/**
+	 * Create a new ReflectorDecorator instance.
+	 * @param reflector
+	 */
 	public ReflectorDecorator(Reflector reflector) {
 		this.reflector = reflector;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getReflectableClassesImpl() throws Exception {
 		return reflector.getReflectableClasses();
 	}
 
-	protected Reflector getReflector() {
+	/**
+	 * Get the reflector of this ReflectorDecorator.
+	 * @return the reflector
+	 */
+	public Reflector getReflector() {
 		return reflector;
 	}
-	protected void setReflector(Reflector reflector) {
+
+	/**
+	 * Set the reflector of this ReflectorDecorator.
+	 * @param reflector the Reflector to set
+	 */
+	public void setReflector(Reflector reflector) {
 		this.reflector = reflector;
 	}
+
 }

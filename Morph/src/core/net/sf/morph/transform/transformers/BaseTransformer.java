@@ -15,7 +15,6 @@
  */
 package net.sf.morph.transform.transformers;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -69,8 +68,6 @@ import org.apache.commons.logging.LogFactory;
  * @since Nov 26, 2004
  */
 public abstract class BaseTransformer implements Transformer, DecoratedTransformer {
-
-	private static final String SPRING_LOCALE_CONTEXT_HOLDER_CLASS = "org.springframework.context.i18n.LocaleContextHolder";
 
 	private boolean initialized = false;
 	private boolean cachingIsTransformableCalls = true;

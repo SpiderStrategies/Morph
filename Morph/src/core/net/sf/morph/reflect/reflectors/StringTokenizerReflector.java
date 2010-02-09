@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 the original author or authors.
+ * Copyright 2007, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -27,15 +27,19 @@ import net.sf.morph.reflect.SizableReflector;
  */
 public class StringTokenizerReflector extends EnumerationReflector implements SizableReflector {
 
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		StringTokenizer.class
-	};
-	
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { StringTokenizer.class };
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected int getSizeImpl(Object container) throws Exception {
-	    StringTokenizer tokenizer = (StringTokenizer) container;
-	    return tokenizer.countTokens();
-    }
-	
+		StringTokenizer tokenizer = (StringTokenizer) container;
+		return tokenizer.countTokens();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}

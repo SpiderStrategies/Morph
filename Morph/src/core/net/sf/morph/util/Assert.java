@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,14 +26,24 @@ import net.sf.composite.util.ObjectUtils;
  * @since Apr 18, 2005
  */
 public abstract class Assert extends net.sf.composite.util.Assert {
-	
+
+	/**
+	 * Validator interface.
+	 */
 	protected interface Validator {
 		public boolean isValid(Object object);
 	}
-	
+
+	/**
+	 * Assert that each element of the given container passes the specified validator.
+	 * @param validator
+	 * @param container
+	 * @param message
+	 */
 	protected static void contentsAssertion(Validator validator, Object container, String message) {
-		if (ObjectUtils.isEmpty(container)) return;
-		
+		if (ObjectUtils.isEmpty(container))
+			return;
+
 		Iterator iterator = ContainerUtils.getIterator(container);
 		int numInvalid = 0;
 		while (iterator.hasNext()) {
@@ -43,7 +53,8 @@ public abstract class Assert extends net.sf.composite.util.Assert {
 			}
 		}
 		if (numInvalid > 0) {
-			throw new IllegalArgumentException(message + ", but there were " + numInvalid + " objects which did not meet this criterion.");
+			throw new IllegalArgumentException(message + ", but there were " + numInvalid
+					+ " objects which did not meet this criterion.");
 		}
 	}
 
@@ -61,9 +72,9 @@ public abstract class Assert extends net.sf.composite.util.Assert {
 		Validator callback = new Validator() {
 			public boolean isValid(Object object) {
 				return object != null;
-			}			
+			}
 		};
-		
+
 		contentsAssertion(callback, container, "The objects in the container cannot be null");
 	}
 
@@ -82,9 +93,9 @@ public abstract class Assert extends net.sf.composite.util.Assert {
 		Validator callback = new Validator() {
 			public boolean isValid(Object object) {
 				return !ObjectUtils.isEmpty(object);
-			}			
+			}
 		};
-		
+
 		contentsAssertion(callback, container, "The objects in the container cannot be empty");
 	}
 

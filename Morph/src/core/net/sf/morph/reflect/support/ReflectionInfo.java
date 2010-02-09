@@ -1,5 +1,5 @@
 /*
- * Copyright 2005, 2007 the original author or authors.
+ * Copyright 2005, 2007, 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -35,6 +35,10 @@ public class ReflectionInfo {
 	private Map propertyAccessMethods = new HashMap();
 	private String[] propertyNames;
 
+	/**
+	 * Create a new ReflectionInfo instance.
+	 * @param clazz
+	 */
 	public ReflectionInfo(Class clazz) {
 		String propertyName;
 		Method[] methods = clazz.getMethods();
@@ -87,6 +91,11 @@ public class ReflectionInfo {
 			new String[propertyAccessMethods.size()]);
 	}
 
+	/**
+	 * Get the non-null MethodHolder for the specified property.
+	 * @param propertyName
+	 * @return MethodHolder
+	 */
 	protected MethodHolder createOrRetrieveMethodHolder(String propertyName) {
 		MethodHolder holder = (MethodHolder) propertyAccessMethods.get(propertyName);
 		if (holder == null) {
@@ -96,32 +105,76 @@ public class ReflectionInfo {
 		return holder;
 	}
 
+	/**
+	 * Register an accessor.
+	 * @param propertyName
+	 * @param method
+	 */
     protected void registerAccessor(String propertyName, Method method) {
         createOrRetrieveMethodHolder(propertyName).setAccessor(method);
     }
 
+    /**
+     * Register a mutator.
+     * @param propertyName
+     * @param method
+     */
     protected void registerMutator(String propertyName, Method method) {
         createOrRetrieveMethodHolder(propertyName).setMutator(method);
     }
 
+    /**
+     * Register an indexed accessor.
+     * @param propertyName
+     * @param method
+     */
     protected void registerIndexedAccessor(String propertyName, Method method) {
         createOrRetrieveMethodHolder(propertyName).setIndexedAccessor(method);
     }
 
+    /**
+     * Register an indexed mutator.
+     * @param propertyName
+     * @param method
+     */
     protected void registerIndexedMutator(String propertyName, Method method) {
         createOrRetrieveMethodHolder(propertyName).setIndexedMutator(method);
     }
 
+    /**
+     * Get the MethodHolder for a given property, if it exists.
+     * @param propertyName
+     * @return MethodHolder or null
+     */
 	public MethodHolder getMethodHolder(String propertyName) {
 		return (MethodHolder) propertyAccessMethods.get(propertyName);
 	}
 
+	/**
+	 * Set a property.
+	 * @param bean
+	 * @param propertyName
+	 * @param value
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
 	public void set(Object bean, String propertyName, Object value)
 		throws IllegalArgumentException, IllegalAccessException,
 		InvocationTargetException {
 		getMethodHolder(propertyName).invokeMutator(bean, value);
 	}
 
+	/**
+	 * Set an indexed property.
+	 * @param bean
+	 * @param propertyName
+	 * @param index
+	 * @param value
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
     public void set(Object bean, String propertyName, Object index,
 		Object value) throws IllegalArgumentException,
 		IllegalAccessException, InvocationTargetException {
@@ -129,6 +182,11 @@ public class ReflectionInfo {
 			value);
 	}
 
+    /**
+     * Learn whether a property is writable.
+     * @param propertyName
+     * @return boolean
+     */
 	public boolean isWriteable(String propertyName) {
 		return
 			getMethodHolder(propertyName) != null &&
@@ -138,6 +196,11 @@ public class ReflectionInfo {
 			);
 	}
 
+	/**
+	 * Learn whether a property is readable.
+	 * @param propertyName
+	 * @return boolean
+	 */
 	public boolean isReadable(String propertyName) {
 		return
 			getMethodHolder(propertyName) != null &&
@@ -147,14 +210,37 @@ public class ReflectionInfo {
 			);
 	}
 
+	/**
+	 * Get the property names known by this {@link ReflectionInfo}.
+	 * @return String[]
+	 */
 	public String[] getPropertyNames() {
 		return propertyNames;
 	}
 
+	/**
+	 * Read a property.
+	 * @param bean
+	 * @param propertyName
+	 * @return value
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
     public Object get(Object bean, String propertyName) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         return getMethodHolder(propertyName).invokeAccessor(bean);
     }
 
+    /**
+     * Read an indexed property.
+     * @param bean
+     * @param propertyName
+     * @param index
+     * @return value
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
     public Object get(Object bean, String propertyName, Object index) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         return getMethodHolder(propertyName).invokeIndexedAccessor(bean, index);
     }

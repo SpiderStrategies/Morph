@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -28,7 +28,7 @@ import net.sf.morph.reflect.reflectors.ServletRequestParameterReflector;
  * Context for HTTP servlets that evaluates request parameters, request
  * attributes, session attributes, and application attributes, in that order.
  * Exposing request parameters in this manner is somewhat unusual, so
- * {@link HttpServletContext#setReflectingRequestParameters(boolean)}can be
+ * {@link HttpServletContext#setReflectingRequestParameters(boolean)} can be
  * called to turn this behavior off.
  * </p>
  * 
@@ -46,17 +46,20 @@ public class HttpServletContext extends ReflectorHierarchicalContext {
 	private static final BeanReflector REQUEST_ATTRIBUTE_REFLECTOR = new ServletRequestAttributeReflector();
 	private static final BeanReflector SESSION_ATTRIBUTE_REFLECTOR = new HttpSessionAttributeReflector();
 	private static final BeanReflector APPLICATION_ATTRIBUTE_REFLECTOR = new ServletContextAttributeReflector();
-	
+
 	private ReflectorHierarchicalContext applicationContext;
 	private ReflectorHierarchicalContext sessionContext;
 	private ReflectorHierarchicalContext requestContext;
-	
+
 	private boolean reflectingRequestParameters;
-	
+
+	/**
+	 * Create a new HttpServletContext instance.
+	 */
 	public HttpServletContext() {
 		super();
 		reflectingRequestParameters = true;
-		
+
 		applicationContext = new ReflectorHierarchicalContext();
 		applicationContext.setBeanReflector(APPLICATION_ATTRIBUTE_REFLECTOR);
 
@@ -67,46 +70,62 @@ public class HttpServletContext extends ReflectorHierarchicalContext {
 		requestContext = new ReflectorHierarchicalContext();
 		requestContext.setBeanReflector(REQUEST_ATTRIBUTE_REFLECTOR);
 		requestContext.setParentContext(sessionContext);
-		
+
 		this.setBeanReflector(REQUEST_PARAMETER_REFLECTOR);
 		this.setParentContext(requestContext);
 	}
-	
+
+	/**
+	 * Create a new HttpServletContext instance.
+	 * @param request
+	 */
 	public HttpServletContext(HttpServletRequest request) {
 		this();
 		setRequest(request);
 	}
-	
+
 	/**
 	 * This method is overridden so that set calls are always invoked on the
 	 * requestContext, since request parameters cannot be set but logically a
 	 * set call is being sent to the request, so it should succeed.
 	 */
-	protected void setHierarchicalImpl(String propertyName, Object propertyValue)
-		throws Exception {
+	protected void setHierarchicalImpl(String propertyName, Object propertyValue) throws Exception {
 		requestContext.set(propertyName, propertyValue);
 	}
-	
+
+	/**
+	 * Get the request of this context.
+	 * @return {@link HttpServletRequest}
+	 */
 	public HttpServletRequest getRequest() {
 		return (HttpServletRequest) getDelegate();
 	}
+
+	/**
+	 * Set the request of this context.
+	 * @param request
+	 */
 	public void setRequest(HttpServletRequest request) {
 		applicationContext.setDelegate(request.getSession().getServletContext());
 		sessionContext.setDelegate(request.getSession());
 		requestContext.setDelegate(request);
 		this.setDelegate(request);
 	}
+
 	/**
-	 * @return Returns the reflectingRequestParameters.
+	 * Get the reflectingRequestParameters of this HttpServletContext.
+	 * @return the reflectingRequestParameters
 	 */
 	public boolean isReflectingRequestParameters() {
 		return reflectingRequestParameters;
 	}
+
 	/**
-	 * @param reflectingRequestParameters The reflectingRequestParameters to set.
+	 * Set the reflectingRequestParameters of this HttpServletContext.
+	 * @param reflectingRequestParameters the boolean to set
 	 */
-	public void setReflectingRequestParameters(
-		boolean reflectingRequestParameters) {
+	public void setReflectingRequestParameters(boolean reflectingRequestParameters) {
+		this.reflectingRequestParameters = reflectingRequestParameters;
 		this.reflectingRequestParameters = reflectingRequestParameters;
 		if (reflectingRequestParameters) {
 			this.setBeanReflector(REQUEST_PARAMETER_REFLECTOR);
@@ -117,4 +136,5 @@ public class HttpServletContext extends ReflectorHierarchicalContext {
 			this.setParentContext(sessionContext);
 		}
 	}
+
 }

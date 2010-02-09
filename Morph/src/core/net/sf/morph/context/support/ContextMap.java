@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,70 +30,153 @@ import net.sf.morph.context.Context;
 public class ContextMap implements Map {
 
 	private ContextMapBridge contextMapBridge = new ContextMapBridge();
-	
+
 	private Context context;
-	
+
+	/**
+	 * Create a new ContextMap instance.
+	 * @param context
+	 */
 	public ContextMap(Context context) {
 		this.context = context;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void clear() {
 		contextMapBridge.clear(context);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean containsKey(Object key) {
 		return contextMapBridge.containsKey(context, key);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean containsValue(Object value) {
 		return contextMapBridge.containsValue(context, value);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Set entrySet() {
 		return contextMapBridge.entrySet(context);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean equals(Object obj) {
 		return contextMapBridge.equals(obj);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object get(Object key) {
 		return contextMapBridge.get(context, key);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public int hashCode() {
 		return contextMapBridge.hashCode();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isEmpty() {
 		return contextMapBridge.isEmpty(context);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Set keySet() {
 		return contextMapBridge.keySet(context);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object put(Object key, Object value) {
 		return contextMapBridge.put(context, key, value);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void putAll(Map t) {
 		contextMapBridge.putAll(context, t);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object remove(Object key) {
 		return contextMapBridge.remove(context, key);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public int size() {
 		return contextMapBridge.size(context);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public String toString() {
 		return contextMapBridge.toString();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Collection values() {
 		return contextMapBridge.values(context);
 	}
 
-	public Context getContext() {
-		return context;
-	}
-	public void setContext(Context context) {
-		this.context = context;
-	}
+	/**
+	 * Get the contextMapBridge of this ContextMap.
+	 * @return the contextMapBridge
+	 */
 	public ContextMapBridge getContextMapBridge() {
 		return contextMapBridge;
 	}
+
+	/**
+	 * Set the contextMapBridge of this ContextMap.
+	 * @param contextMapBridge the ContextMapBridge to set
+	 */
 	public void setContextMapBridge(ContextMapBridge contextMapBridge) {
 		this.contextMapBridge = contextMapBridge;
 	}
-	
+
+	/**
+	 * Get the context of this ContextMap.
+	 * @return the context
+	 */
+	public Context getContext() {
+		return context;
+	}
+
+	/**
+	 * Set the context of this ContextMap.
+	 * @param context the Context to set
+	 */
+	public void setContext(Context context) {
+		this.context = context;
+	}
+
+
 }

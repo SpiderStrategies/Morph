@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007-2008 the original author or authors.
+ * Copyright 2004-2005, 2007-2008, 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -86,16 +86,13 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 	 */
 	public static final String DEFAULT_MAP_TREATMENT = EXTRACT_VALUES;
 
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		Map.class
-	};
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { Map.class };
 
 	/**
 	 * All of the allowed map treatments.
 	 */
 	protected static String[] MAP_TREATMENTS = new String[] {
-		EXTRACT_VALUES, EXTRACT_ENTRIES, EXTRACT_KEYS
-	};
+			EXTRACT_VALUES, EXTRACT_ENTRIES, EXTRACT_KEYS };
 
 	/**
 	 * The map treatment this copier is using.
@@ -126,7 +123,7 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		return (Map) container;
 	}
 
-// container
+	// container
 
 	/**
 	 * {@inheritDoc}
@@ -169,7 +166,9 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 	protected boolean addImpl(Object container, Object value) throws Exception {
 		if (isExtractEntries()) {
 			if (!(value instanceof Map.Entry)) {
-				throw new IllegalArgumentException(ObjectUtils.getObjectDescription(value) + " cannot be added to the Map because it is not of type java.util.Map.Entry");
+				throw new IllegalArgumentException(
+						ObjectUtils.getObjectDescription(value)
+								+ " cannot be added to the Map because it is not of type java.util.Map.Entry");
 			}
 			Entry entry = (Map.Entry) value;
 			Object returnVal = getMap(container).put(entry.getKey(), entry.getValue());
@@ -181,7 +180,9 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		}
 		if (isExtractValues()) {
 			if (log.isWarnEnabled()) {
-				log.warn("The " + ObjectUtils.getObjectDescription(this) + " is set to " + getMapTreatment() + " so " + ObjectUtils.getObjectDescription(value) + " will be added to the Map with a null key");
+				log.warn("The " + ObjectUtils.getObjectDescription(this) + " is set to "
+						+ getMapTreatment() + " so " + ObjectUtils.getObjectDescription(value)
+						+ " will be added to the Map with a null key");
 			}
 			Object returnVal = getMap(container).put(null, value);
 			return ObjectUtils.equals(value, returnVal);
@@ -206,20 +207,12 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 		throw new ReflectionException("Invalid mapTreatment: " + getMapTreatment());
 	}
 
-// bean
+	// bean
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
-//		 the getPropertyNames method used to return implicit properties, but it
-//		 doesn't anymore
-//		Set keys = new ContainerUtils.createOrderedSet();
-//		keys.addAll(getMap(bean).keySet());
-//		keys.add(IMPLICIT_PROPERTY_KEYS);
-//		keys.add(IMPLICIT_PROPERTY_VALUES);
-//		keys.add(IMPLICIT_PROPERTY_ENTRIES);
-//		return (String[]) keys.toArray(new String[keys.size()]);
 		Set keys = getMap(bean).keySet();
 		return (String[]) keys.toArray(new String[keys.size()]);
 	}
@@ -234,21 +227,14 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 	/**
 	 * {@inheritDoc}
 	 */
-	protected boolean isReadableImpl(Object bean, String propertyName)
-		throws Exception {
+	protected boolean isReadableImpl(Object bean, String propertyName) throws Exception {
 		return true;
-//		return
-//			getMap(bean).containsKey(propertyName) ||
-//			IMPLICIT_PROPERTY_KEYS.equals(propertyName) ||
-//			IMPLICIT_PROPERTY_ENTRIES.equals(propertyName) ||
-//			IMPLICIT_PROPERTY_VALUES.equals(propertyName);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected boolean isWriteableImpl(Object bean, String propertyName)
-		throws Exception {
+	protected boolean isWriteableImpl(Object bean, String propertyName) throws Exception {
 		return true;
 	}
 
@@ -272,8 +258,7 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void setImpl(Object bean, String propertyName, Object value)
-		throws Exception {
+	protected void setImpl(Object bean, String propertyName, Object value) throws Exception {
 		getMap(bean).put(propertyName, value);
 	}
 
@@ -290,10 +275,11 @@ public class MapReflector extends BaseReflector implements InstantiatingReflecto
 	 * @param mapTreatment how maps are treated by this reflector
 	 * @throws ReflectionException if an invalid map treatment is specified
 	 */
-	public void setMapTreatment(String mapTreatment) throws
-		ReflectionException {
+	public void setMapTreatment(String mapTreatment) throws ReflectionException {
 		if (!ContainerUtils.contains(MAP_TREATMENTS, mapTreatment)) {
-			throw new ReflectionException("Invalid value for the mapTreatment attribute.  Valid values are: " + StringUtils.englishJoin(MAP_TREATMENTS));
+			throw new ReflectionException(
+					"Invalid value for the mapTreatment attribute.  Valid values are: "
+							+ StringUtils.englishJoin(MAP_TREATMENTS));
 		}
 		this.mapTreatment = mapTreatment;
 	}

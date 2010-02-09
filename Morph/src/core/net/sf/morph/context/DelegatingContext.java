@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -23,6 +23,15 @@ package net.sf.morph.context;
  * @since Nov 29, 2004
  */
 public interface DelegatingContext extends Context {
+	/**
+	 * Get the delegate object.
+	 * @return Object
+	 */
 	public Object getDelegate();
+
+	/**
+	 * Set the delegate object.
+	 * @param delegate
+	 */
 	public void setDelegate(Object delegate);
 }

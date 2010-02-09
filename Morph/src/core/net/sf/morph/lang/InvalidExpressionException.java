@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -23,15 +23,34 @@ package net.sf.morph.lang;
  */
 public class InvalidExpressionException extends LanguageException {
 
+	/**
+	 * Create a new InvalidExpressionException instance.
+	 */
 	public InvalidExpressionException() {
 		super();
 	}
+
+	/**
+	 * Create a new InvalidExpressionException instance.
+	 * @param message
+	 */
 	public InvalidExpressionException(String message) {
 		super(message);
 	}
+
+	/**
+	 * Create a new InvalidExpressionException instance.
+	 * @param message
+	 * @param cause
+	 */
 	public InvalidExpressionException(String message, Throwable cause) {
 		super(message, cause);
 	}
+
+	/**
+	 * Create a new InvalidExpressionException instance.
+	 * @param cause
+	 */
 	public InvalidExpressionException(Throwable cause) {
 		super(cause);
 	}

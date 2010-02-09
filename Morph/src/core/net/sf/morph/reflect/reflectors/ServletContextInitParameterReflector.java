@@ -12,34 +12,49 @@ import javax.servlet.ServletContext;
  */
 public class ServletContextInitParameterReflector extends BaseServletReflector {
 
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		ServletContext.class
-	};
-	
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { ServletContext.class };
+
+	/**
+	 * Get the ServletContext associated with the specified Object (default implementation: cast <code>bean</code>).
+	 * @param bean
+	 * @return {@link ServletContext}
+	 */
 	protected ServletContext getServletContext(Object bean) {
 		return (ServletContext) bean;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
-		Enumeration initParameterNames =
-			getServletContext(bean).getInitParameterNames();
+		Enumeration initParameterNames = getServletContext(bean).getInitParameterNames();
 		return enumerationToStringArray(initParameterNames);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		return getServletContext(bean).getInitParameter(propertyName);
 	}
 
-	protected void setImpl(Object bean, String propertyName, Object value)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void setImpl(Object bean, String propertyName, Object value) throws Exception {
 		throw new UnsupportedOperationException();
 	}
-	
-	protected boolean isWriteableImpl(Object bean, String propertyName)
-		throws Exception {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isWriteableImpl(Object bean, String propertyName) throws Exception {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getReflectableClassesImpl() throws Exception {
 		return REFLECTABLE_TYPES;
 	}

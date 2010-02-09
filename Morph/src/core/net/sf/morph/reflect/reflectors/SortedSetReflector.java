@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -29,22 +29,29 @@ import net.sf.morph.reflect.IndexedContainerReflector;
  * @author Matt Sgarlata
  * @since Nov 26, 2004
  */
-public class SortedSetReflector
-	extends SetReflector
-	implements IndexedContainerReflector, BeanReflector {
+public class SortedSetReflector extends SetReflector implements IndexedContainerReflector,
+		BeanReflector {
 
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		SortedSet.class
-	};
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { SortedSet.class };
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object newInstanceImpl(Class interfaceClass, Object parameters) throws Exception {
-		return interfaceClass == SortedSet.class ? new TreeSet() : super.newInstanceImpl(interfaceClass, parameters);
+		return interfaceClass == SortedSet.class ? new TreeSet() : super.newInstanceImpl(
+				interfaceClass, parameters);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object container, int index) throws Exception {
 		Collection c = getCollection(container);
 		if (c == null || c.size() <= index) {

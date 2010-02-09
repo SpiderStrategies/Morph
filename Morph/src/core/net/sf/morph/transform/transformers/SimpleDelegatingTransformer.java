@@ -115,27 +115,17 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 */
 	protected Transformer[] createDefaultComponents() {
 		return new Transformer[] {
-			new DefaultToBooleanConverter(),
-			new IdentityConverter(),
-			new ObjectToClassConverter(),
-			new TextConverter(),
-			new DefaultToTextConverter(),
-			new TextToNumberConverter(),
-			new TextToTimeConverter(),
-			new NumberToTimeConverter(),
-			new TimeToNumberConverter(),
-			new NumberConverter(),
-			new TimeConverter(),
-			new TextToContainerCopier(),
-			new MapCopier(),
-			new PropertyNameMatchingCopier() {
-				{ setDestinationClasses(new Class[] { Map.class }); }
-			},
-			new ImmutableComponentArrayCopier(),
-			new ContainerCopier(),
-			new TextToEnumConverter(),
-			new PropertyNameMatchingCopier()
-		};
+				new DefaultToBooleanConverter(), new IdentityConverter(),
+				new ObjectToClassConverter(), new TextConverter(), new DefaultToTextConverter(),
+				new TextToNumberConverter(), new TextToTimeConverter(),
+				new NumberToTimeConverter(), new TimeToNumberConverter(), new NumberConverter(),
+				new TimeConverter(), new TextToContainerCopier(), new MapCopier(),
+				new PropertyNameMatchingCopier() {
+					{
+						setDestinationClasses(new Class[] { Map.class });
+					}
+				}, new ImmutableComponentArrayCopier(), new ContainerCopier(),
+				new TextToEnumConverter(), new PropertyNameMatchingCopier() };
 	}
 
 	private Specializer specializer;
@@ -177,7 +167,8 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 				Transformer[] newComponents = (Transformer[]) ClassUtils.createArray(
 						getComponentType(), components.length + defaultComponents.length);
 				System.arraycopy(components, 0, newComponents, 0, components.length);
-				System.arraycopy(defaultComponents, 0, newComponents, components.length, defaultComponents.length);
+				System.arraycopy(defaultComponents, 0, newComponents, components.length,
+						defaultComponents.length);
 				components = newComponents;
 			}
 		}
@@ -213,12 +204,10 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 *             if it could not be determined if <code>sourceType</code> is
 	 *             transformable into <code>destinationType</code>
 	 */
-	protected boolean isTransformableImpl(Class destinationType,
-		Class sourceType) throws Exception {
+	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
 		for (int i = 0; i < getTransformers().length; i++) {
 			Transformer transformer = getTransformers()[i];
-			if (TransformerUtils.isTransformable(transformer,
-				destinationType, sourceType)) {
+			if (TransformerUtils.isTransformable(transformer, destinationType, sourceType)) {
 				return true;
 			}
 		}
@@ -263,8 +252,8 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 * {@inheritDoc}
 	 * @see net.sf.morph.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
 	 */
-	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType)
-			throws Exception {
+	protected void copyImpl(Object destination, Object source, Locale locale,
+			Integer preferredTransformationType) throws Exception {
 		incrementStackDepth();
 		try {
 			if (!hasVisitedDestination(source, destination)) {
@@ -296,8 +285,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			if (transformer instanceof NodeCopier) {
 				NodeCopier nodeCopier = (NodeCopier) transformer;
 				Object reuseableSource = nodeCopier.createReusableSource(destinationType, source);
-				Object newInstance = nodeCopier.createNewInstance(destinationType,
-						reuseableSource);
+				Object newInstance = nodeCopier.createNewInstance(destinationType, reuseableSource);
 				recordVisit(source, destinationType, newInstance);
 				nodeCopier.copy(newInstance, reuseableSource, locale);
 				return newInstance;
@@ -317,7 +305,8 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		MutableInteger depth = ((MutableInteger) stackDepthThreadLocal.get());
 		if (depth == null) {
 			stackDepthThreadLocal.set(new MutableInteger(1));
-		} else {
+		}
+		else {
 			depth.value++;
 		}
 	}
@@ -329,7 +318,8 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		MutableInteger depth = ((MutableInteger) stackDepthThreadLocal.get());
 		if (depth == null) {
 			log.warn("recursion stack descended below zero");
-		} else {
+		}
+		else {
 			depth.value--;
 			if (depth.value < 1) {
 				stackDepthThreadLocal.remove();
@@ -393,12 +383,9 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	protected Object getCachedResult(Object source, Class destinationType) {
 		Object key = new ObjectPair(source, destinationType);
 		if (!getVisitedSourceToDestinationMap().containsKey(key)) {
-			throw new IllegalArgumentException(
-					"Cannot return a cached conversion result for "
-							+ ObjectUtils.getObjectDescription(source)
-							+ " to destination type '"
-							+ destinationType
-							+ "' because that conversion hasn't been performed before");
+			throw new IllegalArgumentException("Cannot return a cached conversion result for "
+					+ ObjectUtils.getObjectDescription(source) + " to destination type '"
+					+ destinationType + "' because that conversion hasn't been performed before");
 		}
 		return getVisitedSourceToDestinationMap().get(key);
 	}
@@ -439,7 +426,8 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 * @throws TransformationException
 	 *             if no suitable transformer could be found
 	 */
-	protected Transformer getTransformer(Map registry, Class transformerType, Class destinationClass, Class sourceClass) {
+	protected Transformer getTransformer(Map registry, Class transformerType,
+			Class destinationClass, Class sourceClass) {
 		ObjectPair key = new ObjectPair(destinationClass, sourceClass);
 		Transformer transformer = (Transformer) registry.get(key);
 		if (transformer == null) {
@@ -499,15 +487,15 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 * @throws TransformationException
 	 *             if no suitable transformer could be found
 	 */
-	private Transformer getTransformer(Class transformerType, Class destinationClass, Class sourceClass) throws TransformationException {
+	private Transformer getTransformer(Class transformerType, Class destinationClass,
+			Class sourceClass) throws TransformationException {
 		Transformer candidate = null;
 		for (int i = 0; i < components.length; i++) {
 			// if the transformer is the correct type
 			Transformer transformer = (Transformer) components[i];
 			if (transformerType.isAssignableFrom(transformer.getClass())) {
 				// if the transformer is capable of performing the transformation
-				if (TransformerUtils.isTransformable(
-						transformer, destinationClass, sourceClass)) {
+				if (TransformerUtils.isTransformable(transformer, destinationClass, sourceClass)) {
 					if (isPreferPreciseTransformers()
 							&& candidate == null
 							&& TransformerUtils.isImpreciseTransformation(transformer,
@@ -516,13 +504,11 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 						continue;
 					}
 					if (getLog().isTraceEnabled()) {
-						getLog().trace("Using "
-							+ ClassUtils.getUnqualifiedClassName(transformerType)
-							+ " " + transformer.getClass().getName()
-							+ " to transform "
-							+ ObjectUtils.getObjectDescription(sourceClass)
-							+ " to "
-							+ ObjectUtils.getObjectDescription(destinationClass));
+						getLog().trace(
+								"Using " + ClassUtils.getUnqualifiedClassName(transformerType)
+										+ " " + transformer.getClass().getName() + " to transform "
+										+ ObjectUtils.getObjectDescription(sourceClass) + " to "
+										+ ObjectUtils.getObjectDescription(destinationClass));
 					}
 					return transformer;
 				}
@@ -532,10 +518,9 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 			}
 		}
 		throw new TransformationException(
-			"Could not find a transformer that can transform objects of "
-				+ ObjectUtils.getObjectDescription(sourceClass)
-				+ " to objects of "
-				+ ObjectUtils.getObjectDescription(destinationClass));
+				"Could not find a transformer that can transform objects of "
+						+ ObjectUtils.getObjectDescription(sourceClass) + " to objects of "
+						+ ObjectUtils.getObjectDescription(destinationClass));
 	}
 
 	/**
@@ -546,9 +531,8 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return (Transformer[]) getComponents();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#getComponents()
+	/**
+	 * {@inheritDoc}
 	 */
 	public synchronized Object[] getComponents() {
 		if (components == null) {
@@ -557,9 +541,8 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 		return super.getComponents();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.morph.transform.transformers.BaseCompositeTransformer#setComponents(java.lang.Object[])
+	/**
+	 * {@inheritDoc}
 	 */
 	public synchronized void setComponents(Object[] components) {
 		if (this.components == components) {
@@ -640,9 +623,8 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	 */
 	protected Object createReusableSource(Class destinationClass, Object source) {
 		Transformer t = getTransformer(destinationClass, ClassUtils.getClass(source));
-		return t instanceof NodeCopier ? ((NodeCopier) t).createReusableSource(
-				destinationClass, source) : super.createReusableSource(destinationClass,
-				source);
+		return t instanceof NodeCopier ? ((NodeCopier) t).createReusableSource(destinationClass,
+				source) : super.createReusableSource(destinationClass, source);
 	}
 
 	/**

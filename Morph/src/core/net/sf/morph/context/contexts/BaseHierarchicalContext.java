@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2008 the original author or authors.
+ * Copyright 2004-2005, 2008, 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -56,12 +56,18 @@ public abstract class BaseHierarchicalContext extends BaseContext implements
 		this.parentContext = parentContext;
 	}
 
+	//TODO javadoc
 	protected abstract Object getHierarchicalImpl(String propertyName) throws Exception;
 
+	//TODO javadoc
 	protected abstract String[] getPropertyNamesHierarchicalImpl() throws Exception;
 
+	//TODO javadoc
 	protected abstract void setHierarchicalImpl(String propertyName, Object propertyValue) throws Exception;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected final Object getImpl(String propertyName) throws Exception {
 		Object value = null;
 
@@ -101,9 +107,11 @@ public abstract class BaseHierarchicalContext extends BaseContext implements
 //		return value;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected final String[] getPropertyNamesImpl() throws Exception {
 		String[] currentPropertyNames = this.getPropertyNamesHierarchicalImpl();
-		int size = currentPropertyNames == null ? 0 : currentPropertyNames.length;
 		Set propertyNames = ContainerUtils.createOrderedSet();
 		if (!ObjectUtils.isEmpty(currentPropertyNames)) {
 			propertyNames.addAll(Arrays.asList(currentPropertyNames));
@@ -123,6 +131,9 @@ public abstract class BaseHierarchicalContext extends BaseContext implements
 			propertyNames.toArray(new String[propertyNames.size()]);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected final void setImpl(String propertyName, Object propertyValue)
 		throws Exception {
 
@@ -145,14 +156,15 @@ public abstract class BaseHierarchicalContext extends BaseContext implements
 	}
 
 	/**
-	 * Sets this context's parent context.
-	 *
-	 * @param parentContext
-	 *            this context's parent context
+	 * {@inheritDoc}
 	 */
 	public void setParentContext(Context parentContext) {
 		this.parentContext = parentContext;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	public Context getParentContext() {
 		return parentContext;
 	}

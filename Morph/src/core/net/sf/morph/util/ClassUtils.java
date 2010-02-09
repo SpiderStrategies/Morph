@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007-2008 the original author or authors.
+ * Copyright 2004-2005, 2007-2008, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -346,33 +346,5 @@ public abstract class ClassUtils extends net.sf.composite.util.ClassUtils {
 	public static Class[] getAllClasses() {
 		return (Class[]) ALL_CLASSES.toArray(new Class[ALL_CLASSES.size()]);
 	}
-
-//	public static Class inheritanceIntersection(Class[] types) {
-//	Assert.contentsNotNull(types);
-//	
-//	if (ObjectUtils.isEmpty(types) || types.length == 1) {
-//		return types;
-//	}
-//	
-//	// types.length >= 2
-//	Class type = types[0];
-//	for (int i=1; i<types.length; i++) {
-//		Class nextType = 
-//	}
-//	
-//	else if (types.length == 2) {
-//		Class type1 = types[0];
-//		Class type2 = types[1];
-//		if (type1.isAssignableFrom(type2)) {
-//			return type2;
-//		}
-//	}
-//	else { //types.length >= 3
-//		Arrays.
-//		return inheritanceIntersection()
-//	}
-//	// if we get to here, types.length >= 2
-//	
-//}
 
 }

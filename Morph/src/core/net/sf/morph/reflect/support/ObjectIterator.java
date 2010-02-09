@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -36,18 +36,31 @@ public class ObjectIterator implements Iterator {
 	private Object object;
 	private boolean hasNext = true;
 
+	/**
+	 * Create a new ObjectIterator instance.
+	 * @param object
+	 */
 	public ObjectIterator(Object object) {
 		this.object = object;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean hasNext() {
 		return hasNext;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object next() {
 		if (!hasNext) {
 			throw new NoSuchElementException(NSEE);

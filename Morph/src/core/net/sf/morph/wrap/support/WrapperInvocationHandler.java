@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,11 +18,16 @@ package net.sf.morph.wrap.support;
 import java.lang.reflect.InvocationHandler;
 
 /**
+ * A Wrapper invocation handler.
  * @author Matt Sgarlata
  * @since Jan 16, 2005
  */
 public interface WrapperInvocationHandler extends InvocationHandler {
-	
+	/**
+	 * Get the interfaces to expose for a given object.
+	 * @param object
+	 * @return Class[]
+	 */
 	public Class[] getInterfaces(Object object);
-	
+
 }

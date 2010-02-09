@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2008 the original author or authors.
+ * Copyright 2004-2005, 2008, 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -70,46 +70,6 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 		return collection != null && collection.contains(value);
 	}
 
-//	/**
-//	 * Returns the union of multiple arrays as an array.  Implementation is O(n<sup>2</sup>).
-//	 *
-//	 * @param arrays
-//	 *            a List of arrays
-//	 * @param componentType
-//	 *            the runtime type of the returned array
-//	 * @return the union of the arrays
-//	 * @deprecated this is silly, just use a HashSet instead
-//	 */
-//	public static Object[] union(List arrays, Class componentType) {
-//		if (componentType == null) {
-//			throw new IllegalArgumentException("componentType must be speciifed");
-//		}
-//		if (arrays == null) {
-//			return null;
-//		}
-//
-//		Set unionSet = new HashSet();
-//		for (int i=0; i<arrays.size(); i++) {
-//			if (!ObjectUtils.isEmpty(arrays.get(i))) {
-//				unionSet.addAll(Arrays.asList( ((Object[]) arrays.get(i)) ));
-//			}
-//		}
-//
-//		Object[] unionArray = (Object[]) ClassUtils.createArray(componentType, unionSet.size());
-//		return unionSet.toArray(unionArray);
-//	}
-//
-//	/**
-//	 * Returns the union of multiple arrays as an array.  Implementation is O(n<sup>2</sup>).
-//	 *
-//	 * @param arrays
-//	 *            a List of arrays
-//	 * @return the union of the arrays
-//	 */
-//	public static Object[] union(List arrays) {
-//		return union(arrays, Object[].class);
-//	}
-
 	/**
 	 * Returns the intersection of multiple arrays as an array.  Implementation is O(n<sup>3</sup>).
 	 *
@@ -128,7 +88,7 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 		}
 
 		Set intersectionSet = new HashSet();
-		intersectionSet.addAll(Arrays.asList( ((Object[]) arrays.get(0)) ));
+		intersectionSet.addAll(Arrays.asList(((Object[]) arrays.get(0))));
 		for (int i = 1; i < arrays.size(); i++) {
 			Object[] array = (Object[]) arrays.get(i);
 			for (int j = 0; j < array.length; j++) {
@@ -138,7 +98,8 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 			}
 		}
 
-		Object[] intersectionArray = (Object[]) ClassUtils.createArray(componentType, intersectionSet.size());
+		Object[] intersectionArray = (Object[]) ClassUtils.createArray(componentType,
+				intersectionSet.size());
 		return intersectionSet.toArray(intersectionArray);
 	}
 
@@ -160,18 +121,19 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 	public static Set createOrderedSet() {
 		if (ClassUtils.isJdk14OrHigherPresent()) {
 			try {
-				return (Set) Class.forName("java.util.LinkedHashSet").newInstance();	
+				return (Set) Class.forName("java.util.LinkedHashSet").newInstance();
+			} catch (Exception e) {
 			}
-			catch (Exception e) { }
 		}
-		
+
 		if (ClassUtils.isCommonsCollections3Present()) {
 			try {
-				return (Set) Class.forName("org.apache.commons.collections.set.ListOrderedSet").newInstance();			
+				return (Set) Class.forName("org.apache.commons.collections.set.ListOrderedSet")
+						.newInstance();
+			} catch (Exception e) {
 			}
-			catch (Exception e) { }
 		}
-		
+
 		return new ListOrderedSet();
 	}
 

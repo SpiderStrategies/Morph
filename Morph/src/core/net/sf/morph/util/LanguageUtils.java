@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,21 +15,27 @@
  */
 package net.sf.morph.util;
 
+import net.sf.morph.lang.Language;
 
 /**
+ * Utilities for {@link Language}s.
  * @author Matt Sgarlata
  * @since Nov 28, 2004
  */
 public class LanguageUtils {
-	
+//TODO delete, not used
+	/**
+	 * Learn whether a string can be parsed as an integer.
+	 * @param string
+	 * @return boolean
+	 */
 	public static boolean isInteger(String string) {
 		try {
 			Integer.parseInt(string);
 			return true;
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			return false;
 		}
 	}
-	
+
 }

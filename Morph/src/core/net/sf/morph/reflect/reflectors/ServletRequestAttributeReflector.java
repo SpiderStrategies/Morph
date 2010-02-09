@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,29 +25,43 @@ import javax.servlet.ServletRequest;
  */
 public class ServletRequestAttributeReflector extends BaseServletReflector {
 
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		ServletRequest.class
-	};
-	
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { ServletRequest.class };
+
+	/**
+	 * Get the ServletRequest associated with the specified Object (default implementation: cast <code>bean</code>).
+	 * @param bean
+	 * @return {@link ServletRequest}
+	 */
 	protected ServletRequest getRequest(Object bean) {
 		return (ServletRequest) bean;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		return enumerationToStringArray(getRequest(bean).getAttributeNames());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		return getRequest(bean).getAttribute(propertyName);
 	}
-	
-	protected void setImpl(Object bean, String propertyName, Object value)
-		throws Exception {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void setImpl(Object bean, String propertyName, Object value) throws Exception {
 		getRequest(bean).setAttribute(propertyName, value);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
-	
+
 }

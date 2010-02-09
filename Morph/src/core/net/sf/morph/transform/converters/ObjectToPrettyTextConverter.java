@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2008 the original author or authors.
+ * Copyright 2004-2005, 2008, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -38,26 +38,19 @@ import net.sf.morph.util.TransformerUtils;
 public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 	/** Default types using <code>toString()</code> */
 	public static final Class[] DEFAULT_TYPES_USING_TO_STRING = new Class[] {
-		String.class, Long.class, Integer.class, Short.class, Character.class,
-		Byte.class, Double.class, Float.class, Boolean.class, Long.TYPE,
-		Integer.TYPE, Short.TYPE, Character.TYPE, Byte.TYPE, Double.TYPE,
-		Float.TYPE, Boolean.TYPE, StringBuffer.class
-	};
+			String.class, Long.class, Integer.class, Short.class, Character.class, Byte.class,
+			Double.class, Float.class, Boolean.class, Long.TYPE, Integer.TYPE, Short.TYPE,
+			Character.TYPE, Byte.TYPE, Double.TYPE, Float.TYPE, Boolean.TYPE, StringBuffer.class };
 
 	/** Default levels */
 	public static final int DEFAULT_LEVELS = 1;
 
+	private static ThreadLocal currentLevelThreadLocal = new ThreadLocal();
+
 	private int levels = DEFAULT_LEVELS;
 	private Converter containerToPrettyTextConverter;
 	private Converter beanToPrettyTextConverter;
-	private static ThreadLocal currentLevelThreadLocal = new ThreadLocal() {
-		/**
-		 * {@inheritDoc}
-		 */
-		protected Object initialValue() {
-			return new MutableInteger(-1);
-		}
-	};
+
 	private Set typesUsingToString;
 
 	/**
@@ -71,9 +64,16 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
+	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
+			throws Exception {
 		MutableInteger currentLevel = (MutableInteger) currentLevelThreadLocal.get();
-		currentLevel.value++;
+		if (currentLevel == null) {
+			currentLevel = new MutableInteger();
+			currentLevelThreadLocal.set(currentLevel);
+		}
+		else {
+			currentLevel.value++;
+		}
 
 		try {
 			// if we aren't down too many levels in the object graph
@@ -82,25 +82,31 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 					return "null";
 				}
 				if (getTypesUsingToStringInternal().contains(source.getClass())) {
-					return source.toString(); 
+					return source.toString();
 				}
 				if (TransformerUtils.isTransformable(getContainerToPrettyTextConverter(),
-					destinationClass, ClassUtils.getClass(source))) {
-					return getContainerToPrettyTextConverter().convert(destinationClass, source, locale);
+						destinationClass, ClassUtils.getClass(source))) {
+					return getContainerToPrettyTextConverter().convert(destinationClass, source,
+							locale);
 				}
 				if (TransformerUtils.isTransformable(getBeanToPrettyTextConverter(),
-					destinationClass, ClassUtils.getClass(source))) {
+						destinationClass, ClassUtils.getClass(source))) {
 					return getBeanToPrettyTextConverter().convert(destinationClass, source, locale);
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (log.isErrorEnabled()) {
-				log.error("Error occurred while attempting to create a formatted text representation of source " + source, e);
+				log.error(
+						"Error occurred while attempting to create a formatted text representation of source "
+								+ source, e);
 			}
-		}
-		finally {
-			currentLevel.value--;
+		} finally {
+			if (currentLevel.value == 0) {
+				currentLevelThreadLocal.set(null);
+			}
+			else {
+				currentLevel.value--;
+			}
 		}
 		return getToTextConverter().convert(destinationClass, source, locale);
 	}
@@ -180,7 +186,8 @@ public class ObjectToPrettyTextConverter extends BaseToPrettyTextConverter {
 	 */
 	protected Set getTypesUsingToStringInternal() {
 		// make sure the set is initialized
-		if (typesUsingToString == null) getTypesUsingToString();
+		if (typesUsingToString == null)
+			getTypesUsingToString();
 		return typesUsingToString;
 	}
 

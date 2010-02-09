@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,28 +25,43 @@ import javax.servlet.http.HttpSession;
  */
 public class HttpSessionAttributeReflector extends BaseServletReflector {
 
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		HttpSession.class
-	};
-	
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { HttpSession.class };
+
+	/**
+	 * Get the HttpSession from the specified Object (default, cast and return <code>bean</code>).
+	 * @param bean
+	 * @return HttpSession
+	 */
 	protected HttpSession getSession(Object bean) {
 		return (HttpSession) bean;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		return enumerationToStringArray(getSession(bean).getAttributeNames());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		return getSession(bean).getAttribute(propertyName);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void setImpl(Object bean, String propertyName, Object value) throws Exception {
 		getSession(bean).setAttribute(propertyName, value);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
-	
+
 }

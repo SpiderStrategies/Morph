@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,18 +25,25 @@ import java.util.Iterator;
  */
 public class IteratorReflector extends BaseContainerReflector {
 
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		Iterator.class
-	};
-	
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { Iterator.class };
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getContainedTypeImpl(Class clazz) throws Exception {
 		return Object.class;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Iterator getIteratorImpl(Object container) throws Exception {
 		return (Iterator) container;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}

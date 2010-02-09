@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-5 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,9 +26,13 @@ import net.sf.morph.Morph;
  * @since Mar 11, 2005
  */
 public class StringUtils {
-	
-//	private static final DecoratedConverter LIST_CONVERTER = new SimpleDelegatingTransformer();
 
+	/**
+	 * Find the number of occurrences of <code>searchFor</code> in <code>toSearch</code>.
+	 * @param toSearch
+	 * @param searchFor
+	 * @return int
+	 */
 	public static int numOccurrences(String toSearch, String searchFor) {
 		if (toSearch == null && searchFor == null) {
 			return 0;
@@ -38,9 +42,9 @@ public class StringUtils {
 		}
 		int matchingIndex = 0;
 		int numOccurrences = 0;
-		for (int i=0; i<toSearch.length(); i++) {
+		for (int i = 0; i < toSearch.length(); i++) {
 			if (toSearch.charAt(i) == searchFor.charAt(matchingIndex)) {
-				if (matchingIndex == searchFor.length() -1) {
+				if (matchingIndex == searchFor.length() - 1) {
 					matchingIndex = 0;
 					numOccurrences++;
 				}
@@ -52,15 +56,26 @@ public class StringUtils {
 		return numOccurrences;
 	}
 
-	public static String repeat(String str, int repititions) {
-		int size = repititions * (str == null ? 0 : str.length());
+	/**
+	 * Get a string consisting of <code>n</code> repetitions of <code>str</code>. 
+	 * @param str
+	 * @param n
+	 * @return String
+	 */
+	public static String repeat(String str, int n) {
+		int size = n * (str == null ? 0 : str.length());
 		StringBuffer buffer = new StringBuffer(size);
-		for (int i=0; i<repititions; i++) {
+		for (int i = 0; i < n; i++) {
 			buffer.append(str);
 		}
 		return buffer.toString();
 	}
 
+	/**
+	 * Separate the elements of an array with commas, and add "and" before the last value.
+	 * @param values
+	 * @return String
+	 */
 	public static String englishJoin(Object values) {
 		if (values == null) {
 			return null;
@@ -79,29 +94,39 @@ public class StringUtils {
 		return buffer.toString();
 	}
 
+	/**
+	 * Separate the elements of a Collection with commas, and add "and" before the last value.
+	 * @param values
+	 * @return String
+	 */
 	public static String englishJoin(Collection values) {
 		return englishJoin(values.toArray(new Object[values.size()]));
 	}
 
+	/**
+	 * Remove any whitespace from the given string. 
+	 * @param expression
+	 * @return String
+	 */
 	public static String removeWhitespace(String expression) {
 		if (expression == null) {
 			return null;
 		}
-		
+
 		// first make sure there is whitespace.  Usually there won't be so we
 		// can save ourselves from creating a new StringBuffer and String
-		for (int i=0; i<expression.length(); i++) {
+		for (int i = 0; i < expression.length(); i++) {
 			if (Character.isWhitespace(expression.charAt(i))) {
 				return constructStringWithoutWhitespace(expression);
 			}
 		}
-		
-		return expression;		
+
+		return expression;
 	}
-	
+
 	private static String constructStringWithoutWhitespace(String expression) {
 		StringBuffer buffer = new StringBuffer(expression.length());
-		for (int i=0; i<expression.length(); i++) {
+		for (int i = 0; i < expression.length(); i++) {
 			if (!Character.isWhitespace(expression.charAt(i))) {
 				buffer.append(expression.charAt(i));
 			}
@@ -109,11 +134,17 @@ public class StringUtils {
 		return buffer.toString();
 	}
 
+	/**
+	 * Join the elements of a container, separated by <code>separator</code>.
+	 * @param object
+	 * @param separator
+	 * @return String
+	 */
 	public static String join(Object object, String separator) {
 		if (object == null) {
 			return null;
 		}
-		
+
 		//build the metric id string
 		StringBuffer idBuff = new StringBuffer();
 		boolean firstIteration = true;
@@ -130,6 +161,11 @@ public class StringUtils {
 		return idBuff.toString();
 	}
 
+	/**
+	 * Join the elements of a container, separated by ", ".
+	 * @param object
+	 * @return String
+	 */
 	public static String join(Object object) {
 		return join(object, ", ");
 	}

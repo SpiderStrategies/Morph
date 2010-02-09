@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,32 +25,49 @@ import net.sf.morph.reflect.ReflectionException;
  * @author Matt Sgarlata
  * @since Dec 4, 2004
  */
-public class PageContextAttributeReflector extends
-	BaseServletReflector {
+public class PageContextAttributeReflector extends BaseServletReflector {
 
 	private static final Class[] REFLECTABLE_TYPES = new Class[] { PageContext.class };
 
+	/**
+	 * Get the PageContext associated with the specified Object (base implementation is to cast <code>bean</code>).
+	 * @param bean
+	 * @return PageContext
+	 */
 	protected PageContext getPageContext(Object bean) {
 		return (PageContext) bean;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		return enumerationToStringArray(getPageContext(bean).getAttributeNamesInScope(
-			PageContext.PAGE_SCOPE));
+				PageContext.PAGE_SCOPE));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		return getPageContext(bean).getAttribute(propertyName);
 	}
 
-	protected void setImpl(Object bean, String propertyName, Object value)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void setImpl(Object bean, String propertyName, Object value) throws Exception {
 		if (value == null) {
-			throw new ReflectionException("Cannot set null for property '" + propertyName + "' because null values are not allowed for " + PageContext.class.getName() + " attributes");
+			throw new ReflectionException("Cannot set null for property '" + propertyName
+					+ "' because null values are not allowed for " + PageContext.class.getName()
+					+ " attributes");
 		}
 		getPageContext(bean).setAttribute(propertyName, value);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}

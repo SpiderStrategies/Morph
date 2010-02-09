@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -28,39 +28,31 @@ import net.sf.morph.util.ClassUtils;
  */
 public class ContextReflector extends BaseBeanReflector implements InstantiatingReflector {
 
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		Context.class
-	};
-	
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { Context.class };
+
 	private Context getContext(Object bean) {
 		return (Context) bean;
 	}
-	
-//	private ReflectorContext getReflectorContext(Object bean) {
-//		return (ReflectorContext) bean;
-//	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
-//		if (bean instanceof ReflectorContext) {
-//			return getReflectorContext(bean).getBeanReflector().getPropertyNames(bean);
-//		}
-//		else {
-			return getContext(bean).getPropertyNames();
-//		}
+		return getContext(bean).getPropertyNames();
 	}
 
-	protected Class getTypeImpl(Object bean, String propertyName)
-		throws Exception {
-//		if (bean instanceof ReflectorContext) {
-//			return getReflectorContext(bean).getBeanReflector().getType(bean, propertyName);
-//		}
-//		else {
-			return ClassUtils.getClass(getContext(bean).get(propertyName));
-//		}
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Class getTypeImpl(Object bean, String propertyName) throws Exception {
+		return ClassUtils.getClass(getContext(bean).get(propertyName));
 	}
 
 	/**
@@ -70,8 +62,7 @@ public class ContextReflector extends BaseBeanReflector implements Instantiating
 	 * {@link net.sf.morph.reflect.BeanReflector#get(Object, String)} method is
 	 * called.
 	 */
-	protected boolean isReadableImpl(Object bean, String propertyName)
-		throws Exception {
+	protected boolean isReadableImpl(Object bean, String propertyName) throws Exception {
 		return true;
 	}
 
@@ -81,20 +72,27 @@ public class ContextReflector extends BaseBeanReflector implements Instantiating
 	 * exposed as a Context), an exception is thrown when the set method is
 	 * called on the context.
 	 */
-	protected boolean isWriteableImpl(Object bean, String propertyName)
-		throws Exception {
+	protected boolean isWriteableImpl(Object bean, String propertyName) throws Exception {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		return getContext(bean).get(propertyName);
 	}
 
-	protected void setImpl(Object bean, String propertyName, Object value)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void setImpl(Object bean, String propertyName, Object value) throws Exception {
 		getContext(bean).set(propertyName, value);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
 		return clazz == Context.class ? new MapContext() : super.newInstanceImpl(clazz, parameters);
 	}

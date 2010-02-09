@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,39 +30,62 @@ import net.sf.morph.reflect.SizableReflector;
  * @author Matt Sgarlata
  * @since Nov 20, 2004
  */
-public class CollectionReflector extends BaseContainerReflector implements ContainerReflector, SizableReflector, InstantiatingReflector, GrowableContainerReflector {
+public class CollectionReflector extends BaseContainerReflector implements ContainerReflector,
+		SizableReflector, InstantiatingReflector, GrowableContainerReflector {
 
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		Collection.class
-	};
-	
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { Collection.class };
+
+	/**
+	 * Get a {@link Collection} view of the specified Object.
+	 * @param container
+	 * @return Collection
+	 */
 	protected Collection getCollection(Object container) {
 		return (Collection) container;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	/*
 	 * TODO JDK 1.5 (generics) compatibility
 	 */
 	protected Class getContainedTypeImpl(Class clazz) throws Exception {
 		return Object.class;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected int getSizeImpl(Object container) throws Exception {
 		return getCollection(container).size();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Iterator getIteratorImpl(Object container) throws Exception {
 		return getCollection(container).iterator();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
-		return clazz == Collection.class ? new ArrayList() : super.newInstanceImpl(clazz, parameters);
+		return clazz == Collection.class ? new ArrayList() : super.newInstanceImpl(clazz,
+				parameters);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean addImpl(Object container, Object value) {
 		return ((Collection) container).add(value);
 	}

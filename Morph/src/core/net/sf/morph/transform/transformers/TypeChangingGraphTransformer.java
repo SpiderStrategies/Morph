@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,7 +31,6 @@ import net.sf.morph.transform.copiers.ContainerCopier;
 import net.sf.morph.transform.copiers.PropertyNameMatchingCopier;
 import net.sf.morph.util.ClassUtils;
 import net.sf.morph.util.TransformerUtils;
-import net.sf.morph.util.TypeMap;
 
 /**
  * <p>
@@ -62,6 +61,11 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 	public TypeChangingGraphTransformer() {
 	}
 
+	/**
+	 * Get the transformer of the specifed type.
+	 * @param transformerType
+	 * @return Transformer
+	 */
 	protected Transformer getTransformer(Class transformerType) {
 		Object[] components = getComponents();
 		for (int i = 0; i < components.length; i++) {
@@ -69,24 +73,38 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 				return (Transformer) components[i];
 			}
 		}
-		throw new TransformationException(
-				"Could not find a component of type '"
-						+ transformerType.getName() + "' in transformer "
-						+ this);
+		throw new TransformationException("Could not find a component of type '"
+				+ transformerType.getName() + "' in transformer " + this);
 	}
 
+	/**
+	 * Get this {@link TypeChangingGraphTransformer}'s {@link ContainerCopier}.
+	 * @return ContainerCopier
+	 */
 	protected ContainerCopier getContainerCopier() {
 		return (ContainerCopier) getTransformer(ContainerCopier.class);
 	}
 
+	/**
+	 * Get this {@link TypeChangingGraphTransformer}'s {@link PropertyNameMatchingCopier}.
+	 * @return {@link PropertyNameMatchingCopier}
+	 */
 	protected PropertyNameMatchingCopier getPropertyNameMatchingCopier() {
 		return (PropertyNameMatchingCopier) getTransformer(PropertyNameMatchingCopier.class);
 	}
 
+	/**
+	 * Get this {@link TypeChangingGraphTransformer}'s {@link IdentityConverter}.
+	 * @return {@link IdentityConverter}
+	 */
 	protected IdentityConverter getIdentityConverter() {
 		return (IdentityConverter) getTransformer(IdentityConverter.class);
 	}
 
+	/**
+	 * Create the {@link Reflector} this {@link TypeChangingGraphTransformer} will use.
+	 * @return Reflector
+	 */
 	protected Reflector createReflector() {
 		// create a reflector that will instantiate classes of the destination
 		// types designated by sourceToDestinationTypeMapping when it encounters
@@ -104,6 +122,9 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 		return reflector;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void initializeImpl() throws Exception {
 		super.initializeImpl();
 
@@ -126,9 +147,12 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 		this.setReflector(reflector);
 	}
 
-	protected Object convertImpl(Class destinationType, Object source, Locale locale) throws Exception {
-		Class transformedDestinationType =
-			TransformerUtils.getMappedDestinationType(
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Object convertImpl(Class destinationType, Object source, Locale locale)
+			throws Exception {
+		Class transformedDestinationType = TransformerUtils.getMappedDestinationType(
 				getSourceToDestinationTypeMapping(), destinationType);
 		if (transformedDestinationType == null) {
 			transformedDestinationType = destinationType;
@@ -136,12 +160,20 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 		return super.convertImpl(transformedDestinationType, source, locale);
 	}
 
+	/**
+	 * Get the sourceToDestinationTypeMapping of this TypeChangingGraphTransformer.
+	 * @return the sourceToDestinationTypeMapping
+	 */
 	public Map getSourceToDestinationTypeMapping() {
 		return sourceToDestinationTypeMapping;
 	}
 
+	/**
+	 * Set the sourceToDestinationTypeMapping of this TypeChangingGraphTransformer.
+	 * @param sourceToDestinationTypeMapping the Map to set
+	 */
 	public void setSourceToDestinationTypeMapping(Map sourceToDestinationTypeMapping) {
-		this.sourceToDestinationTypeMapping = new TypeMap(sourceToDestinationTypeMapping);
+		this.sourceToDestinationTypeMapping = sourceToDestinationTypeMapping;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,15 +25,34 @@ import net.sf.morph.MorphException;
  */
 public class ContextException extends MorphException {
 
+	/**
+	 * Create a new ContextException instance.
+	 */
 	public ContextException() {
 		super();
 	}
+
+	/**
+	 * Create a new ContextException instance.
+	 * @param message
+	 */
 	public ContextException(String message) {
 		super(message);
 	}
+
+	/**
+	 * Create a new ContextException instance.
+	 * @param message
+	 * @param cause
+	 */
 	public ContextException(String message, Throwable cause) {
 		super(message, cause);
 	}
+
+	/**
+	 * Create a new ContextException instance.
+	 * @param cause
+	 */
 	public ContextException(Throwable cause) {
 		super(cause);
 	}

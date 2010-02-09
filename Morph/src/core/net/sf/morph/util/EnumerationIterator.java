@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,21 +25,34 @@ import java.util.Iterator;
  * @since Dec 5, 2004
  */
 public class EnumerationIterator implements Iterator {
-	
+
 	private Enumeration enumeration;
-	
+
+	/**
+	 * Create a new EnumerationIterator instance.
+	 * @param enumeration
+	 */
 	public EnumerationIterator(Enumeration enumeration) {
 		this.enumeration = enumeration;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean hasNext() {
 		return enumeration.hasMoreElements();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object next() {
-		return enumeration.nextElement();	
+		return enumeration.nextElement();
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}

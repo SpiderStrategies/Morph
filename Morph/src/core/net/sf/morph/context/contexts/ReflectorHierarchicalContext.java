@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -62,11 +62,19 @@ public class ReflectorHierarchicalContext extends BaseHierarchicalContext implem
 		super(parentContext);
 	}
 	
+	/**
+	 * Create a new ReflectorHierarchicalContext instance.
+	 * @param delegate
+	 * @param parentContext
+	 */
 	public ReflectorHierarchicalContext(Object delegate, Context parentContext) {
 		super(parentContext);
 		this.delegate = delegate;
 	}
 	
+	/**
+	 * Check the configuration of this {@link ReflectorHierarchicalContext}.
+	 */
 	protected void checkConfiguration() {
 		if (getBeanReflector() == null) {
 			throw new ContextException("The " + getClass().getName()
@@ -86,44 +94,65 @@ public class ReflectorHierarchicalContext extends BaseHierarchicalContext implem
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesHierarchicalImpl() throws Exception {
 		checkConfiguration();
 		return getBeanReflector().getPropertyNames(getDelegate());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getHierarchicalImpl(String propertyName) throws Exception {
 		checkConfiguration();
 		return getBeanReflector().isReadable(getDelegate(), propertyName)
 				? getBeanReflector().get(getDelegate(), propertyName) : null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void setHierarchicalImpl(String propertyName, Object propertyValue)
 		throws Exception {
 		checkConfiguration();
 		getBeanReflector().set(getDelegate(), propertyName, propertyValue);
 	}
 
-	public BeanReflector getBeanReflector() {
+	/**
+	 * Get the beanReflector of this ReflectorHierarchicalContext.
+	 * @return the beanReflector
+	 */
+	public synchronized BeanReflector getBeanReflector() {
 		if (beanReflector == null) {
 			beanReflector = Defaults.createBeanReflector();
 		}
 		return beanReflector;
 	}
 
+	/**
+	 * Set the beanReflector of this ReflectorHierarchicalContext.
+	 * @param beanReflector the BeanReflector to set
+	 */
 	public void setBeanReflector(BeanReflector beanReflector) {
 		this.beanReflector = beanReflector;
 	}
 
+	/**
+	 * Get the delegate of this ReflectorHierarchicalContext.
+	 * @return the delegate
+	 */
 	public Object getDelegate() {
 		return delegate;
 	}
 
-	public void setDelegate(Object reflected) {
-		this.delegate = reflected;
+	/**
+	 * Set the delegate of this ReflectorHierarchicalContext.
+	 * @param delegate the Object to set
+	 */
+	public void setDelegate(Object delegate) {
+		this.delegate = delegate;
 	}
 
-// sgarlatam 12/11/2004: turns out this is more annoying than helpful	
-//	public String toString() {
-//		return "[delegate=" + ObjectUtils.getObjectDescription(delegate) + ",parent=" + ObjectUtils.getObjectDescription(getParentContext()) + "]";
-//	}
 }

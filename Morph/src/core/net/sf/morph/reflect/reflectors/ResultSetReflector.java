@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -46,64 +46,75 @@ import net.sf.morph.transform.TransformationException;
  * @author Matt Sgarlata
  * @since Dec 18, 2004
  */
-public class ResultSetReflector
-	extends BaseBeanReflector
-	implements BeanReflector, ContainerReflector {
-	
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		ResultSet.class
-	};
-	
+public class ResultSetReflector extends BaseBeanReflector implements BeanReflector,
+		ContainerReflector {
+
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { ResultSet.class };
+
 	private ResultSet getResultSet(Object bean) {
 		return (ResultSet) bean;
 	}
-	
+
 	private ResultSetMetaData getMetaData(Object bean) throws Exception {
 		return getResultSet(bean).getMetaData();
 	}
 
-// container reflector methods	
-	
+	// container reflector methods	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getContainedTypeImpl(Class clazz) throws Exception {
 		return ResultSet.class;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Iterator getIteratorImpl(Object container) throws Exception {
 		return new ResultSetIterator((ResultSet) container);
 	}
 
-// bean reflector methods	
-	
+	// bean reflector methods	
+
 	private int getIndexForColumn(Object bean, String propertyName) throws Exception {
 		int numColumns = getMetaData(bean).getColumnCount();
 		String lowerCasePropertyName = propertyName.toLowerCase();
-		for (int i=1; i<numColumns; i++) {
+		for (int i = 1; i < numColumns; i++) {
 			if (lowerCasePropertyName.equals(getMetaData(bean).getColumnLabel(i).toLowerCase())) {
 				return i;
 			}
 		}
-		throw new TransformationException("The propertyName you specified '" + propertyName + "' was not found to be a column in the given ResultSet");
+		throw new TransformationException("The propertyName you specified '" + propertyName
+				+ "' was not found to be a column in the given ResultSet");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		ResultSetMetaData meta = getMetaData(bean);
 		int numColumns = meta.getColumnCount();
 		String[] propertyNames = new String[numColumns];
-		for (int i=0; i<propertyNames.length; i++) {
-			propertyNames[i] = meta.getColumnName(i+1).toLowerCase();
+		for (int i = 0; i < propertyNames.length; i++) {
+			propertyNames[i] = meta.getColumnName(i + 1).toLowerCase();
 		}
 		return propertyNames;
 	}
 
-	protected Class getTypeImpl(Object bean, String propertyName)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Class getTypeImpl(Object bean, String propertyName) throws Exception {
 		return Class.forName(getMetaData(bean).getColumnClassName(
-			getIndexForColumn(bean, propertyName)));
+				getIndexForColumn(bean, propertyName)));
 	}
 
-	protected boolean isWriteableImpl(Object bean, String propertyName)
-		throws Exception {
-		return getMetaData(bean).isWritable(
-			getIndexForColumn(bean, propertyName));
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isWriteableImpl(Object bean, String propertyName) throws Exception {
+		return getMetaData(bean).isWritable(getIndexForColumn(bean, propertyName));
 	}
 
 	/**
@@ -112,7 +123,7 @@ public class ResultSetReflector
 	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		ResultSet rs = getResultSet(bean);
-		Object obj = rs.getObject(propertyName);		
+		Object obj = rs.getObject(propertyName);
 		if (obj instanceof Blob) {
 			obj = rs.getBytes(propertyName);
 		}
@@ -125,8 +136,8 @@ public class ResultSetReflector
 		else if (obj != null && obj.getClass().getName().startsWith("oracle.sql.DATE")) {
 			int index = getIndexForColumn(bean, propertyName);
 			String metaDataClassName = rs.getMetaData().getColumnClassName(index);
-			if ("java.sql.Timestamp".equals(metaDataClassName) ||
-					"oracle.sql.TIMESTAMP".equals(metaDataClassName)) {
+			if ("java.sql.Timestamp".equals(metaDataClassName)
+					|| "oracle.sql.TIMESTAMP".equals(metaDataClassName)) {
 				obj = rs.getTimestamp(propertyName);
 			}
 			else {
@@ -142,15 +153,23 @@ public class ResultSetReflector
 		return obj;
 	}
 
-	protected void setImpl(Object bean, String propertyName, Object value)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void setImpl(Object bean, String propertyName, Object value) throws Exception {
 		getResultSet(bean).updateObject(propertyName, value);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getReflectableClassesImpl() throws Exception {
 		return REFLECTABLE_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isStrictlyTyped() {
 		return true;
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -22,71 +22,91 @@ import net.sf.morph.context.DecoratedContext;
 import net.sf.morph.transform.Converter;
 
 /**
- * Decorates any context so that it implements
- * {@link net.sf.morph.lang.DecoratedLanguage}.
+ * Decorates any context so that it implements {@link DecoratedContext}.
  * 
  * @author Matt Sgarlata
  * @since Dec 5, 2004
  */
 public class ContextDecorator extends BaseContext implements Context, DecoratedContext {
-	
+
 	private Converter converter;
 	private Context context;
-	
+
+	/**
+	 * Create a new ContextDecorator instance.
+	 */
 	public ContextDecorator() {
 		super();
 		this.converter = Defaults.createConverter();
 	}
-	
+
+	/**
+	 * Create a new ContextDecorator instance.
+	 * @param context
+	 */
 	public ContextDecorator(Context context) {
 		this();
 		this.context = context;
 	}
 
+	/**
+	 * Check initialization.
+	 */
 	protected void checkInitialization() {
-		
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public String[] getPropertyNamesImpl() throws ContextException {
 		checkInitialization();
 		return context.getPropertyNames();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object getImpl(String propertyName) throws Exception {
 		return getLanguage().get(context, propertyName);
 	}
 
-	public void setImpl(String propertyName, Object propertyValue)
-		throws ContextException {
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setImpl(String propertyName, Object propertyValue) throws ContextException {
 		getLanguage().set(context, propertyName, propertyValue);
 	}
 
 	/**
-	 * @return Returns the context.
+	 * Get the context of this ContextDecorator.
+	 * @return the context
 	 */
 	public Context getContext() {
 		return context;
 	}
+
 	/**
-	 * @param context The context to set.
+	 * Set the context of this ContextDecorator.
+	 * @param context the Context to set
 	 */
 	public void setContext(Context context) {
 		this.context = context;
 	}
+
 	/**
-	 * @return Returns the converter.
+	 * Get the converter of this ContextDecorator.
+	 * @return the converter
 	 */
 	public Converter getConverter() {
-		if (converter == null) {
-			setConverter(Defaults.createConverter());
-		}
 		return converter;
 	}
+
 	/**
-	 * @param converter The converter to set.
+	 * Set the converter of this ContextDecorator.
+	 * @param converter the Converter to set
 	 */
 	public void setConverter(Converter converter) {
 		this.converter = converter;
 	}
-	
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,7 +26,12 @@ import java.util.List;
  * @since Nov 30, 2004
  */
 public abstract class BaseServletReflector extends BaseBeanReflector {
-	
+
+	/**
+	 * Turn an Enumeration <code>e</code> into a string array.
+	 * @param e
+	 * @return String[]
+	 */
 	protected String[] enumerationToStringArray(Enumeration e) {
 		// don't use a converter here for performance issues (reflectors are
 		// low level components so they need high performance) and because
@@ -38,12 +43,17 @@ public abstract class BaseServletReflector extends BaseBeanReflector {
 		}
 		return (String[]) list.toArray(new String[list.size()]);
 	}
-	
-	protected boolean isReadableImpl(Object bean, String propertyName)
-		throws Exception {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isReadableImpl(Object bean, String propertyName) throws Exception {
 		return true;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getTypeImpl(Object bean, String propertyName) throws Exception {
 		return Object.class;
 	}

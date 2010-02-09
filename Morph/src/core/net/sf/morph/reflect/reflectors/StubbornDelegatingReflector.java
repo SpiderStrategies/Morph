@@ -39,39 +39,45 @@ import net.sf.morph.util.ContainerUtils;
 import net.sf.morph.util.ReflectorUtils;
 
 /**
- * 
+ * Delegating Reflector that... is stubborn.
  * 
  * @author Matt Sgarlata
  * @since Morph 1.1 (Oct 25, 2007)
  */
+//TODO explain properly above
 public class StubbornDelegatingReflector extends BaseCompositeReflector implements
-        DecoratedReflector, StrictlyTypedComposite, SpecializableComposite,
-        BeanReflector, ContainerReflector, GrowableContainerReflector,
-        IndexedContainerReflector, InstantiatingReflector,
-        MutableIndexedContainerReflector, CompositeReflector, Cloneable {
+		DecoratedReflector, StrictlyTypedComposite, SpecializableComposite, BeanReflector,
+		ContainerReflector, GrowableContainerReflector, IndexedContainerReflector,
+		InstantiatingReflector, MutableIndexedContainerReflector, CompositeReflector, Cloneable {
 
 	/**
-	 * Construct a new SimpleDelegatingReflector.
+	 * Create a new StubbornDelegatingReflector instance.
 	 */
 	public StubbornDelegatingReflector() {
 		this(null);
 	}
 
 	/**
-	 * Construct a new SimpleDelegatingReflector.
+	 * Create a new StubbornDelegatingReflector instance.
 	 * @param components
 	 */
 	public StubbornDelegatingReflector(Object[] components) {
 		setComponents(components);
 	}
 
-// internal state initialization/validation
+	// internal state initialization/validation
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void initializeImpl() throws Exception {
 		super.initializeImpl();
 		getComponentValidator().validate(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getReflectableClassesImpl() {
 		Set set = ContainerUtils.createOrderedSet();
 		Object[] reflectors = getComponents();
@@ -84,14 +90,17 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 		return (Class[]) set.toArray(new Class[set.size()]);
 	}
 
-// bean reflectors
+	// bean reflectors
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		Object[] reflectors = getComponents();
 		boolean reflectorFound = false;
 		Object value = null;
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {
 				reflectorFound = true;
 				BeanReflector beanReflector = (BeanReflector) reflectors[i];
 				value = beanReflector.get(bean, propertyName);
@@ -100,7 +109,7 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 				}
 			}
 		}
-		
+
 		if (reflectorFound) {
 			// value will be null, but returning value here for the sake of
 			// clarity
@@ -110,12 +119,15 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 			throw new NoReflectorFoundException(bean, BeanReflector.class);
 		}
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		Set propertyNames = ContainerUtils.createOrderedSet();
 		Object[] reflectors = getComponents();
 		boolean reflectorFound = false;
-		for (int i=0; i<reflectors.length; i++) {
+		for (int i = 0; i < reflectors.length; i++) {
 			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {
 				reflectorFound = true;
 				BeanReflector beanReflector = (BeanReflector) reflectors[i];
@@ -138,43 +150,44 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 	 * non-null value could be found, returns the type that is returned by
 	 * the first BeanReflector that is a component of this reflector.
 	 */
-	protected Class getTypeImpl(Object bean, String propertyName)
-		throws Exception {
+	protected Class getTypeImpl(Object bean, String propertyName) throws Exception {
 		// first search for a non-null value
 		Object[] reflectors = getComponents();
 		Object value = null;
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {
 				BeanReflector beanReflector = (BeanReflector) reflectors[i];
 				value = beanReflector.get(bean, propertyName);
 				if (value != null) {
 					break;
 				}
 			}
-		}	
+		}
 		// if a non-null value was found, return that value's type
 		if (value != null) {
 			return ClassUtils.getClass(value);
 		}
-		
+
 		// if no non-null value was found, return the type of that is returned
 		// by the first BeanReflector that is a component of this reflector
 		reflectors = getComponents();
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {
 				BeanReflector reflector = (BeanReflector) reflectors[i];
 				return reflector.getType(bean, propertyName);
 			}
 		}
-		
+
 		throw new NoReflectorFoundException(bean, BeanReflector.class);
 	}
 
-	protected boolean isReadableImpl(Object bean, String propertyName)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isReadableImpl(Object bean, String propertyName) throws Exception {
 		Object[] reflectors = getComponents();
 		boolean reflectorFound = false;
-		for (int i=0; i<reflectors.length; i++) {
+		for (int i = 0; i < reflectors.length; i++) {
 			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {
 				reflectorFound = true;
 				BeanReflector beanReflector = (BeanReflector) reflectors[i];
@@ -183,7 +196,7 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 				}
 			}
 		}
-		
+
 		if (reflectorFound) {
 			// if we reached here without returning true, the property isn't
 			// readable
@@ -194,11 +207,13 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 		}
 	}
 
-	protected boolean isWriteableImpl(Object bean, String propertyName)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isWriteableImpl(Object bean, String propertyName) throws Exception {
 		Object[] reflectors = getComponents();
 		boolean reflectorFound = false;
-		for (int i=0; i<reflectors.length; i++) {
+		for (int i = 0; i < reflectors.length; i++) {
 			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {
 				reflectorFound = true;
 				BeanReflector reflector = (BeanReflector) reflectors[i];
@@ -207,7 +222,7 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 				}
 			}
 		}
-		
+
 		if (reflectorFound) {
 			// if we reached here without returning true, the property isn't
 			// readable
@@ -218,25 +233,26 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 		}
 	}
 
-	protected void setImpl(Object bean, String propertyName, Object value)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void setImpl(Object bean, String propertyName, Object value) throws Exception {
 		Object[] reflectors = getComponents();
 		Exception exception = null;
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], bean, BeanReflector.class)) {
 				BeanReflector reflector = (BeanReflector) reflectors[i];
 				if (reflector.isWriteable(bean, propertyName)) {
 					try {
 						reflector.set(bean, propertyName, value);
 						return;
-					}
-					catch (ReflectionException e) {
+					} catch (ReflectionException e) {
 						exception = e;
-					}					
+					}
 				}
 			}
 		}
-		
+
 		if (exception == null) {
 			throw new NoReflectorFoundException(bean, BeanReflector.class);
 		}
@@ -245,23 +261,26 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 		}
 	}
 
-// container reflectors
+	// container reflectors
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Iterator getIteratorImpl(Object container) throws Exception {
 		Object[] reflectors = getComponents();
 		Exception exception = null;
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], container, ContainerReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], container,
+					ContainerReflector.class)) {
 				ContainerReflector reflector = (ContainerReflector) reflectors[i];
 				try {
 					return reflector.getIterator(container);
-				}
-				catch (ReflectionException e) {
+				} catch (ReflectionException e) {
 					exception = e;
-				}					
+				}
 			}
 		}
-		
+
 		if (exception == null) {
 			throw new NoReflectorFoundException(container, ContainerReflector.class);
 		}
@@ -270,21 +289,24 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getContainedTypeImpl(Class clazz) throws Exception {
 		Object[] reflectors = getComponents();
 		Exception exception = null;
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], clazz, ContainerReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], clazz,
+					ContainerReflector.class)) {
 				ContainerReflector reflector = (ContainerReflector) reflectors[i];
 				try {
 					return reflector.getContainedType(clazz);
-				}
-				catch (ReflectionException e) {
+				} catch (ReflectionException e) {
 					exception = e;
-				}					
+				}
 			}
 		}
-		
+
 		if (exception == null) {
 			throw new NoReflectorFoundException(clazz, ContainerReflector.class);
 		}
@@ -293,23 +315,26 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 		}
 	}
 
-// sizable reflectors
+	// sizable reflectors
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected int getSizeImpl(Object container) throws Exception {
 		Object[] reflectors = getComponents();
 		Exception exception = null;
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], container, ContainerReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], container,
+					ContainerReflector.class)) {
 				SizableReflector reflector = (SizableReflector) reflectors[i];
 				try {
 					return reflector.getSize(container);
-				}
-				catch (ReflectionException e) {
+				} catch (ReflectionException e) {
 					exception = e;
-				}					
+				}
 			}
 		}
-		
+
 		if (exception == null) {
 			throw new NoReflectorFoundException(container, ContainerReflector.class);
 		}
@@ -318,23 +343,26 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 		}
 	}
 
-// growable reflectors
+	// growable reflectors
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean addImpl(Object container, Object value) throws Exception {
 		Object[] reflectors = getComponents();
 		Exception exception = null;
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], container, GrowableContainerReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], container,
+					GrowableContainerReflector.class)) {
 				GrowableContainerReflector reflector = (GrowableContainerReflector) reflectors[i];
 				try {
 					return reflector.add(container, value);
-				}
-				catch (ReflectionException e) {
+				} catch (ReflectionException e) {
 					exception = e;
-				}					
+				}
 			}
 		}
-		
+
 		if (exception == null) {
 			throw new NoReflectorFoundException(container, GrowableContainerReflector.class);
 		}
@@ -343,23 +371,26 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 		}
 	}
 
-// indexed reflectors
+	// indexed reflectors
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object container, int index) throws Exception {
 		Object[] reflectors = getComponents();
 		Exception exception = null;
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], container, IndexedContainerReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], container,
+					IndexedContainerReflector.class)) {
 				IndexedContainerReflector reflector = (IndexedContainerReflector) reflectors[i];
 				try {
 					return reflector.get(container, index);
-				}
-				catch (ReflectionException e) {
+				} catch (ReflectionException e) {
 					exception = e;
-				}					
+				}
 			}
 		}
-		
+
 		if (exception == null) {
 			throw new NoReflectorFoundException(container, IndexedContainerReflector.class);
 		}
@@ -368,24 +399,26 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 		}
 	}
 
-// mutable indexed reflectors
+	// mutable indexed reflectors
 
-	protected Object setImpl(Object container, int index, Object propertyValue)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Object setImpl(Object container, int index, Object propertyValue) throws Exception {
 		Exception exception = null;
 		Object[] reflectors = getComponents();
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], container, MutableIndexedContainerReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], container,
+					MutableIndexedContainerReflector.class)) {
 				MutableIndexedContainerReflector reflector = (MutableIndexedContainerReflector) reflectors[i];
 				try {
 					return reflector.set(container, index, propertyValue);
-				}
-				catch (ReflectionException e) {
+				} catch (ReflectionException e) {
 					exception = e;
-				}					
+				}
 			}
 		}
-		
+
 		if (exception == null) {
 			throw new NoReflectorFoundException(container, MutableIndexedContainerReflector.class);
 		}
@@ -393,24 +426,27 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 			throw exception;
 		}
 	}
-	
-// instantiating reflectors	
 
+	// instantiating reflectors	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
 		Object[] reflectors = getComponents();
 		Exception exception = null;
-		for (int i=0; i<reflectors.length; i++) {
-			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], clazz, InstantiatingReflector.class)) {				
+		for (int i = 0; i < reflectors.length; i++) {
+			if (ReflectorUtils.isReflectable((Reflector) reflectors[i], clazz,
+					InstantiatingReflector.class)) {
 				InstantiatingReflector reflector = (InstantiatingReflector) reflectors[i];
 				try {
 					return reflector.newInstance(clazz, parameters);
-				}
-				catch (ReflectionException e) {
+				} catch (ReflectionException e) {
 					exception = e;
-				}					
+				}
 			}
 		}
-		
+
 		if (exception == null) {
 			throw new NoReflectorFoundException(clazz, InstantiatingReflector.class);
 		}
@@ -419,10 +455,13 @@ public class StubbornDelegatingReflector extends BaseCompositeReflector implemen
 		}
 	}
 
-	public boolean isReflectableImpl(Class reflectedType, Class reflectorType)
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isReflectableImpl(Class reflectedType, Class reflectorType)
 			throws ReflectionException {
 		Object[] reflectors = getComponents();
-		for (int i=0; i<reflectors.length; i++) {
+		for (int i = 0; i < reflectors.length; i++) {
 			Reflector reflector = (Reflector) reflectors[i];
 			if (ReflectorUtils.isReflectable(reflector, reflectedType, reflectorType)) {
 				return true;

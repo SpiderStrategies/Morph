@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -27,6 +27,11 @@ import net.sf.morph.util.ClassUtils;
  */
 public class NoReflectorFoundException extends ReflectionException {
 
+	/**
+	 * Create a new NoReflectorFoundException instance.
+	 * @param reflectedObject
+	 * @param reflectorType
+	 */
 	public NoReflectorFoundException(Object reflectedObject, Class reflectorType) {
 		super("Could not find a "
 		        + ClassUtils.getUnqualifiedClassName(reflectorType)
@@ -34,6 +39,11 @@ public class NoReflectorFoundException extends ReflectionException {
 		        + ObjectUtils.getObjectDescription(reflectedObject));
 	}
 
+	/**
+	 * Create a new NoReflectorFoundException instance.
+	 * @param reflectedType
+	 * @param reflectorType
+	 */
 	public NoReflectorFoundException(Class reflectedType, Class reflectorType) {
 		super("Could not find a "
 				+ ClassUtils.getUnqualifiedClassName(reflectorType)

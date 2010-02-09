@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,37 +30,72 @@ import net.sf.morph.reflect.MutableIndexedContainerReflector;
  */
 public class BaseReflectorTransformer extends BaseTransformer {
 
+	/**
+	 * Create a new BaseReflectorTransformer instance.
+	 */
 	public BaseReflectorTransformer() {
 		super();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		return getReflector().getReflectableClasses();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getSourceClassesImpl() throws Exception {
 		return getReflector().getReflectableClasses();
 	}
 
+	/**
+	 * Get this {@link BaseReflectorTransformer}'s {@link BeanReflector}.
+	 * @return {@link BeanReflector}
+	 */
 	protected BeanReflector getBeanReflector() {
 		return (BeanReflector) getReflector(BeanReflector.class);
 	}
 
+	/**
+	 * Get this {@link BaseReflectorTransformer}'s {@link ContainerReflector}
+	 * @return {@link ContainerReflector}
+	 */
 	protected ContainerReflector getContainerReflector() {
 		return (ContainerReflector) getReflector(ContainerReflector.class);
 	}
 
+	/**
+	 * Get this {@link BaseReflectorTransformer}'s {@link MutableIndexedContainerReflector}.
+	 * @return {@link MutableIndexedContainerReflector}
+	 */
 	protected MutableIndexedContainerReflector getMutableIndexedContainerReflector() {
 		return (MutableIndexedContainerReflector) getReflector(MutableIndexedContainerReflector.class);
 	}
 
+	/**
+	 * Get this {@link BaseReflectorTransformer}'s {@link IndexedContainerReflector}.
+	 * @return {@link IndexedContainerReflector}
+	 */
 	protected IndexedContainerReflector getIndexedContainerReflector() {
 		return (IndexedContainerReflector) getReflector(IndexedContainerReflector.class);
 	}
 
+	/**
+	 * Get this {@link BaseReflectorTransformer}'s {@link GrowableContainerReflector}.
+	 * @return {@link GrowableContainerReflector}
+	 */
 	protected GrowableContainerReflector getGrowableContainerReflector() {
 		return (GrowableContainerReflector) getReflector(GrowableContainerReflector.class);
 	}
 
+	/**
+	 * Learn whether this {@link BaseReflectorTransformer} has a Reflector of the specified type.
+	 * @param reflectorType
+	 * @return boolean
+	 */
 	protected boolean hasReflector(Class reflectorType) {
 		return CompositeUtils.isSpecializable(getReflector(), reflectorType);
 	}

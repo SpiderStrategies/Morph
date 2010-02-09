@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,50 +24,56 @@ import net.sf.morph.util.NumberUtils;
  * @since Dec 15, 2004
  */
 public abstract class NumberRounder {
-	
+
 	/**
 	 * Rounding mode specified in {@link BigDecimal}.
 	 * 
 	 * @see BigDecimal#ROUND_CEILING
 	 */
 	public static final String ROUND_CEILING = "ROUND_CEILING";
+
 	/**
 	 * Rounding mode specified in {@link BigDecimal}.
 	 * 
 	 * @see BigDecimal#ROUND_DOWN
 	 */
 	public static final String ROUND_DOWN = "ROUND_DOWN";
+
 	/**
 	 * Rounding mode specified in {@link BigDecimal}.
 	 * 
 	 * @see BigDecimal#ROUND_FLOOR
 	 */
 	public static final String ROUND_FLOOR = "ROUND_FLOOR";
+
 	/**
 	 * Rounding mode specified in {@link BigDecimal}.
 	 * 
 	 * @see BigDecimal#ROUND_HALF_DOWN
 	 */
 	public static final String ROUND_HALF_DOWN = "ROUND_HALF_DOWN";
+
 	/**
 	 * Rounding mode specified in {@link BigDecimal}.
 	 * 
 	 * @see BigDecimal#ROUND_HALF_EVEN
 	 */
 	public static final String ROUND_HALF_EVEN = "ROUND_HALF_EVEN";
+
 	/**
 	 * Rounding mode specified in {@link BigDecimal}.
 	 * 
 	 * @see BigDecimal#ROUND_HALF_UP
 	 */
 	public static final String ROUND_HALF_UP = "ROUND_HALF_UP";
+
 	/**
 	 * Rounding mode specified in {@link BigDecimal}.
 	 * 
 	 * @see BigDecimal#ROUND_UP
 	 */
 	public static final String ROUND_UP = "ROUND_UP";
-	
+
 	/**
 	 * Converts a rounding mode defined in this class to one of the rounding
 	 * mode <code>int</code>s specified in the {@link BigDecimal} class.
@@ -80,8 +86,7 @@ public abstract class NumberRounder {
 	 * @throws IllegalArgumentException
 	 *             if an invalid rounding mode was specified
 	 */
-	public static int getBigDecimalRoundMode(String mode)
-		throws IllegalArgumentException {
+	public static int getBigDecimalRoundMode(String mode) throws IllegalArgumentException {
 		if (ROUND_CEILING.equals(mode)) {
 			return BigDecimal.ROUND_CEILING;
 		}
@@ -103,7 +108,11 @@ public abstract class NumberRounder {
 		if (ROUND_UP.equals(mode)) {
 			return BigDecimal.ROUND_UP;
 		}
-		throw new IllegalArgumentException("'" + mode + "' is not a valid rounding mode.  Please specify one of the constants defined in " + NumberRounder.class.getName());
+		throw new IllegalArgumentException(
+				"'"
+						+ mode
+						+ "' is not a valid rounding mode.  Please specify one of the constants defined in "
+						+ NumberRounder.class.getName());
 	}
 
 	/**
@@ -122,8 +131,7 @@ public abstract class NumberRounder {
 	 * @throws IllegalArgumentException
 	 *             if an invalid rounding mode is specified
 	 */
-	public static Number round(Number number, String mode)
-		throws IllegalArgumentException {
+	public static Number round(Number number, String mode) throws IllegalArgumentException {
 		if (NumberUtils.isDecimal(number)) {
 			BigDecimal bigDecimal = NumberUtils.numberToBigDecimal(number);
 			BigDecimal rounded = bigDecimal.setScale(0, getBigDecimalRoundMode(mode));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,15 +26,34 @@ import net.sf.morph.MorphException;
  */
 public class LanguageException extends MorphException {
 
+	/**
+	 * Create a new LanguageException instance.
+	 */
 	public LanguageException() {
 		super();
 	}
+
+	/**
+	 * Create a new LanguageException instance.
+	 * @param message
+	 */
 	public LanguageException(String message) {
 		super(message);
 	}
+
+	/**
+	 * Create a new LanguageException instance.
+	 * @param message
+	 * @param cause
+	 */
 	public LanguageException(String message, Throwable cause) {
 		super(message, cause);
 	}
+
+	/**
+	 * Create a new LanguageException instance.
+	 * @param cause
+	 */
 	public LanguageException(Throwable cause) {
 		super(cause);
 	}

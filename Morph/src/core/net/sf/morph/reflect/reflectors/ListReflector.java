@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,23 +30,31 @@ import net.sf.morph.reflect.MutableIndexedContainerReflector;
  * @author Matt Sgarlata
  * @since Nov 26, 2004
  */
-public class ListReflector
-	extends SortedSetReflector
-	implements IndexedContainerReflector, MutableIndexedContainerReflector, GrowableContainerReflector,
-	InstantiatingReflector, BeanReflector {
+public class ListReflector extends SortedSetReflector implements IndexedContainerReflector,
+		MutableIndexedContainerReflector, GrowableContainerReflector, InstantiatingReflector,
+		BeanReflector {
 
 	private static final Class[] REFLECTABLE_TYPES = new Class[] { List.class };
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object newInstanceImpl(Class interfaceClass, Object parameters) throws Exception {
-		return interfaceClass == List.class ? new ArrayList() : super.newInstanceImpl(interfaceClass, parameters);
+		return interfaceClass == List.class ? new ArrayList() : super.newInstanceImpl(
+				interfaceClass, parameters);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
 
-	protected Object setImpl(Object container, int index, Object propertyValue)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Object setImpl(Object container, int index, Object propertyValue) throws Exception {
 		return ((List) container).set(index, propertyValue);
 	}
 

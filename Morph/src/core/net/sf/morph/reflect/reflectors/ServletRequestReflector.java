@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007-2008 the original author or authors.
+ * Copyright 2004-2005, 2007-2008, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -29,29 +29,36 @@ import net.sf.morph.util.ClassUtils;
  */
 public class ServletRequestReflector extends StubbornDelegatingReflector {
 
+	/**
+	 * Create a new ServletRequestReflector instance.
+	 */
 	public ServletRequestReflector() {
-		super(new Reflector[] { new ServletRequestParameterReflector(),
-		        new ServletRequestAttributeReflector() });
+		super(new Reflector[] {
+				new ServletRequestParameterReflector(), new ServletRequestAttributeReflector() });
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getTypeImpl(Object bean, String propertyName) throws Exception {
-	    HttpServletRequest request = (HttpServletRequest) bean;
+		HttpServletRequest request = (HttpServletRequest) bean;
 
 		// first check request parameters
 		String[] values = request.getParameterValues(propertyName);
 		if (!ObjectUtils.isEmpty(values)) {
-			return ObjectUtils.isEmpty(values) || values.length == 1 ? String.class : String[].class;
+			return ObjectUtils.isEmpty(values) || values.length == 1 ? String.class
+					: String[].class;
 		}
-	    
+
 		// next check request attributes
-	    Object attr = request.getAttribute(propertyName);
-	    if (attr != null) {
-	    	return ClassUtils.getClass(attr);
-	    }
-	    
-	    // if neither a parameter nor an attribute is present, just return
-	    // Object.class
-	    return Object.class;
-    }
-	
+		Object attr = request.getAttribute(propertyName);
+		if (attr != null) {
+			return ClassUtils.getClass(attr);
+		}
+
+		// if neither a parameter nor an attribute is present, just return
+		// Object.class
+		return Object.class;
+	}
+
 }

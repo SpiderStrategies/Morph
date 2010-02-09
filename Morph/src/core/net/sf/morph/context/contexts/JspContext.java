@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -40,44 +40,63 @@ import net.sf.morph.reflect.reflectors.PageContextAttributeReflector;
  * @since Dec 4, 2004
  */
 public class JspContext extends ReflectorHierarchicalContext {
-	
+
 	private static final BeanReflector PAGE_CONTEXT_ATTRIBUTE_REFLECTOR = new PageContextAttributeReflector();
-	
+
 	private HttpServletContext httpServletContext;
-	
+
 	private PageContext pageContext;
-	
+
+	/**
+	 * Create a new JspContext instance.
+	 */
 	public JspContext() {
 		httpServletContext = new HttpServletContext();
-		
+
 		this.setBeanReflector(PAGE_CONTEXT_ATTRIBUTE_REFLECTOR);
 		this.setParentContext(httpServletContext);
 	}
-	
+
+	/**
+	 * Create a new JspContext instance.
+	 * @param pageContext
+	 */
 	public JspContext(PageContext pageContext) {
 		this();
 		setPageContext(pageContext);
 	}
-	
+
 	/**
-	 * @return Returns the pageContext.
+	 * Learn whether this {@link JspContext} is reflecting request parameters.
+	 * @return boolean
+	 */
+	public boolean isReflectingRequestParameters() {
+		return httpServletContext.isReflectingRequestParameters();
+	}
+
+	/**
+	 * Set whether this {@link JspContext} is reflecting request parameters.
+	 * @param reflectingRequestParameters
+	 */
+	public void setReflectingRequestParameters(boolean reflectingRequestParameters) {
+		httpServletContext.setReflectingRequestParameters(reflectingRequestParameters);
+	}
+
+	/**
+	 * Get the pageContext of this JspContext.
+	 * @return the pageContext
 	 */
 	public PageContext getPageContext() {
 		return pageContext;
 	}
+
 	/**
-	 * @param pageContext The pageContext to set.
+	 * Set the pageContext of this JspContext.
+	 * @param pageContext the PageContext to set
 	 */
 	public void setPageContext(PageContext pageContext) {
 		this.pageContext = pageContext;
 		this.httpServletContext.setRequest((HttpServletRequest) pageContext.getRequest());
 		this.setDelegate(pageContext);
-	}
-	public boolean isReflectingRequestParameters() {
-		return httpServletContext.isReflectingRequestParameters();
-	}
-	public void setReflectingRequestParameters(
-		boolean reflectingRequestParameters) {
-		httpServletContext.setReflectingRequestParameters(reflectingRequestParameters);
 	}
 }

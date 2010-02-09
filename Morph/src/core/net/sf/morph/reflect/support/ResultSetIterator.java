@@ -1,3 +1,18 @@
+/*
+ * Copyright 2004-2005, 2010 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sf.morph.reflect.support;
 
 import java.sql.ResultSet;
@@ -26,6 +41,10 @@ public class ResultSetIterator implements Iterator {
 	// set to true if the current row has been successfully sent to the user
 	private boolean hasReturnedRow;
 
+	/**
+	 * Create a new ResultSetIterator instance.
+	 * @param resultSet
+	 */
 	public ResultSetIterator(ResultSet resultSet) {
 		this.resultSet = resultSet;
 		// initialize to true, since when we start the result set begins before
@@ -34,6 +53,9 @@ public class ResultSetIterator implements Iterator {
 		this.hasReturnedRow = true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean hasNext() {
 		if (hasReturnedRow) {
 			advanceToNextRow();
@@ -42,6 +64,9 @@ public class ResultSetIterator implements Iterator {
 		return hasNext;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object next() {
 		if (hasNext()) {
 			hasReturnedRow = true;
@@ -50,23 +75,33 @@ public class ResultSetIterator implements Iterator {
 		throw new NoSuchElementException(NO_MORE);
 	}
 
+	/**
+	 * Advance to next row.
+	 * @throws MorphException
+	 */
 	protected void advanceToNextRow() throws MorphException {
 		try {
 			hasNext = resultSet.next();
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			handleResultSetNextException(e);
 		}
 	}
 
-	protected void handleResultSetNextException(SQLException e)
-		throws MorphException {
+	/**
+	 * Handle ResultSet next exception.
+	 * @param e
+	 * @throws MorphException
+	 */
+	protected void handleResultSetNextException(SQLException e) throws MorphException {
 		if (log.isErrorEnabled()) {
 			log.error("Error moving to next row in resultSet", e);
 		}
 		throw new MorphException("Error moving to next row in resultSet", e);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}

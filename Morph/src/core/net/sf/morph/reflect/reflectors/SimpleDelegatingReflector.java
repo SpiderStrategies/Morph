@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007-2008 the original author or authors.
+ * Copyright 2004-2005, 2007-2008, 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -48,10 +48,9 @@ import net.sf.morph.util.ReflectorUtils;
  * @since Dec 13, 2004
  */
 public class SimpleDelegatingReflector extends BaseCompositeReflector implements
-		DecoratedReflector, StrictlyTypedComposite, SpecializableComposite,
-		BeanReflector, ContainerReflector, GrowableContainerReflector,
-		IndexedContainerReflector, InstantiatingReflector,
-		MutableIndexedContainerReflector, CompositeReflector, Cloneable {
+		DecoratedReflector, StrictlyTypedComposite, SpecializableComposite, BeanReflector,
+		ContainerReflector, GrowableContainerReflector, IndexedContainerReflector,
+		InstantiatingReflector, MutableIndexedContainerReflector, CompositeReflector, Cloneable {
 
 	/**
 	 * Construct a new SimpleDelegatingReflector.
@@ -84,13 +83,18 @@ public class SimpleDelegatingReflector extends BaseCompositeReflector implements
 				Reflector[] newComponents = (Reflector[]) ClassUtils.createArray(
 						getComponentType(), components.length + defaultComponents.length);
 				System.arraycopy(components, 0, newComponents, 0, components.length);
-				System.arraycopy(defaultComponents, 0, newComponents, components.length, defaultComponents.length);
+				System.arraycopy(defaultComponents, 0, newComponents, components.length,
+						defaultComponents.length);
 				components = newComponents;
 			}
 		}
 		setComponents(components);
 	}
 
+	/**
+	 * Create the default Reflector components of this {@link SimpleDelegatingReflector}.
+	 * @return Reflector
+	 */
 	protected Reflector[] createDefaultComponents() {
 		List componentList = new LinkedList();
 
@@ -135,13 +139,19 @@ public class SimpleDelegatingReflector extends BaseCompositeReflector implements
 		return (Reflector[]) componentList.toArray(new Reflector[componentList.size()]);
 	}
 
-// internal state initialization/validation
+	// internal state initialization/validation
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void initializeImpl() throws Exception {
 		super.initializeImpl();
 		getComponentValidator().validate(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getReflectableClassesImpl() {
 		Set set = ContainerUtils.createOrderedSet();
 		Object[] reflectors = getComponents();
@@ -154,140 +164,227 @@ public class SimpleDelegatingReflector extends BaseCompositeReflector implements
 		return (Class[]) set.toArray(new Class[set.size()]);
 	}
 
-// bean reflectors
+	// bean reflectors
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		return getBeanReflector(bean).get(bean, propertyName);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		return getBeanReflector(bean).getPropertyNames(bean);
 	}
 
-	protected Class getTypeImpl(Object bean, String propertyName)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Class getTypeImpl(Object bean, String propertyName) throws Exception {
 		return getBeanReflector(bean).getType(bean, propertyName);
 	}
 
-	protected boolean isReadableImpl(Object bean, String propertyName)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isReadableImpl(Object bean, String propertyName) throws Exception {
 		return getBeanReflector(bean).isReadable(bean, propertyName);
 	}
 
-	protected boolean isWriteableImpl(Object bean, String propertyName)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isWriteableImpl(Object bean, String propertyName) throws Exception {
 		return getBeanReflector(bean).isWriteable(bean, propertyName);
 	}
 
-	protected void setImpl(Object bean, String propertyName, Object value)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void setImpl(Object bean, String propertyName, Object value) throws Exception {
 		getBeanReflector(bean).set(bean, propertyName, value);
 	}
 
-// container reflectors
+	// container reflectors
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Iterator getIteratorImpl(Object container) throws Exception {
 		return getContainerReflector(container).getIterator(container);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getContainedTypeImpl(Class clazz) throws Exception {
 		return getContainerReflectorForClass(clazz).getContainedType(clazz);
 	}
 
-// sizable reflectors
+	// sizable reflectors
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected int getSizeImpl(Object container) throws Exception {
 		return getSizableReflector(container).getSize(container);
 	}
 
-// growable reflectors
+	// growable reflectors
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected boolean addImpl(Object container, Object value) throws Exception {
 		return getGrowableContainerReflector(container).add(container, value);
 	}
 
-// indexed reflectors
+	// indexed reflectors
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object container, int index) throws Exception {
 		return getIndexedContainerReflector(container).get(container, index);
 	}
 
-// mutable indexed reflectors
+	// mutable indexed reflectors
 
-	protected Object setImpl(Object container, int index, Object propertyValue)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Object setImpl(Object container, int index, Object propertyValue) throws Exception {
 		return getMutableIndexedContainerReflector(container).set(container, index, propertyValue);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
 		InstantiatingReflector reflector = getInstantiatingReflectorForClass(clazz);
 		return reflector.newInstance(clazz, parameters);
 	}
 
-	public boolean isReflectableImpl(Class reflectedType, Class reflectorType)
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isReflectableImpl(Class reflectedType, Class reflectorType)
 			throws ReflectionException {
 		return safeGetReflector(reflectorType, reflectedType) != null;
 	}
 
+	/**
+	 * Get the contained reflector of the specified type, for the specified type.
+	 * @param reflectorType
+	 * @param reflectedType
+	 * @return Reflector
+	 */
 	protected Reflector getReflector(Class reflectorType, Class reflectedType) {
 		Reflector result = safeGetReflector(reflectorType, reflectedType);
 		if (result == null) {
 			throw new ReflectionException("Could not find a "
-					+ ClassUtils.getUnqualifiedClassName(reflectorType)
-					+ " that can reflect "
+					+ ClassUtils.getUnqualifiedClassName(reflectorType) + " that can reflect "
+					+ ObjectUtils.getObjectDescription(reflectedType));
+		}
+		if (log.isTraceEnabled()) {
+			log.trace("Using " + result.toString() + " to reflect "
 					+ ObjectUtils.getObjectDescription(reflectedType));
 		}
 		return result;
 	}
 
+	//TODO cache result
 	private Reflector safeGetReflector(Class reflectorType, Class reflectedType) {
 		for (int i = 0; i < getComponents().length; i++) {
 			Reflector component = (Reflector) getComponents()[i];
 			if (ReflectorUtils.isReflectable(component, reflectedType, reflectorType)) {
-				if (log.isTraceEnabled()) {
-					log.trace("Using "
-						+ component.getClass().getName()
-						+ " to reflect "
-						+ ObjectUtils.getObjectDescription(reflectedType));
-				}
 				return component;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Get a BeanReflector for the specified object.
+	 * @param bean
+	 * @return {@link BeanReflector}
+	 */
 	protected BeanReflector getBeanReflector(Object bean) {
 		return (BeanReflector) getReflector(BeanReflector.class, bean.getClass());
 	}
 
+	/**
+	 * Get a ContainerReflector for the specified object.
+	 * @param bean
+	 * @return ContainerReflector
+	 */
 	protected ContainerReflector getContainerReflector(Object bean) {
 		return (ContainerReflector) getReflector(ContainerReflector.class, bean.getClass());
 	}
 
+	/**
+	 * Get a ContainerReflector for the specified type.
+	 * @param reflectedClass
+	 * @return ContainerReflector
+	 */
 	protected ContainerReflector getContainerReflectorForClass(Class reflectedClass) {
 		return (ContainerReflector) getReflector(ContainerReflector.class, reflectedClass);
 	}
 
+	/**
+	 * Get a {@link GrowableContainerReflector} for the specified object.
+	 * @param bean
+	 * @return {@link GrowableContainerReflector}
+	 */
 	protected GrowableContainerReflector getGrowableContainerReflector(Object bean) {
-		return (GrowableContainerReflector) getReflector(GrowableContainerReflector.class, bean.getClass());
+		return (GrowableContainerReflector) getReflector(GrowableContainerReflector.class, bean
+				.getClass());
 	}
 
+	/**
+	 * Get a {@link SizableReflector} for the specified Object.
+	 * @param bean
+	 * @return {@link SizableReflector}
+	 */
 	protected SizableReflector getSizableReflector(Object bean) {
 		return (SizableReflector) getReflector(SizableReflector.class, bean.getClass());
 	}
 
+	/**
+	 * Get an {@link IndexedContainerReflector} for the specified object.
+	 * @param bean
+	 * @return {@link IndexedContainerReflector}
+	 */
 	protected IndexedContainerReflector getIndexedContainerReflector(Object bean) {
-		return (IndexedContainerReflector) getReflector(IndexedContainerReflector.class, bean.getClass());
+		return (IndexedContainerReflector) getReflector(IndexedContainerReflector.class, bean
+				.getClass());
 	}
 
+	/**
+	 * Get a {@link MutableIndexedContainerReflector} for the specified object.
+	 * @param bean
+	 * @return {@link MutableIndexedContainerReflector}
+	 */
 	protected MutableIndexedContainerReflector getMutableIndexedContainerReflector(Object bean) {
-		return (MutableIndexedContainerReflector) getReflector(MutableIndexedContainerReflector.class, bean.getClass());
+		return (MutableIndexedContainerReflector) getReflector(
+				MutableIndexedContainerReflector.class, bean.getClass());
 	}
 
+	/**
+	 * Get an {@link InstantiatingReflector} for the specified type.
+	 * @param clazz
+	 * @return {@link InstantiatingReflector}
+	 */
 	protected InstantiatingReflector getInstantiatingReflectorForClass(Class clazz) {
 		return (InstantiatingReflector) getReflector(InstantiatingReflector.class, clazz);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	// workaround for problem w/constructor using JDK 1.4.2_06 on WinXP SP2
 	public Object[] getComponents() {
 		if (super.getComponents() == null) {

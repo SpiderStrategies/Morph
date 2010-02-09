@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007 the original author or authors.
+ * Copyright 2004-2005, 2007, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -37,69 +37,107 @@ import net.sf.morph.util.ClassUtils;
 public class ArrayReflector extends BaseContainerReflector implements ContainerReflector,
 		IndexedContainerReflector, MutableIndexedContainerReflector, SizableReflector,
 		BeanReflector, InstantiatingReflector {
-	
+
 	private SizableReflector sourceReflector;
-	
+
+	/**
+	 * Create a new ArrayReflector instance.
+	 */
 	public ArrayReflector() {
-	    super();
-	    // by default use the best reflectors available to Morph to try to
-	    // determine the size of the (optional) parameter to the newInstance
-	    // method which indicates the size of the array to be created.  If
-	    // a static list of reflectors is enumerated here, new reflectors
-	    // added to morph won't automatically get added here (as was recently
-	    // the case with the StringTokenizerReflector)
-	    sourceReflector = Defaults.createSizableReflector();
-    }
-	
+		super();
+		// by default use the best reflectors available to Morph to try to
+		// determine the size of the (optional) parameter to the newInstance
+		// method which indicates the size of the array to be created.  If
+		// a static list of reflectors is enumerated here, new reflectors
+		// added to morph won't automatically get added here (as was recently
+		// the case with the StringTokenizerReflector)
+		sourceReflector = Defaults.createSizableReflector();
+	}
+
+	/**
+	 * Create a new ArrayReflector instance.
+	 * @param sourceReflector
+	 */
 	public ArrayReflector(SizableReflector sourceReflector) {
 		super();
 		this.sourceReflector = sourceReflector;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class[] getReflectableClassesImpl() {
 		return ClassUtils.ARRAY_TYPES;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Iterator getIteratorImpl(Object container) throws Exception {
 		return new ArrayIterator(container);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected int getSizeImpl(Object container) throws Exception {
 		return Array.getLength(container);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object container, int index) throws Exception {
 		return Array.get(container, index);
 	}
 
-	protected Object setImpl(Object container, int index, Object propertyValue)
-		throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Object setImpl(Object container, int index, Object propertyValue) throws Exception {
 		Object oldValue = getImpl(container, index);
 		Array.set(container, index, propertyValue);
 		return oldValue;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Class getContainedTypeImpl(Class clazz) throws Exception {
 		return ClassUtils.getContainedClass(clazz);
 	}
 
 	/**
-	 * The default implementation is correct, but this is faster because it
+	 * {@inheritDoc}
+	 */
+	/* The default implementation is correct, but this is faster because it
 	 * doesn't require looping through all the reflectable classes
 	 */
 	protected boolean isReflectableImpl(Class clazz) throws Exception {
 		return clazz.isArray();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object newInstanceImpl(Class clazz, Object parameters) throws Exception {
 		int length = parameters == null ? 0 : getSourceReflector().getSize(parameters);
 		return ClassUtils.createArray(clazz.getComponentType(), length);
 	}
 
+	/**
+	 * Get the sizable source reflector
+	 * @return {@link SizableReflector}
+	 */
 	public SizableReflector getSourceReflector() {
-    	return sourceReflector;
-    }
+		return sourceReflector;
+	}
 
+	/**
+	 * Set the sizable source reflector.
+	 * @param sourceReflector
+	 */
 	public void setSourceReflector(SizableReflector sourceReflector) {
-    	this.sourceReflector = sourceReflector;
-    }
+		this.sourceReflector = sourceReflector;
+	}
 }

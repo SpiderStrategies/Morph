@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,35 +24,44 @@ import javax.servlet.ServletContext;
  * @since Nov 21, 2004
  */
 public class ServletContextAttributeReflector extends BaseServletReflector {
-	
-//	public static final String PSEUDO_PROPERTY_INIT_PARAMETER_NAMES = "initParameterNames";
-//	public static final String PSEUDO_PROPERTY_MAJOR_VERSION = "majorVersion";
-//	public static final String PSEUDO_PROPERTY_MINOR_VERSION = "minorVersion";
-//	public static final String PSEUDO_PROPERTY_SERRVER_INFO = "serverInfo";
-//	public static final String PSEUDO_PROPERTY_SERVLET_CONTEXT_NAME = "servletContextName";
 
-	private static final Class[] REFLECTABLE_TYPES = new Class[] {
-		ServletContext.class
-	};
-	
+	private static final Class[] REFLECTABLE_TYPES = new Class[] { ServletContext.class };
+
+	/**
+	 * Get the ServletContext of the specified Object (default implementation: cast <code>bean</code>).
+	 * @param bean
+	 * @return {@link ServletContext}
+	 */
 	protected ServletContext getServletContext(Object bean) {
 		return (ServletContext) bean;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected String[] getPropertyNamesImpl(Object bean) throws Exception {
 		return enumerationToStringArray(getServletContext(bean).getAttributeNames());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected Object getImpl(Object bean, String propertyName) throws Exception {
 		return getServletContext(bean).getAttribute(propertyName);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void setImpl(Object bean, String propertyName, Object value) throws Exception {
 		getServletContext(bean).setAttribute(propertyName, value);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class[] getReflectableClassesImpl() {
 		return REFLECTABLE_TYPES;
 	}
-	
+
 }
