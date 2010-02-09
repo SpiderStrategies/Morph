@@ -14,7 +14,7 @@
     <conf name="site" visibility="private" />
 
     <!-- public configurations other projects may use -->
-    <conf name="antlr" visibility="public" extends="default" />
+    <conf name="dsl" visibility="public" extends="default" />
     <conf name="beanutils" visibility="public" extends="default" />
     <conf name="chain" visibility="public" extends="default" />
     <conf name="collections" visibility="public" extends="default" />
@@ -29,9 +29,8 @@
   </configurations>
 
   <publications>
-    <artifact name="morph" type="jar" />
-    <artifact name="morph-test" type="jar" conf="test" />
-    <artifact name="morph-sandbox" type="jar" conf="sandbox" />
+    <artifact name="morph" type="jar" conf="default" />
+    <artifact name="morph-sandbox" type="jar" conf="sandbox,dsl" />
   </publications>
 
   <dependencies defaultconf="core->default" defaultconfmapping="*->default">
@@ -65,7 +64,7 @@
                 conf="test,sandbox,chain" />
 
     <dependency org="antlr" name="antlr" rev="2.7.7"
-                conf="codegen,sandbox,antlr" />
+                conf="codegen,sandbox,dsl" />
 
   </dependencies>
 
