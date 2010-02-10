@@ -1,0 +1,47 @@
+<project
+	xmlns:j="jelly:core"
+	xmlns:maven="jelly:maven"
+	xmlns:ant="jelly:ant"
+	xmlns:u="jelly:util"
+  >
+
+	<!--
+	 | Hack to get the sub-component source trees included
+	 -->
+	<!--
+	<preGoal name="java:compile">
+		<ant:path id="maven.compile.src.set">
+			<ant:pathelement location="${pom.build.sourceDirectory}/beanutils" />
+			<ant:pathelement location="${pom.build.sourceDirectory}/core" />
+			<ant:pathelement location="${pom.build.sourceDirectory}/web" />
+		</ant:path>
+	</preGoal>
+	-->
+
+	<!--
+	 | Build the additional jars. The full spring.jar will be built as the default project target
+	 -->
+	 <!--
+	<preGoal name="jar:jar">
+
+		<u:tokenize var="components" delim=",">web,core,beanutils,test</u:tokenize>
+		<j:forEach items="${components}" var="component">
+			<mkdir dir="${path.build}/@{component}"/>
+			<javac destdir="${path.build}/@{component}" deprecation="on" classpathref="classpath" debug="true" debuglevel="lines,vars,source">
+				<src path="${path.src}/@{component}" />
+			</javac>
+			<jar
+				destfile="${path.dist}/${distname}/morph-@{component}-${project.version}.jar"
+				basedir="${path.build}/@{component}"/>
+		</j:forEach>
+
+		<ant:ant target="component-jars"/>
+
+	</preGoal>
+	-->
+
+	<postGoal name="javadoc:generate">
+		<ant:ant target="javadoc"/>
+	</postGoal>
+
+</project>

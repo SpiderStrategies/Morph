@@ -1,0 +1,18 @@
+<!-- just like default, but with Maven2 resolver added -->
+<ivysettings>
+	<settings defaultResolver="default" />
+	<include url="${ivy.default.settings.dir}/ivysettings-public.xml" />
+	<include url="${ivy.default.settings.dir}/ivysettings-shared.xml" />
+	<include url="${ivy.default.settings.dir}/ivysettings-local.xml" />
+	<include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml" />
+
+	<resolvers>
+		<chain name="default" returnFirst="true">
+			<resolver ref="local" />
+			<resolver ref="main" />
+			<ibiblio name="m2" m2compatible="true"
+				root="http://repo1.maven.org/maven2/" />
+			<ibiblio name="m2nopoms" m2compatible="true" usepoms="false" />
+		</chain>
+	</resolvers>
+</ivysettings>

@@ -1,0 +1,280 @@
+<?xml version="1.0"?>
+<project>
+  <id>morph</id>
+  <name>Morph</name>
+  <currentVersion>${project.version}</currentVersion>
+  <organization>
+    <name>SourceForge</name>
+    <url>http://www.sourceforge.net/</url>
+    <logo>http://sourceforge.net/sflogo.php?group_id=124910&amp;type=5</logo>
+  </organization>
+  <inceptionYear>2004</inceptionYear>
+  <package>net.sf.morph</package>
+  <logo>/images/morph.jpg</logo>
+
+  <description>
+    Morph is a Java framework that eases the internal interoperability of an application.  As information flows through an application, it undergoes multiple transformations.  Morph provides a standard way to implement these transformations.
+  </description>
+
+  <shortDescription>Internal Interoperability Tool</shortDescription>
+
+  <url>http://morph.sourceforge.net/</url>
+  <issueTrackingUrl>
+    http://sourceforge.net/tracker/?group_id=124910&amp;atid=700930
+  </issueTrackingUrl>
+  <siteAddress>shell.sourceforge.net</siteAddress>
+  <siteDirectory>
+    /home/groups/m/mo/morph/htdocs
+  </siteDirectory>
+
+  <repository>
+    <connection>
+      scm:svn://development.spiderstrategies.com/morph
+    </connection>
+    <url>
+      svn://development.spiderstrategies.com/morph
+    </url>
+  </repository>
+
+  <versions>
+    <version>
+      <id>head</id>
+      <name>${project.version}</name>
+      <tag>HEAD</tag>
+    </version>
+  </versions>
+
+  <mailingLists>
+    <mailingList>
+      <name>Morph Announcements</name>
+      <subscribe>morph-announce-request@lists.sourceforge.net?subject=subscribe</subscribe>
+      <unsubscribe>morph-announce-request@lists.sourceforge.net?subject=unsubscribe</unsubscribe>
+	  <!--
+      <archive>
+        http://www.mail-archive.com/users@morph.apache.org/
+      </archive>
+	  -->
+    </mailingList>
+    <mailingList>
+      <name>Morph User List</name>
+      <subscribe>morph-user-request@lists.sourceforge.net?subject=subscribe</subscribe>
+      <unsubscribe>morph-user-request@lists.sourceforge.net?subject=unsubscribe</unsubscribe>
+      <archive>
+        http://sourceforge.net/mailarchive/forum.php?forum_id=43172
+      </archive>
+    </mailingList>
+    <mailingList>
+      <name>Morph Developer List</name>
+      <subscribe>morph-developer-request@lists.sourceforge.net?subject=subscribe</subscribe>
+      <unsubscribe>morph-developer-request@lists.sourceforge.net?subject=unsubscribe</unsubscribe>
+      <archive>
+        http://sourceforge.net/mailarchive/forum.php?forum_id=43171
+      </archive>
+    </mailingList>
+  </mailingLists>
+
+  <developers>
+
+    <developer>
+      <name>Matt Sgarlata</name>
+      <id>sgarlatm</id>
+      <email>sgarlatm@lists.sourceforge.net</email>
+    </developer>
+
+    <developer>
+      <name>Matt Benson</name>
+      <id>matt.benson</id>
+      <email>gudnabrsam@yahoo.com</email>
+    </developer>
+  </developers>
+
+  <contributors>
+
+    <contributor>
+      <name>Alexander Volanis</name>
+      <email>AVolanis@rsasecurity.com</email>
+    </contributor>
+
+  </contributors>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+      <url>http://jakarta.apache.org/commons/logging</url>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-chain</groupId>
+      <artifactId>commons-chain</artifactId>
+      <version>1.2</version>
+      <url>http://jakarta.apache.org/commons/chain</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <url>http://www.junit.org/index.htm</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>1.5</version>
+      <url>http://jakarta.apache.org/velocity/</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>servletapi</groupId>
+      <artifactId>servletapi</artifactId>
+      <version>2.4</version>
+      <url>http://java.sun.com/products/servlet/2.3/javadoc/index.html</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>jspapi</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>2.0</version>
+      <url>http://java.sun.com/products/servlet/2.3/javadoc/index.html</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils-core</artifactId>
+      <version>1.7.0</version>
+      <url>http://jakarta.apache.org/commons/beanutils</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.1</version>
+      <url>http://jakarta.apache.org/commons/collections</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <url>http://logging.apache.org/log4j/docs/</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+      <version>2.0</version>
+      <url>http://www.springframework.org</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-mock</artifactId>
+      <version>1.2.6</version>
+      <url>http://www.springframework.org</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.4</version>
+      <url>http://jakarta.apache.org/commons/lang</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>antlr</groupId>
+      <artifactId>antlr</artifactId>
+      <version>2.7.7</version>
+      <url>http://www.antlr2.org</url>
+      <properties>
+        <optional>true</optional>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>composite</groupId>
+      <artifactId>composite</artifactId>
+      <version>1.1</version>
+      <url>http://composite.sourceforge.net</url>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <nagEmailAddress>
+      morph-developer@lists.sourceforge.net
+    </nagEmailAddress>
+
+    <sourceDirectory>src/core</sourceDirectory>
+
+    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+
+    <aspectSourceDirectory/>
+
+    <!-- Unit test cases -->
+    <unitTest>
+      <includes>
+        <include>**/*TestCase.java</include>
+      </includes>
+      <excludes>
+        <exclude>**/Base*TestCase.java</exclude>
+        <exclude>**/*BaseTestCase.java</exclude>
+      </excludes>
+    </unitTest>
+              
+    <!-- J A R  R E S O U R C E S -->
+    <!-- Resources that are packaged up inside the JAR file -->
+    <!--
+	<resources>
+      <resource>
+        <directory>${basedir}/src/resources/misc</directory>
+        <includes>
+          <include>*.xsd</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${basedir}/src/resources/logging</directory>
+        <includes>
+          <include>log4j.properties</include>
+        </includes>
+      </resource>
+    </resources>
+	-->
+  </build>
+</project>

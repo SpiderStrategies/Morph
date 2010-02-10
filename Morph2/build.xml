@@ -1,0 +1,389 @@
+<project name="morph" default="build-all"
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+  <!-- requires Apache Ant >= 1.7.0 -->
+
+  <property file="build.properties" />
+
+  <fail unless="project.version" />
+
+  <property environment="env" />
+
+  <condition property="on-windows">
+    <os family="windows" />
+  </condition>
+
+  <property name="src.dir" location="src" />
+  <property name="lib.dir" location="lib" />
+  <property name="build.dir" location="build" />
+  <property name="classes.dir" location="${build.dir}/classes" />
+  <property name="dist.dir" location="dist" />
+  <property name="docs.dir" location="docs/reference" />
+  <property name="xdocs.dir" location="xdocs" />
+
+  <property name="grammar.dir" location="grammar" />
+  <property name="grammar.file" location="${grammar.dir}/morph.g" />
+  <property name="codegen.dir" location="codegen" />
+  <property name="parser.package" value="net/sf/morph/transform/copiers/dsl" />
+  <property name="grammar.outdir" location="${codegen.dir}/${parser.package}" />
+
+  <!-- define here so less chance we'll forget something: -->
+  <patternset id="dist-src">
+    <include name="src/**" />
+    <include name="grammar/**" />
+    <include name="log4j/**" />
+    <include name="docs/reference/readme.txt" />
+    <include name="docs/reference/src/**" />
+    <include name="docs/reference/styles/**" />
+    <include name="xdocs/**" />
+    <include name="build.xml" />
+    <include name="LICENSE.txt" />
+    <include name="build-documentation.xml" />
+    <include name="build.properties" />
+    <include name="project.xml" />
+    <include name="pom.xml" />
+    <include name="project.properties" />
+    <include name="ivy.xml" />
+    <include name="ivyconf.xml" />
+    <include name="checkstyle.xml" />
+  </patternset>
+
+  <property name="javac.source" value="1.3" />
+  <property name="javac.target" value="1.3" />
+  <property name="javac.deprecation" value="false" />
+  <property name="javac.debug" value="true" />
+  <property name="javac.debuglevel" value="lines,vars,source" />
+
+  <path id="core.src" path="${src.dir}/core" />
+
+  <path id="test.src" path="${src.dir}/test" />
+
+  <path id="sandbox.src">
+    <pathelement location="${src.dir}/sandbox" />
+    <pathelement location="${codegen.dir}" />
+  </path>
+
+  <property name="core.classes" location="${classes.dir}/core" />
+  <property name="test.classes" location="${classes.dir}/test" />
+  <property name="sandbox.classes" location="${classes.dir}/sandbox" />
+
+  <property name="maven.bin" location="bin" />
+  <property name="maven.target" location="target" />
+  <property name="sitegen.dir" location="${maven.target}/docs" />
+  <property name="sitegen.sem" location="${sitegen.dir}.sem" />
+
+  <macrodef name="compile">
+    <attribute name="conf" />
+    <attribute name="destdir" default="${classes.dir}/@{conf}" />
+    <sequential>
+      <mkdir dir="@{destdir}" />
+      <javac destdir="@{destdir}"
+             source="${javac.source}" target="${javac.target}"
+             debug="${javac.debug}" debuglevel="${javac.debuglevel}"
+             deprecation="${javac.deprecation}">
+        <src refid="@{conf}.src" />
+        <classpath refid="@{conf}.cp" />
+      </javac>
+      <copy todir="@{destdir}">
+        <fileset dir="${src.dir}/@{conf}">
+          <exclude name="log4j.properties" />
+          <exclude name="**/*.java" />
+          <exclude name="**/package.html" />
+          <exclude name="**/overview.html" />
+        </fileset>
+      </copy>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="build-jar">
+    <attribute name="conf" />
+    <attribute name="label" default="-@{conf}" />
+    <sequential>
+      <jar destfile="${build.dir}/${ant.project.name}@{label}-${version}.jar"
+           basedir="${classes.dir}/@{conf}">
+        <manifest>
+          <attribute name="Implementation-Version" value="${version}" />
+        </manifest>
+      </jar>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="documentation">
+    <attribute name="dest" />
+    <sequential>
+      <ant antfile="build-documentation.xml" />
+      <copy todir="@{dest}" preservelastmodified="true">
+        <fileset dir="${docs.dir}">
+          <include name="html/" />
+          <include name="html_single/" />
+          <include name="pdf/" />
+        </fileset>
+      </copy>
+    </sequential>
+  </macrodef>
+
+  <target name="ivy-settings">
+    <ivy:configure />
+  </target>
+
+  <target name="resolve" depends="ivy-settings"
+          description="Resolve dependencies with Ivy">
+    <ivy:resolve />
+  </target>
+
+  <target name="report" depends="resolve"
+          description="Generate Ivy dependency report">
+    <ivy:report todir="${build.dir}" />
+  </target>
+
+  <target name="codegen" depends="ivy-settings" description="Generate code">
+    <mkdir dir="${grammar.outdir}" />
+    <antlr target="${grammar.file}" outputdirectory="${grammar.outdir}" />
+  </target>
+
+  <target name="core-classpath" depends="ivy-settings">
+    <ivy:resolve conf="core" />
+    <ivy:cachepath pathid="core.cp" conf="core" />
+  </target>
+
+  <target name="compile" depends="core-classpath"
+          description="Compile core classes">
+    <compile conf="core" />
+  </target>
+
+  <target name="test-classpath" depends="ivy-settings">
+    <ivy:resolve conf="test" />
+    <ivy:cachepath pathid="test.ivycp" conf="test" />
+    <path id="test.cp">
+      <path refid="test.ivycp" />
+      <path location="${core.classes}" />
+    </path>
+  </target>
+
+  <target name="compile-test" depends="compile,test-classpath"
+          description="Compile test classes">
+    <compile conf="test" />
+  </target>
+
+  <target name="sandbox-classpath" depends="ivy-settings">
+    <ivy:resolve conf="sandbox" />
+    <ivy:cachepath pathid="sandbox.ivycp" conf="sandbox" />
+    <path id="sandbox.cp">
+      <path refid="sandbox.ivycp" />
+      <path location="${core.classes}" />
+      <path location="${test.classes}" />
+    </path>
+  </target>
+
+  <target name="compile-sandbox" depends="compile-test,codegen,sandbox-classpath"
+          description="Compile sandbox classes">
+    <compile conf="sandbox" />
+  </target>
+
+  <target name="-version" unless="version">
+    <property name="local-version" value="" />
+    <property name="version" value="${project.version}${local-version}" />
+    <property name="project.fullname" value="${ant.project.name}-${version}" />
+    <property name="project.dist" location="${dist.dir}/${project.fullname}" />
+  </target>
+
+  <target name="local-version">
+    <tstamp>
+      <format property="now" pattern="yyyyMMddHHmmss" />
+    </tstamp>
+    <property name="local-version" value="-${now}" />
+  </target>
+
+  <target name="build" depends="compile,-version"
+          description="Build core artifact(s)">
+    <build-jar conf="core" label="" />
+  </target>
+
+  <target name="build-test" depends="compile-test,-version"
+          description="Build test artifact(s)">
+    <build-jar conf="test" />
+  </target>
+
+  <target name="build-sandbox" depends="compile-sandbox,-version"
+          description="Build sandbox artifact(s)">
+    <build-jar conf="sandbox" />
+  </target>
+
+  <target name="build-all" depends="build,build-test,build-sandbox"
+          description="Build all artifacts" />
+
+  <target name="publish" depends="local-version,build-all"
+          description="Publish this project in the local Ivy repository">
+    <delete file="${build.dir}/ivy.xml" />
+
+    <!-- generate ivy.xml replacing the one just deleted -->
+    <ivy:publish artifactspattern="${build.dir}/[artifact]-[revision].[ext]"
+                 resolver="local"
+                 pubrevision="${version}"
+                 pubdate="${now}"
+                 status="integration" />
+    <echo>${project.fullname} published locally</echo>
+  </target>
+
+  <target name="-site-uptodate">
+    <condition property="site-uptodate">
+      <and>
+        <available file="${sitegen.sem}" />
+        <uptodate property="site-uptodate" targetfile="${sitegen.sem}">
+          <srcfiles dir="${src.dir}" />
+          <srcfiles dir="${docs.dir}" includes="src/**,styles/**" />
+          <srcfiles dir="${xdocs.dir}" />
+          <srcfiles file="project.xml" />
+        </uptodate>
+      </and>
+    </condition>
+  </target>
+
+  <target name="-check-maven" depends="-site-uptodate" unless="site-uptodate">
+    <fail unless="env.MAVEN_HOME" message="Maven 1.x required.  See http://maven.apache.org/maven-1.x/start/install.html"/>
+    <fail message="Maven 1.x required; Maven 2.x found.">
+      <condition>
+        <available file="${env.MAVEN_HOME}/bin/mvn" />
+      </condition>
+    </fail>
+
+    <condition property="site-win">
+      <isset property="on-windows" />
+    </condition>
+
+    <condition property="site-other">
+      <not>
+        <isset property="on-windows" />
+      </not>
+    </condition>
+  </target>
+
+  <target name="-site-win" depends="-check-maven" if="site-win">
+    <exec taskname="maven" executable="cmd">
+      <arg value="/c" />
+      <arg value="${env.MAVEN_HOME}/bin/maven.bat" />
+      <arg line="-Dver.ext=${ver.ext}" />
+      <arg value="site:generate" />
+    </exec>
+  </target>
+
+  <target name="-site-other" depends="-check-maven" if="site-other">
+    <exec taskname="maven" executable="${env.MAVEN_HOME}/bin/maven">
+      <arg line="-Dver.ext=${ver.ext}" />
+      <arg value="site:generate" />
+    </exec>
+  </target>
+
+  <target name="site" depends="-site-win,-site-other" unless="site-uptodate"
+          description="Generate website">
+    <documentation dest="${sitegen.dir}/reference" />
+    <echo file="${sitegen.sem}">uptodate check for sitegen</echo>
+    <delete file="build.log" />
+    <delete file="velocity.log" />
+  </target>
+
+  <target name="dist" depends="-check-maven,-dist-bin,-dist-src"
+          description="Prepare distribution files">
+    <checksum fileext=".md5" algorithm="MD5">
+      <fileset id="arc" dir="${dist.dir}" includes="*.zip,*.tar.gz,*.tar.bz2" />
+    </checksum>
+    <checksum fileext=".sha1" algorithm="SHA">
+      <fileset refid="arc" />
+    </checksum>
+  </target>
+
+  <!-- ASF style distros -->
+  <!--target name="-dist-bin" depends="build-all,site">
+    <mkdir dir="${dist.dir}" />
+    <zip destfile="${project.dist}.zip" duplicate="fail">
+      <zipfileset dir="${build.dir}" includes="*-${version}.jar"
+                  prefix="${project.fullname}" />
+      <zipfileset dir="${sitegen.dir}" prefix="${project.fullname}/docs" />
+      <zipfileset file="LICENSE.txt" prefix="${project.fullname}" />
+    </zip>
+    <tar destfile="${project.dist}.tar.gz" longfile="gnu" compression="gzip">
+      <zipfileset src="${project.dist}.zip" />
+    </tar>
+    <tar destfile="${project.dist}.tar.bz2" longfile="gnu" compression="bzip2">
+      <zipfileset src="${project.dist}.zip" />
+    </tar>
+  </target-->
+
+  <!--target name="-dist-src" depends="build-all,site">
+    <mkdir dir="${dist.dir}" /-->
+    <!-- create archives with src and buildfile(s) -->
+    <!--property name="project.srcname" value="${project.fullname}-src" />
+    <property name="src.dist" value="${dist.dir}/${project.srcname}" />
+    <basename file="${ant.file}" property="ant.file.basename" />
+    <zip destfile="${src.dist}.zip" duplicate="fail">
+      <zipfileset dir="${basedir}" prefix="${project.srcname}">
+        <patternset refid="dist-src" />
+      </zipfileset>
+    </zip>
+    <tar destfile="${src.dist}.tar.gz" longfile="gnu" compression="gzip">
+      <zipfileset src="${src.dist}.zip" />
+    </tar>
+    <tar destfile="${src.dist}.tar.bz2" longfile="gnu" compression="bzip2">
+      <zipfileset src="${src.dist}.zip" />
+    </tar>
+  </target-->
+
+  <!-- SF.net style distro -->
+  <target name="-dist-bin" depends="build-all,site">
+    <mkdir dir="${dist.dir}" />
+    <!-- create archives with src and binary content -->
+    <basename file="${ant.file}" property="ant.file.basename" />
+    <zip destfile="${project.dist}.zip" duplicate="fail">
+      <zipfileset dir="${build.dir}" includes="*-${version}.jar"
+                  prefix="${project.fullname}" />
+      <zipfileset dir="${basedir}" prefix="${project.fullname}">
+        <patternset refid="dist-src" />
+      </zipfileset>
+      <zipfileset dir="${sitegen.dir}" prefix="${project.fullname}/site" />
+    </zip>
+    <tar destfile="${project.dist}.tar.gz" longfile="gnu" compression="gzip">
+      <zipfileset src="${project.dist}.zip" />
+    </tar>
+    <tar destfile="${project.dist}.tar.bz2" longfile="gnu" compression="bzip2">
+      <zipfileset src="${project.dist}.zip" />
+    </tar>
+  </target>
+
+  <target name="-dist-src" />
+
+  <target name="clean-lib" description="Clean project dependencies">
+    <delete includeemptydirs="true" dir="${lib.dir}" />
+  </target>
+
+  <target name="clean-resolve" depends="clean-lib,resolve" />
+
+  <target name="clean" description="Clean project">
+    <delete dir="${build.dir}" />
+    <delete dir="${codegen.dir}" />
+    <delete dir="${dist.dir}" />
+    <delete dir="${maven.bin}" />
+    <delete dir="${maven.target}" />
+  </target>
+
+  <target name="rebuild" depends="clean,build" />
+
+  <target name="rebuild-all" depends="clean,build-all" />
+
+  <target name="clean-all" depends="clean,clean-lib"
+          description="Clean project and dependencies" />
+
+  <target name="test" depends="compile-test">
+    <property name="realtime.formatter"
+value="org.apache.tools.ant.taskdefs.optional.junit.RealtimeJUnitResultFormatter" />
+
+    <junit failureproperty="tests.failed">
+      <test name="net.sf.morph.MorphTestRunner" />
+      <classpath>
+        <path refid="test.cp" />
+        <pathelement path="${test.classes}" />
+      </classpath>
+      <formatter type="plain" usefile="false" />
+    </junit>
+    <fail if="tests.failed" />
+  </target>
+
+</project>

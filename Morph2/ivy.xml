@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<ivy-module version="1.3">
+
+  <info organisation="net.sf.morph" module="morph" />
+
+  <configurations>
+    <conf name="default" visibility="public" />
+
+    <conf name="core" visibility="private" extends="default" />
+    <conf name="test" visibility="private" extends="core" />
+    <conf name="sandbox" visibility="private" extends="test" />
+    <conf name="codegen" visibility="private" extends="default" />
+    <conf name="site" visibility="private" />
+
+    <!-- public configurations other projects may use -->
+    <conf name="dsl" visibility="public" extends="default" />
+    <conf name="beanutils" visibility="public" extends="default" />
+    <conf name="chain" visibility="public" extends="default" />
+    <conf name="collections" visibility="public" extends="default" />
+    <conf name="lang" visibility="public" extends="default" />
+    <conf name="spring" visibility="public" extends="default" />
+    <conf name="velocity" visibility="public" extends="default" />
+    <conf name="web" visibility="public" extends="default" />
+    <conf name="jdom" visibility="public" extends="default" />
+
+    <conf name="all" visibility="public" extends="*(public)" />
+
+  </configurations>
+
+  <publications>
+    <artifact name="morph" type="jar" conf="default" />
+    <artifact name="morph-sandbox" type="jar" conf="sandbox,dsl" />
+  </publications>
+
+  <dependencies defaultconf="core->default" defaultconfmapping="*->default">
+    <!-- required core -->
+    <dependency org="commons-logging" name="commons-logging" rev="1.1.1" conf="default" />
+    <dependency org="net.sf.composite" name="composite"
+                rev="latest.integration" />
+
+    <!-- optional core -->
+    <dependency org="org.springframework" name="spring" rev="2.0"
+                conf="core,spring" />
+    <dependency org="servletapi" name="servletapi" rev="2.3" conf="core,web" />
+    <!--dependency org="jspapi" name="jsp-api" rev="2.0" conf="core,web" /-->
+    <dependency org="commons-beanutils" name="commons-beanutils" rev="1.7.0"
+                conf="core,beanutils" />
+    <dependency org="velocity" name="velocity" rev="1.5"
+                conf="core,velocity,site" />
+    <dependency org="jdom" name="jdom" rev="1.0" conf="jdom,sandbox,site" />
+    <dependency org="commons-collections" name="commons-collections" rev="3.2.1"
+                conf="core,collections,site" />
+
+    <!-- etc -->
+    <dependency org="commons-lang" name="commons-lang" rev="2.4"
+                conf="core,lang,site" />
+    <dependency org="junit" name="junit" rev="3.8.1" conf="test" />
+    <dependency org="log4j" name="log4j" rev="1.2.14" conf="test" />
+    <dependency org="org.springframework" name="spring-mock" rev="1.1.4"
+                conf="test" />
+
+    <dependency org="commons-chain" name="commons-chain" rev="1.2"
+                conf="test,sandbox,chain" />
+
+    <dependency org="antlr" name="antlr" rev="2.7.7"
+                conf="codegen,sandbox,dsl" />
+
+  </dependencies>
+
+</ivy-module>

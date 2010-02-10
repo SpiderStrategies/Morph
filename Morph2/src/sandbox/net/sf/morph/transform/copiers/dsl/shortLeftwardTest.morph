@@ -1,0 +1,8 @@
+net.sf.morph.transform.copiers.dsl.A : net.sf.morph.transform.copiers.dsl.B {
+	<-foo,
+	<-bar,
+	<-baz,
+	stringA<=stringB,
+	intA<=intB,
+	objectA<=objectB
+}
