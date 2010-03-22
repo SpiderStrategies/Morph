@@ -14,11 +14,11 @@ public class ResourceArrayInputStreamPropertyEditorTest extends TestCase {
 	public void test1() {
 		assertEquals(
 				"foobar",
-				getContent("classpath:net/sf/morph/util/foo,classpath:net/sf/morph/util/bar"));
+				getContent("classpath:net/sf/morph2/util/foo,classpath:net/sf/morph2/util/bar"));
 	}
 
 	public void test2() {
-		String content = getContent("classpath:net/sf/morph/util/???");
+		String content = getContent("classpath:net/sf/morph2/util/???");
 		assertTrue("barfoo".equals(content) || "foobar".equals(content));
 	}
 
