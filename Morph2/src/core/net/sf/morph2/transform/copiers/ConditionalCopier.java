@@ -24,6 +24,7 @@ import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
 import net.sf.morph2.transform.ExplicitTransformer;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.transform.converters.DefaultToBooleanConverter;
 import net.sf.morph2.transform.transformers.BaseTransformer;
@@ -54,9 +55,8 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 	protected Class[] getDestinationClassesImpl() throws Exception {
 		Transformer tt = getThenTransformer();
 		Transformer et = getElseTransformer();
-		return et == null ? tt.getDestinationClasses() : tt == null ? et
-				.getDestinationClasses() : merge(tt.getDestinationClasses(), et
-				.getDestinationClasses());
+		return et == null ? tt.getDestinationClasses() : tt == null ? et.getDestinationClasses()
+				: merge(tt.getDestinationClasses(), et.getDestinationClasses());
 	}
 
 	/**
@@ -65,8 +65,8 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 	protected Class[] getSourceClassesImpl() throws Exception {
 		Transformer tt = getThenTransformer();
 		Transformer et = getElseTransformer();
-		return et == null ? tt.getSourceClasses() : tt == null ? et.getSourceClasses()
-				: merge(tt.getSourceClasses(), et.getSourceClasses());
+		return et == null ? tt.getSourceClasses() : tt == null ? et.getSourceClasses() : merge(tt
+				.getSourceClasses(), et.getSourceClasses());
 	}
 
 	/**
@@ -79,13 +79,11 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 	/**
 	 * {@inheritDoc}
 	 */
-	protected boolean isTransformableImpl(Class destinationType, Class sourceType)
-			throws Exception {
-		return TransformerUtils.isTransformable(getIfConverter(), Boolean.class,
-				sourceType)
-				&& (TransformerUtils.isTransformable(getThenTransformer(),
-						destinationType, sourceType) || TransformerUtils.isTransformable(
-						getElseTransformer(), destinationType, sourceType));
+	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
+		return TransformerUtils.isTransformable(getIfConverter(), Boolean.class, sourceType)
+				&& (TransformerUtils.isTransformable(getThenTransformer(), destinationType,
+						sourceType) || TransformerUtils.isTransformable(getElseTransformer(),
+						destinationType, sourceType));
 	}
 
 	/**
@@ -107,18 +105,17 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
 			throws Exception {
-		//pass source as default result when "if" fails and no "else":
-		return transform(destinationClass, source, source, locale,
-				TRANSFORMATION_TYPE_CONVERT);
+		// pass source as default result when "if" fails and no "else":
+		return transform(destinationClass, source, source, locale, TransformationType.CONVERT);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
-			Integer preferredTransformationType) throws Exception {
+			TransformationType preferredTransformationType) throws Exception {
 		transform(ClassUtils.getClass(destination), destination, source, locale,
-				TRANSFORMATION_TYPE_COPY);
+				TransformationType.COPY);
 	}
 
 	/**
@@ -132,15 +129,15 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 	 * @throws TransformationException
 	 */
 	protected Object transform(Class destinationType, Object destination, Object source,
-			Locale locale, Integer preferredTransformationType)
+			Locale locale, TransformationType preferredTransformationType)
 			throws TransformationException {
 		Transformer t;
 		if (evaluateIf(source, locale)) {
 			t = getThenTransformer();
-			//note that the thenTransformer is not required until it is intended to be used
+			// note that the thenTransformer is not required until it is
+			// intended to be used
 			Assert.notNull(t, "thenTransformer");
-		}
-		else {
+		} else {
 			t = getElseTransformer();
 		}
 		return t == null ? destination : TransformerUtils.transform(t, destinationType,
@@ -222,4 +219,3 @@ public class ConditionalCopier extends BaseTransformer implements DecoratedConve
 	}
 
 }
-

@@ -25,6 +25,7 @@ import net.sf.morph2.transform.Converter;
 import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
 import net.sf.morph2.transform.NodeCopier;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.transform.transformers.BaseTransformer;
 import net.sf.morph2.util.Assert;
@@ -68,10 +69,10 @@ public class SetExpressionCopier extends BaseTransformer implements DecoratedCop
 
 	/**
 	 * {@inheritDoc}
-	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, TransformationType)
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
-			Integer preferredTransformationType) throws Exception {
+			TransformationType preferredTransformationType) throws Exception {
 		getLanguage().set(destination, expression, source, locale);
 	}
 

@@ -22,6 +22,7 @@ import java.util.Set;
 import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
 import net.sf.morph2.transform.ExplicitTransformer;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.transformers.BaseTransformer;
 import net.sf.morph2.util.ClassUtils;
 import net.sf.morph2.util.ContainerUtils;
@@ -80,16 +81,16 @@ public class ImmutableComponentArrayCopier extends BaseTransformer implements
 	 */
 	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
 		Object array = ClassUtils.createArray(destinationClass.getComponentType(), Array.getLength(source));
-		copyImpl(array, source, locale, TRANSFORMATION_TYPE_CONVERT);
+		copyImpl(array, source, locale, TransformationType.CONVERT);
 		return array;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, TransformationType)
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
-			Integer preferredTransformationType) throws Exception {
+			TransformationType preferredTransformationType) throws Exception {
 		System.arraycopy(source, 0, destination, 0, Array.getLength(source));
 	}
 

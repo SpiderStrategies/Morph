@@ -18,6 +18,7 @@ package net.sf.morph2.examples.person;
 import java.util.Locale;
 
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.copiers.PropertyNameMappingCopier;
 
 
@@ -27,7 +28,7 @@ import net.sf.morph2.transform.copiers.PropertyNameMappingCopier;
  */
 public class PersonDAOToPersonVOCopier extends PropertyNameMappingCopier {
 
-	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType)
+	protected void copyImpl(Object destination, Object source, Locale locale, TransformationType preferredTransformationType)
 		throws TransformationException {
 		
 		super.copyImpl(destination, source, locale, preferredTransformationType);

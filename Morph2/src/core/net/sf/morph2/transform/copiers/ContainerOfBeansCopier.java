@@ -20,6 +20,7 @@ import java.util.Locale;
 import net.sf.morph2.reflect.IndexedContainerReflector;
 import net.sf.morph2.transform.Converter;
 import net.sf.morph2.transform.Copier;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.util.ReflectorUtils;
 
@@ -35,7 +36,7 @@ public class ContainerOfBeansCopier extends ContainerCopier {
 //	private Transformer beanTransformer;
 	private Class destinationBeanClass;
 	
-	protected void put(int index, Object destination, Object value, Class valueClass, Locale locale, Integer preferredTransformationType) {
+	protected void put(int index, Object destination, Object value, Class valueClass, Locale locale, TransformationType preferredTransformationType) {
 		Object transformed = null;
 		// try to do the transformation using a copy operation
 		if (getBeanTransformer() instanceof Copier &&

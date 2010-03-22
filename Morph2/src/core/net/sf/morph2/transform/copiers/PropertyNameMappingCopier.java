@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.util.ContainerUtils;
 
 /**
@@ -120,7 +121,7 @@ public class PropertyNameMappingCopier extends BasePropertyNameCopier {
 	 * {@inheritDoc}
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
-			Integer preferredTransformationType) throws TransformationException {
+			TransformationType preferredTransformationType) throws TransformationException {
 
 		Entry propertyMapping;
 		String sourceProperty;

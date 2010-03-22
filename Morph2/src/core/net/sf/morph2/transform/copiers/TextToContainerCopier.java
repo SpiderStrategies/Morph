@@ -23,6 +23,7 @@ import net.sf.morph2.transform.Converter;
 import net.sf.morph2.transform.Copier;
 import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.transformers.BaseTransformer;
 import net.sf.morph2.util.MorphStringTokenizer;
 
@@ -83,7 +84,7 @@ public class TextToContainerCopier extends BaseTransformer implements DecoratedC
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType) throws Exception {
+	protected void copyImpl(Object destination, Object source, Locale locale, TransformationType preferredTransformationType) throws Exception {
 		Enumeration tokenizer = getTokenizer(source, locale);	    
 	    getContainerCopier().copy(destination, tokenizer, locale);
     }

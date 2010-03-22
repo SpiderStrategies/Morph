@@ -15,6 +15,8 @@
  */
 package net.sf.morph2.transform.copiers;
 
+import static net.sf.morph2.transform.TransformationType.*;
+
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -30,6 +32,7 @@ import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
 import net.sf.morph2.transform.NodeCopier;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.transform.support.ResetableIteratorWrapper;
 import net.sf.morph2.transform.transformers.BaseReflectorTransformer;
@@ -99,8 +102,8 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 * @param sourceValueClass source type, or type source value would be if not null
 	 * @return destination element type
 	 */
-	protected Class determineDestinationContainedType(Object destination,
-			Object sourceValue, Class sourceValueClass, Locale locale) {
+	protected Class determineDestinationContainedType(Object destination, Object sourceValue,
+			Class sourceValueClass, Locale locale) {
 		return determineDestinationContainedType(destination, sourceValueClass);
 	}
 
@@ -111,8 +114,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 * @return destination element type
 	 * @deprecated in favor of fully-specified method
 	 */
-	protected Class determineDestinationContainedType(Object destination,
-			Class sourceValueClass) {
+	protected Class determineDestinationContainedType(Object destination, Class sourceValueClass) {
 		// determine the destinationType
 		Class destinationType = null;
 
@@ -134,15 +136,18 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 		}
 
 		if (destinationType == null) {
-			//check whether nestedTransformer has only one possible destination for the given source:
-			Class[] availableDestinationTypes = TransformerUtils.getDestinationClasses(getNestedTransformer(), sourceValueClass);
-			if (availableDestinationTypes.length == 1 && availableDestinationTypes[0] != Object.class) {
+			// check whether nestedTransformer has only one possible destination
+			// for the given source:
+			Class[] availableDestinationTypes = TransformerUtils.getDestinationClasses(
+					getNestedTransformer(), sourceValueClass);
+			if (availableDestinationTypes.length == 1
+					&& availableDestinationTypes[0] != Object.class) {
 				destinationType = availableDestinationTypes[0];
 			}
 		}
 		// if no mapping was found and the destination is untyped
 		if (destinationType == null) {
-			// choose the class of the source as the destination class			
+			// choose the class of the source as the destination class
 			destinationType = sourceValueClass;
 		}
 		return destinationType;
@@ -168,61 +173,55 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 *            the preferred transformation type to perform when transforming
 	 *            the sourceValue for addition into the destination
 	 */
-	protected void put(int index, Object destination, Object sourceValue, Class sourceValueClass, Locale locale, Integer preferredTransformationType) {
-		Class destinationContainedType =
-			determineDestinationContainedType(destination, sourceValue, sourceValueClass, locale);
+	protected void put(int index, Object destination, Object sourceValue, Class sourceValueClass,
+			Locale locale, TransformationType preferredTransformationType) {
+		Class destinationContainedType = determineDestinationContainedType(destination,
+				sourceValue, sourceValueClass, locale);
 
-		boolean canGrow = ReflectorUtils.isReflectable(getReflector(),
-				destination.getClass(), GrowableContainerReflector.class);
-		boolean canMutate = ReflectorUtils.isReflectable(getReflector(),
-				destination.getClass(), MutableIndexedContainerReflector.class)
+		boolean canGrow = ReflectorUtils.isReflectable(getReflector(), destination.getClass(),
+				GrowableContainerReflector.class);
+		boolean canMutate = ReflectorUtils.isReflectable(getReflector(), destination.getClass(),
+				MutableIndexedContainerReflector.class)
 				&& getMutableIndexedContainerReflector().getSize(destination) > index;
-		Integer xform = null;
+		TransformationType xform = null;
 
-		if (isPreferGrow() || TRANSFORMATION_TYPE_CONVERT.equals(preferredTransformationType)) {
-			xform = canGrow ? TRANSFORMATION_TYPE_CONVERT
-					: canMutate ? TRANSFORMATION_TYPE_COPY : null;
-		}
-		else if (TRANSFORMATION_TYPE_COPY.equals(preferredTransformationType)) {
-			xform = canMutate ? TRANSFORMATION_TYPE_COPY
-					: canGrow ? TRANSFORMATION_TYPE_CONVERT : null;
+		if (isPreferGrow() || preferredTransformationType == CONVERT) {
+			xform = canGrow ? CONVERT : canMutate ? COPY : null;
+		} else if (preferredTransformationType == COPY) {
+			xform = canMutate ? COPY : canGrow ? CONVERT : null;
 		}
 		// if we can just add items to the end of the existing container
-		if (TRANSFORMATION_TYPE_CONVERT.equals(xform)) {
+		if (xform == CONVERT) {
 
 			// do a nested conversion so that we have a new instance called
 			// convertedValue that we can ...
-			Object convertedValue = nestedTransform(destinationContainedType, null,
-					sourceValue, locale, TRANSFORMATION_TYPE_CONVERT);
+			Object convertedValue = nestedTransform(destinationContainedType, null, sourceValue,
+					locale, CONVERT);
 			// ... add to the end of the existing container
 			getGrowableContainerReflector().add(destination, convertedValue);
 		}
 		// else we are overwriting a value at a given index of the destination
 		// container
-		else if (TRANSFORMATION_TYPE_COPY.equals(xform)) {
+		else if (xform == COPY) {
 			// we may want to do a copy or a convert, depending on the
 			// capabilities of our graph transformer and whether a copy
 			// operation is preferred. this logic is implemented in the
 			// TransformerUtils.transform method method
-			Object destinationValue = getMutableIndexedContainerReflector().get(
-				destination, index);
-			Object transformedValue = nestedTransform(destinationContainedType,
-					destinationValue, sourceValue, locale, preferredTransformationType);
-			getMutableIndexedContainerReflector().set(destination, index,
-				transformedValue);
-		}
-		else {
+			Object destinationValue = getMutableIndexedContainerReflector().get(destination, index);
+			Object transformedValue = nestedTransform(destinationContainedType, destinationValue,
+					sourceValue, locale, preferredTransformationType);
+			getMutableIndexedContainerReflector().set(destination, index, transformedValue);
+		} else {
 			// this shouldn't happen
-			throw new TransformationException("Unable to copy value at index "
-				+ index + " to the destination because "
-				+ ObjectUtils.getObjectDescription(getReflector())
-				+ ", the reflector specified for "
-				+ ObjectUtils.getObjectDescription(this)
-				+ ", cannot reflect destination "
-				+ ObjectUtils.getObjectDescription(destination)
-				+ " with a reflector that implements "
-				+ GrowableContainerReflector.class.getName() + " or "
-				+ MutableIndexedContainerReflector.class.getName());
+			throw new TransformationException("Unable to copy value at index " + index
+					+ " to the destination because "
+					+ ObjectUtils.getObjectDescription(getReflector())
+					+ ", the reflector specified for " + ObjectUtils.getObjectDescription(this)
+					+ ", cannot reflect destination "
+					+ ObjectUtils.getObjectDescription(destination)
+					+ " with a reflector that implements "
+					+ GrowableContainerReflector.class.getName() + " or "
+					+ MutableIndexedContainerReflector.class.getName());
 		}
 	}
 
@@ -235,25 +234,24 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 * @param preferredTransformationType
 	 * @return result
 	 */
-	protected Object nestedTransform(Class destinationContainedType,
-			Object destinationValue, Object sourceValue, Locale locale,
-			Integer preferredTransformationType) {
-		return TransformerUtils.transform(getNestedTransformer(),
-				destinationContainedType, destinationValue, sourceValue, locale,
-				preferredTransformationType);
+	protected Object nestedTransform(Class destinationContainedType, Object destinationValue,
+			Object sourceValue, Locale locale, TransformationType preferredTransformationType) {
+		return TransformerUtils.transform(getNestedTransformer(), destinationContainedType,
+				destinationValue, sourceValue, locale, preferredTransformationType);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected Object convertImpl(Class destinationClass, Object source, Locale locale) throws Exception {
-		// The code here for Iterators and Enumerations is not quite 
-		// as rigorous as it could be.  Being as rigorous as possible, we would
+	protected Object convertImpl(Class destinationClass, Object source, Locale locale)
+			throws Exception {
+		// The code here for Iterators and Enumerations is not quite
+		// as rigorous as it could be. Being as rigorous as possible, we would
 		// take into account the possibility of converting from one type of
 		// Iterator to another type of Iterator or one type of Enumeration to
-		// another type of Enumeration.  That's kind of silly though because
+		// another type of Enumeration. That's kind of silly though because
 		// there aren't any stand-alone Iterator or Enumeration implementations
-		// that come with the JDK.  Thus, if any Iterator or Iterator subclass
+		// that come with the JDK. Thus, if any Iterator or Iterator subclass
 		// or Enumeration or Enumeration subclass is requested, we just return
 		// whatever type is most readily available.
 		boolean iter = Iterator.class.isAssignableFrom(destinationClass);
@@ -270,30 +268,27 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType)
-		throws TransformationException {
+	protected void copyImpl(Object destination, Object source, Locale locale,
+			TransformationType preferredTransformationType) throws TransformationException {
 		// if the destination is an Iterator or Enumeration, we actually already
 		// did all the required work in the createNewInstance method, so just
 		// return
-		if (destination instanceof Iterator ||
-			destination instanceof Enumeration) {
+		if (destination instanceof Iterator || destination instanceof Enumeration) {
 			return;
 		}
 		int i = 0;
 		Iterator sourceIterator = getContainerReflector().getIterator(source);
 		while (sourceIterator.hasNext()) {
 			Object sourceValue = sourceIterator.next();
-			// determine the 
+			// determine the
 			Class sourceValueClass;
 			if (sourceValue == null) {
-				sourceValueClass = getContainerReflector().getContainedType(
-					source.getClass());				
-			}
-			else {
+				sourceValueClass = getContainerReflector().getContainedType(source.getClass());
+			} else {
 				sourceValueClass = sourceValue.getClass();
 			}
 			put(i++, destination, sourceValue, sourceValueClass, locale,
-				preferredTransformationType);
+					preferredTransformationType);
 		}
 	}
 
@@ -302,9 +297,8 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 */
 	public Object createReusableSource(Class destinationClass, Object source) {
 		// if to array, get a resetable iterator over the source object:
-		return destinationClass.isArray() ? new ResetableIteratorWrapper(
-				getContainerReflector().getIterator(source))
-				: super.createReusableSource(destinationClass, source);
+		return destinationClass.isArray() ? new ResetableIteratorWrapper(getContainerReflector()
+				.getIterator(source)) : super.createReusableSource(destinationClass, source);
 	}
 
 	/**
@@ -336,7 +330,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	protected boolean isWrappingRuntimeExceptions() {
 		// this transformer can recursively call other transformers, so we don't
 		// want to eat user defined exceptions
-	    return false;
+		return false;
 	}
 
 	/**
@@ -367,8 +361,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 * @param containedSourceToDestinationMapping Map
 	 * @see {@link net.sf.morph2.util.TypeMap}
 	 */
-	public void setContainedSourceToDestinationTypeMap(
-		Map containedSourceToDestinationMapping) {
+	public void setContainedSourceToDestinationTypeMap(Map containedSourceToDestinationMapping) {
 		this.containedSourceToDestinationTypeMap = new TypeMap(containedSourceToDestinationMapping);
 	}
 
@@ -387,7 +380,7 @@ public class ContainerCopier extends BaseReflectorTransformer implements Decorat
 	 * grow vs. mutate will be determined at runtime by the capabilities of the configured
 	 * reflector with regard to the copy destination; preferredTransformationType will also
 	 * be observed.
-	 * @see #copyImpl(Object, Object, Locale, Integer)
+	 * @see #copyImpl(Object, Object, Locale, TransformationType)
 	 * @since Morph 1.1
 	 * @param preferGrow the boolean to set
 	 */

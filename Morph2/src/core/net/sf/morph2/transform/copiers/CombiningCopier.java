@@ -20,6 +20,7 @@ import java.util.Locale;
 import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.transformers.BaseReflectorTransformer;
 
 /**
@@ -51,7 +52,7 @@ public class CombiningCopier extends BaseReflectorTransformer implements Decorat
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType) throws TransformationException {
+	protected void copyImpl(Object destination, Object source, Locale locale, TransformationType preferredTransformationType) throws TransformationException {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("not implemented");
 	}

@@ -22,6 +22,7 @@ import net.sf.composite.util.ObjectUtils;
 import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
 import net.sf.morph2.transform.NodeCopier;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.transform.transformers.BaseReflectorTransformer;
 import net.sf.morph2.util.TransformerUtils;
@@ -99,7 +100,7 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 	 */
 	protected Transformer chooseTransformer(String sourceProperty, Object source,
 			String destinationProperty, Object destination, Locale locale,
-			Integer preferredTransformationType) {
+			TransformationType preferredTransformationType) {
 		Map m = getPropertyTransformers();
 		if (m != null) {
 			Transformer t = (Transformer) m.get(sourceProperty);
@@ -122,7 +123,7 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 	 */
 	protected void copyProperty(String sourceProperty, Object source,
 			String destinationProperty, Object destination, Locale locale,
-			Integer preferredTransformationType) {
+			TransformationType preferredTransformationType) {
 		if (getLog().isTraceEnabled()) {
 			getLog().trace(
 				"Copying property '" + sourceProperty + "' of "
@@ -183,10 +184,10 @@ public abstract class BasePropertyNameCopier extends BaseReflectorTransformer im
 	 * @return Integer
 	 * @see Transformer
 	 */
-	protected Integer getPreferredTransformationType(Object source,
+	protected TransformationType getPreferredTransformationType(Object source,
 			String sourceProperty, Object sourceValue, Object destination,
 			String destinationProperty, Object destinationValue, Locale locale,
-			Integer preferredTransformationType) {
+			TransformationType preferredTransformationType) {
 		return preferredTransformationType;
 	}
 

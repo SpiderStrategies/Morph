@@ -44,6 +44,7 @@ import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
 import net.sf.morph2.transform.NodeCopier;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.transform.transformers.BaseTransformer;
 import net.sf.morph2.util.TransformerUtils;
@@ -165,7 +166,7 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 	 * {@inheritDoc}
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
-			Integer preferredTransformationType) throws Exception {
+			TransformationType preferredTransformationType) throws Exception {
 		for (Iterator it = getMapping().entrySet().iterator(); it.hasNext();) {
 			Map.Entry e = (Map.Entry) it.next();
 			String sourceProperty = (String) e.getKey();
@@ -188,7 +189,7 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 	 */
 	protected void copyProperty(String sourceProperty, Object source,
 			String destinationProperty, Object destination, Locale locale,
-			Integer preferredTransformationType) throws Exception {
+			TransformationType preferredTransformationType) throws Exception {
 		if (getLog().isTraceEnabled()) {
 			getLog().trace(
 					"Copying property '" + sourceProperty + "' of "
@@ -213,7 +214,7 @@ public class PropertyExpressionMappingCopier extends BaseTransformer implements
 		if (getLanguage().isProperty(destinationProperty)
 				&& !((BeanReflector) getReflector(BeanReflector.class)).isWriteable(destination,
 						destinationProperty)) {
-			preferredTransformationType = TRANSFORMATION_TYPE_COPY;
+			preferredTransformationType = TransformationType.COPY;
 		}
 		// determine the new value that will be set on the destination
 		Object newDestinationValue = TransformerUtils.transform(transformer,

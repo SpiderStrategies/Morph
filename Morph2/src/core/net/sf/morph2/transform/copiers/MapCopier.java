@@ -20,6 +20,7 @@ import java.util.Map;
 
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph2.reflect.reflectors.MapReflector;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.util.ClassUtils;
 import net.sf.morph2.util.TransformerUtils;
 
@@ -37,6 +38,7 @@ public class MapCopier extends ContainerCopier {
 	public static class BasicEntry implements Map.Entry {
 		private Object key;
 		private Object value;
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -48,26 +50,31 @@ public class MapCopier extends ContainerCopier {
 				return false;
 			}
 			Map.Entry e = (Map.Entry) obj;
-			return ObjectUtils.equals(getKey(), e.getKey()) && ObjectUtils.equals(getValue(), e.getValue());
+			return ObjectUtils.equals(getKey(), e.getKey())
+					&& ObjectUtils.equals(getValue(), e.getValue());
 		}
+
 		/**
 		 * {@inheritDoc}
 		 */
 		public Object getKey() {
 			return key;
 		}
+
 		/**
 		 * {@inheritDoc}
 		 */
 		public Object getValue() {
 			return value;
 		}
+
 		/**
 		 * {@inheritDoc}
 		 */
 		public int hashCode() {
 			return super.hashCode();
 		}
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -79,6 +86,7 @@ public class MapCopier extends ContainerCopier {
 			}
 		}
 	}
+
 	private static final Class[] SOURCE_AND_DESTINATION_TYPES = { Map.class };
 
 	/**
@@ -107,9 +115,11 @@ public class MapCopier extends ContainerCopier {
 	 * {@inheritDoc}
 	 */
 	protected Object nestedTransform(Class destinationContainedType, Object destinationValue,
-			Object sourceValue, Locale locale, Integer preferredTransformationType) {
-		if (Map.Entry.class.isAssignableFrom(destinationContainedType) && Map.Entry.class.isInstance(sourceValue)) {
-			// as long as we return an instance of Map.Entry, the MapReflector will take care of us;
+			Object sourceValue, Locale locale, TransformationType preferredTransformationType) {
+		if (Map.Entry.class.isAssignableFrom(destinationContainedType)
+				&& Map.Entry.class.isInstance(sourceValue)) {
+			// as long as we return an instance of Map.Entry, the MapReflector
+			// will take care of us;
 			// we just handle any deep copying we can:
 			Map.Entry e = (Map.Entry) sourceValue;
 			Class keyClass = ClassUtils.getClass(e.getKey());
@@ -121,14 +131,14 @@ public class MapCopier extends ContainerCopier {
 			if (k || v) {
 				BasicEntry result = new BasicEntry();
 				result.key = k ? TransformerUtils.transform(getNestedTransformer(), keyClass, null,
-						e.getKey(), locale, TRANSFORMATION_TYPE_CONVERT) : e.getKey();
+						e.getKey(), locale, TransformationType.CONVERT) : e.getKey();
 				result.value = v ? TransformerUtils.transform(getNestedTransformer(), valueClass,
-						null, e.getValue(), locale, TRANSFORMATION_TYPE_CONVERT) : e.getValue();
+						null, e.getValue(), locale, TransformationType.CONVERT) : e.getValue();
 				return result;
 			}
 			return sourceValue;
 		}
-		return super.nestedTransform(destinationContainedType, destinationValue, sourceValue, locale,
-				preferredTransformationType);
+		return super.nestedTransform(destinationContainedType, destinationValue, sourceValue,
+				locale, preferredTransformationType);
 	}
 }

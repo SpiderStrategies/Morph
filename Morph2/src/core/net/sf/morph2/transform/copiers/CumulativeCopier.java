@@ -20,6 +20,7 @@ import java.util.Locale;
 import net.sf.morph2.transform.Copier;
 import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.transform.transformers.BaseCompositeTransformer;
 import net.sf.morph2.util.TransformerUtils;
@@ -95,10 +96,10 @@ public class CumulativeCopier extends BaseCompositeTransformer implements
 
 	/**
 	 * {@inheritDoc}
-	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, TransformationType)
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
-			Integer preferredTransformationType) throws Exception {
+			TransformationType preferredTransformationType) throws Exception {
 		Object[] copiers = getComponents();
 		for (int i = 0; i < copiers.length; i++) {
 			((Copier) copiers[i]).copy(destination, source, locale);

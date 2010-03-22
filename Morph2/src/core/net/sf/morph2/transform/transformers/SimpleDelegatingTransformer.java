@@ -37,6 +37,7 @@ import net.sf.morph2.transform.ExplicitTransformer;
 import net.sf.morph2.transform.ImpreciseTransformer;
 import net.sf.morph2.transform.NodeCopier;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.transform.converters.DefaultToBooleanConverter;
 import net.sf.morph2.transform.converters.DefaultToTextConverter;
@@ -250,10 +251,10 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 
 	/**
 	 * {@inheritDoc}
-	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, TransformationType)
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
-			Integer preferredTransformationType) throws Exception {
+			TransformationType preferredTransformationType) throws Exception {
 		incrementStackDepth();
 		try {
 			if (!hasVisitedDestination(source, destination)) {

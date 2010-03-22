@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007-2008 the original author or authors.
+ * Copyright 2004-2005, 2007-2008, 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,6 +15,8 @@
  */
 package net.sf.morph2.util;
 
+import static net.sf.morph2.transform.TransformationType.*;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
@@ -29,6 +31,7 @@ import net.sf.morph2.transform.ExplicitTransformer;
 import net.sf.morph2.transform.ImpreciseTransformer;
 import net.sf.morph2.transform.NestingAwareTransformer;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 
 import org.apache.commons.logging.Log;
@@ -69,9 +72,11 @@ public abstract class TransformerUtils {
 	 * @param sourceClass
 	 * @return boolean
 	 */
-	public static boolean isImplicitlyTransformable(Transformer transformer, Class destinationClass, Class sourceClass) {
-		return ClassUtils.inheritanceContains(transformer.getDestinationClasses(), destinationClass)
-			&& ClassUtils.inheritanceContains(transformer.getSourceClasses(), sourceClass);
+	public static boolean isImplicitlyTransformable(Transformer transformer,
+			Class destinationClass, Class sourceClass) {
+		return ClassUtils
+				.inheritanceContains(transformer.getDestinationClasses(), destinationClass)
+				&& ClassUtils.inheritanceContains(transformer.getSourceClasses(), sourceClass);
 	}
 
 	/**
@@ -84,9 +89,11 @@ public abstract class TransformerUtils {
 	 * @see #isImplicitlyTransformable(Transformer, Class, Class)
 	 * @see ExplicitTransformer
 	 */
-	public static boolean isTransformable(Transformer transformer, Class destinationClass, Class sourceClass) {
+	public static boolean isTransformable(Transformer transformer, Class destinationClass,
+			Class sourceClass) {
 		if (transformer instanceof ExplicitTransformer) {
-			return ((ExplicitTransformer) transformer).isTransformable(destinationClass, sourceClass);
+			return ((ExplicitTransformer) transformer).isTransformable(destinationClass,
+					sourceClass);
 		}
 		return isImplicitlyTransformable(transformer, destinationClass, sourceClass);
 	}
@@ -104,8 +111,8 @@ public abstract class TransformerUtils {
 	public static boolean isImpreciseTransformation(Transformer transformer,
 			Class destinationClass, Class sourceClass) {
 		if (transformer instanceof ImpreciseTransformer) {
-			return ((ImpreciseTransformer) transformer).isImpreciseTransformation(
-					destinationClass, sourceClass);
+			return ((ImpreciseTransformer) transformer).isImpreciseTransformation(destinationClass,
+					sourceClass);
 		}
 		return destinationClass == null && sourceClass != null;
 	}
@@ -130,48 +137,41 @@ public abstract class TransformerUtils {
 	 * @return the transformed object graph
 	 * @throws TransformationException
 	 *             if the graph could not be transformed for some reason
-	 * @see Converter#TRANSFORMATION_TYPE_CONVERT
-	 * @see Copier#TRANSFORMATION_TYPE_COPY
 	 */
-	public static Object transform(Transformer transformer, Class destinationType, Object destination,
-		Object source, Locale locale, Integer preferredTransformationType)
-		throws TransformationException {
+	public static Object transform(Transformer transformer, Class destinationType,
+			Object destination, Object source, Locale locale,
+			TransformationType preferredTransformationType) throws TransformationException {
 
-		//default to preferredTransformationType if specified, else by Transformer type
-		Integer xform = preferredTransformationType != null ? preferredTransformationType
-				: transformer instanceof Copier ? Transformer.TRANSFORMATION_TYPE_COPY
-						: Transformer.TRANSFORMATION_TYPE_CONVERT;
+		// default to preferredTransformationType if specified, else by
+		// Transformer type
+		TransformationType xform = preferredTransformationType != null ? preferredTransformationType
+				: transformer instanceof Copier ? COPY : CONVERT;
 
 		boolean mutableDest = !ClassUtils.isImmutableObject(destination);
 
 		// next, override impossible operations with possible ones
 		// (this block is somewhat more verbose than necessary but
 		// should be proof against possible additional Transformer types):
-		if (Transformer.TRANSFORMATION_TYPE_COPY.equals(xform)) {
+		if (xform == COPY) {
 			if (!(transformer instanceof Copier && mutableDest) && transformer instanceof Converter) {
-				xform = Transformer.TRANSFORMATION_TYPE_CONVERT;
+				xform = CONVERT;
 			}
-		}
-		else if (Transformer.TRANSFORMATION_TYPE_CONVERT.equals(xform)) {
-			if (!(transformer instanceof Converter) && transformer instanceof Copier
-					&& mutableDest) {
-				xform = Transformer.TRANSFORMATION_TYPE_COPY;
+		} else if (xform == CONVERT) {
+			if (!(transformer instanceof Converter) && transformer instanceof Copier && mutableDest) {
+				xform = COPY;
 			}
 		}
 
 		Exception copyException = null;
-		if (Transformer.TRANSFORMATION_TYPE_COPY.equals(xform)) {
+		if (xform == COPY) {
 			if (log.isTraceEnabled()) {
-				log.trace("Performing nested copy of "
-						+ ObjectUtils.getObjectDescription(source)
-						+ " to destination "
-						+ ObjectUtils.getObjectDescription(destination));
+				log.trace("Performing nested copy of " + ObjectUtils.getObjectDescription(source)
+						+ " to destination " + ObjectUtils.getObjectDescription(destination));
 			}
 			try {
 				((Copier) transformer).copy(destination, source, locale);
 				return destination;
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				/* if copy fails, try to fall back to conversion. This can
 				 * only happen if the choice to copy was externally specified,
 				 * so we assume the failing transformation was nested,
@@ -179,13 +179,16 @@ public abstract class TransformerUtils {
 				 * usually be called by the framework itself. :)
 				 */
 				if (CompositeUtils.isSpecializable(transformer, Converter.class)) {
-					transformer = (Transformer) CompositeUtils.specialize(transformer, Converter.class);
-					//make sure the transformation we're looking for didn't fall out during specialization:
-					if (TransformerUtils.isTransformable(transformer, destinationType, ClassUtils.getClass(source))) {
+					transformer = (Transformer) CompositeUtils.specialize(transformer,
+							Converter.class);
+					// make sure the transformation we're looking for didn't
+					// fall out during specialization:
+					if (TransformerUtils.isTransformable(transformer, destinationType, ClassUtils
+							.getClass(source))) {
 						if (log.isInfoEnabled()) {
 							log.info("Trying to fall back on conversion due to copy failure", e);
 						}
-						xform = Transformer.TRANSFORMATION_TYPE_CONVERT;
+						xform = CONVERT;
 						copyException = e;
 					}
 				}
@@ -196,18 +199,17 @@ public abstract class TransformerUtils {
 				}
 			}
 		}
-		if (Transformer.TRANSFORMATION_TYPE_CONVERT.equals(xform)) {
+		if (xform == CONVERT) {
 			if (log.isTraceEnabled()) {
 				log.trace("Performing nested conversion of "
-					+ ObjectUtils.getObjectDescription(source)
-					+ " to destination type "
-					+ ObjectUtils.getObjectDescription(destinationType));
+						+ ObjectUtils.getObjectDescription(source) + " to destination type "
+						+ ObjectUtils.getObjectDescription(destinationType));
 			}
 			try {
 				return ((Converter) transformer).convert(destinationType, source, locale);
-			}
-			catch (Exception e) {
-				//if this was originally an attempted copy, throw the original exception:
+			} catch (Exception e) {
+				// if this was originally an attempted copy, throw the original
+				// exception:
 				if (copyException != null) {
 					e = copyException;
 				}
@@ -233,7 +235,8 @@ public abstract class TransformerUtils {
 		}
 		// see if the requested type has been directly mapped to some other type
 		Class mappedDestinationType = (Class) typeMapping.get(requestedType);
-		// see if the requested type has been indirectly mapped to some other type
+		// see if the requested type has been indirectly mapped to some other
+		// type
 		if (mappedDestinationType == null) {
 			Set keys = typeMapping.keySet();
 			for (Iterator i = keys.iterator(); i.hasNext();) {
@@ -261,11 +264,13 @@ public abstract class TransformerUtils {
 		if (transformer instanceof ExplicitTransformer) {
 			Set result = ContainerUtils.createOrderedSet();
 			for (int i = 0; i < sourceTypes.length; i++) {
-				if (((ExplicitTransformer) transformer).isTransformable(destinationType, sourceTypes[i])) {
+				if (((ExplicitTransformer) transformer).isTransformable(destinationType,
+						sourceTypes[i])) {
 					result.add(sourceTypes[i]);
 				}
 			}
-			return result.isEmpty() ? CLASS_NONE : (Class[]) result.toArray(new Class[result.size()]);
+			return result.isEmpty() ? CLASS_NONE : (Class[]) result
+					.toArray(new Class[result.size()]);
 		}
 		return sourceTypes;
 	}
@@ -285,11 +290,13 @@ public abstract class TransformerUtils {
 		if (transformer instanceof ExplicitTransformer) {
 			Set result = ContainerUtils.createOrderedSet();
 			for (int i = 0; i < destinationTypes.length; i++) {
-				if (((ExplicitTransformer) transformer).isTransformable(destinationTypes[i], sourceType)) {
+				if (((ExplicitTransformer) transformer).isTransformable(destinationTypes[i],
+						sourceType)) {
 					result.add(destinationTypes[i]);
 				}
 			}
-			return result.isEmpty() ? CLASS_NONE : (Class[]) result.toArray(new Class[result.size()]);
+			return result.isEmpty() ? CLASS_NONE : (Class[]) result
+					.toArray(new Class[result.size()]);
 		}
 		return destinationTypes;
 	}

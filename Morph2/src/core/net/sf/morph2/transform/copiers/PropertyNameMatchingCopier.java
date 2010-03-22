@@ -25,6 +25,7 @@ import java.util.Set;
 import net.sf.composite.util.ObjectUtils;
 import net.sf.morph2.reflect.ReflectionException;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.util.ContainerUtils;
 import net.sf.morph2.util.StringUtils;
 
@@ -70,7 +71,7 @@ public class PropertyNameMatchingCopier extends BasePropertyNameCopier {
 	 * {@inheritDoc}
 	 */
 	public void copyImpl(Object destination, Object source, Locale locale,
-			Integer preferredTransformationType) throws Exception {
+			TransformationType preferredTransformationType) throws Exception {
 		String[] properties = evaluateIncludedProperties(source);
 		if (log.isInfoEnabled()) {
 			if (ObjectUtils.isEmpty(properties)) {

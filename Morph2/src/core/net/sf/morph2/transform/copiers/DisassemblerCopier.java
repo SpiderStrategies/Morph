@@ -25,6 +25,7 @@ import net.sf.morph2.transform.Converter;
 import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.util.ClassUtils;
 import net.sf.morph2.util.TransformerUtils;
@@ -163,7 +164,7 @@ public class DisassemblerCopier extends AssemblyCopierSupport implements Decorat
 		 */
 		protected Object nestedTransform(Class destinationContainedType,
 				Object destinationValue, Object sourceValue, Locale locale,
-				Integer preferredTransformationType) {
+				TransformationType preferredTransformationType) {
 			Disassembly d = (Disassembly) sourceValue;
 			return TransformerUtils.transform(getCopier(d.getIndex()),
 					destinationContainedType, destinationValue, d.getSource(), locale,
@@ -192,10 +193,10 @@ public class DisassemblerCopier extends AssemblyCopierSupport implements Decorat
 
 	/**
 	 * {@inheritDoc}
-	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, TransformationType)
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
-			Integer preferredTransformationType) throws Exception {
+			TransformationType preferredTransformationType) throws Exception {
 		int size;
 		if (getComponents() == null) {
 			SizableReflector szr = (SizableReflector) getReflector(SizableReflector.class);

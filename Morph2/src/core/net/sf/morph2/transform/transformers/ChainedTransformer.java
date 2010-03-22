@@ -30,6 +30,7 @@ import net.sf.morph2.transform.DecoratedCopier;
 import net.sf.morph2.transform.ExplicitTransformer;
 import net.sf.morph2.transform.ImpreciseTransformer;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.transform.copiers.CopierDecorator;
 import net.sf.morph2.util.Assert;
@@ -151,9 +152,9 @@ public class ChainedTransformer extends BaseCompositeTransformer implements
 
 	/**
 	 * {@inheritDoc}
-	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, java.lang.Integer)
+	 * @see net.sf.morph2.transform.transformers.BaseTransformer#copyImpl(java.lang.Object, java.lang.Object, java.util.Locale, TransformationType)
 	 */
-	protected void copyImpl(Object destination, Object source, Locale locale, Integer preferredTransformationType) throws Exception {
+	protected void copyImpl(Object destination, Object source, Locale locale, TransformationType preferredTransformationType) throws Exception {
 		if (log.isTraceEnabled()) {
 			log.trace("Using chain to copy "
 				+ ObjectUtils.getObjectDescription(source) + " to "

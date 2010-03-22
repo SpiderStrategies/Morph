@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2004-2005, 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,10 +30,7 @@ import net.sf.composite.Component;
  * @since Nov 26, 2004
  */
 public interface Transformer extends Component {
-	
-	public static final Integer TRANSFORMATION_TYPE_CONVERT = new Integer(1);
-	public static final Integer TRANSFORMATION_TYPE_COPY = new Integer(2);
-	
+
 	/**
 	 * Defines the types of objects that can be used as information sources by
 	 * this transformer. This can be thought of as the valid "output" types for
@@ -53,5 +50,5 @@ public interface Transformer extends Component {
 	 *         this transformer
 	 */
 	public Class[] getDestinationClasses();
-	
+
 }

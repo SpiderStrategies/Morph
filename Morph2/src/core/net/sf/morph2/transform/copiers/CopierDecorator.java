@@ -22,6 +22,7 @@ import net.sf.morph2.transform.DecoratedConverter;
 import net.sf.morph2.transform.DecoratedCopier;
 import net.sf.morph2.transform.ExplicitTransformer;
 import net.sf.morph2.transform.TransformationException;
+import net.sf.morph2.transform.TransformationType;
 import net.sf.morph2.transform.Transformer;
 import net.sf.morph2.transform.transformers.BaseTransformer;
 import net.sf.morph2.util.TransformerUtils;
@@ -67,7 +68,7 @@ public class CopierDecorator extends BaseTransformer implements DecoratedCopier,
 	 * {@inheritDoc}
 	 */
 	protected void copyImpl(Object destination, Object source, Locale locale,
-			Integer preferredTransformationType) throws TransformationException {
+			TransformationType preferredTransformationType) throws TransformationException {
 		getNestedCopier().copy(destination, source, locale);
 	}
 
