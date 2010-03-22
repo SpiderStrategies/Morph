@@ -23,7 +23,7 @@
   <property name="grammar.dir" location="grammar" />
   <property name="grammar.file" location="${grammar.dir}/morph.g" />
   <property name="codegen.dir" location="codegen" />
-  <property name="parser.package" value="net/sf/morph/transform/copiers/dsl" />
+  <property name="parser.package" value="net/sf/morph2/transform/copiers/dsl" />
   <property name="grammar.outdir" location="${codegen.dir}/${parser.package}" />
 
   <!-- define here so less chance we'll forget something: -->
@@ -376,7 +376,7 @@
 value="org.apache.tools.ant.taskdefs.optional.junit.RealtimeJUnitResultFormatter" />
 
     <junit failureproperty="tests.failed">
-      <test name="net.sf.morph.MorphTestRunner" />
+      <test name="net.sf.morph2.MorphTestRunner" />
       <classpath>
         <path refid="test.cp" />
         <pathelement path="${test.classes}" />
