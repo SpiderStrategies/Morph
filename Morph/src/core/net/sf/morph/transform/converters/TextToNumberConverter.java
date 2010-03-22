@@ -303,6 +303,7 @@ public class TextToNumberConverter extends BaseTransformer implements DecoratedC
 	 */
 	private StringBuffer removeIgnoredCharacters(String string, Locale locale) {
 		StringBuffer charactersToParse = new StringBuffer();
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
 	    for (int i = 0; i < string.length(); i++) {
 			char currentChar = string.charAt(i);
 			if (getWhitespaceHandling() == WHITESPACE_IGNORE
@@ -314,7 +315,6 @@ public class TextToNumberConverter extends BaseTransformer implements DecoratedC
 				continue;
 			}
 			if (getPercentageHandling() == PERCENTAGE_IGNORE) {
-				DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
 				if (currentChar == symbols.getPercent()) {
 					continue;
 				}
