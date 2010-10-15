@@ -3,8 +3,6 @@ package net.sf.morph.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -97,12 +95,12 @@ public class TestObjects {
 		singleElementObjectArray = new Object[1];
 		multiElementObjectArray = new Object[3];
 		
-		emptyMap = new HashMap();
-		
-		singleElementMap = new HashMap();
+		emptyMap = ContainerUtils.createOrderedMap();
+
+		singleElementMap = ContainerUtils.createOrderedMap();
 		singleElementMap.put("one", null);
 		
-		multiElementMap = new HashMap();
+		multiElementMap = ContainerUtils.createOrderedMap();
 		multiElementMap.put("one", null);
 		multiElementMap.put("two", null);
 		multiElementMap.put("three", null);
@@ -122,7 +120,7 @@ public class TestObjects {
 		oneTwoThreeNumberArray = new Number[] { one, two, three };
 		oneTwoThreeObjectArray = new Object[] { one, two, three };
 		
-		oneTwoThreeMap = new HashMap();
+		oneTwoThreeMap = ContainerUtils.createOrderedMap();
 		oneTwoThreeMap.put("one", one);
 		oneTwoThreeMap.put("two", two);
 		oneTwoThreeMap.put("three", three);
@@ -137,7 +135,7 @@ public class TestObjects {
 		oneTwoThreeVector.add(two);
 		oneTwoThreeVector.add(three);
 		
-		oneTwoThreeSet = new HashSet();
+		oneTwoThreeSet = ContainerUtils.createOrderedSet();
 		oneTwoThreeSet.add(one);
 		oneTwoThreeSet.add(two);
 		oneTwoThreeSet.add(three);

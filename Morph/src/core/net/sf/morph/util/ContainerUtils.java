@@ -17,8 +17,10 @@ package net.sf.morph.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -137,4 +139,25 @@ public class ContainerUtils extends net.sf.composite.util.ContainerUtils {
 		return new ListOrderedSet();
 	}
 
+	/**
+	 * Create an ordered Map based on the classes available in the current environment.
+	 * @return Map (HashMap if ordering not available)
+	 */
+	public static Map createOrderedMap() {
+		if (ClassUtils.isJdk14OrHigherPresent()) {
+			try {
+				return (Map) Class.forName("java.util.LinkedHashMap").newInstance();
+			} catch (Exception e) {
+			}
+		}
+		if (ClassUtils.isCommonsCollections3Present()) {
+			try {
+				return (Map) Class.forName("org.apache.commons.collections.map.ListOrderedMap")
+						.newInstance();
+			} catch (Exception e) {
+			}
+		}
+		//not ordered!
+		return new HashMap();
+	}
 }
