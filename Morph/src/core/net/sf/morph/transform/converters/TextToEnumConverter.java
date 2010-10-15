@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2009-2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -66,6 +66,9 @@ public class TextToEnumConverter extends BaseTransformer implements DecoratedCon
 		if (ENUM_TYPE == null) {
 			throw new IllegalStateException("Requires Java 5 or greater");
 		}
+		if (destinationClass == null) {
+			return null;
+		}
 		Throwable cause = null;
 		if (ENUM_TYPE.isAssignableFrom(destinationClass)) {
 			String s = (String) getTextConverter().convert(String.class, source, locale);
@@ -99,10 +102,10 @@ public class TextToEnumConverter extends BaseTransformer implements DecoratedCon
 		if (ENUM_TYPE == null) {
 			return false;
 		}
-		if (ENUM_TYPE.isAssignableFrom(destinationType)) {
+		if (destinationType != null && ENUM_TYPE.isAssignableFrom(destinationType)) {
 			return getTextConverter().isTransformable(String.class, sourceType);
 		}
-		if (ENUM_TYPE.isAssignableFrom(sourceType)) {
+		if (sourceType != null && ENUM_TYPE.isAssignableFrom(sourceType)) {
 			return getTextConverter().isTransformable(destinationType, String.class);
 		}
 		return false;
