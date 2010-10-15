@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005, 2007-2008 the original author or authors.
+ * Copyright 2004-2005, 2007-2008, 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -67,7 +67,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Matt Sgarlata
  * @since Nov 26, 2004
  */
-public abstract class BaseTransformer implements Transformer, DecoratedTransformer {
+public abstract class BaseTransformer implements DecoratedTransformer {
 
 	private boolean initialized = false;
 	private boolean cachingIsTransformableCalls = true;
@@ -112,6 +112,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 */
 	protected boolean isTransformableImpl(Class destinationType,
 		Class sourceType) throws Exception {
+		//TODO factor out #newInstance to BaseReflectorTransformer and consult the InstantiatingReflector
 		return TransformerUtils.isImplicitlyTransformable(this, destinationType,
 				sourceType);
 	}
