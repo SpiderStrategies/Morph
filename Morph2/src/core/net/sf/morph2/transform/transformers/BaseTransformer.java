@@ -66,7 +66,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Matt Sgarlata
  * @since Nov 26, 2004
  */
-public abstract class BaseTransformer implements Transformer, DecoratedTransformer {
+public abstract class BaseTransformer implements DecoratedTransformer {
 
 	private boolean initialized = false;
 	private boolean cachingIsTransformableCalls = true;
@@ -110,6 +110,7 @@ public abstract class BaseTransformer implements Transformer, DecoratedTransform
 	 *             is transformable into <code>destinationType</code>
 	 */
 	protected boolean isTransformableImpl(Class destinationType, Class sourceType) throws Exception {
+		//TODO factor out #newInstance to BaseReflectorTransformer and consult the InstantiatingReflector
 		return TransformerUtils.isImplicitlyTransformable(this, destinationType, sourceType);
 	}
 
