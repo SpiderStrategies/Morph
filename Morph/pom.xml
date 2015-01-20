@@ -60,13 +60,13 @@
     </dependency>
 
     <dependency>
-      <groupId>jspapi</groupId>
-      <artifactId>jsp-api</artifactId>
-      <version>2.3</version>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>javax.servlet.jsp-api</artifactId>
+      <version>2.3.1</version>
       <optional>true</optional>
       <scope>provided</scope>
     </dependency>
-
+    
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils-core</artifactId>
