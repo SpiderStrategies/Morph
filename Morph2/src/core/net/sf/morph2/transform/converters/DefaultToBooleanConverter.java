@@ -58,7 +58,8 @@ public class DefaultToBooleanConverter extends SimpleDelegatingTransformer {
 	 */
 	protected boolean isTransformableImpl(Class destinationType,
 		Class sourceType) throws Exception {
-		return ClassUtils.inheritanceContains(DESTINATION_TYPES, destinationType);
+		return ClassUtils.inheritanceContains(getDestinationClasses(), destinationType)
+				&& super.isTransformableImpl(destinationType, sourceType);
 	}
 
 }
