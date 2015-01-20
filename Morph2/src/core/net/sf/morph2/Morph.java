@@ -207,36 +207,6 @@ public abstract class Morph {
 	}
 	
 	/**
-	 * Converts the given <code>source</code> into a <code>boolean</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static boolean convertToBoolean(Object source) throws TransformationException {
-		return ((Boolean) convert(boolean.class, source)).booleanValue();
-	}
-	
-//	/**
-//	 * Converts the given <code>source</code> into a <code>boolean</code>.
-//	 * 
-//	 * @param source
-//	 *            the source object to convert
-//	 * @param locale
-//	 *            the locale in which the conversion is to be performed
-//	 * @return the result of the conversion
-//	 * @throws TransformationException
-//	 *             if <code>destinationClass</code> is <code>null</code>,
-//	 *             an error occurred while performing the conversion
-//	 */
-//	public static boolean convertToBoolean(Object source, Locale locale) throws TransformationException {
-//		return ((Boolean) convert(boolean.class, source, locale)).booleanValue();
-//	}
-	
-	/**
 	 * Converts the given <code>source</code> into a <code>Boolean</code>.
 	 * 
 	 * @param source
@@ -246,54 +216,8 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Boolean convertToBooleanObject(Object source) throws TransformationException {
+	public static Boolean convertToBoolean(Object source) throws TransformationException {
 		return (Boolean) convert(Boolean.class, source);
-	}
-	
-//	/**
-//	 * Converts the given <code>source</code> into a <code>Boolean</code>.
-//	 * 
-//	 * @param source
-//	 *            the source object to convert
-//	 * @param locale
-//	 *            the locale in which the conversion is to be performed
-//	 * @return the result of the conversion
-//	 * @throws TransformationException
-//	 *             if <code>destinationClass</code> is <code>null</code>,
-//	 *             an error occurred while performing the conversion
-//	 */
-//	public static Boolean convertToBooleanObject(Object source, Locale locale) throws TransformationException {
-//		return (Boolean) convert(Boolean.class, source, locale);
-//	}
-	
-	/**
-	 * Converts the given <code>source</code> into a <code>byte</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static byte convertToByte(Object source) throws TransformationException {
-		return ((Byte) convert(byte.class, source)).byteValue();
-	}
-	
-	/**
-	 * Converts the given <code>source</code> into a <code>byte</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @param locale
-	 *            the locale in which the conversion is to be performed
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static byte convertToByte(Object source, Locale locale) throws TransformationException {
-		return ((Byte) convert(byte.class, source, locale)).byteValue();
 	}
 	
 	/**
@@ -306,7 +230,7 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Byte convertToByteObject(Object source) throws TransformationException {
+	public static Byte convertToByte(Object source) throws TransformationException {
 		return (Byte) convert(Byte.class, source);
 	}
 	
@@ -322,7 +246,7 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Byte convertToByteObject(Object source, Locale locale) throws TransformationException {
+	public static Byte convertToByte(Object source, Locale locale) throws TransformationException {
 		return (Byte) convert(Byte.class, source, locale);
 	}
 	
@@ -387,36 +311,6 @@ public abstract class Morph {
 	}
 	
 	/**
-	 * Converts the given <code>source</code> into a <code>double</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static double convertToDouble(Object source) throws TransformationException {
-		return ((Double) convert(double.class, source)).doubleValue();
-	}
-	
-	/**
-	 * Converts the given <code>source</code> into a <code>double</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @param locale
-	 *            the locale in which the conversion is to be performed
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static double convertToDouble(Object source, Locale locale) throws TransformationException {
-		return ((Double) convert(double.class, source, locale)).doubleValue();
-	}
-	
-	/**
 	 * Converts the given <code>source</code> into a <code>Double</code>.
 	 * 
 	 * @param source
@@ -426,7 +320,7 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Double convertToDoubleObject(Object source) throws TransformationException {
+	public static Double convertToDouble(Object source) throws TransformationException {
 		return (Double) convert(Double.class, source);
 	}
 	
@@ -442,40 +336,10 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Double convertToDoubleObject(Object source, Locale locale) throws TransformationException {
+	public static Double convertToDouble(Object source, Locale locale) throws TransformationException {
 		return (Double) convert(Double.class, source, locale);
 	}
-	
-	/**
-	 * Converts the given <code>source</code> into a <code>float</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static float convertToFloat(Object source) throws TransformationException {
-		return ((Float) convert(float.class, source)).floatValue();
-	}
-	
-	/**
-	 * Converts the given <code>source</code> into a <code>float</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @param locale
-	 *            the locale in which the conversion is to be performed
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static float convertToFloat(Object source, Locale locale) throws TransformationException {
-		return ((Float) convert(float.class, source, locale)).floatValue();
-	}
-	
+		
 	/**
 	 * Converts the given <code>source</code> into a <code>Float</code>.
 	 * 
@@ -486,7 +350,7 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Float convertToFloatObject(Object source) throws TransformationException {
+	public static Float convertToFloat(Object source) throws TransformationException {
 		return (Float) convert(Float.class, source);
 	}
 	
@@ -502,40 +366,10 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Float convertToFloatObject(Object source, Locale locale) throws TransformationException {
+	public static Float convertToFloat(Object source, Locale locale) throws TransformationException {
 		return (Float) convert(Float.class, source, locale);
 	}
-	
-	/**
-	 * Converts the given <code>source</code> into a <code>int</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static int convertToInt(Object source) throws TransformationException {
-		return ((Integer) convert(int.class, source)).intValue();
-	}
-	
-	/**
-	 * Converts the given <code>source</code> into a <code>int</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @param locale
-	 *            the locale in which the conversion is to be performed
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static int convertToInt(Object source, Locale locale) throws TransformationException {
-		return ((Integer) convert(int.class, source, locale)).intValue();
-	}
-	
+		
 	/**
 	 * Converts the given <code>source</code> into a <code>Integer</code>.
 	 * 
@@ -546,7 +380,7 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Integer convertToIntegerObject(Object source) throws TransformationException {
+	public static Integer convertToInteger(Object source) throws TransformationException {
 		return (Integer) convert(Integer.class, source);
 	}
 	
@@ -562,40 +396,10 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Integer convertToIntegerObject(Object source, Locale locale) throws TransformationException {
+	public static Integer convertToInteger(Object source, Locale locale) throws TransformationException {
 		return (Integer) convert(Integer.class, source, locale);
 	}
-	
-	/**
-	 * Converts the given <code>source</code> into a <code>long</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static long convertToLong(Object source) throws TransformationException {
-		return ((Long) convert(long.class, source)).longValue();
-	}
-	
-	/**
-	 * Converts the given <code>source</code> into a <code>long</code>.
-	 * 
-	 * @param source
-	 *            the source object to convert
-	 * @param locale
-	 *            the locale in which the conversion is to be performed
-	 * @return the result of the conversion
-	 * @throws TransformationException
-	 *             if <code>destinationClass</code> is <code>null</code>,
-	 *             an error occurred while performing the conversion
-	 */
-	public static long convertToLong(Object source, Locale locale) throws TransformationException {
-		return ((Long) convert(long.class, source, locale)).longValue();
-	}
-	
+		
 	/**
 	 * Converts the given <code>source</code> into a <code>Long</code>.
 	 * 
@@ -606,7 +410,7 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Long convertToLongObject(Object source) throws TransformationException {
+	public static Long convertToLong(Object source) throws TransformationException {
 		return (Long) convert(Long.class, source);
 	}
 	
@@ -622,7 +426,7 @@ public abstract class Morph {
 	 *             if <code>destinationClass</code> is <code>null</code>,
 	 *             an error occurred while performing the conversion
 	 */
-	public static Long convertToLongObject(Object source, Locale locale) throws TransformationException {
+	public static Long convertToLong(Object source, Locale locale) throws TransformationException {
 		return (Long) convert(Long.class, source, locale);
 	}
 	
@@ -988,31 +792,6 @@ public abstract class Morph {
 
 	/**
 	 * Retrieve the information indicated by <code>expression</code> from
-	 * <code>target</code> as a <code>boolean</code>.
-	 * 
-	 * @param target
-	 *            the object from which information will be retrieved
-	 * @param expression
-	 *            an expression specifying which information to retrieve
-	 * @return the information indicated by <code>expression</code> from
-	 *         <code>target</code> as a <code>boolean</code>
-	 * @throws TransformationException
-	 *             if an error occurs while converting the requested information
-	 *             to a <code>boolean</code>
-	 * @throws LanguageException
-	 *             if <code>target</code> is <code>null</code> or <br>
-	 *             an error occurrs while evaluating an otherwise valid
-	 *             expression
-	 * @throws InvalidExpressionException
-	 *             if <code>expression</code> is empty or not a valid
-	 *             expression
-	 */
-    public static boolean getBoolean(Object target, String expression) {
-    	return ((Boolean) Morph.get(target, expression, boolean.class)).booleanValue();
-    }
-
-	/**
-	 * Retrieve the information indicated by <code>expression</code> from
 	 * <code>target</code> as a <code>Boolean</code> object.
 	 * 
 	 * @param target
@@ -1032,7 +811,7 @@ public abstract class Morph {
 	 *             if <code>expression</code> is empty or not a valid
 	 *             expression
 	 */
-    public static Boolean getBooleanObject(Object target, String expression) {
+    public static Boolean getBoolean(Object target, String expression) {
     	return (Boolean) Morph.get(target, expression, Boolean.class);
     }
 
@@ -1064,31 +843,6 @@ public abstract class Morph {
 
 	/**
 	 * Retrieve the information indicated by <code>expression</code> from
-	 * <code>target</code> as a <code>byte</code>.
-	 * 
-	 * @param target
-	 *            the object from which information will be retrieved
-	 * @param expression
-	 *            an expression specifying which information to retrieve
-	 * @return the information indicated by <code>expression</code> from
-	 *         <code>target</code> as a <code>byte</code>
-	 * @throws TransformationException
-	 *             if an error occurs while converting the requested information
-	 *             to a <code>byte</code>
-	 * @throws LanguageException
-	 *             if <code>target</code> is <code>null</code> or <br>
-	 *             an error occurrs while evaluating an otherwise valid
-	 *             expression
-	 * @throws InvalidExpressionException
-	 *             if <code>expression</code> is empty or not a valid
-	 *             expression
-	 */
-    public static byte getByte(Object target, String expression) {
-    	return ((Byte) Morph.get(target, expression, byte.class)).byteValue();
-    }
-
-	/**
-	 * Retrieve the information indicated by <code>expression</code> from
 	 * <code>target</code> as a <code>Byte</code> object.
 	 * 
 	 * @param target
@@ -1108,7 +862,7 @@ public abstract class Morph {
 	 *             if <code>expression</code> is empty or not a valid
 	 *             expression
 	 */
-	public static Byte getByteObject(Object target, String expression) {
+	public static Byte getByte(Object target, String expression) {
     	return (Byte) Morph.get(target, expression, Byte.class);
     }
 
@@ -1140,31 +894,6 @@ public abstract class Morph {
 
 	/**
 	 * Retrieve the information indicated by <code>expression</code> from
-	 * <code>target</code> as a <code>double</code>.
-	 * 
-	 * @param target
-	 *            the object from which information will be retrieved
-	 * @param expression
-	 *            an expression specifying which information to retrieve
-	 * @return the information indicated by <code>expression</code> from
-	 *         <code>target</code> as a <code>double</code>
-	 * @throws TransformationException
-	 *             if an error occurs while converting the requested information
-	 *             to a <code>double</code>
-	 * @throws LanguageException
-	 *             if <code>target</code> is <code>null</code> or <br>
-	 *             an error occurrs while evaluating an otherwise valid
-	 *             expression
-	 * @throws InvalidExpressionException
-	 *             if <code>expression</code> is empty or not a valid
-	 *             expression
-	 */
-    public static double getDouble(Object target, String expression) {
-    	return ((Double) Morph.get(target, expression, double.class)).doubleValue();
-    }
-
-	/**
-	 * Retrieve the information indicated by <code>expression</code> from
 	 * <code>target</code> as a <code>Double</code> object.
 	 * 
 	 * @param target
@@ -1184,7 +913,7 @@ public abstract class Morph {
 	 *             if <code>expression</code> is empty or not a valid
 	 *             expression
 	 */
-    public static Double getDoubleObject(Object target, String expression) {
+    public static Double getDouble(Object target, String expression) {
     	return (Double) Morph.get(target, expression, Double.class);
     }
 
@@ -1216,31 +945,6 @@ public abstract class Morph {
 
 	/**
 	 * Retrieve the information indicated by <code>expression</code> from
-	 * <code>target</code> as a <code>float</code>.
-	 * 
-	 * @param target
-	 *            the object from which information will be retrieved
-	 * @param expression
-	 *            an expression specifying which information to retrieve
-	 * @return the information indicated by <code>expression</code> from
-	 *         <code>target</code> as a <code>float</code>
-	 * @throws TransformationException
-	 *             if an error occurs while converting the requested information
-	 *             to a <code>float</code>
-	 * @throws LanguageException
-	 *             if <code>target</code> is <code>null</code> or <br>
-	 *             an error occurrs while evaluating an otherwise valid
-	 *             expression
-	 * @throws InvalidExpressionException
-	 *             if <code>expression</code> is empty or not a valid
-	 *             expression
-	 */
-    public static float getFloat(Object target, String expression) {
-    	return ((Float) Morph.get(target, expression, float.class)).floatValue();
-    }
-
-	/**
-	 * Retrieve the information indicated by <code>expression</code> from
 	 * <code>target</code> as a <code>Float</code> object.
 	 * 
 	 * @param target
@@ -1260,7 +964,7 @@ public abstract class Morph {
 	 *             if <code>expression</code> is empty or not a valid
 	 *             expression
 	 */
-    public static Float getFloatObject(Object target, String expression) {
+    public static Float getFloat(Object target, String expression) {
     	return (Float) Morph.get(target, expression, Float.class);
     }
 
@@ -1292,31 +996,6 @@ public abstract class Morph {
     
 	/**
 	 * Retrieve the information indicated by <code>expression</code> from
-	 * <code>target</code> as a <code>int</code>.
-	 * 
-	 * @param target
-	 *            the object from which information will be retrieved
-	 * @param expression
-	 *            an expression specifying which information to retrieve
-	 * @return the information indicated by <code>expression</code> from
-	 *         <code>target</code> as a <code>int</code>
-	 * @throws TransformationException
-	 *             if an error occurs while converting the requested information
-	 *             to a <code>int</code>
-	 * @throws LanguageException
-	 *             if <code>target</code> is <code>null</code> or <br>
-	 *             an error occurrs while evaluating an otherwise valid
-	 *             expression
-	 * @throws InvalidExpressionException
-	 *             if <code>expression</code> is empty or not a valid
-	 *             expression
-	 */
-    public static int getInt(Object target, String expression) {
-    	return ((Integer) Morph.get(target, expression, int.class)).intValue();
-    }
-
-	/**
-	 * Retrieve the information indicated by <code>expression</code> from
 	 * <code>target</code> as a <code>Integer</code> object.
 	 * 
 	 * @param target
@@ -1336,7 +1015,7 @@ public abstract class Morph {
 	 *             if <code>expression</code> is empty or not a valid
 	 *             expression
 	 */
-    public static Integer getIntegerObject(Object target, String expression) {
+    public static Integer getInteger(Object target, String expression) {
     	return (Integer) Morph.get(target, expression, Integer.class);
     }
 
@@ -1368,31 +1047,6 @@ public abstract class Morph {
 
 	/**
 	 * Retrieve the information indicated by <code>expression</code> from
-	 * <code>target</code> as a <code>long</code>.
-	 * 
-	 * @param target
-	 *            the object from which information will be retrieved
-	 * @param expression
-	 *            an expression specifying which information to retrieve
-	 * @return the information indicated by <code>expression</code> from
-	 *         <code>target</code> as a <code>long</code>
-	 * @throws TransformationException
-	 *             if an error occurs while converting the requested information
-	 *             to a <code>long</code>
-	 * @throws LanguageException
-	 *             if <code>target</code> is <code>null</code> or <br>
-	 *             an error occurrs while evaluating an otherwise valid
-	 *             expression
-	 * @throws InvalidExpressionException
-	 *             if <code>expression</code> is empty or not a valid
-	 *             expression
-	 */
-    public static long getLong(Object target, String expression) {
-    	return ((Long) Morph.get(target, expression, long.class)).longValue();
-    }
-
-	/**
-	 * Retrieve the information indicated by <code>expression</code> from
 	 * <code>target</code> as a <code>Long</code> object.
 	 * 
 	 * @param target
@@ -1412,7 +1066,7 @@ public abstract class Morph {
 	 *             if <code>expression</code> is empty or not a valid
 	 *             expression
 	 */
-    public static Long getLongObject(Object target, String expression) {
+    public static Long getLong(Object target, String expression) {
     	return (Long) Morph.get(target, expression, Long.class);
     }
 

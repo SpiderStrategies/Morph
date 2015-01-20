@@ -30,7 +30,6 @@ import javax.servlet.ServletRequest;
 
 import junit.framework.TestCase;
 import net.sf.morph2.reflect.ReflectionException;
-import net.sf.morph2.transform.TransformationException;
 import net.sf.morph2.util.TestObjects;
 import net.sf.morph2.util.TestUtils;
 
@@ -46,7 +45,7 @@ public class MorphTestCase extends TestCase {
 	public void testGetLongObject() {
 		Map map = new HashMap();
 		map.put("longObject", "2");
-		TestUtils.assertEquals(new Long(2), Morph.getLongObject(map, "longObject"));		
+		TestUtils.assertEquals(new Long(2), Morph.getLong(map, "longObject"));		
 	}
 	
 	public void testRuntimeArrayTypeOfConversion() {
@@ -97,7 +96,7 @@ public class MorphTestCase extends TestCase {
 		Calendar newYearsDay2005 = new GregorianCalendar();
 		newYearsDay2005.setTime(date);
 		TestUtils.assertEquals(newYearsDay2005, Morph.convertToCalendar(new Long(date.getTime())));		
-		TestUtils.assertEquals(new Long(date.getTime()), Morph.convertToLongObject(date));		
+		TestUtils.assertEquals(new Long(date.getTime()), Morph.convertToLong(date));		
 	}
 
 	public void testStringToDoubleConversion() {
@@ -154,7 +153,7 @@ public class MorphTestCase extends TestCase {
 		assertTrue(dest.testProperty.equals(new Integer(123)));		
 	}
 	
-	public void testGetBooleanObject() throws Exception {
+	public void testgetBoolean() throws Exception {
 		Map map = new HashMap();
 		
 		map.put("true", Boolean.TRUE);
@@ -166,30 +165,20 @@ public class MorphTestCase extends TestCase {
 		map.put("emptyStr", "");		
 		map.put("null", null);
 
-		assertEquals(Boolean.TRUE, Morph.getBooleanObject(map, "true"));
-		assertEquals(Boolean.FALSE, Morph.getBooleanObject(map, "false"));
+		assertEquals(Boolean.TRUE, Morph.getBoolean(map, "true"));
+		assertEquals(Boolean.FALSE, Morph.getBoolean(map, "false"));
 
-		assertEquals(Boolean.TRUE, Morph.getBooleanObject(map, "trueStr"));
-		assertEquals(Boolean.FALSE, Morph.getBooleanObject(map, "falseStr"));
+		assertEquals(Boolean.TRUE, Morph.getBoolean(map, "trueStr"));
+		assertEquals(Boolean.FALSE, Morph.getBoolean(map, "falseStr"));
 
-		assertEquals(null, Morph.getBooleanObject(map, "emptyStr"));
-		assertEquals(null, Morph.getBooleanObject(map, "null"));
+		assertEquals(null, Morph.getBoolean(map, "emptyStr"));
+		assertEquals(null, Morph.getBoolean(map, "null"));
 	}
 	
 	public void testConvertToBoolean() throws Exception {
 		assertTrue(Morph.convertToBoolean(Boolean.TRUE));
 		assertFalse(Morph.convertToBoolean(Boolean.FALSE));
-		try {
-			Morph.convertToBoolean(null);
-			fail("Should not have been able to convert null to a boolean");
-		}
-		catch (TransformationException e) { }
-	}
-	
-	public void testConvertToBooleanObject() throws Exception {
-		assertEquals(Boolean.TRUE, Morph.convertToBooleanObject(Boolean.TRUE));
-		assertEquals(Boolean.FALSE, Morph.convertToBooleanObject(Boolean.FALSE));
-		assertNull(Morph.convertToBooleanObject(null));
+		assertNull(Morph.convertToBoolean(null));
 	}
 	
 	public static class CopiableObject {
@@ -266,7 +255,7 @@ public class MorphTestCase extends TestCase {
 	
 	public void testConvertObjectToInteger() {
 		try {
-			Morph.convertToIntegerObject(new Object());
+			Morph.convertToInteger(new Object());
 		}
 		// this is an invalid conversion, so a TransformationException should
 		// be thrown
