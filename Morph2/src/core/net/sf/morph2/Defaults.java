@@ -30,6 +30,7 @@ import net.sf.morph2.transform.converters.DefaultToTextConverter;
 import net.sf.morph2.transform.converters.NumberConverter;
 import net.sf.morph2.transform.converters.ObjectToPrettyTextConverter;
 import net.sf.morph2.transform.converters.TextConverter;
+import net.sf.morph2.transform.converters.TextToNumberConverter;
 import net.sf.morph2.transform.converters.TimeConverter;
 import net.sf.morph2.transform.copiers.ContainerCopier;
 import net.sf.morph2.transform.transformers.SimpleDelegatingTransformer;
@@ -42,7 +43,10 @@ import net.sf.morph2.transform.transformers.SimpleDelegatingTransformer;
  * @since Jan 9, 2005
  */
 public abstract class Defaults {
-
+	
+	// making these singletons to save memory
+	public static final TextToNumberConverter TEXT_TO_NUMBER_CONVERTER = new TextToNumberConverter();
+	
 	/**
 	 * Create a basic DecoratedReflector.
 	 * @return DecoratedReflector
