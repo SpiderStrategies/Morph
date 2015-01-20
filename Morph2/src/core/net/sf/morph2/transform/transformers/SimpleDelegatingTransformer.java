@@ -115,7 +115,8 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 	protected Transformer[] createDefaultComponents() {
 		return new Transformer[] {
 				new DefaultToBooleanConverter(), new IdentityConverter(),
-				new ObjectToClassConverter(), new TextConverter(), new DefaultToTextConverter(),
+				new ObjectToClassConverter(), new TextConverter(),
+				new TextToEnumConverter(), new DefaultToTextConverter(),
 				new TextToNumberConverter(), new TextToTimeConverter(),
 				new NumberToTimeConverter(), new TimeToNumberConverter(), new NumberConverter(),
 				new TimeConverter(), new TextToContainerCopier(), new MapCopier(),
@@ -124,7 +125,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 						setDestinationClasses(new Class[] { Map.class });
 					}
 				}, new ImmutableComponentArrayCopier(), new ContainerCopier(),
-				new TextToEnumConverter(), new PropertyNameMatchingCopier() };
+				new PropertyNameMatchingCopier() };
 	}
 
 	private Specializer specializer;
