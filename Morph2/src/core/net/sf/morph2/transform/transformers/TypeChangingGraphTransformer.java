@@ -29,6 +29,7 @@ import net.sf.morph2.transform.copiers.ContainerCopier;
 import net.sf.morph2.transform.copiers.PropertyNameMatchingCopier;
 import net.sf.morph2.util.ClassUtils;
 import net.sf.morph2.util.TransformerUtils;
+import net.sf.morph2.util.TypeMap;
 
 /**
  * <p>
@@ -171,7 +172,9 @@ public class TypeChangingGraphTransformer extends SimpleDelegatingTransformer {
 	 * @param sourceToDestinationTypeMapping the Map to set
 	 */
 	public void setSourceToDestinationTypeMapping(Map sourceToDestinationTypeMapping) {
-		this.sourceToDestinationTypeMapping = sourceToDestinationTypeMapping;
+		// this needs to be a TypeMap in case the configuration was done with Spring
+		// because the keys and values will be Strings in that case
+		this.sourceToDestinationTypeMapping = new TypeMap(sourceToDestinationTypeMapping);
 	}
 
 }
