@@ -176,6 +176,14 @@ public abstract class Morph {
 		return (BigDecimal) convert(BigDecimal.class, source, locale);
 	}
 	
+	public static BigDecimal convertToBigDecimal(CharSequence source) throws TransformationException {
+		return (BigDecimal) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(BigDecimal.class, source);
+	}
+	
+	public static BigDecimal convertToBigDecimal(CharSequence source, Locale locale) throws TransformationException {
+		return (BigDecimal) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(BigDecimal.class, source, locale);
+	}
+
 	/**
 	 * Converts the given <code>source</code> into a <code>BigInteger</code>.
 	 * 
@@ -206,6 +214,14 @@ public abstract class Morph {
 		return (BigInteger) convert(BigInteger.class, source, locale);
 	}
 	
+	public static BigInteger convertToBigInteger(CharSequence source) throws TransformationException {
+		return (BigInteger) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(BigInteger.class, source);
+	}
+	
+	public static BigInteger convertToBigInteger(CharSequence source, Locale locale) throws TransformationException {
+		return (BigInteger) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(BigInteger.class, source, locale);
+	}
+
 	/**
 	 * Converts the given <code>source</code> into a <code>Boolean</code>.
 	 * 
@@ -250,6 +266,14 @@ public abstract class Morph {
 		return (Byte) convert(Byte.class, source, locale);
 	}
 	
+	public static Byte convertToByte(CharSequence source) throws TransformationException {
+		return (Byte) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(Byte.class, source);
+	}
+	
+	public static Byte convertToByte(CharSequence source, Locale locale) throws TransformationException {
+		return (Byte) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(Byte.class, source, locale);
+	}
+
 	/**
 	 * Converts the given <code>source</code> into a <code>Calendar</code>.
 	 * 
@@ -370,6 +394,14 @@ public abstract class Morph {
 		return (Float) convert(Float.class, source, locale);
 	}
 		
+	public static Float convertToFloat(CharSequence source) throws TransformationException {
+		return (Float) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(Float.class, source);
+	}
+	
+	public static Float convertToFloat(CharSequence source, Locale locale) throws TransformationException {
+		return (Float) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(Float.class, source, locale);
+	}
+
 	/**
 	 * Converts the given <code>source</code> into a <code>Integer</code>.
 	 * 
@@ -400,6 +432,14 @@ public abstract class Morph {
 		return (Integer) convert(Integer.class, source, locale);
 	}
 		
+	public static Integer convertToInteger(CharSequence source) throws TransformationException {
+		return (Integer) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(Integer.class, source);
+	}
+	
+	public static Integer convertToInteger(CharSequence source, Locale locale) throws TransformationException {
+		return (Integer) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(Integer.class, source, locale);
+	}
+
 	/**
 	 * Converts the given <code>source</code> into a <code>Long</code>.
 	 * 
@@ -430,6 +470,14 @@ public abstract class Morph {
 		return (Long) convert(Long.class, source, locale);
 	}
 	
+	public static Long convertToLong(CharSequence source) throws TransformationException {
+		return (Long) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(Long.class, source);
+	}
+	
+	public static Long convertToLong(CharSequence source, Locale locale) throws TransformationException {
+		return (Long) Defaults.TEXT_TO_NUMBER_CONVERTER.convert(Long.class, source, locale);
+	}
+
 	/**
 	 * Converts the given <code>source</code> into a <code>String</code>.
 	 * 

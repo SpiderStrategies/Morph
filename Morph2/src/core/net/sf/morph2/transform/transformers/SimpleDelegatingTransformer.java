@@ -27,6 +27,7 @@ import net.sf.composite.specialize.specializers.CachingSpecializerProxy;
 import net.sf.composite.specialize.specializers.CloningSpecializer;
 import net.sf.composite.util.ObjectPair;
 import net.sf.composite.util.ObjectUtils;
+import net.sf.morph2.Defaults;
 import net.sf.morph2.transform.Converter;
 import net.sf.morph2.transform.Copier;
 import net.sf.morph2.transform.DecoratedConverter;
@@ -45,7 +46,6 @@ import net.sf.morph2.transform.converters.NumberToTimeConverter;
 import net.sf.morph2.transform.converters.ObjectToClassConverter;
 import net.sf.morph2.transform.converters.TextConverter;
 import net.sf.morph2.transform.converters.TextToEnumConverter;
-import net.sf.morph2.transform.converters.TextToNumberConverter;
 import net.sf.morph2.transform.converters.TextToTimeConverter;
 import net.sf.morph2.transform.converters.TimeConverter;
 import net.sf.morph2.transform.converters.TimeToNumberConverter;
@@ -117,7 +117,7 @@ public class SimpleDelegatingTransformer extends BaseCompositeTransformer implem
 				new DefaultToBooleanConverter(), new IdentityConverter(),
 				new ObjectToClassConverter(), new TextConverter(),
 				new TextToEnumConverter(), new DefaultToTextConverter(),
-				new TextToNumberConverter(), new TextToTimeConverter(),
+				Defaults.TEXT_TO_NUMBER_CONVERTER, new TextToTimeConverter(),
 				new NumberToTimeConverter(), new TimeToNumberConverter(), new NumberConverter(),
 				new TimeConverter(), new TextToContainerCopier(), new MapCopier(),
 				new PropertyNameMatchingCopier() {
